@@ -1,0 +1,41 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+ENV/
+.venv/
+
+# VSCode
+.vscode/
+
+# Mac/Windows
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Frontend
+*.lock
+yarn.lock
+pnpm-lock.yaml
+
+# Others
+.idea/
+*.swp
+*.swo
+
+# Local environment
+.env
+.env.*
