@@ -75,12 +75,6 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/chat-context/chat-context",
-        "iconPath": "static/chat.png",
-        "selectedIconPath": "static/chat-active.png",
-        "text": "对话"
-      },
-      {
         "pagePath": "pages/journey/journey",
         "iconPath": "static/journey.png",
         "selectedIconPath": "static/journey-active.png",
