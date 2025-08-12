@@ -2,11 +2,7 @@
 export default {
   onLaunch: function () {
     console.log('App Launch')
-    // 应用启动时检查是否已登录
-    // 这里简化处理，实际应检查登录状态
-    uni.redirectTo({
-      url: '/pages/login/login'
-    })
+    // 启动时不再自动跳转，交由 index.vue 处理
   },
   onShow: function () {
     console.log('App Show')
