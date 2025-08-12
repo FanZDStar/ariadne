@@ -1,0 +1,2 @@
+清晰描述vibe coding流程，需提供用户输入的完整Prompt序列
+（包括用于引导AI IDE进行Bug修复的提示词）

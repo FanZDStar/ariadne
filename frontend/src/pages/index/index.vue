@@ -1,48 +1,31 @@
 <template>
-  <view class="content">
-    <image class="logo" src="/static/logo.png"></image>
-    <view class="text-area">
-      <text class="title">{{ title }}</text>
-    </view>
+  <view>
+    <Header />
+    <MainContent>
+      <text class="welcome">欢迎使用 OurEDA Ariadne！</text>
+    </MainContent>
   </view>
 </template>
 
 <script>
+import Header from '@/components/Header.vue'
+import MainContent from '@/components/MainContent.vue'
+
 export default {
-  data() {
-    return {
-      title: 'Hello',
-    }
-  },
-  onLoad() {},
-  methods: {},
+  components: {
+    Header,
+    MainContent
+  }
 }
 </script>
 
-<style>
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
-  display: flex;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+<style scoped>
+.welcome {
+  font-size: 5vw;
+  color: #007aff;
+  font-weight: 600;
+  margin-top: 4vw;
+  letter-spacing: 0.5vw;
+  text-align: center;
 }
 </style>
