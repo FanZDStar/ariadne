@@ -1,16 +1,97 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	}
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarTitleText": "恋恋有声",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/chat-context/chat-context",
+      "style": {
+        "navigationBarTitleText": "对话选择"
+      }
+    },
+    {
+      "path": "pages/self-dialog/self-dialog",
+      "style": {
+        "navigationBarTitleText": "与自己对话"
+      }
+    },
+    {
+      "path": "pages/tips/tips",
+      "style": {
+        "navigationBarTitleText": "恋爱小技巧"
+      }
+    },
+    {
+      "path": "pages/protection/protection",
+      "style": {
+        "navigationBarTitleText": "感情防护"
+      }
+    },
+    {
+      "path": "pages/journey/journey",
+      "style": {
+        "navigationBarTitleText": "心之旅程"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "恋恋有声",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#007aff",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "iconPath": "static/home.png",
+        "selectedIconPath": "static/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/chat-context/chat-context",
+        "iconPath": "static/chat.png",
+        "selectedIconPath": "static/chat-active.png",
+        "text": "对话"
+      },
+      {
+        "pagePath": "pages/journey/journey",
+        "iconPath": "static/journey.png",
+        "selectedIconPath": "static/journey-active.png",
+        "text": "心之旅程"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "static/profile.png",
+        "selectedIconPath": "static/profile-active.png",
+        "text": "我的"
+      }
+    ]
+  }
 }
