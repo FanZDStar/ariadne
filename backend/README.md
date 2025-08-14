@@ -11,7 +11,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 # 应用配置
 DEBUG=True
 ```
-## 二 安装依赖
+
+## 二 准备数据库
+SQL文件见database文件夹，导入到mysql中即可
+
+## 三 运行项目
 建议在虚拟环境下安装，可以直接使用python自带的工具来创建虚拟环境
 下面的是没有使用虚拟环境的代码
 ```bash
