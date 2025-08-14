@@ -1,15 +1,14 @@
-# #file:ariadne/backend/app/api/routes/auth.py
 # from fastapi import APIRouter, Depends, HTTPException, status
 # from sqlalchemy.orm import Session
 # from sqlalchemy.exc import IntegrityError
 # from datetime import timedelta
 # from app.database.session import get_db
 # from app.models.user import User
-# from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
+# from app.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserUpdate
 # from app.utils.password import get_password_hash, verify_password
 # from app.core.security import create_access_token
 # from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
-# from app.api.deps import get_current_user  # 添加这一行导入
+# from app.api.deps import get_current_user
 
 # router = APIRouter(prefix="/auth", tags=["认证"])
 
@@ -85,13 +84,46 @@
 # def read_users_me(current_user: User = Depends(get_current_user)):
 #     """获取当前用户信息"""
 #     return current_user
+
+# @router.put("/users/me", response_model=UserResponse)
+# def update_user_me(
+#     user_update: UserUpdate,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """更新当前用户信息"""
+#     # 检查用户名是否已存在（如果要更新用户名）
+#     if user_update.username and user_update.username != current_user.username:
+#         existing_user = db.query(User).filter(User.username == user_update.username).first()
+#         if existing_user:
+#             raise HTTPException(
+#                 status_code=status.HTTP_400_BAD_REQUEST,
+#                 detail="Username already registered"
+#             )
+#         # 检查用户名长度
+#         if len(user_update.username) > 6:
+#             raise HTTPException(
+#                 status_code=status.HTTP_400_BAD_REQUEST,
+#                 detail="Username must be no more than 6 characters"
+#             )
+#         current_user.username = user_update.username
+    
+#     # 更新bio（如果提供了）
+#     if user_update.bio is not None:
+#         current_user.bio = user_update.bio
+    
+#     db.commit()
+#     db.refresh(current_user)
+#     return current_user
+
+#file:ariadne/backend/app/api/routes/auth.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta
 from app.database.session import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
+from app.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserUpdate
 from app.utils.password import get_password_hash, verify_password
 from app.core.security import create_access_token
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
@@ -119,13 +151,13 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
                 detail="Email already registered"
             )
     
-    # 创建新用户
+    # 创建新用户，设置默认nickname
     hashed_password = get_password_hash(user.password)
     db_user = User(
         username=user.username,
         password_hash=hashed_password,
         email=user.email,
-        nickname=user.nickname,
+        nickname=user.nickname or "情感小白",  # 默认nickname
         bio=user.bio
     )
     
@@ -170,4 +202,23 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 @router.get("/users/me", response_model=UserResponse)
 def read_users_me(current_user: User = Depends(get_current_user)):
     """获取当前用户信息"""
+    return current_user
+
+@router.put("/users/me", response_model=UserResponse)
+def update_user_me(
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """更新当前用户信息"""
+    # 更新nickname（如果提供了）
+    if user_update.nickname is not None:
+        current_user.nickname = user_update.nickname or "情感小白"
+    
+    # 更新bio（如果提供了）
+    if user_update.bio is not None:
+        current_user.bio = user_update.bio
+    
+    db.commit()
+    db.refresh(current_user)
     return current_user

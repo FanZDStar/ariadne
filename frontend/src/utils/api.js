@@ -11,12 +11,22 @@
 //                 if (res.statusCode >= 200 && res.statusCode < 300) {
 //                     resolve(res.data);
 //                 } else {
-//                     reject(new Error(`HTTP ${res.statusCode}: ${res.data?.detail || '请求失败'}`));
+//                     // 根据不同状态码提供更准确的错误信息
+//                     let errorMsg = `HTTP ${res.statusCode}`;
+//                     if (res.data && res.data.detail) {
+//                         errorMsg += `: ${res.data.detail}`;
+//                     }
+//                     const error = new Error(errorMsg);
+//                     error.statusCode = res.statusCode;
+//                     error.responseData = res.data;
+//                     reject(error);
 //                 }
 //             },
 //             fail: (err) => {
-//                 console.error('请求失败:', err);
-//                 reject(new Error('网络请求失败，请检查网络连接'));
+//                 console.error('网络请求失败:', err);
+//                 const error = new Error('网络请求失败，请检查网络连接');
+//                 error.isNetworkError = true;
+//                 reject(error);
 //             }
 //         });
 //     });
@@ -34,7 +44,7 @@
 //             }
 //         });
 //     },
-    
+
 //     // 用户登录
 //     login: (loginData) => {
 //         return request('/auth/login', {
@@ -45,7 +55,7 @@
 //             }
 //         });
 //     },
-    
+
 //     // 获取用户信息
 //     getUserInfo: (token) => {
 //         return request('/auth/users/me', {
@@ -61,24 +71,25 @@
 //     setToken: (token) => {
 //         uni.setStorageSync('access_token', token);
 //     },
-    
+
 //     getToken: () => {
 //         return uni.getStorageSync('access_token');
 //     },
-    
+
 //     clearToken: () => {
 //         uni.removeStorageSync('access_token');
 //     },
-    
+
 //     setUserInfo: (userInfo) => {
 //         uni.setStorageSync('user_info', JSON.stringify(userInfo));
 //     },
-    
+
 //     getUserInfo: () => {
 //         const userInfo = uni.getStorageSync('user_info');
 //         return userInfo ? JSON.parse(userInfo) : null;
 //     }
 // };
+
 const BASE_URL = 'http://127.0.0.1:8000'; // 后端API地址
 
 // 封装fetch请求
@@ -144,6 +155,18 @@ export const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
+    },
+
+    // 更新用户信息
+    updateUserInfo: (token, userData) => {
+        return request('/auth/users/me', {
+            method: 'PUT',
+            data: userData,
+            header: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
     }
 };
 
@@ -168,5 +191,9 @@ export const storage = {
     getUserInfo: () => {
         const userInfo = uni.getStorageSync('user_info');
         return userInfo ? JSON.parse(userInfo) : null;
+    },
+
+    clearUserInfo: () => {
+        uni.removeStorageSync('user_info');
     }
 };

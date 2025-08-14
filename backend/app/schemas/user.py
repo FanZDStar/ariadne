@@ -1,18 +1,22 @@
-#file:ariadne/backend/app/schemas/user.py
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
 # 用户基础模型
 class UserBase(BaseModel):
-    username: str
+    username: str = Field(..., max_length=15)
     email: Optional[str] = None
-    nickname: Optional[str] = None
+    nickname: Optional[str] = Field(None, max_length=6)
     bio: Optional[str] = None
 
 # 用户创建模型
 class UserCreate(UserBase):
     password: str
+
+# 用户更新模型
+class UserUpdate(BaseModel):
+    nickname: Optional[str] = Field(None, max_length=6)
+    bio: Optional[str] = None
 
 # 用户登录模型
 class UserLogin(BaseModel):

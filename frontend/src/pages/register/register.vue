@@ -11,6 +11,10 @@
             </view>
 
             <view class="input-group">
+                <input class="input" placeholder="请输入邮箱（可选）" v-model="email" />
+            </view>
+
+            <view class="input-group">
                 <input class="input" placeholder="请输入密码" v-model="password" password />
             </view>
 
@@ -29,16 +33,19 @@
 </template>
 
 <script>
+import { api } from '../../utils/api.js';
+
 export default {
     data() {
         return {
             username: '',
+            email: '',
             password: '',
             confirmPassword: ''
         }
     },
     methods: {
-        handleRegister() {
+        async handleRegister() {
             if (!this.username || !this.password) {
                 uni.showToast({
                     title: '请输入用户名和密码',
@@ -55,16 +62,64 @@ export default {
                 return
             }
 
-            // 注册逻辑（这里简化处理，实际应调用后端接口）
-            uni.showToast({
-                title: '注册成功',
-                icon: 'success'
-            })
+            // 调用后端注册接口
+            try {
+                const userData = {
+                    username: this.username,
+                    password: this.password
+                };
 
-            // 延迟跳转到登录页
-            setTimeout(() => {
-                uni.navigateBack()
-            }, 1000)
+                // 如果填写了邮箱，则添加到注册数据中
+                if (this.email) {
+                    userData.email = this.email;
+                }
+
+                console.log('发送注册请求:', userData);
+                const res = await api.register(userData);
+                console.log('注册响应:', res);
+
+                if (res.user_id) {
+                    uni.showToast({
+                        title: '注册成功',
+                        icon: 'success'
+                    })
+
+                    // 延迟跳转到登录页
+                    setTimeout(() => {
+                        uni.navigateBack()
+                    }, 1000)
+                } else {
+                    uni.showToast({
+                        title: '注册失败',
+                        icon: 'none'
+                    })
+                }
+            } catch (error) {
+                console.error('注册错误:', error);
+                let errorMsg = '注册失败';
+
+                // 更精确的错误处理
+                if (error.message) {
+                    errorMsg = error.message;
+                    // 如果是HTTP错误，提取关键信息
+                    if (errorMsg.includes('already registered')) {
+                        if (errorMsg.includes('Username')) {
+                            errorMsg = '用户名已存在';
+                        } else if (errorMsg.includes('Email')) {
+                            errorMsg = '邮箱已被注册';
+                        }
+                    } else if (errorMsg.includes('HTTP 400')) {
+                        errorMsg = '请求参数错误，请检查输入';
+                    } else if (errorMsg.includes('网络请求失败')) {
+                        errorMsg = '网络连接失败，请检查网络';
+                    }
+                }
+
+                uni.showToast({
+                    title: errorMsg,
+                    icon: 'none'
+                })
+            }
         },
 
         goToLogin() {
@@ -138,6 +193,7 @@ export default {
     margin-left: 10rpx;
 }
 </style> -->
+
 <template>
     <view class="register-container">
         <view class="register-header">
@@ -147,7 +203,7 @@ export default {
 
         <view class="register-form">
             <view class="input-group">
-                <input class="input" placeholder="请输入用户名" v-model="username" />
+                <input class="input" placeholder="请输入用户名（最多15个字符）" v-model="username" />
             </view>
 
             <view class="input-group">
@@ -189,6 +245,14 @@ export default {
             if (!this.username || !this.password) {
                 uni.showToast({
                     title: '请输入用户名和密码',
+                    icon: 'none'
+                })
+                return
+            }
+
+            if (this.username.length > 15) {
+                uni.showToast({
+                    title: '用户名最多15个字符',
                     icon: 'none'
                 })
                 return
