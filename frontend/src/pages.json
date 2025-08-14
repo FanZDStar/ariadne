@@ -60,6 +60,14 @@
       "style": {
         "navigationBarTitleText": "我的"
       }
+    },
+    {
+      "path": "pages/diary/diary",
+      "style": {
+        "navigationBarTitleText": "情感日记",
+        "navigationBarBackgroundColor": "#ffafcc",
+        "navigationBarTextStyle": "white"
+      }
     }
   ],
   "globalStyle": {
