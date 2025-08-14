@@ -1,0 +1,1 @@
+#file:ariadne/backend/app/schemas/__init__.py
