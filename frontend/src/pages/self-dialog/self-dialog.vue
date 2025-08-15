@@ -94,7 +94,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin-bottom: 20rpx; /* 与底部输入框保持间距 */
+    margin-bottom: 100rpx; /* 与底部输入框保持间距 */
 }
 
 /* 固定在底部的输入框样式，类似导航栏 */
