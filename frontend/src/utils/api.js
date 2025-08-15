@@ -75,6 +75,27 @@
 //                 'Authorization': `Bearer ${token}`
 //             }
 //         });
+//     },
+
+//     // 获取用户日记
+//     getUserDiaries: (token) => {
+//         return request('/diary/', {
+//             header: {
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
+//     },
+
+//     // 创建日记
+//     createDiary: (token, diaryData) => {
+//         return request('/diary/', {
+//             method: 'POST',
+//             data: diaryData,
+//             header: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
 //     }
 // };
 
@@ -105,6 +126,7 @@
 //         uni.removeStorageSync('user_info');
 //     }
 // };
+
 const BASE_URL = 'http://127.0.0.1:8000'; // 后端API地址
 
 // 封装fetch请求
@@ -134,6 +156,36 @@ function request(url, options = {}) {
                 const error = new Error('网络请求失败，请检查网络连接');
                 error.isNetworkError = true;
                 reject(error);
+            }
+        });
+    });
+}
+
+// 上传文件
+function uploadFile(url, filePath, token) {
+    return new Promise((resolve, reject) => {
+        uni.uploadFile({
+            url: BASE_URL + url,
+            filePath: filePath,
+            name: 'file',
+            header: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: (res) => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        const data = JSON.parse(res.data);
+                        resolve(data);
+                    } catch (e) {
+                        resolve(res.data);
+                    }
+                } else {
+                    reject(new Error(`HTTP ${res.statusCode}`));
+                }
+            },
+            fail: (err) => {
+                console.error('文件上传失败:', err);
+                reject(new Error('文件上传失败'));
             }
         });
     });
@@ -203,6 +255,11 @@ export const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
+    },
+
+    // 上传图片
+    uploadImage: (filePath, token) => {
+        return uploadFile('/image/upload', filePath, token);
     }
 };
 

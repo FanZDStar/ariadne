@@ -1,6 +1,7 @@
 #file:ariadne/backend/app/models/emotional_diary.py
 from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, Boolean, ForeignKey
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from app.database.session import Base
 
 class EmotionalDiary(Base):
@@ -14,3 +15,7 @@ class EmotionalDiary(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     is_private = Column(Boolean, default=True)
+    image_count = Column(Integer, default=0)
+    
+    # 关联图片
+    images = relationship("DiaryImage", back_populates="diary")

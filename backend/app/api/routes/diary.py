@@ -1,5 +1,123 @@
+# #file:ariadne/backend/app/api/routes/diary.py
+# from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+# from sqlalchemy.orm import Session
+# from typing import List
+# from app.database.session import get_db
+# from app.models.user import User
+# from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+# from app.api.deps import get_current_user
+# from app.models.emotional_diary import EmotionalDiary
+
+# router = APIRouter(prefix="/diary", tags=["情感日记"])
+
+# @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+# def create_diary(
+#     diary: DiaryCreate,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """创建新的情感日记"""
+#     db_diary = EmotionalDiary(
+#         user_id=current_user.user_id,
+#         title=diary.title,
+#         content=diary.content,
+#         mood=diary.mood,
+#         is_private=diary.is_private
+#     )
+    
+#     db.add(db_diary)
+#     db.commit()
+#     db.refresh(db_diary)
+#     return db_diary
+
+# @router.get("/", response_model=List[DiaryResponse])
+# def get_user_diaries(
+#     skip: int = 0,
+#     limit: int = 100,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """获取当前用户的所有情感日记，按时间倒序排列"""
+#     diaries = db.query(EmotionalDiary)\
+#                 .filter(EmotionalDiary.user_id == current_user.user_id)\
+#                 .order_by(EmotionalDiary.created_at.desc())\
+#                 .offset(skip)\
+#                 .limit(limit)\
+#                 .all()
+#     return diaries
+
+# @router.get("/{diary_id}", response_model=DiaryResponse)
+# def get_diary(
+#     diary_id: int,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """获取特定的情感日记"""
+#     diary = db.query(EmotionalDiary)\
+#               .filter(EmotionalDiary.diary_id == diary_id)\
+#               .filter(EmotionalDiary.user_id == current_user.user_id)\
+#               .first()
+    
+#     if not diary:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Diary not found"
+#         )
+    
+#     return diary
+
+# @router.put("/{diary_id}", response_model=DiaryResponse)
+# def update_diary(
+#     diary_id: int,
+#     diary_update: DiaryUpdate,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """更新情感日记"""
+#     db_diary = db.query(EmotionalDiary)\
+#                  .filter(EmotionalDiary.diary_id == diary_id)\
+#                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+#                  .first()
+    
+#     if not db_diary:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Diary not found"
+#         )
+    
+#     # 更新字段
+#     update_data = diary_update.dict(exclude_unset=True)
+#     for key, value in update_data.items():
+#         setattr(db_diary, key, value)
+    
+#     db.commit()
+#     db.refresh(db_diary)
+#     return db_diary
+
+# @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+# def delete_diary(
+#     diary_id: int,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """删除情感日记"""
+#     db_diary = db.query(EmotionalDiary)\
+#                  .filter(EmotionalDiary.diary_id == diary_id)\
+#                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+#                  .first()
+    
+#     if not db_diary:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Diary not found"
+#         )
+    
+#     db.delete(db_diary)
+#     db.commit()
+#     return
+
 #file:ariadne/backend/app/api/routes/diary.py
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from app.database.session import get_db
@@ -7,6 +125,7 @@ from app.models.user import User
 from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
 from app.api.deps import get_current_user
 from app.models.emotional_diary import EmotionalDiary
+from app.models.diary_image import DiaryImage
 
 router = APIRouter(prefix="/diary", tags=["情感日记"])
 
@@ -22,10 +141,23 @@ def create_diary(
         title=diary.title,
         content=diary.content,
         mood=diary.mood,
-        is_private=diary.is_private
+        is_private=diary.is_private,
+        image_count=len(diary.images)
     )
     
     db.add(db_diary)
+    db.commit()
+    db.refresh(db_diary)
+    
+    # 添加图片
+    for i, image_data in enumerate(diary.images):
+        db_image = DiaryImage(
+            diary_id=db_diary.diary_id,
+            image_url=image_data.image_url,
+            image_order=i
+        )
+        db.add(db_image)
+    
     db.commit()
     db.refresh(db_diary)
     return db_diary
@@ -88,7 +220,27 @@ def update_diary(
     # 更新字段
     update_data = diary_update.dict(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(db_diary, key, value)
+        if key != 'images':  # 图片单独处理
+            setattr(db_diary, key, value)
+    
+    # 更新图片（如果提供了）
+    if diary_update.images is not None:
+        # 删除现有图片
+        db.query(DiaryImage)\
+          .filter(DiaryImage.diary_id == diary_id)\
+          .delete()
+        
+        # 添加新图片
+        for i, image_data in enumerate(diary_update.images):
+            db_image = DiaryImage(
+                diary_id=diary_id,
+                image_url=image_data.image_url,
+                image_order=i
+            )
+            db.add(db_image)
+        
+        # 更新图片计数
+        db_diary.image_count = len(diary_update.images)
     
     db.commit()
     db.refresh(db_diary)
