@@ -1,3 +1,4 @@
+<!-- src/pages/self-dialog/self-dialog.vue -->
 <template>
     <view class="dialog-container">
         <view class="header">
@@ -6,21 +7,26 @@
         </view>
 
         <view class="content">
-            <ChatBox 
-                :messages="chatHistory" 
-                placeholder="请描述你在感情中遇到的问题或困惑..." 
-                @send="handleSend" 
-            />
+            <ChatMessages :messages="chatHistory" />
         </view>
+        
+        <!-- 底部输入框，类似导航栏效果 -->
+        <ChatInput 
+            class="fixed-input"
+            placeholder="请描述你在感情中遇到的问题或困惑..." 
+            @send="handleSend" 
+        />
     </view>
 </template>
 
 <script>
-import ChatBox from '@/components/ChatBox.vue';
+import ChatMessages from '@/components/ChatMessages.vue'
+import ChatInput from '@/components/ChatInput.vue'
 
 export default {
     components: {
-        ChatBox
+        ChatMessages,
+        ChatInput
     },
     data() {
         return {
@@ -57,6 +63,7 @@ export default {
 <style scoped>
 .dialog-container {
     padding: 30rpx;
+    padding-bottom: 0; /* 为底部输入框留出空间 */
     background-color: #f8f8f8;
     height: 100vh;
     display: flex;
@@ -87,5 +94,18 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    margin-bottom: 20rpx; /* 与底部输入框保持间距 */
+}
+
+/* 固定在底部的输入框样式，类似导航栏 */
+.fixed-input {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 20rpx 30rpx;
+    box-shadow: 0 -5rpx 20rpx rgba(0, 0, 0, 0.1);
+    z-index: 999;
 }
 </style>
