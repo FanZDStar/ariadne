@@ -505,6 +505,7 @@ export default {
       }
     },
 
+    // 修改removeImage方法中的图片显示
     removeImage(index) {
       this.uploadedImages.splice(index, 1);
     },
@@ -513,6 +514,21 @@ export default {
       uni.navigateBack();
     },
 
+    // 添加这个方法
+    getImageUrl(imageUrl) {
+      // 如果已经是完整URL，直接返回
+      if (imageUrl.startsWith('http')) {
+        return imageUrl;
+      }
+
+      // 如果是相对路径，拼接基础URL
+      const baseUrl = 'http://127.0.0.1:8000';
+      if (imageUrl.startsWith('/')) {
+        return baseUrl + imageUrl;
+      } else {
+        return baseUrl + '/' + imageUrl;
+      }
+    },
     async publish() {
       if (!this.canPublish) {
         uni.showToast({

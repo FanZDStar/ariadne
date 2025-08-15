@@ -44,12 +44,11 @@
               <text class="content-text">{{ diary.content }}</text>
             </view>
 
-            <!-- 图片展示 -->
             <view class="diary-images" v-if="diary.images && diary.images.length > 0">
               <view class="image-grid"
                 :class="{ 'single-image': diary.images.length === 1, 'multi-images': diary.images.length > 1 }">
                 <view class="image-wrapper" v-for="image in diary.images.slice(0, 9)" :key="image.image_id">
-                  <image :src="image.image_url" class="diary-image" mode="aspectFill"
+                  <image :src="getImageUrl(image.image_url)" class="diary-image" mode="aspectFill"
                     @click="previewImage(diary.images, image.image_url)" />
                 </view>
 
@@ -145,11 +144,27 @@ export default {
       return moodMap[mood] || '😊';
     },
 
+    // 修改这个方法，确保正确处理图片URL
+    getImageUrl(imageUrl) {
+      // 如果已经是完整URL，直接返回
+      if (imageUrl.startsWith('http')) {
+        return imageUrl;
+      }
+
+      // 如果是相对路径，拼接基础URL
+      const baseUrl = 'http://127.0.0.1:8000';
+      if (imageUrl.startsWith('/')) {
+        return baseUrl + imageUrl;
+      } else {
+        return baseUrl + '/' + imageUrl;
+      }
+    },
+
     previewImage(images, currentImage) {
-      const urls = images.map(img => img.image_url);
+      const urls = images.map(img => this.getImageUrl(img.image_url));
       uni.previewImage({
         urls: urls,
-        current: currentImage
+        current: this.getImageUrl(currentImage)
       });
     }
   }
