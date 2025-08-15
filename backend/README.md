@@ -42,6 +42,17 @@ pip install -r requirements.txt
 # 启动开发服务器
 uvicorn app.main:app --reload
 
+# 关闭服务器
+CTRL+C
+
 # 退出虚拟环境
 deactivate
 ```
+
+服务器启动后，访问以下地址查看API文档：
+
+交互式文档: http://127.0.0.1:8000/docs
+
+ReDoc文档: http://127.0.0.1:8000/redoc
+
+基础接口测试: http://127.0.0.1:8000/
