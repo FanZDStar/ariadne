@@ -68,6 +68,14 @@
         "navigationBarBackgroundColor": "#ffafcc",
         "navigationBarTextStyle": "white"
       }
+    },
+    {
+      "path": "pages/diary/write-diary",
+      "style": {
+        "navigationBarTitleText": "写日记",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
     }
   ],
   "globalStyle": {

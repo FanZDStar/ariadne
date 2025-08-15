@@ -63,6 +63,18 @@
 //                 'Authorization': `Bearer ${token}`
 //             }
 //         });
+//     },
+
+//     // 更新用户信息
+//     updateUserInfo: (token, userData) => {
+//         return request('/auth/users/me', {
+//             method: 'PUT',
+//             data: userData,
+//             header: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
 //     }
 // };
 
@@ -87,9 +99,12 @@
 //     getUserInfo: () => {
 //         const userInfo = uni.getStorageSync('user_info');
 //         return userInfo ? JSON.parse(userInfo) : null;
+//     },
+
+//     clearUserInfo: () => {
+//         uni.removeStorageSync('user_info');
 //     }
 // };
-
 const BASE_URL = 'http://127.0.0.1:8000'; // 后端API地址
 
 // 封装fetch请求
@@ -162,6 +177,27 @@ export const api = {
         return request('/auth/users/me', {
             method: 'PUT',
             data: userData,
+            header: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 获取用户日记
+    getUserDiaries: (token) => {
+        return request('/diary/', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 创建日记
+    createDiary: (token, diaryData) => {
+        return request('/diary/', {
+            method: 'POST',
+            data: diaryData,
             header: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`

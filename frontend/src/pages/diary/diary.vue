@@ -24,28 +24,28 @@
           </view>
         </swiper-item>
       </swiper>
-      
+
       <view class="new-diary-btn" @click="createNewDiary">
         <text class="btn-text">✍️ 写日记</text>
       </view>
     </view>
-    
+
     <!-- 下半屏：日记列表区域 -->
     <view class="diary-section">
       <scroll-view class="diary-scroll" scroll-y>
         <view class="diary-list">
           <!-- 日记条目 -->
-          <view class="diary-item">
+          <view class="diary-item" v-for="diary in diaryList" :key="diary.diary_id">
             <view class="diary-header">
-              <text class="diary-date">2025.8.15</text>
-              <text class="diary-time">15:30</text>
+              <text class="diary-date">{{ formatDiaryDate(diary.created_at) }}</text>
+              <text class="diary-time">{{ formatDiaryTime(diary.created_at) }}</text>
             </view>
             <view class="diary-content">
-              <text class="content-text">今天去看了小猪佩奇。</text>
+              <text class="content-text">{{ diary.content }}</text>
             </view>
             <view class="diary-footer">
               <view class="mood-tag">
-                <text>😊</text>
+                <text>{{ getMoodEmoji(diary.mood) }}</text>
               </view>
               <view class="action-buttons">
                 <text class="action-btn">❤️ 0</text>
@@ -53,8 +53,11 @@
               </view>
             </view>
           </view>
-          
-          <!-- 可以添加更多日记条目 -->
+
+          <!-- 没有日记时的提示 -->
+          <view v-if="diaryList.length === 0" class="empty-diary">
+            <text class="empty-text">还没有写过日记，点击右上角开始记录吧！</text>
+          </view>
         </view>
       </scroll-view>
     </view>
@@ -62,29 +65,67 @@
 </template>
 
 <script>
+import { api, storage } from '../../utils/api.js';
+
 export default {
   data() {
     return {
-      diaryList: [
-        {
-          id: 1,
-          date: '2025.8.15',
-          time: '15:30',
-          content: '今天去看了小猪佩奇。',
-          mood: '😊',
-          likes: 0,
-          comments: 0
-        }
-      ]
+      diaryList: []
     }
   },
-  
+
+  onLoad() {
+    this.loadDiaries();
+  },
+
   methods: {
+    async loadDiaries() {
+      const token = storage.getToken();
+      if (!token) {
+        uni.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        return;
+      }
+
+      try {
+        const diaries = await api.getUserDiaries(token);
+        this.diaryList = diaries;
+      } catch (error) {
+        console.error('获取日记失败:', error);
+        uni.showToast({
+          title: '获取日记失败',
+          icon: 'none'
+        });
+      }
+    },
+
     createNewDiary() {
-      uni.showToast({
-        title: '创建新日记功能开发中',
-        icon: 'none'
+      uni.navigateTo({
+        url: '/pages/diary/write-diary'
       });
+    },
+
+    formatDiaryDate(dateString) {
+      const date = new Date(dateString);
+      return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+    },
+
+    formatDiaryTime(dateString) {
+      const date = new Date(dateString);
+      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    },
+
+    getMoodEmoji(mood) {
+      const moodMap = {
+        'very_happy': '😄',
+        'happy': '😊',
+        'neutral': '😐',
+        'sad': '😢',
+        'very_sad': '😭'
+      };
+      return moodMap[mood] || '😊';
     }
   }
 }
@@ -118,7 +159,7 @@ export default {
   font-size: 36rpx;
   color: white;
   font-weight: bold;
-  text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.3);
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
 .new-diary-btn {
@@ -128,7 +169,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.9);
   padding: 20rpx 30rpx;
   border-radius: 50rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
 }
 
 .btn-text {
@@ -162,7 +203,7 @@ export default {
   background-color: white;
   border-radius: 20rpx;
   padding: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
 .diary-header {
@@ -209,6 +250,16 @@ export default {
 
 .action-btn {
   font-size: 24rpx;
+  color: #999;
+}
+
+.empty-diary {
+  text-align: center;
+  padding: 60rpx 0;
+}
+
+.empty-text {
+  font-size: 28rpx;
   color: #999;
 }
 </style>
