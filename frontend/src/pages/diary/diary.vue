@@ -1,39 +1,39 @@
 <template>
   <view class="diary-container">
+    <!-- 上半屏：背景图片选择区域 -->
+    <view class="background-section" :style="{ height: backgroundHeight + 'px' }">
+      <swiper class="background-swiper" indicator-dots indicator-color="#ffffff80" indicator-active-color="#ffffff">
+        <swiper-item>
+          <view class="background-item" style="background-color: #ffafcc;">
+            <text class="background-label">粉色心情</text>
+          </view>
+        </swiper-item>
+        <swiper-item>
+          <view class="background-item" style="background-color: #a2d2ff;">
+            <text class="background-label">蓝色忧郁</text>
+          </view>
+        </swiper-item>
+        <swiper-item>
+          <view class="background-item" style="background-color: #ffcad4;">
+            <text class="background-label">温柔时光</text>
+          </view>
+        </swiper-item>
+        <swiper-item>
+          <view class="background-item" style="background-color: #cdb4db;">
+            <text class="background-label">紫色梦境</text>
+          </view>
+        </swiper-item>
+      </swiper>
 
-    <scroll-view class="diary-scroll-view" scroll11111-y>
-      <!-- 上半屏：背景图片选择区域 -->
-      <view class="background-section">
-        <swiper class="background-swiper" indicator-dots indicator-color="#ffffff80" indicator-active-color="#ffffff">
-          <swiper-item>
-            <view class="background-item" style="background-color: #ffafcc;">
-              <text class="background-label">粉色心情</text>
-            </view>
-          </swiper-item>
-          <swiper-item>
-            <view class="background-item" style="background-color: #a2d2ff;">
-              <text class="background-label">蓝色忧郁</text>
-            </view>
-          </swiper-item>
-          <swiper-item>
-            <view class="background-item" style="background-color: #ffcad4;">
-              <text class="background-label">温柔时光</text>
-            </view>
-          </swiper-item>
-          <swiper-item>
-            <view class="background-item" style="background-color: #cdb4db;">
-              <text class="background-label">紫色梦境</text>
-            </view>
-          </swiper-item>
-        </swiper>
-
-        <view class="new-diary-btn" @click="createNewDiary">
-          <text class="btn-text">✍️ 写日记</text>
-        </view>
+      <view class="new-diary-btn" @click="createNewDiary">
+        <text class="btn-text">✍️ 写日记</text>
       </view>
+    </view>
 
-      <!-- 日记列表区域 -->
-      <view class="diary-content">
+    <!-- 日记列表区域 -->
+    <view class="diary-content">
+      <scroll-view class="diary-scroll-view" scroll-y @scroll="onScroll" :scroll-top="scrollTop"
+        :enable-back-to-top="true">
         <view class="diary-list">
           <!-- 日记条目 -->
           <view class="diary-item" v-for="diary in diaryList" :key="diary.diary_id">
@@ -76,8 +76,8 @@
             <text class="empty-text">还没有写过日记，点击右上角开始记录吧！</text>
           </view>
         </view>
-      </view>
-    </scroll-view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -87,7 +87,11 @@ import { api, storage } from '../../utils/api.js';
 export default {
   data() {
     return {
-      diaryList: []
+      diaryList: [],
+      scrollTop: 0,
+      backgroundHeight: Math.round(uni.getSystemInfoSync().windowHeight * 0.4), // 初始高度为40%屏幕高度
+      maxBackgroundHeight: Math.round(uni.getSystemInfoSync().windowHeight * 0.4), // 最大高度
+      minBackgroundHeight: 80 // 最小高度
     }
   },
 
@@ -167,6 +171,21 @@ export default {
         urls: urls,
         current: this.getImageUrl(currentImage)
       });
+    },
+
+    // 滚动事件处理
+    onScroll(e) {
+      const scrollTop = e.detail.scrollTop;
+
+      // 根据滚动距离调整背景高度
+      // 滚动越多，背景越小
+      const scrollRatio = Math.min(scrollTop / 200, 1); // 200px滚动距离内完成变化
+      const newHeight = Math.max(
+        this.minBackgroundHeight,
+        this.maxBackgroundHeight - (this.maxBackgroundHeight - this.minBackgroundHeight) * scrollRatio
+      );
+
+      this.backgroundHeight = newHeight;
     }
   }
 }
@@ -175,18 +194,16 @@ export default {
 <style scoped>
 .diary-container {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: #f5f5f5;
-}
-
-.diary-scroll-view {
-  height: 100%;
 }
 
 /* 上半屏：背景图片选择区域 */
 .background-section {
-  height: 40vh;
   position: relative;
-  background-color: #f5f5f5;
+  transition: height 0.1s ease-out;
+  flex-shrink: 0;
 }
 
 .background-swiper {
@@ -215,6 +232,7 @@ export default {
   border-radius: 50rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
   z-index: 100;
+  transition: all 0.1s ease-out;
 }
 
 .btn-text {
@@ -225,18 +243,25 @@ export default {
 
 /* 日记内容区域 */
 .diary-content {
+  flex: 1;
   background-color: #f5f5f5;
   padding: 30rpx;
   padding-top: 0;
   border-top-left-radius: 40rpx;
   border-top-right-radius: 40rpx;
   margin-top: -20rpx;
+  overflow: hidden;
+}
+
+.diary-scroll-view {
+  height: 100%;
 }
 
 .diary-list {
   display: flex;
   flex-direction: column;
   gap: 30rpx;
+  padding-bottom: 30rpx;
 }
 
 .diary-item {
@@ -268,6 +293,7 @@ export default {
   color: #333;
   line-height: 1.6;
   margin-bottom: 20rpx;
+  word-wrap: break-word;
 }
 
 /* 图片展示样式 */
