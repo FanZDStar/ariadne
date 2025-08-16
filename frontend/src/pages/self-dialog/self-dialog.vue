@@ -7,7 +7,11 @@
         </view>
 
         <view class="content">
-            <ChatMessages :messages="chatHistory" />
+            <ChatMessages 
+                ref="chatMessages"
+                :messages="chatHistory" 
+                @ai-typing="handleAiTyping" 
+            />
         </view>
         
         <!-- 底部输入框，类似导航栏效果 -->
@@ -15,6 +19,7 @@
             class="fixed-input"
             placeholder="请描述你在感情中遇到的问题或困惑..." 
             @send="handleSend" 
+            :disabled="isAiTyping"
         />
     </view>
 </template>
@@ -35,7 +40,8 @@ export default {
                     role: 'ai',
                     content: '你好！我是你的情感助手。请告诉我你在感情中遇到了什么问题或困惑？'
                 }
-            ]
+            ],
+            isAiTyping: false // 添加AI打字状态
         }
     },
     methods: {
@@ -55,6 +61,11 @@ export default {
                     content: aiResponse
                 })
             }, 1000) // 1秒延迟，模拟AI思考
+        },
+        
+        // 处理AI打字状态变化
+        handleAiTyping(typing) {
+            this.isAiTyping = typing;
         }
     }
 }
@@ -94,7 +105,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin-bottom: 100rpx; /* 与底部输入框保持间距 */
+    margin-bottom: 120rpx; /* 增加间距以适应多行输入框 */
 }
 
 /* 固定在底部的输入框样式，类似导航栏 */
