@@ -2,8 +2,7 @@
 <template>
     <view class="dialog-container">
         <view class="header">
-            <text class="title">自己与自己的对话</text>
-            <text class="subtitle">反思感情中的言行举止，获得AI引导和建议</text>
+            <image class="header-image" src="../../static/self-dialog.png" mode="widthFix"></image>
         </view>
 
         <view class="content">
@@ -85,8 +84,14 @@ export default {
 .header {
     margin-bottom: 30rpx;
     flex-shrink: 0;
+    text-align: center; /* 居中显示图片 */
 }
 
+.header-image {
+    width: 100%; /* 或者指定具体宽度 */
+    max-width: 600rpx; /* 限制最大宽度 */
+    margin: 0 auto; /* 居中对齐 */
+}
 .title {
     font-size: 36rpx;
     font-weight: bold;
