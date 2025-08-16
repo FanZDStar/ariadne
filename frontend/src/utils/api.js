@@ -32,6 +32,36 @@
 //     });
 // }
 
+// // 上传文件
+// function uploadFile(url, filePath, token) {
+//     return new Promise((resolve, reject) => {
+//         uni.uploadFile({
+//             url: BASE_URL + url,
+//             filePath: filePath,
+//             name: 'file',
+//             header: {
+//                 'Authorization': `Bearer ${token}`
+//             },
+//             success: (res) => {
+//                 if (res.statusCode >= 200 && res.statusCode < 300) {
+//                     try {
+//                         const data = JSON.parse(res.data);
+//                         resolve(data);
+//                     } catch (e) {
+//                         resolve(res.data);
+//                     }
+//                 } else {
+//                     reject(new Error(`HTTP ${res.statusCode}`));
+//                 }
+//             },
+//             fail: (err) => {
+//                 console.error('文件上传失败:', err);
+//                 reject(new Error('文件上传失败'));
+//             }
+//         });
+//     });
+// }
+
 // // API接口
 // export const api = {
 //     // 用户注册
@@ -96,6 +126,20 @@
 //                 'Authorization': `Bearer ${token}`
 //             }
 //         });
+//     },
+
+//     // 获取心情统计数据
+//     getMoodStats: (token, period) => {
+//         return request(`/diary/mood-stats/${period}`, {
+//             header: {
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
+//     },
+
+//     // 上传图片
+//     uploadImage: (filePath, token) => {
+//         return uploadFile('/image/upload', filePath, token);
 //     }
 // };
 
@@ -252,6 +296,15 @@ export const api = {
             data: diaryData,
             header: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 获取心情统计数据
+    getMoodStats: (token, period) => {
+        return request(`/diary/mood-stats/${period}`, {
+            header: {
                 'Authorization': `Bearer ${token}`
             }
         });

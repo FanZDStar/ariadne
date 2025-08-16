@@ -1,6 +1,7 @@
 <template>
   <view class="diary-container">
-    <scroll-view class="diary-scroll-view" scroll-y>
+
+    <scroll-view class="diary-scroll-view" scroll11111-y>
       <!-- 上半屏：背景图片选择区域 -->
       <view class="background-section">
         <swiper class="background-swiper" indicator-dots indicator-color="#ffffff80" indicator-active-color="#ffffff">

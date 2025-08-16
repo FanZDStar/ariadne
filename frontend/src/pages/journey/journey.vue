@@ -114,7 +114,7 @@ export default {
                 </view>
             </view>
 
-            <view class="journey-card">
+            <view class="journey-card" @click="goToGrowthTrack">
                 <text class="card-title">成长轨迹</text>
                 <text class="card-desc">查看你在情感方面的成长变化</text>
                 <view class="status">
@@ -153,6 +153,11 @@ export default {
                         icon: 'none'
                     });
                 }
+            });
+        },
+        goToGrowthTrack() {
+            uni.navigateTo({
+                url: '/pages/growth-track/growth-track'
             });
         }
     }
