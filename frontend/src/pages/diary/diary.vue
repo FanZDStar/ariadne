@@ -1,5 +1,25 @@
 <template>
   <view class="diary-container">
+    <!-- 自定义导航栏 -->
+    <view class="custom-navbar">
+      <view class="navbar-content">
+        <!-- 返回上一级按钮 -->
+        <view class="back-to-journey" v-if="isAtTop" @click="goBackToJourney">
+          <text class="back-icon">←</text>
+        </view>
+        <!-- 返回顶部提示 -->
+        <view class="back-to-top-hint" v-if="showBackToTopHint" @click="scrollToTop">
+          <text class="back-icon">↑</text>
+          <text class="back-text">回到顶部</text>
+        </view>
+
+        <!-- 默认标题 -->
+        <text class="navbar-title" :class="{ 'hidden': showBackToTopHint }">
+          情感日记
+        </text>
+      </view>
+    </view>
+
     <!-- 上半屏：背景图片选择区域 -->
     <view class="background-section" :style="{ height: backgroundHeight + 'px' }">
       <swiper class="background-swiper" indicator-dots indicator-color="#ffffff80" indicator-active-color="#ffffff">
@@ -33,7 +53,7 @@
     <!-- 日记列表区域 -->
     <view class="diary-content">
       <scroll-view class="diary-scroll-view" scroll-y @scroll="onScroll" :scroll-top="scrollTop"
-        :enable-back-to-top="true">
+        :enable-back-to-top="true" ref="scrollView" id="scrollView">
         <view class="diary-list">
           <!-- 日记条目 -->
           <view class="diary-item" v-for="diary in diaryList" :key="diary.diary_id">
@@ -91,7 +111,10 @@ export default {
       scrollTop: 0,
       backgroundHeight: Math.round(uni.getSystemInfoSync().windowHeight * 0.4), // 初始高度为40%屏幕高度
       maxBackgroundHeight: Math.round(uni.getSystemInfoSync().windowHeight * 0.4), // 最大高度
-      minBackgroundHeight: 80 // 最小高度
+      minBackgroundHeight: 80, // 最小高度
+      showBackToTopHint: false, // 是否显示回到顶部提示
+      scrollThreshold: 300, // 滚动多少距离后显示回到顶部提示
+      isAtTop: true // 是否位于顶部
     }
   },
 
@@ -127,7 +150,11 @@ export default {
         url: '/pages/diary/write-diary'
       });
     },
-
+    goBackToJourney() {
+      uni.switchTab({
+        url: '/pages/journey/journey' // 跳转到 Tab 页面
+      });
+    },
     formatDiaryDate(dateString) {
       const date = new Date(dateString);
       return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
@@ -186,17 +213,101 @@ export default {
       );
 
       this.backgroundHeight = newHeight;
+
+      // 控制回到顶部提示的显示/隐藏
+      this.showBackToTopHint = scrollTop > this.scrollThreshold;
+      this.isAtTop = scrollTop === 0; // 判断是否位于顶部
+    },
+
+    // 滚动到顶部
+    scrollToTop() {
+      this.scrollTop = 1;
+      // 强制刷新以触发滚动
+      this.$nextTick(() => {
+        this.scrollTop = 0;
+      });
     }
   }
 }
 </script>
 
 <style scoped>
+
+/* 新增返回上一级按钮样式 */
+.back-to-journey {
+  position: absolute;
+  left: 30rpx;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.back-icon {
+  font-size: 32rpx;
+  color: white;
+  margin-right: 10rpx;
+}
 .diary-container {
   height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  position: relative;
+  padding-top: var(--status-bar-height);
+}
+
+/* 自定义导航栏 */
+.custom-navbar {
+  position: fixed;
+  top: var(--status-bar-height);
+  left: 0;
+  right: 0;
+  height: 44px;
+  background-color: #ffafcc;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.navbar-title {
+  font-size: 36rpx;
+  color: white;
+  font-weight: bold;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-title.hidden {
+  opacity: 0;
+}
+
+/* 回到顶部提示 */
+.back-to-top-hint {
+  position: absolute;
+  left: 30rpx;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.back-icon {
+  font-size: 32rpx;
+  color: white;
+  margin-right: 10rpx;
+}
+
+.back-text {
+  font-size: 28rpx;
+  color: white;
 }
 
 /* 上半屏：背景图片选择区域 */
@@ -204,6 +315,7 @@ export default {
   position: relative;
   transition: height 0.1s ease-out;
   flex-shrink: 0;
+  margin-top: calc(var(--status-bar-height) + 44px);
 }
 
 .background-swiper {
@@ -262,6 +374,7 @@ export default {
   flex-direction: column;
   gap: 30rpx;
   padding-bottom: 30rpx;
+  padding-top: 20rpx;
 }
 
 .diary-item {

@@ -64,9 +64,9 @@
     {
       "path": "pages/diary/diary",
       "style": {
-        "navigationBarTitleText": "情感日记",
-        "navigationBarBackgroundColor": "#ffafcc",
-        "navigationBarTextStyle": "white"
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom",
+        "navigationBarBackgroundColor": "#ffafcc"
       }
     },
     {
