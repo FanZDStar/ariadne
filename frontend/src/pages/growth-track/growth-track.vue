@@ -40,10 +40,6 @@
             <text class="y-label">1</text>
           </view>
           <view class="chart-content">
-            <view class="chart-grid">
-              <!-- 网格线 -->
-              <view class="grid-line" v-for="i in 5" :key="i"></view>
-            </view>
             <!-- 折线 -->
             <canvas 
               class="chart-canvas" 
@@ -154,6 +150,7 @@ export default {
         const response = await api.getMoodStats(token, this.currentPeriod);
         this.chartData = response.data || [];
         this.calculateStats();
+        this.drawChart();
       } catch (error) {
         console.error('获取心情数据失败:', error);
         uni.showToast({
@@ -162,7 +159,46 @@ export default {
         });
       }
     },
-    
+    drawChart() {
+      const ctx = uni.createCanvasContext('moodChart', this);
+      const width = 300; // Canvas 宽度
+      const height = 200; // Canvas 高度
+      const padding = 20; // 内边距
+
+      if (this.chartData.length < 2) {
+        ctx.draw();
+        return;
+      }
+
+      // 计算点的坐标
+      const points = this.chartData.map((point, index) => ({
+        x: padding + (index / (this.chartData.length - 1)) * (width - 2 * padding),
+        y: height - padding - ((point.mood_score - 1) / 4) * (height - 2 * padding)
+      }));
+
+      // 绘制平滑曲线
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 0; i < points.length - 1; i++) {
+        const cpX = (points[i].x + points[i + 1].x) / 2;
+        const cpY = (points[i].y + points[i + 1].y) / 2;
+        ctx.quadraticCurveTo(points[i].x, points[i].y, cpX, cpY);
+      }
+      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+      ctx.setStrokeStyle('#007aff');
+      ctx.setLineWidth(2);
+      ctx.stroke();
+
+      // 绘制数据点
+      points.forEach(point => {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+        ctx.setFillStyle('#007aff');
+        ctx.fill();
+      });
+
+      ctx.draw();
+    },
     calculateStats() {
       if (this.chartData.length === 0) {
         this.averageMood = '0.00';
