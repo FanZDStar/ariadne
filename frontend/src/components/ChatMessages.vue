@@ -8,10 +8,12 @@
             scroll-with-animation="true"
             ref="scrollView"
         >
-            <view v-for="(message, index) in displayedMessages" :key="index" :class="['message', message.role]">
-                <text class="message-text">{{ message.content }}</text>
-                <!-- 为AI消息添加光标闪烁效果 -->
-                <text v-if="message.role === 'ai' && isTyping(message.content, index)" class="cursor">|</text>
+            <view v-for="(message, index) in displayedMessages" :key="index" :class="['message-container', message.role]">
+                <view :class="['message', message.role]">
+                    <text class="message-text">{{ message.content }}</text>
+                    <!-- 为AI消息添加光标闪烁效果 -->
+                    <text v-if="message.role === 'ai' && isTyping(message.content, index)" class="cursor">|</text>
+                </view>
             </view>
             <view class="scroll-anchor" ref="scrollAnchor"></view>
         </scroll-view>
@@ -173,26 +175,37 @@ export default {
     height: 100%;
 }
 
-.message {
-    padding: 15rpx;
+.message-container {
     margin-bottom: 15rpx;
+    display: flex;
+}
+
+.message-container.user {
+    justify-content: flex-end;
+}
+
+.message-container.ai {
+    justify-content: flex-start;
+}
+
+.message {
     border-radius: 8rpx;
-    max-width: 80%;
     position: relative;
     word-wrap: break-word;
     word-break: break-word;
+    display: inline-block;
+    max-width: 80%;
+    padding: 15rpx;
 }
 
 .message.user {
     background-color: #007aff;
     color: white;
-    margin-left: auto;
 }
 
 .message.ai {
     background-color: #f0f0f0;
     color: #333;
-    margin-right: auto;
 }
 
 .message-text {
