@@ -37,17 +37,15 @@ export default {
 
         goToExperience() {
             // 这里可以跳转到具体的恋爱尝试页面
-            uni.showToast({
-                title: '功能开发中',
-                icon: 'none'
+            uni.navigateTo({
+                url: '/pages/love-experiment/love-experiment'
             })
         },
 
         goToLove() {
             // 这里可以跳转到爱自己相关的页面
-            uni.showToast({
-                title: '功能开发中',
-                icon: 'none'
+            uni.navigateTo({
+                url: '/pages/love-yourself/love-yourself'
             })
         }
     }

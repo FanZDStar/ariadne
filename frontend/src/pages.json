@@ -84,6 +84,22 @@
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
+    },
+    {
+      "path": "pages/love-experiment/love-experiment",
+      "style": {
+        "navigationBarTitleText": "恋爱小尝试",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/love-yourself/love-yourself",
+      "style": {
+        "navigationBarTitleText": "爱他人先爱自己",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
     }
   ],
   "globalStyle": {
