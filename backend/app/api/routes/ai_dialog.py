@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request
 from pydantic import BaseModel
 import httpx
 from app.core.config import settings
+from app.core.prompts import PROMPTS
 
 router = APIRouter()
 
@@ -11,7 +12,7 @@ class Message(BaseModel):
 
 class DialogRequest(BaseModel):
     messages: list[Message]
-    system_prompt: str | None = None
+    scene: str = "self-dialog"  # 场景标识，默认自我对话
 
 class DialogResponse(BaseModel):
     content: str
@@ -31,9 +32,9 @@ async def ai_dialog(data: DialogRequest, request: Request):
         "max_tokens": 800,
         "top_p": 0.9
     }
-    # 系统提示词优先用前端传递，否则用默认
-    if data.system_prompt:
-        payload["messages"].append({"role": "system", "content": data.system_prompt})
+    # 根据scene选择后端统一管理的prompt
+    system_prompt = PROMPTS.get(data.scene, PROMPTS["self-dialog"])
+    payload["messages"].append({"role": "system", "content": system_prompt})
     # 添加历史对话
     for msg in data.messages[-8:]:
         payload["messages"].append({"role": msg.role if msg.role != "ai" else "assistant", "content": msg.content})
