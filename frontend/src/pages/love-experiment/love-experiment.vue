@@ -41,45 +41,115 @@ export default {
                     content: '你好！我是你的恋爱技能练习助手。今天我们来练习如何表达爱意吧！你可以告诉我你想对谁表达感情，以及你目前的困扰。'
                 }
             ],
-            isAiTyping: false
+            isAiTyping: false,
+            // 系统提示词 - 定义AI的角色和行为
+            systemPrompt: `你是一个专业的恋爱技能教练，专注于帮助用户提升恋爱和人际交往能力。你的使命是通过互动练习帮助用户增强表达爱意、沟通和建立关系的技能。
+
+## 角色定义
+- 你是一位经验丰富、幽默风趣的恋爱教练
+- 你善于创造轻松的学习氛围，让用户在练习中提升技能
+- 你会根据用户的具体情况提供个性化的练习建议
+- 你鼓励用户勇敢尝试，同时提供实用的技巧和方法
+
+## 对话风格
+- 轻松、友好、鼓励性
+- 提供具体可操作的建议
+- 通过情景模拟帮助用户练习
+- 用"让我们来试试"、"你可以这样表达"等引导性语言
+
+## 回应结构
+1. **肯定用户**：认可用户的主动尝试
+2. **情景分析**：帮助用户分析具体情况
+3. **技能指导**：提供实用的恋爱技巧
+4. **互动练习**：设计小练习帮助用户掌握技能
+
+## 特殊要求
+- 回复长度控制在150-300字
+- 多使用具体例子和情景模拟
+- 避免过于理论化，注重实践指导
+- 根据用户需求提供个性化的练习方案
+- 强调恋爱技能是可以通过练习提升的
+
+## 示例回应风格
+用户："我不知道怎么向喜欢的人表白"
+你的回应："表白确实需要一些技巧和勇气！让我来帮你练习一下。首先，选择一个舒适私密的环境很重要。你可以这样说：'我一直想告诉你，和你在一起的时光让我感到很开心，我希望我们可以更进一步。'你觉得这样的表达怎么样？要不要试着调整一下？"
+
+现在，请以恋爱技能教练的身份，用专业而轻松的方式帮助用户练习恋爱技能。`
         }
     },
     methods: {
-        handleSend(message) {
+        async handleSend(message) {
             // 添加用户消息到聊天记录
             this.chatHistory.push({
                 role: 'user',
                 content: message
             })
 
-            // 模拟AI响应延迟，提升用户体验
+            // 设置AI正在输入状态
             this.isAiTyping = true;
-            setTimeout(() => {
-                let aiResponse = "";
-                
-                // 根据用户输入内容给出相关建议
-                if (message.includes('表白') || message.includes('表达') || message.includes('爱')) {
-                    aiResponse = "表白是一件需要勇气的事情！让我来帮你练习：\n\n1. 选择合适的时机和地点\n2. 真诚地表达你的感受\n3. 给对方回应的空间\n\n你可以试着告诉我，你想对谁表白？";
-                } else if (message.includes('聊天') || message.includes('话题') || message.includes('说话')) {
-                    aiResponse = "聊天是增进感情的好方法！以下是一些万能话题：\n\n1. 最近看过的电影或书籍\n2. 共同的兴趣爱好\n3. 童年趣事\n4. 对未来的规划\n\n你想练习哪个方面呢？";
-                } else if (message.includes('礼物') || message.includes('惊喜')) {
-                    aiResponse = "送礼物是表达心意的好方式！记住这几点：\n\n1. 投其所好，了解对方的喜好\n2. 用心准备，不在于价格高低\n3. 选择特殊的日子或创造惊喜时刻\n\n你想为谁准备礼物呢？";
-                } else {
-                    aiResponse = "这是一个很好的话题！在恋爱中，沟通和理解是最重要的。让我给你一些建议：\n\n1. 保持真诚和开放的态度\n2. 学会倾听对方的想法\n3. 用积极的方式表达自己的需求\n\n你可以和我分享更多细节吗？";
-                }
+
+            try {
+                // 调用AI接口获取响应
+                const aiResponse = await this.getAIResponse(message);
                 
                 this.chatHistory.push({
                     role: 'ai',
                     content: aiResponse
                 })
-                
+            } catch (error) {
+                console.error('AI响应错误:', error);
+                this.chatHistory.push({
+                    role: 'ai',
+                    content: '抱歉，我现在有些困惑，让我们换个角度继续我们的练习吧。你还有其他想要练习的恋爱技能吗？'
+                })
+            } finally {
                 this.isAiTyping = false;
-            }, 1000) // 1秒延迟，模拟AI思考
+            }
         },
         
         // 处理AI打字状态变化
         handleAiTyping(typing) {
             this.isAiTyping = typing;
+        },
+        
+        // 调用AI接口获取响应
+        async getAIResponse(userMessage) {
+            // 构建后端API请求体
+            const apiUrl = process.env.VUE_APP_BACKEND_API_URL || 'http://127.0.0.1:8000/ai-dialog';
+            // 构造历史消息（role: user/ai）
+            const messages = this.chatHistory.slice(-8).map(msg => ({
+                role: msg.role,
+                content: msg.content
+            }));
+            // 请求体
+            const data = {
+                messages: messages,
+                system_prompt: this.systemPrompt
+            };
+            return new Promise((resolve, reject) => {
+                uni.request({
+                    url: apiUrl,
+                    method: 'POST',
+                    timeout: 30000,
+                    header: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data,
+                    success: (res) => {
+                        console.log('后端AI响应:', res);
+                        if (res.statusCode === 200 && res.data && res.data.content) {
+                            // 后端已做内容优化
+                            resolve(res.data.content);
+                        } else {
+                            reject(new Error(`AI响应格式错误: ${JSON.stringify(res.data)}`));
+                        }
+                    },
+                    fail: (err) => {
+                        console.error('请求失败:', err);
+                        reject(new Error(`网络请求失败: ${err.errMsg || '未知错误'}`));
+                    }
+                });
+            });
         }
     }
 }
