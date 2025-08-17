@@ -114,36 +114,32 @@ export default {
         
         // 调用AI接口获取响应
         async getAIResponse(userMessage) {
-            const apiUrl = process.env.VUE_APP_AI_API_URL || 'https://api.suanli.cn/v1/chat/completions';
-            const apiKey = process.env.VUE_APP_AI_API_KEY || 'sk-W0rpStc95T7JVYVwDYc29IyirjtpPPby6SozFMQr17m8KWeo';
-            const model = process.env.VUE_APP_AI_MODEL || 'free:Qwen3-30B-A3B';
-            
+            // 构建后端API请求体
+            const apiUrl = process.env.VUE_APP_BACKEND_API_URL || 'http://127.0.0.1:8000/ai-dialog';
+            // 构造历史消息（role: user/ai）
+            const messages = this.chatHistory.slice(-8).map(msg => ({
+                role: msg.role,
+                content: msg.content
+            }));
+            // 请求体
+            const data = {
+                messages: messages,
+                system_prompt: this.systemPrompt
+            };
             return new Promise((resolve, reject) => {
-                // 构建完整的对话上下文
-                const messages = this.buildConversationMessages(userMessage);
-                
                 uni.request({
                     url: apiUrl,
                     method: 'POST',
-                    timeout: 30000, // 30秒超时
+                    timeout: 30000,
                     header: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
+                        'Content-Type': 'application/json'
                     },
-                    data: {
-                        model: model,
-                        messages: messages,
-                        temperature: 0.7, // 稍微增加一些创造性
-                        max_tokens: 800,  // 限制回复长度
-                        top_p: 0.9       // 控制回复质量
-                    },
+                    data: data,
                     success: (res) => {
-                        console.log('AI响应:', res);
-                        if (res.statusCode === 200 && res.data.choices && res.data.choices.length > 0) {
-                            const content = res.data.choices[0].message.content;
-                            // 简单的内容过滤和优化
-                            const optimizedContent = this.optimizeAIResponse(content);
-                            resolve(optimizedContent);
+                        console.log('后端AI响应:', res);
+                        if (res.statusCode === 200 && res.data && res.data.content) {
+                            // 后端已做内容优化
+                            resolve(res.data.content);
                         } else {
                             reject(new Error(`AI响应格式错误: ${JSON.stringify(res.data)}`));
                         }
@@ -158,38 +154,8 @@ export default {
         
         // 构建对话上下文
         buildConversationMessages(currentMessage) {
-            const messages = [];
-            
-            // 添加系统提示词
-            messages.push({
-                role: 'system',
-                content: this.systemPrompt
-            });
-            
-            // 添加最近的对话历史（保留最近8轮对话，避免token过多）
-            const recentHistory = this.chatHistory.slice(-8);
-            recentHistory.forEach(msg => {
-                if (msg.role === 'user') {
-                    messages.push({
-                        role: 'user',
-                        content: msg.content
-                    });
-                } else if (msg.role === 'ai') {
-                    messages.push({
-                        role: 'assistant',
-                        content: msg.content
-                    });
-                }
-            });
-            
-            // 添加当前用户消息
-            messages.push({
-                role: 'user',
-                content: currentMessage
-            });
-            
-            console.log('发送给AI的完整对话:', messages);
-            return messages;
+            // 此方法已不再用于AI请求，保留可选
+            return [];
         },
         
         // 优化AI回复内容

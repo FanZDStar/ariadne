@@ -2,14 +2,16 @@
 ## 一 注意：在backend文件下下创建一个.env文件，并在其中添加以下内容并将下文中的root改成你的mysql账号名，admin123改为你的数据库密码
 ```
 # 数据库配置
-DATABASE_URL=mysql+pymysql://root:admin123@localhost/ariadne
+DATABASE_URL=mysql+pymysql://root:123456@localhost/ariadne
 # JWT配置
 SECRET_KEY=your-secret-key-change-in-production
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-# 应用配置
-DEBUG=True
+# 后端AI配置
+ai_api_url=https://api.suanli.cn/v1/chat/completions
+ai_api_key=sk-W0rpStc95T7JVYVwDYc29IyirjtpPPby6SozFMQr17m8KWeo
+ai_model=free:Qwen3-30B-A3B
 ```
 
 ## 二 准备数据库
