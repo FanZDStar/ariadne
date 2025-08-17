@@ -13,12 +13,17 @@
 
         <view class="content">
             <scroll-view class="history-list" scroll-y="true">
-                <view v-for="item in historyList" :key="item.id" class="history-item" @click="viewHistoryDetail(item)">
-                    <view class="item-header">
-                        <text class="item-title">{{ getPreviewText(item.content) }}</text>
-                        <text class="item-time">{{ formatTime(item.created_at) }}</text>
+                <view v-for="item in historyList" :key="item.id" class="history-item">
+                    <view class="item-content" @click="viewHistoryDetail(item)">
+                        <view class="item-header">
+                            <text class="item-title">{{ item.title }}</text>
+                            <text class="item-time">{{ formatTime(item.created_at) }}</text>
+                        </view>
+                        <text class="item-preview">{{ getPreviewText(item) }}</text>
                     </view>
-                    <text class="item-content">{{ item.content }}</text>
+                    <view class="item-actions">
+                        <button class="delete-btn" @click="deleteSession(item.id)">删除</button>
+                    </view>
                 </view>
 
                 <view v-if="historyList.length === 0" class="empty">
@@ -54,30 +59,52 @@ export default {
         },
 
         async loadHistory() {
-            // 这里暂时使用模拟数据，等后端接口完成后替换
-            this.historyList = [
-                {
-                    id: 1,
-                    type: this.activeTab,
-                    content: "今天和喜欢的人说话时很紧张，不知道该怎么办",
-                    created_at: "2023-05-15T10:30:00"
-                },
-                {
-                    id: 2,
-                    type: this.activeTab,
-                    content: "感觉自己在感情中总是没有安全感",
-                    created_at: "2023-05-14T15:45:00"
+            try {
+                const response = await uni.request({
+                    url: `http://127.0.0.1:8000/chat/chat-sessions?scene=${this.activeTab}`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                })
+
+                if (response.statusCode === 200) {
+                    this.historyList = response.data
+                } else {
+                    console.error('加载历史记录失败:', response)
+                    this.historyList = []
                 }
-            ]
+            } catch (error) {
+                console.error('加载历史记录失败:', error)
+                uni.showToast({
+                    title: '加载失败',
+                    icon: 'none'
+                })
+                this.historyList = []
+            }
         },
 
-        getPreviewText(content) {
-            return content.length > 30 ? content.substring(0, 30) + '...' : content
+        getPreviewText(session) {
+            // 获取第一条用户消息作为预览
+            const firstUserMessage = session.messages.find(msg => msg.role === 'user')
+            if (firstUserMessage) {
+                return firstUserMessage.content.length > 30 ? 
+                    firstUserMessage.content.substring(0, 30) + '...' : 
+                    firstUserMessage.content
+            }
+            return session.title || '无内容'
         },
 
         formatTime(time) {
-            // 简单的时间格式化
-            return time.substring(0, 16).replace('T', ' ')
+            // 格式化时间
+            const date = new Date(time)
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).replace(/\//g, '-')
         },
 
         viewHistoryDetail(item) {
@@ -87,10 +114,42 @@ export default {
                 'love-experiment': '/pages/love-experiment/love-experiment',
                 'love-yourself': '/pages/love-yourself/love-yourself'
             }
-
+            
             uni.navigateTo({
-                url: `${pageMap[this.activeTab]}?historyId=${item.id}`
+                url: `${pageMap[this.activeTab]}?sessionId=${item.id}`
             })
+        },
+
+        async deleteSession(sessionId) {
+            try {
+                const response = await uni.request({
+                    url: `http://127.0.0.1:8000/chat/chat-sessions/${sessionId}`,
+                    method: 'DELETE',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                })
+
+                if (response.statusCode === 200) {
+                    uni.showToast({
+                        title: '删除成功',
+                        icon: 'success'
+                    })
+                    // 重新加载历史记录
+                    this.loadHistory()
+                } else {
+                    uni.showToast({
+                        title: '删除失败',
+                        icon: 'none'
+                    })
+                }
+            } catch (error) {
+                console.error('删除失败:', error)
+                uni.showToast({
+                    title: '删除失败',
+                    icon: 'none'
+                })
+            }
         }
     }
 }

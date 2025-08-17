@@ -21,27 +21,38 @@
             @send="handleSend" 
             :disabled="isAiTyping"
         />
+        
+        <!-- 悬浮保存按钮 -->
+        <SaveButton 
+            :can-save="hasNewMessages && chatHistory.length > 1"
+            @save="saveChatHistory"
+        />
     </view>
 </template>
 
 <script>
 import ChatMessages from '@/components/ChatMessages.vue'
 import ChatInput from '@/components/ChatInput.vue'
+import SaveButton from '@/components/SaveButton.vue'
 
 export default {
     components: {
         ChatMessages,
-        ChatInput
+        ChatInput,
+        SaveButton
     },
     data() {
         return {
             chatHistory: [
                 {
-                    role: 'ai',
+                    role: 'assistant',
                     content: '你好！我是你的自我关爱助手。爱他人之前，先要学会爱自己。请告诉我你在自我关爱方面有什么困惑或想法？'
                 }
             ],
             isAiTyping: false,
+            hasNewMessages: false, // 标记是否有新消息
+            sessionId: null, // 如果是从历史记录进入，记录session id
+            scene: 'love-yourself', // 当前场景
             // 系统提示词 - 定义AI的角色和行为
             systemPrompt: `你是一个专业的心理咨询师，专注于帮助用户学会自我关爱。你的使命是帮助用户认识到自我关爱的重要性，并提供实用的建议和指导。
 
@@ -78,13 +89,58 @@ export default {
 现在，请以心理咨询师的身份，用温暖专业的方式回应用户的每一个关于自我关爱的问题。`
         }
     },
+
+    onLoad(options) {
+        // 如果是从历史记录进入，加载历史对话
+        if (options.sessionId) {
+            this.sessionId = parseInt(options.sessionId)
+            this.loadHistorySession(options.sessionId)
+        }
+    },
+
+    // 删除自动保存逻辑
+    // onUnload() {
+    //     // 页面卸载时保存
+    //     if (this.hasNewMessages && this.chatHistory.length > 1) {
+    //         this.saveChatHistorySync()
+    //     }
+    // },
+
     methods: {
+        async loadHistorySession(sessionId) {
+            try {
+                const response = await uni.request({
+                    url: `http://127.0.0.1:8000/chat/chat-sessions/${sessionId}`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                })
+
+                if (response.statusCode === 200) {
+                    this.chatHistory = response.data.messages.map(msg => ({
+                        role: msg.role,
+                        content: msg.content,
+                        timestamp: new Date(msg.created_at)
+                    }))
+                }
+            } catch (error) {
+                console.error('加载历史对话失败:', error)
+                uni.showToast({
+                    title: '加载历史对话失败',
+                    icon: 'none'
+                })
+            }
+        },
+
         async handleSend(message) {
             // 添加用户消息到聊天记录
             this.chatHistory.push({
                 role: 'user',
-                content: message
+                content: message,
+                timestamp: new Date()
             })
+            this.hasNewMessages = true
 
             // 设置AI正在输入状态
             this.isAiTyping = true;
@@ -94,13 +150,13 @@ export default {
                 const aiResponse = await this.getAIResponse(message);
                 
                 this.chatHistory.push({
-                    role: 'ai',
+                    role: 'assistant',
                     content: aiResponse
                 })
             } catch (error) {
                 console.error('AI响应错误:', error);
                 this.chatHistory.push({
-                    role: 'ai',
+                    role: 'assistant',
                     content: '抱歉，我现在有些困惑，让我们换个角度继续我们的对话吧。你还有其他想要分享的感受吗？'
                 })
             } finally {
@@ -151,7 +207,44 @@ export default {
                     }
                 });
             });
+        },
+
+        async saveChatHistory() {
+            try {
+                const messages = this.chatHistory.filter(msg => msg.role === 'user' || msg.role === 'assistant').map(msg => ({
+                    role: msg.role,
+                    content: msg.content
+                }))
+
+                await uni.request({
+                    url: 'http://127.0.0.1:8000/chat/save-chat',
+                    method: 'POST',
+                    header: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    },
+                    data: {
+                        scene: this.scene,
+                        messages: messages,
+                        session_id: this.sessionId // 如果是从历史记录进入，传入session_id
+                    }
+                })
+
+                uni.showToast({
+                    title: '对话已保存',
+                    icon: 'success'
+                })
+                this.hasNewMessages = false
+            } catch (error) {
+                console.error('保存对话失败:', error)
+                uni.showToast({
+                    title: '保存失败',
+                    icon: 'none'
+                })
+            }
         }
+
+        // 删除了 saveChatHistorySync 方法，不再需要自动保存
     }
 }
 </script>
@@ -190,7 +283,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin-bottom: 120rpx; /* 增加间距以适应多行输入框 */
+    margin-bottom: 120rpx; /* 只为输入框留出空间 */
 }
 
 /* 固定在底部的输入框样式，类似导航栏 */

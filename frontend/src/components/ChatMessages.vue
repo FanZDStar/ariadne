@@ -12,7 +12,7 @@
                 <view :class="['message', message.role]">
                     <text class="message-text">{{ message.content }}</text>
                     <!-- 为AI消息添加光标闪烁效果 -->
-                    <text v-if="message.role === 'ai' && isTyping(message.content, index)" class="cursor">|</text>
+                    <text v-if="message.role === 'assistant' && isTyping(message.content, index)" class="cursor">|</text>
                 </view>
             </view>
             <view class="scroll-anchor" ref="scrollAnchor"></view>
@@ -42,6 +42,7 @@ export default {
         // 监听消息变化，自动滚动到底部
         messages: {
             handler(newMessages) {
+                console.log('ChatMessages收到新消息:', newMessages)
                 this.handleNewMessages(newMessages)
             },
             deep: true
@@ -71,7 +72,7 @@ export default {
                     }
                 } 
                 // AI消息使用打字机效果
-                else if (message.role === 'ai') {
+                else if (message.role === 'assistant') {
                     // 如果已经有定时器在运行，先清除它
                     if (this.typingTimers[index]) {
                         clearInterval(this.typingTimers[index])
@@ -89,7 +90,7 @@ export default {
                     
                     // 初始化显示内容为空
                     this.displayedMessages[index] = {
-                        role: 'ai',
+                        role: 'assistant',
                         content: ''
                     }
                     
@@ -129,7 +130,7 @@ export default {
             const originalMessage = this.messages[messageIndex]
             return (
                 originalMessage && 
-                originalMessage.role === 'ai' && 
+                originalMessage.role === 'assistant' && 
                 displayedContent !== originalMessage.content &&
                 this.typingTimers[messageIndex] !== undefined
             )

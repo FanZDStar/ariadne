@@ -32,6 +32,12 @@
       }
     },
     {
+      "path": "pages/chat-history/chat-history",
+      "style": {
+        "navigationBarTitleText": "对话历史"
+      }
+    },
+    {
       "path": "pages/self-dialog/self-dialog",
       "style": {
         "navigationBarTitleText": "与自己对话"
@@ -107,12 +113,6 @@
         "navigationBarTitleText": "意见反馈",
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
-      }
-    },
-    {
-      "path": "pages/chat-history/chat-history",
-      "style": {
-        "navigationBarTitleText": "对话历史"
       }
     }
   ],

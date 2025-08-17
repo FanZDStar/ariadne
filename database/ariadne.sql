@@ -42,14 +42,14 @@ INSERT INTO `chat_contexts` VALUES (3, '爱他人先爱自己', '探讨如何在
 -- ----------------------------
 DROP TABLE IF EXISTS `chat_messages`;
 CREATE TABLE `chat_messages`  (
-  `message_id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `session_id` int NOT NULL,
-  `sender_type` enum('user','ai') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `role` enum('user','assistant') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`message_id`) USING BTREE,
+  PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_chat_messages_session`(`session_id` ASC) USING BTREE,
-  CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`session_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+  CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -61,18 +61,16 @@ CREATE TABLE `chat_messages`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `chat_sessions`;
 CREATE TABLE `chat_sessions`  (
-  `session_id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `context_id` int NOT NULL,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `scene` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `is_favorite` tinyint(1) NULL DEFAULT 0,
-  PRIMARY KEY (`session_id`) USING BTREE,
-  INDEX `context_id`(`context_id` ASC) USING BTREE,
-  INDEX `idx_chat_sessions_user_context`(`user_id` ASC, `context_id` ASC) USING BTREE,
-  CONSTRAINT `chat_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `chat_sessions_ibfk_2` FOREIGN KEY (`context_id`) REFERENCES `chat_contexts` (`context_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_chat_sessions_user_scene`(`user_id` ASC, `scene` ASC) USING BTREE,
+  INDEX `idx_chat_sessions_created_at`(`created_at` ASC) USING BTREE,
+  CONSTRAINT `chat_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------

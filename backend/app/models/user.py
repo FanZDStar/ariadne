@@ -1,6 +1,7 @@
 #file:ariadne/backend/app/models/user.py
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from app.database.session import Base
 
 class User(Base):
@@ -17,3 +18,6 @@ class User(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     last_login = Column(DateTime)
     is_active = Column(Boolean, default=True)
+    
+    # 添加聊天记录关联
+    chat_sessions = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
