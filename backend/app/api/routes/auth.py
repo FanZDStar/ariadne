@@ -101,6 +101,10 @@ def update_user_me(
     if user_update.bio is not None:
         current_user.bio = user_update.bio
     
+     # 更新头像URL（如果提供了）
+    if user_update.avatar_url is not None:
+        current_user.avatar_url = user_update.avatar_url
+    
     db.commit()
     db.refresh(current_user)
     return current_user

@@ -17,6 +17,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     nickname: Optional[str] = Field(None, max_length=6)
     bio: Optional[str] = None
+    avatar_url: Optional[str] = None
 
 # 用户登录模型
 class UserLogin(BaseModel):

@@ -1,34 +1,28 @@
-
 <template>
   <view class="growth-track-container">
     <view class="header">
       <text class="title">成长轨迹</text>
       <text class="subtitle">查看你的情感变化趋势</text>
     </view>
-    
+
     <!-- 时间段选择 -->
     <view class="period-selector">
       <scroll-view class="period-scroll" scroll-x>
         <view class="period-list">
-          <view 
-            class="period-item" 
-            v-for="period in periods" 
-            :key="period.value"
-            :class="{ active: currentPeriod === period.value }"
-            @click="selectPeriod(period.value)"
-          >
+          <view class="period-item" v-for="period in periods" :key="period.value"
+            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
             <text class="period-text">{{ period.label }}</text>
           </view>
         </view>
       </scroll-view>
     </view>
-    
+
     <!-- 图表区域 -->
     <view class="chart-container">
       <view class="chart-header">
         <text class="chart-title">{{ getCurrentPeriodLabel() }}心情变化趋势</text>
       </view>
-      
+
       <view class="chart-wrapper" v-if="chartData.length > 0">
         <!-- 简单的折线图实现 -->
         <view class="simple-chart">
@@ -41,47 +35,33 @@
           </view>
           <view class="chart-content">
             <!-- 折线 -->
-            <canvas 
-              class="chart-canvas" 
-              canvas-id="moodChart"
-              id="moodChart"
-              disable-scroll="true"
-            ></canvas>
+            <canvas class="chart-canvas" canvas-id="moodChart" id="moodChart" disable-scroll="true"></canvas>
             <!-- 数据点 -->
             <view class="data-points">
-              <view 
-                class="data-point" 
-                v-for="(point, index) in chartData" 
-                :key="index"
-                :style="{
-                  left: `${getPointX(index)}%`,
-                  bottom: `${getPointY(point.mood_score)}%`
-                }"
-              >
+              <view class="data-point" v-for="(point, index) in chartData" :key="index" :style="{
+                left: `${getPointX(index)}%`,
+                bottom: `${getPointY(point.mood_score)}%`
+              }">
                 <view class="point-dot"></view>
                 <text class="point-value">{{ point.mood_score }}</text>
               </view>
             </view>
             <!-- X轴标签 -->
             <view class="x-axis">
-              <text 
-                class="x-label" 
-                v-for="(point, index) in getVisibleXLabels()" 
-                :key="index"
-                :style="{ left: `${getPointX(point.index)}%` }"
-              >
+              <text class="x-label" v-for="(point, index) in getVisibleXLabels()" :key="index"
+                :style="{ left: `${getPointX(point.index)}%` }">
                 {{ point.label }}
               </text>
             </view>
           </view>
         </view>
       </view>
-      
+
       <view class="empty-chart" v-else>
         <text class="empty-text">暂无数据</text>
       </view>
     </view>
-    
+
     <!-- 统计信息 -->
     <view class="stats-container">
       <view class="stats-card">
@@ -125,17 +105,34 @@ export default {
       minMood: '0.00'
     }
   },
-  
+
   onLoad() {
     this.loadMoodData();
+    this.loadMoodData();
   },
-  
+
+  watch: {
+    chartData: {
+      handler(newVal) {
+        if (newVal && newVal.length > 0) {
+          this.drawChart(); // 数据变化时重新绘制图表
+        }
+      },
+      immediate: true // 如果数据在组件加载时已经存在，立即触发
+    }
+  },
+  onReady() {
+    // 确保画布初始化完成后调用绘制方法
+    if (this.chartData.length > 0) {
+      this.drawChart();
+    }
+  },
   methods: {
     selectPeriod(period) {
       this.currentPeriod = period;
       this.loadMoodData();
     },
-    
+
     async loadMoodData() {
       const token = storage.getToken();
       if (!token) {
@@ -145,12 +142,16 @@ export default {
         });
         return;
       }
-      
+
       try {
         const response = await api.getMoodStats(token, this.currentPeriod);
         this.chartData = response.data || [];
         this.calculateStats();
         this.drawChart();
+        // 确保数据加载完成后调用 drawChart
+        // if (this.chartData.length > 0) {
+        //   this.drawChart();
+        // }
       } catch (error) {
         console.error('获取心情数据失败:', error);
         uni.showToast({
@@ -166,7 +167,7 @@ export default {
       const padding = 20; // 内边距
 
       if (this.chartData.length < 2) {
-        ctx.draw();
+        ctx.draw(); // 如果数据不足，清空画布
         return;
       }
 
@@ -199,6 +200,8 @@ export default {
 
       ctx.draw();
     },
+
+
     calculateStats() {
       if (this.chartData.length === 0) {
         this.averageMood = '0.00';
@@ -206,32 +209,32 @@ export default {
         this.minMood = '0.00';
         return;
       }
-      
+
       const moodScores = this.chartData.map(item => item.mood_score);
       const sum = moodScores.reduce((a, b) => a + b, 0);
       this.averageMood = (sum / moodScores.length).toFixed(2);
       this.maxMood = Math.max(...moodScores).toFixed(2);
       this.minMood = Math.min(...moodScores).toFixed(2);
     },
-    
+
     getCurrentPeriodLabel() {
       const period = this.periods.find(p => p.value === this.currentPeriod);
       return period ? period.label : '';
     },
-    
+
     getPointX(index) {
       if (this.chartData.length <= 1) return 50;
       return (index / (this.chartData.length - 1)) * 100;
     },
-    
+
     getPointY(score) {
       // 将1-5分映射到0-100%
       return ((score - 1) / 4) * 100;
     },
-    
+
     getVisibleXLabels() {
       if (this.chartData.length === 0) return [];
-      
+
       const maxLabels = 5; // 最多显示5个标签
       if (this.chartData.length <= maxLabels) {
         return this.chartData.map((item, index) => ({
@@ -239,7 +242,7 @@ export default {
           label: this.formatTimeLabel(item.time)
         }));
       }
-      
+
       // 如果数据点太多，只显示部分标签
       const step = Math.ceil(this.chartData.length / maxLabels);
       const labels = [];
@@ -251,7 +254,7 @@ export default {
       }
       return labels;
     },
-    
+
     formatTimeLabel(time) {
       if (this.currentPeriod === 'today') {
         return time; // 显示小时，如 "14:00"
