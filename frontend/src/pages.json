@@ -108,6 +108,12 @@
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
+    },
+    {
+      "path": "pages/chat-history/chat-history",
+      "style": {
+        "navigationBarTitleText": "对话历史"
+      }
     }
   ],
   "globalStyle": {
