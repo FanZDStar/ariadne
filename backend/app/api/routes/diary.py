@@ -156,9 +156,89 @@ def delete_diary(
     db.commit()
     return
 
+# @router.get("/mood-stats/{period}")
+# def get_mood_statistics(
+#     period: str,  # "today", "7days", "30days", "60days", "365days"
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """获取心情统计数据"""
+#     # 确定时间范围
+#     end_date = datetime.utcnow()
+#     if period == "today":
+#         start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+#     elif period == "7days":
+#         start_date = end_date - timedelta(days=7)
+#     elif period == "30days":
+#         start_date = end_date - timedelta(days=30)
+#     elif period == "60days":
+#         start_date = end_date - timedelta(days=60)
+#     elif period == "365days":
+#         start_date = end_date - timedelta(days=365)
+#     else:
+#         raise HTTPException(status_code=400, detail="Invalid period")
+    
+#     # 创建心情分数的CASE表达式
+#     mood_score_case = EmotionalDiary.get_mood_score_case()
+    
+#     if period == "today":
+#         # 今天的心情数据，按小时分组
+#         stats = db.query(
+#             func.hour(EmotionalDiary.created_at).label('hour'),
+#             func.avg(mood_score_case).label('avg_mood')
+#         ).filter(
+#             and_(
+#                 EmotionalDiary.user_id == current_user.user_id,
+#                 EmotionalDiary.created_at >= start_date,
+#                 EmotionalDiary.created_at <= end_date
+#             )
+#         ).group_by(
+#             func.hour(EmotionalDiary.created_at)
+#         ).order_by(
+#             func.hour(EmotionalDiary.created_at)
+#         ).all()
+        
+#         # 格式化数据
+#         result = []
+#         for stat in stats:
+#             result.append({
+#                 "time": f"{stat.hour}:00",
+#                 "mood_score": round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0
+#             })
+#     else:
+#         # 多天的心情数据，按天分组
+#         stats = db.query(
+#             func.date(EmotionalDiary.created_at).label('date'),
+#             func.avg(mood_score_case).label('avg_mood')
+#         ).filter(
+#             and_(
+#                 EmotionalDiary.user_id == current_user.user_id,
+#                 EmotionalDiary.created_at >= start_date,
+#                 EmotionalDiary.created_at <= end_date
+#             )
+#         ).group_by(
+#             func.date(EmotionalDiary.created_at)
+#         ).order_by(
+#             func.date(EmotionalDiary.created_at)
+#         ).all()
+        
+#         # 格式化数据
+#         result = []
+#         for stat in stats:
+#             result.append({
+#                 "time": stat.date.strftime('%Y-%m-%d'),
+#                 "mood_score": round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0
+#             })
+    
+#     return {
+#         "period": period,
+#         "data": result
+#     }
+
 @router.get("/mood-stats/{period}")
 def get_mood_statistics(
-    period: str,  # "today", "7days", "30days", "60days", "365days"
+    period: str,  # "today", "7days", "30days", "60days", "365days", "3days"
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -167,6 +247,8 @@ def get_mood_statistics(
     end_date = datetime.utcnow()
     if period == "today":
         start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    elif period == "3days":
+        start_date = end_date - timedelta(days=3)
     elif period == "7days":
         start_date = end_date - timedelta(days=7)
     elif period == "30days":
