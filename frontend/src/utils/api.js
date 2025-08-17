@@ -194,6 +194,26 @@ export const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
+    },
+    // 创建悄悄话
+    createWhisper: (token, whisperData) => {
+        return request('/tree-hole/', {
+            method: 'POST',
+            data: whisperData,
+            header: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 获取用户悄悄话
+    getUserWhispers: (token) => {
+        return request('/tree-hole/my-whispers', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
     }
 };
 

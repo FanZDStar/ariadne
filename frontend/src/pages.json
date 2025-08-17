@@ -114,6 +114,30 @@
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
+    },
+    {
+      "path": "pages/tree-hole/tree-hole",
+      "style": {
+        "navigationBarTitleText": "心灵树洞",
+        "navigationBarBackgroundColor": "#87CEEB",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tree-hole/write-whisper",
+      "style": {
+        "navigationBarTitleText": "说悄悄话",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/tree-hole/my-whispers",
+      "style": {
+        "navigationBarTitleText": "我的悄悄话",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
     }
   ],
   "globalStyle": {
