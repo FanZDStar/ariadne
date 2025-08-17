@@ -9,31 +9,59 @@ function request(url, options = {}) {
             'Authorization': `Bearer ${token}`
         };
     }
+    // return new Promise((resolve, reject) => {
+    //     uni.request({
+    //         url: BASE_URL + url,
+    //         ...options,
+    //         success: async (res) => {
+    //             if (res.statusCode === 401) {
+    //                 // Token过期，尝试刷新Token
+    //                 try {
+    //                     const newToken = await api.refreshToken();
+    //                     storage.setToken(newToken);
+    //                     options.header['Authorization'] = `Bearer ${newToken}`;
+    //                     // 重试请求
+    //                     const retryRes = await request(url, options);
+    //                     resolve(retryRes);
+    //                 } catch (err) {
+    //                     reject(new Error('登录已过期，请重新登录'));
+    //                 }
+    //             } else if (res.statusCode >= 200 && res.statusCode < 300) {
+    //                 resolve(res.data);
+    //             } else {
+    //                 reject(new Error(`HTTP ${res.statusCode}`));
+    //             }
+    //         },
+    //         fail: (err) => {
+    //             reject(new Error('网络请求失败，请检查网络连接'));
+    //         }
+    //     });
+    // });
     return new Promise((resolve, reject) => {
         uni.request({
             url: BASE_URL + url,
             ...options,
-            success: async (res) => {
-                if (res.statusCode === 401) {
-                    // Token过期，尝试刷新Token
-                    try {
-                        const newToken = await api.refreshToken();
-                        storage.setToken(newToken);
-                        options.header['Authorization'] = `Bearer ${newToken}`;
-                        // 重试请求
-                        const retryRes = await request(url, options);
-                        resolve(retryRes);
-                    } catch (err) {
-                        reject(new Error('登录已过期，请重新登录'));
-                    }
-                } else if (res.statusCode >= 200 && res.statusCode < 300) {
+            success: (res) => {
+                // 检查响应状态
+                if (res.statusCode >= 200 && res.statusCode < 300) {
                     resolve(res.data);
                 } else {
-                    reject(new Error(`HTTP ${res.statusCode}`));
+                    // 根据不同状态码提供更准确的错误信息
+                    let errorMsg = `HTTP ${res.statusCode}`;
+                    if (res.data && res.data.detail) {
+                        errorMsg += `: ${res.data.detail}`;
+                    }
+                    const error = new Error(errorMsg);
+                    error.statusCode = res.statusCode;
+                    error.responseData = res.data;
+                    reject(error);
                 }
             },
             fail: (err) => {
-                reject(new Error('网络请求失败，请检查网络连接'));
+                console.error('网络请求失败:', err);
+                const error = new Error('网络请求失败，请检查网络连接');
+                error.isNetworkError = true;
+                reject(error);
             }
         });
     });
