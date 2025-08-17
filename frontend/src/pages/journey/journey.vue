@@ -212,22 +212,32 @@ export default {
                 return;
             }
 
+        //     try {
+        //         // 获取近3天的心情数据
+        //         const response = await api.getMoodStats(token, '3days');
+        //         const moodData = response.data || [];
+
+        //         if (moodData.length === 0) {
+        //             this.growthScore = '暂无数据';
+        //             return;
+        //         }
+
+        //         // 计算平均心情值
+        //         const totalScore = moodData.reduce((sum, item) => sum + item.mood_score, 0);
+        //         const averageScore = totalScore / moodData.length;
+
+        //         // 格式化显示
+        //         this.growthScore = averageScore.toFixed(1) + '/5.0';
+        //     } catch (error) {
+        //         console.error('获取成长指数失败:', error);
+        //         this.growthScore = '获取失败';
+        //     }
+            // },
+
             try {
-                // 获取近3天的心情数据
-                const response = await api.getMoodStats(token, '3days');
-                const moodData = response.data || [];
-
-                if (moodData.length === 0) {
-                    this.growthScore = '暂无数据';
-                    return;
-                }
-
-                // 计算平均心情值
-                const totalScore = moodData.reduce((sum, item) => sum + item.mood_score, 0);
-                const averageScore = totalScore / moodData.length;
-
-                // 格式化显示
-                this.growthScore = averageScore.toFixed(1) + '/5.0';
+                // 获取近3天的成长指数
+                const response = await api.getGrowthScore(token);
+                this.growthScore = response.formatted_score;
             } catch (error) {
                 console.error('获取成长指数失败:', error);
                 this.growthScore = '获取失败';

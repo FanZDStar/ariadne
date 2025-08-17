@@ -143,7 +143,14 @@ export const api = {
             }
         });
     },
-
+    // 获取成长指数
+    getGrowthScore: (token) => {
+        return request('/diary/growth-score', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
     // 上传图片
     uploadImage: (filePath, token) => {
         return uploadFile('/image/upload', filePath, token);
