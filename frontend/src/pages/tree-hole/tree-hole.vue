@@ -1,35 +1,24 @@
 <template>
-  <view class="tree-hole-container">
-    <view class="tree-area">
-      <view class="tree">
-        <!-- 树冠 -->
-        <view class="tree-top">
-          <view class="leaf-layer layer1"></view>
-          <view class="leaf-layer layer2"></view>
-          <view class="leaf-layer layer3"></view>
-        </view>
-        
-        <!-- 树干 -->
-        <view class="tree-trunk">
-          <!-- 树洞 -->
-          <view class="tree-hole">
-            <text class="hole-text">心灵树洞</text>
-          </view>
-        </view>
-      </view>
+  <view class="tree-hole-container" :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }">
+    <view class="theme-switch" @click="toggleTheme">
+      <text class="theme-icon">{{ theme === 'day' ? '🌙' : '☀️' }}</text>
     </view>
-    
+
+    <view class="tree-area">
+      <image class="tree-image" :src="treeImage" mode="aspectFit" />
+    </view>
+
     <view class="options-container">
       <view class="option-card" @click="goToWhisper">
         <text class="option-icon">💬</text>
         <text class="option-text">说悄悄话</text>
       </view>
-      
+
       <view class="option-card" @click="goToListen">
         <text class="option-icon">👂</text>
         <text class="option-text">做倾听者</text>
       </view>
-      
+
       <view class="option-card" @click="goToMyWhispers">
         <text class="option-icon">📝</text>
         <text class="option-text">我的悄悄话</text>
@@ -40,37 +29,109 @@
 
 <script>
 export default {
+  data() {
+    return {
+      theme: 'day', // 'day' or 'night'
+    };
+  },
+  computed: {
+    treeImage() {
+      // 确保你的 static 目录下有 tree-day.png 和 tree-night.png
+      if (this.theme === 'day') {
+        return '/static/tree-day.png';
+      } else {
+        return '/static/tree-night.png';
+      }
+    },
+  },
+  onLoad() {
+    this.setInitialTheme();
+  },
+  onShow() {
+    // 每次页面显示时都更新导航栏样式，防止从其他页面返回时样式被重置
+    this.updateNavBar();
+  },
   methods: {
-    goToWhisper() {
-      uni.navigateTo({
-        url: '/pages/tree-hole/write-whisper'
+    setInitialTheme() {
+      const hour = new Date().getHours();
+      // 晚上6点到早上6点之间为夜晚
+      if (hour >= 18 || hour < 6) {
+        this.theme = 'night';
+      } else {
+        this.theme = 'day';
+      }
+    },
+    toggleTheme() {
+      this.theme = this.theme === 'day' ? 'night' : 'day';
+      this.updateNavBar();
+    },
+    updateNavBar() {
+      const isDay = this.theme === 'day';
+      uni.setNavigationBarColor({
+        frontColor: isDay ? '#000000' : '#ffffff', // 白天用黑色文字，晚上用白色
+        backgroundColor: isDay ? '#87CEEB' : '#2c3e50',
       });
     },
-    
+    goToWhisper() {
+      uni.navigateTo({
+        url: '/pages/tree-hole/write-whisper',
+      });
+    },
     goToListen() {
       uni.showToast({
         title: '功能开发中',
-        icon: 'none'
+        icon: 'none',
       });
     },
-    
     goToMyWhispers() {
       uni.navigateTo({
-        url: '/pages/tree-hole/my-whispers'
+        url: '/pages/tree-hole/my-whispers',
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
 .tree-hole-container {
   height: 100vh;
-  background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
   display: flex;
   flex-direction: column;
   padding: 40rpx;
   box-sizing: border-box;
+  transition: background-color 0.5s;
+}
+
+.day-theme {
+  background: linear-gradient(to bottom, #87ceeb, #e0f6ff);
+}
+
+.night-theme {
+  background: linear-gradient(to bottom, #2c3e50, #34495e);
+}
+
+.theme-switch {
+  position: fixed;
+  top: 100rpx;
+  /* 调整位置以避开导航栏 */
+  right: 40rpx;
+  z-index: 999;
+  width: 80rpx;
+  height: 80rpx;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.night-theme .theme-switch {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.theme-icon {
+  font-size: 48rpx;
 }
 
 .tree-area {
@@ -80,74 +141,13 @@ export default {
   justify-content: center;
 }
 
-.tree {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.tree-image {
+  width: 100%;
+  height: 100%;
+  max-width: 600rpx;
+  max-height: 600rpx;
 }
 
-/* 树冠 */
-.tree-top {
-  position: relative;
-  margin-bottom: -40rpx;
-  z-index: 2;
-}
-
-.leaf-layer {
-  width: 200rpx;
-  height: 120rpx;
-  background: linear-gradient(to bottom, #228B22, #006400);
-  border-radius: 50%;
-  margin-bottom: -30rpx;
-  position: relative;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
-}
-
-.layer2 {
-  width: 240rpx;
-  margin-top: -20rpx;
-}
-
-.layer3 {
-  width: 280rpx;
-  margin-top: -20rpx;
-}
-
-/* 树干 */
-.tree-trunk {
-  width: 60rpx;
-  height: 200rpx;
-  background: #8B4513;
-  border-radius: 10rpx;
-  position: relative;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.2);
-}
-
-/* 树洞 */
-.tree-hole {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40rpx;
-  height: 60rpx;
-  background: #5D4037;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 0 10rpx rgba(0, 0, 0, 0.5);
-}
-
-.hole-text {
-  font-size: 16rpx;
-  color: #D7CCC8;
-  transform: rotate(90deg);
-  white-space: nowrap;
-}
-
-/* 选项区域 */
 .options-container {
   display: flex;
   justify-content: space-around;
@@ -155,16 +155,27 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 20rpx;
   margin-top: 40rpx;
+  transition: background-color 0.5s;
+}
+
+.night-theme .options-container {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .option-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30rpx;
-  background-color: white;
+  padding: 20rpx;
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 20rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  transition: background-color 0.5s;
+  width: 180rpx;
+}
+
+.night-theme .option-card {
+  background-color: rgba(44, 62, 80, 0.7);
 }
 
 .option-icon {
@@ -176,5 +187,9 @@ export default {
   font-size: 28rpx;
   color: #333;
   font-weight: bold;
+}
+
+.night-theme .option-text {
+  color: #ecf0f1;
 }
 </style>
