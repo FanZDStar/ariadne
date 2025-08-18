@@ -24,10 +24,10 @@
                 <text class="arrow">></text>
             </view>
 
-            <view class="menu-item" @click="goToFavorites">
+            <!-- <view class="menu-item" @click="goToFavorites">
                 <text class="menu-text">我的收藏</text>
                 <text class="arrow">></text>
-            </view>
+            </view> -->
 
             <view class="menu-item" @click="goToFeedback">
                 <text class="menu-text">意见反馈</text>
@@ -291,12 +291,12 @@ export default {
             });
         },
 
-        goToFavorites() {
-            uni.showToast({
-                title: '功能开发中',
-                icon: 'none'
-            })
-        },
+        // goToFavorites() {
+        //     uni.showToast({
+        //         title: '功能开发中',
+        //         icon: 'none'
+        //     })
+        // },
 
         goToFeedback() {
             uni.navigateTo({

@@ -58,7 +58,7 @@
     {
       "path": "pages/journey/journey",
       "style": {
-        "navigationBarTitleText": "心之旅程"
+        "navigationBarTitleText": ""
       }
     },
     {
@@ -126,7 +126,7 @@
     {
       "path": "pages/tree-hole/write-whisper",
       "style": {
-        "navigationBarTitleText": "说悄悄话",
+        "navigationBarTitleText": "",
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }

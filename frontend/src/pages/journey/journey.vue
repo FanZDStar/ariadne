@@ -5,6 +5,11 @@
             <text class="subtitle">记录你的情感成长历程</text>
         </view>
 
+        <view class="broadcast-banner">
+            <text class="broadcast-icon">📣</text>
+            <text class="broadcast-text">{{ randomBroadcast }}</text>
+        </view>
+
         <view class="content">
             <view class="journey-card" @click="goToDiary">
                 <text class="card-title">情感日记</text>
@@ -23,35 +28,34 @@
                     <text v-else class="loading-text">数据加载中...</text>
                 </view>
             </view>
-
-            <view class="journey-card">
-                <text class="card-title">收获与反思</text>
-                <text class="card-desc">总结从每段感情中获得的经验</text>
-                <view class="status">
-                    <text>已总结 0 条经验</text>
-                </view>
-            </view>
         </view>
     </view>
 </template>
 
 <script>
 import { api, storage } from '../../utils/api.js';
+import { broadcasts } from '../../utils/broadcasts.js';
 
 export default {
     data() {
         return {
             diaryCount: null,
-            growthScore: '计算中...'
+            growthScore: '计算中...',
+            randomBroadcast: ''
         }
     },
 
     onLoad() {
         this.loadDiaryCount();
         this.loadGrowthScore();
+        this.setRandomBroadcast();
     },
 
     methods: {
+        setRandomBroadcast() {
+            const randomIndex = Math.floor(Math.random() * broadcasts.length);
+            this.randomBroadcast = broadcasts[randomIndex];
+        },
         async loadDiaryCount() {
             const token = storage.getToken();
             if (!token) {
@@ -121,7 +125,7 @@ export default {
 }
 
 .header {
-    margin-bottom: 60rpx;
+    margin-bottom: 40rpx;
 }
 
 .title {
@@ -135,6 +139,26 @@ export default {
 .subtitle {
     font-size: 28rpx;
     color: #999;
+}
+
+.broadcast-banner {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 20rpx;
+    padding: 25rpx 30rpx;
+    margin-bottom: 40rpx;
+    box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.06);
+}
+
+.broadcast-icon {
+    font-size: 36rpx;
+    margin-right: 20rpx;
+}
+
+.broadcast-text {
+    font-size: 26rpx;
+    color: #666;
 }
 
 .content {
