@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # JWT配置
     secret_key: str
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 1440
 
     # 应用配置
     debug: bool = False

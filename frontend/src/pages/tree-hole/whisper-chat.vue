@@ -5,8 +5,8 @@
         </view>
         <scroll-view scroll-y class="chat-messages">
             <view v-for="(message, index) in messages" :key="index"
-                :class="message.is_self ? 'message-self' : 'message-other'">
-                <image class="avatar" :src="message.avatar" />
+                :class="message.user_id === selfId ? 'message-self' : 'message-other'">
+                <image class="avatar" :src="getAvatar(message.user_id)" />
                 <view class="message-bubble">
                     <text>{{ message.content }}</text>
                 </view>
@@ -28,15 +28,24 @@ export default {
             whisper_id: null,
             originalWhisper: {},
             messages: [],
-            newMessage: ''
+            newMessage: '',
+            selfId: null,
+            participants: {}
         };
     },
     onLoad(options) {
         this.whisper_id = options.whisper_id;
+        this.selfId = storage.getUserInfo().user_id;
         this.fetchWhisperDetails();
         this.fetchChatHistory();
     },
     methods: {
+        getAvatar(userId) {
+            if (this.participants[userId]) {
+                return this.participants[userId].anonymous_avatar;
+            }
+            return '/static/avatar.png';
+        },
         async fetchWhisperDetails() {
             const token = storage.getToken();
             this.originalWhisper = await api.getWhisperDetails(token, this.whisper_id);
@@ -44,6 +53,20 @@ export default {
         async fetchChatHistory() {
             const token = storage.getToken();
             this.messages = await api.getWhisperChatHistory(token, this.whisper_id);
+
+            // Fetch participant info
+            const userIds = [...new Set(this.messages.map(m => m.user_id))];
+            for (const userId of userIds) {
+                if (!this.participants[userId]) {
+                    // This is a placeholder for a new API endpoint you might need:
+                    // GET /tree-hole-chat/{whisper_id}/participant/{user_id}
+                    // For now, we'll just use a default
+                    this.participants[userId] = {
+                        anonymous_avatar: '/static/avatar.png'
+                    };
+                }
+            }
+
         },
         async sendMessage() {
             if (!this.newMessage.trim()) return;

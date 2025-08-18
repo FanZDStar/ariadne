@@ -1,89 +1,26 @@
-# # backend/app/schemas/tree_hole_chat.py
-# from pydantic import BaseModel
-# from typing import List, Optional
-# from datetime import datetime
-
-# class TreeHoleChatBase(BaseModel):
-#     content: str
-
-# class TreeHoleChatCreate(TreeHoleChatBase):
-#     pass
-
-# class TreeHoleChat(TreeHoleChatBase):
-#     chat_id: int
-#     whisper_id: int
-#     user_id: int
-#     created_at: datetime
-
-#     class Config:
-#         from_attributes = True
-
-# class TreeHoleChatParticipant(BaseModel):
-#     anonymous_nickname: str
-#     anonymous_avatar: str
-
-#     class Config:
-#         from_attributes = True
-
-# backend/app/schemas/tree_hole.py
+# backend/app/schemas/tree_hole_chat.py
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from app.schemas.user import UserResponse
 
-# 悄悄话基础模型
-class WhisperBase(BaseModel):
+class TreeHoleChatBase(BaseModel):
     content: str
-    is_anonymous: Optional[bool] = True
 
-class WhisperCreate(WhisperBase):
+class TreeHoleChatCreate(TreeHoleChatBase):
     pass
 
-class WhisperUpdate(BaseModel):
-    content: Optional[str] = None
-    is_anonymous: Optional[bool] = None
-
-class WhisperResponse(WhisperBase):
+class TreeHoleChat(TreeHoleChatBase):
+    chat_id: int
     whisper_id: int
     user_id: int
-    like_count: int
-    comment_count: int
     created_at: datetime
-    updated_at: datetime
-    user: UserResponse # 添加 user 字段
 
     class Config:
         from_attributes = True
 
-# 评论模型
-class CommentBase(BaseModel):
-    content: str
-    is_anonymous: Optional[bool] = True
+class TreeHoleChatParticipant(BaseModel):
+    anonymous_nickname: str
+    anonymous_avatar: str
 
-class CommentCreate(CommentBase):
-    pass
-
-class CommentResponse(CommentBase):
-    comment_id: int
-    whisper_id: int
-    user_id: int
-    created_at: datetime
-    
-    class Config:
-        from_attributes = True
-
-# 点赞模型
-class LikeBase(BaseModel):
-    pass
-
-class LikeCreate(LikeBase):
-    pass
-
-class LikeResponse(LikeBase):
-    like_id: int
-    whisper_id: int
-    user_id: int
-    created_at: datetime
-    
     class Config:
         from_attributes = True
