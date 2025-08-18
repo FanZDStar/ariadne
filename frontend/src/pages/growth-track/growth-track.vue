@@ -107,7 +107,7 @@ export default {
   },
 
   onLoad() {
-    this.loadMoodData();
+    // 修复：移除重复调用
     this.loadMoodData();
   },
 
@@ -115,18 +115,24 @@ export default {
     chartData: {
       handler(newVal) {
         if (newVal && newVal.length > 0) {
-          this.drawChart(); // 数据变化时重新绘制图表
+          this.$nextTick(() => {
+            this.drawChart(); // 数据变化时重新绘制图表
+          });
         }
       },
       immediate: true // 如果数据在组件加载时已经存在，立即触发
     }
   },
+  
   onReady() {
     // 确保画布初始化完成后调用绘制方法
     if (this.chartData.length > 0) {
-      this.drawChart();
+      this.$nextTick(() => {
+        this.drawChart();
+      });
     }
   },
+  
   methods: {
     selectPeriod(period) {
       this.currentPeriod = period;
@@ -147,11 +153,13 @@ export default {
         const response = await api.getMoodStats(token, this.currentPeriod);
         this.chartData = response.data || [];
         this.calculateStats();
-        this.drawChart();
-        // 确保数据加载完成后调用 drawChart
-        // if (this.chartData.length > 0) {
-        //   this.drawChart();
-        // }
+        
+        // 使用 $nextTick 确保 DOM 更新后再绘制图表
+        this.$nextTick(() => {
+          if (this.chartData.length > 0) {
+            this.drawChart();
+          }
+        });
       } catch (error) {
         console.error('获取心情数据失败:', error);
         uni.showToast({
@@ -160,47 +168,53 @@ export default {
         });
       }
     },
+    
     drawChart() {
-      const ctx = uni.createCanvasContext('moodChart', this);
-      const width = 300; // Canvas 宽度
-      const height = 200; // Canvas 高度
-      const padding = 20; // 内边距
+      // 确保在下次 DOM 更新周期时执行绘制
+      setTimeout(() => {
+        const ctx = uni.createCanvasContext('moodChart', this);
+        const width = 300; // Canvas 宽度
+        const height = 200; // Canvas 高度
+        const padding = 20; // 内边距
 
-      if (this.chartData.length < 2) {
-        ctx.draw(); // 如果数据不足，清空画布
-        return;
-      }
+        if (this.chartData.length < 2) {
+          ctx.draw(); // 如果数据不足，清空画布
+          return;
+        }
 
-      // 计算点的坐标
-      const points = this.chartData.map((point, index) => ({
-        x: padding + (index / (this.chartData.length - 1)) * (width - 2 * padding),
-        y: height - padding - ((point.mood_score - 1) / 4) * (height - 2 * padding)
-      }));
+        // 计算点的坐标
+        const points = this.chartData.map((point, index) => ({
+          x: padding + (index / (this.chartData.length - 1)) * (width - 2 * padding),
+          y: height - padding - ((point.mood_score - 1) / 4) * (height - 2 * padding)
+        }));
 
-      // 绘制平滑曲线
-      ctx.beginPath();
-      ctx.moveTo(points[0].x, points[0].y);
-      for (let i = 0; i < points.length - 1; i++) {
-        const cpX = (points[i].x + points[i + 1].x) / 2;
-        const cpY = (points[i].y + points[i + 1].y) / 2;
-        ctx.quadraticCurveTo(points[i].x, points[i].y, cpX, cpY);
-      }
-      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
-      ctx.setStrokeStyle('#007aff');
-      ctx.setLineWidth(2);
-      ctx.stroke();
-
-      // 绘制数据点
-      points.forEach(point => {
+        // 绘制平滑曲线
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
-        ctx.setFillStyle('#007aff');
-        ctx.fill();
-      });
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 0; i < points.length - 1; i++) {
+          const cpX = (points[i].x + points[i + 1].x) / 2;
+          const cpY = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, cpX, cpY);
+        }
+        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+        ctx.setStrokeStyle('#007aff');
+        ctx.setLineWidth(2);
+        ctx.stroke();
 
-      ctx.draw();
+        // 绘制数据点
+        points.forEach(point => {
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+          ctx.setFillStyle('#007aff');
+          ctx.fill();
+        });
+
+        ctx.draw(false, () => {
+          // 绘制完成后的回调
+          console.log('Chart drawing completed');
+        });
+      }, 0);
     },
-
 
     calculateStats() {
       if (this.chartData.length === 0) {
