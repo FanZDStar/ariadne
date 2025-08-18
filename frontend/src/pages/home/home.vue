@@ -197,7 +197,7 @@ export default {
             </view>
 
             <view class="card" @click="goToTreeHole">
-                <image class="card-icon" src="/static/tree-hole-icon.png"></image>
+                <image class="card-icon" src="/static/tree-hole.png"></image>
                 <view class="card-text">
                     <text class="card-title">心灵树洞</text>
                     <text class="card-desc">倾诉心声，倾听他人，寻找共鸣</text>
