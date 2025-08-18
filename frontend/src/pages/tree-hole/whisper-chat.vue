@@ -1,20 +1,28 @@
 <template>
     <view class="chat-container">
-        <view class="whisper-header-bar">
-            <text>{{ originalWhisper.content }}</text>
+        <view class="whisper-header-note">
+            <scroll-view scroll-y="true" class="header-scroll">
+                <text class="header-content">{{ originalWhisper.content }}</text>
+            </scroll-view>
         </view>
-        <scroll-view scroll-y class="chat-messages">
-            <view v-for="(message, index) in messages" :key="index"
-                :class="message.user_id === selfId ? 'message-self' : 'message-other'">
-                <image class="avatar" :src="getAvatar(message.user_id)" />
-                <view class="message-bubble">
-                    <text>{{ message.content }}</text>
+
+        <scroll-view scroll-y class="chat-messages-scroll" :scroll-top="scrollTop" scroll-with-animation>
+            <view class="scroll-content">
+                <view v-for="(message, index) in messages" :key="index" class="message-row"
+                    :class="message.user_id === selfId ? 'self' : 'other'">
+                    <image v-if="message.user_id !== selfId" class="avatar" :src="getAvatar(message.user_id)" />
+                    <view class="message-bubble">
+                        <text class="message-text">{{ message.content }}</text>
+                    </view>
+                    <image v-if="message.user_id === selfId" class="avatar" :src="getAvatar(message.user_id)" />
                 </view>
             </view>
         </scroll-view>
-        <view class="chat-input">
-            <input v-model="newMessage" placeholder="输入消息..." />
-            <button @click="sendMessage">发送</button>
+
+        <view class="chat-input-area">
+            <input class="input-field" v-model="newMessage" placeholder="说点什么吧..." @confirm="sendMessage"
+                confirm-type="send" cursor-spacing="20" />
+            <button class="send-button" @click="sendMessage" :disabled="!newMessage.trim()">发送</button>
         </view>
     </view>
 </template>
@@ -30,12 +38,14 @@ export default {
             messages: [],
             newMessage: '',
             selfId: null,
-            participants: {}
+            participants: {},
+            scrollTop: 0
         };
     },
     onLoad(options) {
         this.whisper_id = options.whisper_id;
-        this.selfId = storage.getUserInfo().user_id;
+        const userInfo = storage.getUserInfo();
+        this.selfId = userInfo ? userInfo.user_id : null;
         this.fetchWhisperDetails();
         this.fetchChatHistory();
     },
@@ -44,36 +54,41 @@ export default {
             if (this.participants[userId]) {
                 return this.participants[userId].anonymous_avatar;
             }
-            return '/static/avatar.png';
+            return '/static/avatar.png'; // Fallback avatar
         },
         async fetchWhisperDetails() {
             const token = storage.getToken();
+            if (!token) return;
             this.originalWhisper = await api.getWhisperDetails(token, this.whisper_id);
         },
         async fetchChatHistory() {
             const token = storage.getToken();
+            if (!token) return;
             this.messages = await api.getWhisperChatHistory(token, this.whisper_id);
-
-            // Fetch participant info
-            const userIds = [...new Set(this.messages.map(m => m.user_id))];
-            for (const userId of userIds) {
-                if (!this.participants[userId]) {
-                    // This is a placeholder for a new API endpoint you might need:
-                    // GET /tree-hole-chat/{whisper_id}/participant/{user_id}
-                    // For now, we'll just use a default
-                    this.participants[userId] = {
-                        anonymous_avatar: '/static/avatar.png'
-                    };
-                }
-            }
-
+            this.scrollToBottom();
         },
         async sendMessage() {
             if (!this.newMessage.trim()) return;
             const token = storage.getToken();
-            await api.sendWhisperChatMessage(token, this.whisper_id, this.newMessage);
-            this.newMessage = '';
-            this.fetchChatHistory(); // Refresh messages
+            if (!token) return;
+
+            try {
+                await api.sendWhisperChatMessage(token, this.whisper_id, this.newMessage);
+                this.newMessage = '';
+                this.fetchChatHistory(); // Refresh messages
+            } catch (error) {
+                console.error("Failed to send message:", error);
+                uni.showToast({
+                    title: '发送失败',
+                    icon: 'none'
+                });
+            }
+        },
+        scrollToBottom() {
+            this.$nextTick(() => {
+                // A large value to scroll to the bottom
+                this.scrollTop = 999999;
+            });
         }
     }
 };
@@ -84,66 +99,131 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    background-color: #f4f4f4;
 }
 
-.whisper-header-bar {
-    padding: 10px;
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #eee;
+.whisper-header-note {
+    flex-shrink: 0;
+    max-height: 20vh;
+    /* Max 1/5 screen height */
+    background-color: #fffbe8;
+    margin: 20rpx;
+    padding: 25rpx;
+    border-radius: 16rpx;
+    box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.08);
+    border: 1rpx solid #eee9d5;
 }
 
-.chat-messages {
+.header-scroll {
+    max-height: calc(20vh - 50rpx);
+    /* Adjust based on padding */
+}
+
+.header-content {
+    font-size: 28rpx;
+    color: #6c6c6c;
+    line-height: 1.6;
+}
+
+.chat-messages-scroll {
     flex: 1;
-    padding: 10px;
+    width: 100%;
+    overflow-y: auto;
 }
 
-.message-self {
+.scroll-content {
+    padding: 20rpx;
+    padding-bottom: 40rpx;
+    /* Extra space at the bottom */
+}
+
+.message-row {
     display: flex;
+    align-items: flex-start;
+    margin-bottom: 30rpx;
+    width: 100%;
+}
+
+/* My messages on the right */
+.message-row.self {
     justify-content: flex-end;
-    margin-bottom: 10px;
 }
 
-.message-other {
-    display: flex;
+/* Other's messages on the left */
+.message-row.other {
     justify-content: flex-start;
-    margin-bottom: 10px;
 }
 
 .avatar {
-    width: 40px;
-    height: 40px;
+    width: 80rpx;
+    height: 80rpx;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
 .message-bubble {
-    max-width: 70%;
-    padding: 10px;
-    border-radius: 10px;
-    margin: 0 10px;
+    max-width: calc(100% - 180rpx);
+    padding: 20rpx 25rpx;
+    border-radius: 16rpx;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
-.message-self .message-bubble {
-    background-color: #dcf8c6;
+.message-row.self .message-bubble {
+    margin-right: 20rpx;
+    background-color: #a2d2ff;
+    /* Blue bubble for me */
+    border-top-right-radius: 0;
 }
 
-.message-other .message-bubble {
-    background-color: #fff;
+.message-row.other .message-bubble {
+    margin-left: 20rpx;
+    background-color: #ffffff;
+    /* White bubble for other */
+    border: 1rpx solid #e8e8e8;
+    border-top-left-radius: 0;
 }
 
-.chat-input {
+.message-text {
+    font-size: 30rpx;
+    line-height: 1.5;
+    color: #333;
+}
+
+.chat-input-area {
     display: flex;
-    padding: 10px;
-    border-top: 1px solid #eee;
+    align-items: center;
+    padding: 20rpx;
+    padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+    background-color: #f9f9f9;
+    border-top: 1rpx solid #e0e0e0;
+    flex-shrink: 0;
 }
 
-.chat-input input {
+.input-field {
     flex: 1;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    padding: 5px 10px;
+    height: 70rpx;
+    background-color: #fff;
+    border: 1rpx solid #ddd;
+    border-radius: 35rpx;
+    padding: 0 30rpx;
+    font-size: 28rpx;
 }
 
-.chat-input button {
-    margin-left: 10px;
+.send-button {
+    background-color: #007aff;
+    color: white;
+    border-radius: 35rpx;
+    font-size: 28rpx;
+    margin-left: 20rpx;
+    padding: 0 40rpx;
+    height: 70rpx;
+    line-height: 70rpx;
+}
+
+.send-button[disabled] {
+    background-color: #a0cfff;
+    color: #e0e0e0;
 }
 </style>

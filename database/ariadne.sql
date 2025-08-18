@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 18/08/2025 21:13:22
+ Date: 19/08/2025 01:29:26
 */
 
 SET NAMES utf8mb4;
@@ -655,6 +655,62 @@ CREATE TABLE `system_logs`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for tree_hole_chat_participants
+-- ----------------------------
+DROP TABLE IF EXISTS `tree_hole_chat_participants`;
+CREATE TABLE `tree_hole_chat_participants`  (
+  `participant_id` int NOT NULL AUTO_INCREMENT,
+  `whisper_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `anonymous_nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `anonymous_avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`participant_id`) USING BTREE,
+  UNIQUE INDEX `uk_whisper_user`(`whisper_id` ASC, `user_id` ASC) USING BTREE,
+  CONSTRAINT `fk_tree_hole_chat_participants_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tree_hole_chat_participants
+-- ----------------------------
+INSERT INTO `tree_hole_chat_participants` VALUES (1, 21, 6, '寻光者', '/uploads/anonymous_avatar_3.png');
+INSERT INTO `tree_hole_chat_participants` VALUES (2, 14, 6, '寻光者', '/uploads/anonymous_avatar_3.png');
+INSERT INTO `tree_hole_chat_participants` VALUES (3, 11, 6, '观星者', '/uploads/anonymous_avatar_3.png');
+INSERT INTO `tree_hole_chat_participants` VALUES (4, 2, 6, '寻光者', '/uploads/anonymous_avatar_1.png');
+INSERT INTO `tree_hole_chat_participants` VALUES (5, 2, 3, '寻光者', '/uploads/anonymous_avatar_3.png');
+
+-- ----------------------------
+-- Table structure for tree_hole_chats
+-- ----------------------------
+DROP TABLE IF EXISTS `tree_hole_chats`;
+CREATE TABLE `tree_hole_chats`  (
+  `chat_id` int NOT NULL AUTO_INCREMENT,
+  `whisper_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`chat_id`) USING BTREE,
+  INDEX `idx_tree_hole_chats_whisper_id`(`whisper_id` ASC) USING BTREE,
+  CONSTRAINT `fk_tree_hole_chats_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tree_hole_chats
+-- ----------------------------
+INSERT INTO `tree_hole_chats` VALUES (1, 11, 6, '1', '2025-08-19 00:38:29');
+INSERT INTO `tree_hole_chats` VALUES (2, 21, 6, '1', '2025-08-19 00:39:40');
+INSERT INTO `tree_hole_chats` VALUES (3, 21, 6, '1', '2025-08-19 00:42:05');
+INSERT INTO `tree_hole_chats` VALUES (4, 21, 6, '2', '2025-08-19 00:42:10');
+INSERT INTO `tree_hole_chats` VALUES (5, 21, 6, '3', '2025-08-19 00:42:17');
+INSERT INTO `tree_hole_chats` VALUES (6, 21, 6, '1', '2025-08-19 00:42:25');
+INSERT INTO `tree_hole_chats` VALUES (7, 14, 6, '1', '2025-08-19 00:43:48');
+INSERT INTO `tree_hole_chats` VALUES (8, 11, 6, '2', '2025-08-19 00:43:59');
+INSERT INTO `tree_hole_chats` VALUES (9, 2, 6, '我在等风也等你', '2025-08-19 00:44:39');
+INSERT INTO `tree_hole_chats` VALUES (10, 2, 6, '那你最近还好吗', '2025-08-19 00:45:06');
+INSERT INTO `tree_hole_chats` VALUES (11, 2, 3, '还好', '2025-08-19 00:54:45');
+INSERT INTO `tree_hole_chats` VALUES (12, 2, 3, '唉', '2025-08-19 01:21:23');
+INSERT INTO `tree_hole_chats` VALUES (13, 2, 6, '我也累啊', '2025-08-19 01:29:03');
+
+-- ----------------------------
 -- Table structure for tree_hole_comments
 -- ----------------------------
 DROP TABLE IF EXISTS `tree_hole_comments`;
@@ -670,7 +726,7 @@ CREATE TABLE `tree_hole_comments`  (
   INDEX `idx_tree_hole_comments_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_comments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_comments_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_comments
@@ -691,11 +747,21 @@ CREATE TABLE `tree_hole_likes`  (
   INDEX `idx_tree_hole_likes_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_likes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_likes_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_likes
 -- ----------------------------
+INSERT INTO `tree_hole_likes` VALUES (5, 15, 6, '2025-08-18 23:28:13');
+INSERT INTO `tree_hole_likes` VALUES (9, 6, 6, '2025-08-18 23:40:44');
+INSERT INTO `tree_hole_likes` VALUES (11, 2, 6, '2025-08-18 23:41:23');
+INSERT INTO `tree_hole_likes` VALUES (12, 3, 6, '2025-08-19 00:00:51');
+INSERT INTO `tree_hole_likes` VALUES (13, 10, 6, '2025-08-19 00:01:15');
+INSERT INTO `tree_hole_likes` VALUES (14, 19, 6, '2025-08-19 00:01:17');
+INSERT INTO `tree_hole_likes` VALUES (15, 11, 6, '2025-08-19 00:01:19');
+INSERT INTO `tree_hole_likes` VALUES (16, 7, 6, '2025-08-19 00:01:21');
+INSERT INTO `tree_hole_likes` VALUES (17, 14, 6, '2025-08-19 01:04:42');
+INSERT INTO `tree_hole_likes` VALUES (18, 5, 3, '2025-08-19 01:07:56');
 
 -- ----------------------------
 -- Table structure for tree_hole_whispers
@@ -710,16 +776,37 @@ CREATE TABLE `tree_hole_whispers`  (
   `comment_count` int NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `chatted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`whisper_id`) USING BTREE,
   INDEX `idx_tree_hole_whispers_user`(`user_id` ASC) USING BTREE,
   INDEX `idx_tree_hole_whispers_created`(`created_at` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_whispers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_whispers
 -- ----------------------------
-INSERT INTO `tree_hole_whispers` VALUES (1, 6, '原来我是一个小猪吗', 1, 0, 0, '2025-08-18 01:49:40', '2025-08-18 01:49:40');
+INSERT INTO `tree_hole_whispers` VALUES (1, 6, '原来我是一个小猪吗', 1, 0, 0, '2025-08-18 01:49:40', '2025-08-18 01:49:40', 0);
+INSERT INTO `tree_hole_whispers` VALUES (2, 3, '最近压力好大，感觉快喘不过气了。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 00:44:39', 1);
+INSERT INTO `tree_hole_whispers` VALUES (3, 5, '暗恋一个人真的好辛苦，不敢说出口。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 00:00:51', 0);
+INSERT INTO `tree_hole_whispers` VALUES (4, 1, '和好朋友吵架了，不知道该怎么和好。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (5, 6, '对未来感到好迷茫，不知道该做什么。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 01:07:56', 0);
+INSERT INTO `tree_hole_whispers` VALUES (6, 2, '今天被表扬了，超级开心！', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-18 23:40:44', 0);
+INSERT INTO `tree_hole_whispers` VALUES (7, 4, '有时候觉得好孤独，好像没有人能理解我。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 00:01:21', 0);
+INSERT INTO `tree_hole_whispers` VALUES (8, 3, '希望能遇到一个真正懂我的人。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-19 00:01:49', 0);
+INSERT INTO `tree_hole_whispers` VALUES (9, 1, '家里的期望让我觉得很累。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 23:28:31', 0);
+INSERT INTO `tree_hole_whispers` VALUES (10, 5, '很想辞职去旅行，但又没有勇气。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 00:01:15', 0);
+INSERT INTO `tree_hole_whispers` VALUES (11, 2, '我好像喜欢上一个不可能的人了。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 00:38:29', 1);
+INSERT INTO `tree_hole_whispers` VALUES (12, 6, '今天吃到了超好吃的蛋糕，心情都变好了。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (13, 4, '为什么人际关系这么复杂？', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (14, 1, '好想回到小时候，无忧无虑的。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 01:04:42', 1);
+INSERT INTO `tree_hole_whispers` VALUES (15, 3, '希望明天会是新的一天，一切都会好起来。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-18 23:28:13', 0);
+INSERT INTO `tree_hole_whispers` VALUES (16, 5, '又失眠了，脑子里乱七八糟的。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (17, 2, '感觉自己一事无成，好失败。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (18, 6, '收到了一个意外的惊喜，感觉被爱着。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (19, 4, '好想念一个人，但是又不能联系他/她。', 1, 1, 0, '2025-08-18 22:23:42', '2025-08-19 00:01:17', 0);
+INSERT INTO `tree_hole_whispers` VALUES (20, 1, '什么时候才能变成自己想成为的样子呢？', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-18 22:23:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (21, 3, '今天的天空好美，拍下来了。', 1, 0, 0, '2025-08-18 22:23:42', '2025-08-19 00:31:36', 1);
 
 -- ----------------------------
 -- Table structure for user_feedbacks
@@ -790,9 +877,9 @@ CREATE TABLE `users`  (
 -- ----------------------------
 INSERT INTO `users` VALUES (1, 'root', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.PZvO.S', 'admin@example.com', NULL, '管理员', NULL, '2025-08-14 16:26:19', '2025-08-14 16:26:19', NULL, 1);
 INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTtgmz0Rtw3/mQSkmqZroLyLkOe', 'test@example.com', NULL, '测试用户', '这是一个测试用户', '2025-08-14 17:21:35', '2025-08-14 17:22:29', '2025-08-14 17:22:29', 1);
-INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-08-14 22:16:16', '2025-08-14 22:16:07', 1);
+INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-08-19 00:53:50', '2025-08-19 00:53:50', 1);
 INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1);
 INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-08-14 21:41:38', NULL, 1);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/eaed2b4d-e60c-4e84-bfb5-2b9680effcb4.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-08-18 20:21:12', '2025-08-18 20:21:12', 1);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/eaed2b4d-e60c-4e84-bfb5-2b9680effcb4.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-08-19 01:28:44', '2025-08-19 01:28:44', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;
