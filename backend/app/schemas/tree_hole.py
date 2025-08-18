@@ -1,6 +1,8 @@
+#file:ariadne/backend/app/schemas/tree_hole.py
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from app.schemas.user import UserResponse
 
 # 悄悄话基础模型
 class WhisperBase(BaseModel):
@@ -21,7 +23,9 @@ class WhisperResponse(WhisperBase):
     comment_count: int
     created_at: datetime
     updated_at: datetime
-    
+    user: UserResponse
+    liked: bool = False  # 添加 liked 字段
+
     class Config:
         from_attributes = True
 
