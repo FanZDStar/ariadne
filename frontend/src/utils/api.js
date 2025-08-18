@@ -214,6 +214,60 @@ export const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
+    },
+
+    getRandomWhisper: (token) => {
+        return request('/tree-hole/random', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+    likeWhisper: (token, whisperId) => {
+        return request(`/tree-hole/${whisperId}/like`, {
+            method: 'POST',
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+    getWhisperDetails: (token, whisperId) => {
+        return request(`/tree-hole/${whisperId}`, {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+    getWhisperChatHistory: (token, whisperId) => {
+        return request(`/tree-hole-chat/${whisperId}`, {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+    sendWhisperChatMessage: (token, whisperId, content) => {
+        return request(`/tree-hole-chat/${whisperId}`, {
+            method: 'POST',
+            data: { content },
+            header: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+    getMyPostedWhispers: (token) => {
+        return request('/tree-hole/my-whispers', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+    getMyChats: (token) => {
+        return request('/tree-hole-chat/chats/', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
     }
 };
 

@@ -78,9 +78,8 @@ export default {
       });
     },
     goToListen() {
-      uni.showToast({
-        title: '功能开发中',
-        icon: 'none',
+      uni.navigateTo({
+        url: '/pages/tree-hole/listen-whisper'
       });
     },
     goToMyWhispers() {

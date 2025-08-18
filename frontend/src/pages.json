@@ -138,6 +138,18 @@
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
+    },
+    {
+      "path": "pages/tree-hole/listen-whisper",
+      "style": {
+        "navigationBarTitleText": "做倾听者"
+      }
+    },
+    {
+      "path": "pages/tree-hole/whisper-chat",
+      "style": {
+        "navigationBarTitleText": "悄悄话"
+      }
     }
   ],
   "globalStyle": {
