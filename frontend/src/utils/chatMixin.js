@@ -3,6 +3,10 @@
  * 用于减少三个聊天页面的代码重复
  * 统一处理聊天逻辑、AI调用、保存等功能
  */
+
+// 使用环境变量的API基础地址
+const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+
 export default {
     data() {
         return {
@@ -38,7 +42,7 @@ export default {
         async loadHistorySession(sessionId) {
             try {
                 const response = await uni.request({
-                    url: `http://127.0.0.1:8000/chat/chat-sessions/${sessionId}`,
+                    url: `${BASE_URL}/chat/chat-sessions/${sessionId}`,
                     method: 'GET',
                     header: {
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
@@ -106,7 +110,7 @@ export default {
                 }))
 
                 await uni.request({
-                    url: 'http://127.0.0.1:8000/chat/save-chat',
+                    url: `${BASE_URL}/chat/save-chat`,
                     method: 'POST',
                     header: {
                         'Content-Type': 'application/json',
@@ -145,7 +149,7 @@ export default {
          * 使用后端统一的prompt管理，不再在前端维护systemPrompt
          */
         async getAIResponse(userMessage) {
-            const apiUrl = 'http://127.0.0.1:8000/ai-dialog'
+            const apiUrl = `${BASE_URL}/ai-dialog`
             
             // 构造历史消息（最多取最近8条消息）
             const messages = this.chatHistory.slice(-8).map(msg => ({

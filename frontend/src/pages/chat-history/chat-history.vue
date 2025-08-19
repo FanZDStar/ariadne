@@ -35,6 +35,9 @@
 </template>
 
 <script>
+// 使用环境变量的API基础地址
+const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+
 export default {
     data() {
         return {
@@ -42,7 +45,7 @@ export default {
             tabs: [
                 { type: 'self-dialog', name: '自我对话' },
                 { type: 'love-experiment', name: '恋爱尝试' },
-                { type: 'love-yourself', name: '爱自己' }
+                { type: 'self-love', name: '爱自己' }
             ],
             historyList: []
         }
@@ -61,7 +64,7 @@ export default {
         async loadHistory() {
             try {
                 const response = await uni.request({
-                    url: `http://127.0.0.1:8000/chat/chat-sessions?scene=${this.activeTab}`,
+                    url: `${BASE_URL}/chat/chat-sessions?scene=${this.activeTab}`,
                     method: 'GET',
                     header: {
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
@@ -112,7 +115,7 @@ export default {
             const pageMap = {
                 'self-dialog': '/pages/self-dialog/self-dialog',
                 'love-experiment': '/pages/love-experiment/love-experiment',
-                'love-yourself': '/pages/love-yourself/love-yourself'
+                'self-love': '/pages/love-yourself/love-yourself'
             }
             
             uni.navigateTo({
@@ -123,7 +126,7 @@ export default {
         async deleteSession(sessionId) {
             try {
                 const response = await uni.request({
-                    url: `http://127.0.0.1:8000/chat/chat-sessions/${sessionId}`,
+                    url: `${BASE_URL}/chat/chat-sessions/${sessionId}`,
                     method: 'DELETE',
                     header: {
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`

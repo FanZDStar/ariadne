@@ -41,8 +41,11 @@ venv\Scripts\Activate.ps1
 # 确保虚拟环境已激活
 pip install -r requirements.txt
 
-# 启动开发服务器
-uvicorn app.main:app --reload
+# 启动开发服务器（明确指定host和port）
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
+# 生产环境启动（高性能）
+# gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 127.0.0.1:8000
 
 # 关闭服务器
 CTRL+C
@@ -53,8 +56,8 @@ deactivate
 
 服务器启动后，访问以下地址查看API文档：
 
-交互式文档: http://127.0.0.1:8000/docs
+交互式文档: http://154.37.214.128:8000/docs
 
-ReDoc文档: http://127.0.0.1:8000/redoc
+ReDoc文档: http://154.37.214.128:8000/redoc
 
-基础接口测试: http://127.0.0.1:8000/
+基础接口测试: http://154.37.214.128:8000/
