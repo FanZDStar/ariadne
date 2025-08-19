@@ -11,10 +11,16 @@
                 <input class="input" placeholder="请输入账号或邮箱" v-model="username" />
             </view>
 
-            <view class="input-group">
+            <!-- <view class="input-group">
                 <input class="input" placeholder="请输入密码" v-model="password" password />
+            </view> -->
+            <view class="input-group">
+                <view class="password-input-container">
+                    <input class="input" placeholder="请输入密码" :password="!showPassword" v-model="password" />
+                    <text class="eye-icon" @click="showPassword = !showPassword">{{ showPassword ? '👁️' : '👁️‍🗨️'
+                        }}</text>
+                </view>
             </view>
-
             <button class="login-btn" @click="handleLogin">登录</button>
 
             <view class="register-link">
@@ -32,7 +38,8 @@ export default {
     data() {
         return {
             username: '',
-            password: ''
+            password: '',
+            showPassword: false
         }
     },
     methods: {
@@ -116,6 +123,10 @@ export default {
 </script>
 
 <style scoped>
+/* .eye-icon {
+    margin-left: 90%;
+} */
+
 .login-container {
     padding: 40rpx;
     background-color: #f8f8f8;
@@ -182,6 +193,21 @@ export default {
 
 .link {
     color: #007aff;
+    margin-left: 10rpx;
+}
+
+.password-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1rpx solid #eee;
+}
+
+.input {
+    flex: 1;
+}
+
+.eye-icon {
     margin-left: 10rpx;
 }
 </style>

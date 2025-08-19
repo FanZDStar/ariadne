@@ -59,3 +59,23 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+
+class UserUpdateEmail(BaseModel):
+    email: str
+
+    @validator('email')
+    def validate_email(cls, v):
+        if v and not re.match(r"[^@]+@[^@]+\.[^@]+", v):
+            raise ValueError('邮箱格式不正确')
+        return v
+
+class UserUpdatePassword(BaseModel):
+    old_password: str
+    new_password: str
+
+    @validator('new_password')
+    def validate_password(cls, v):
+        if not re.match(PASSWORD_REGEX, v):
+            raise ValueError('密码必须是6-15位的大小写字母、数字和英文感叹号的两种或以上组合')
+        return v

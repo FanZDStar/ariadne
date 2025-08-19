@@ -1,11 +1,10 @@
-#file:ariadne/backend/app/api/routes/auth.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta
 from app.database.session import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserUpdate
+from app.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserUpdate, UserUpdateEmail, UserUpdatePassword
 from app.utils.password import get_password_hash, verify_password
 from app.core.security import create_access_token
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
@@ -59,11 +58,12 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login", response_model=Token)
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     """用户登录"""
+    # 查找用户
     if "@" in user.username:
         db_user = db.query(User).filter(User.email == user.username).first()
     else:
         db_user = db.query(User).filter(User.username == user.username).first()
-
+        
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -71,7 +71,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # ... (token creation logic remains the same)
+    # 更新最后登录时间
     from sqlalchemy import func
     db_user.last_login = func.now()
     db.commit()
@@ -109,6 +109,45 @@ def update_user_me(
     if user_update.avatar_url is not None:
         current_user.avatar_url = user_update.avatar_url
     
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+@router.put("/users/me/email", response_model=UserResponse)
+def update_user_email(
+    user_update: UserUpdateEmail,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """更新当前用户的邮箱"""
+    # Check if the email already exists
+    db_email = db.query(User).filter(User.email == user_update.email).first()
+    if db_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    current_user.email = user_update.email
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+@router.put("/users/me/password", response_model=UserResponse)
+def update_user_password(
+    user_update: UserUpdatePassword,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """更新当前用户的密码"""
+    if not verify_password(user_update.old_password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="旧密码不正确")
+
+    if user_update.old_password == user_update.new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="新密码不能与旧密码相同"
+        )
+
+    current_user.password_hash = get_password_hash(user_update.new_password)
     db.commit()
     db.refresh(current_user)
     return current_user

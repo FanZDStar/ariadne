@@ -39,8 +39,8 @@
 
 <script>
 // 使用环境变量的API基础地址
-const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
-
+// const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+const BASE_URL = 'http://127.0.0.1:8000';
 export default {
     data() {
         return {
@@ -94,8 +94,8 @@ export default {
             // 获取第一条用户消息作为预览
             const firstUserMessage = session.messages.find(msg => msg.role === 'user')
             if (firstUserMessage) {
-                return firstUserMessage.content.length > 30 ? 
-                    firstUserMessage.content.substring(0, 30) + '...' : 
+                return firstUserMessage.content.length > 30 ?
+                    firstUserMessage.content.substring(0, 30) + '...' :
                     firstUserMessage.content
             }
             return session.title || '无内容'
@@ -120,7 +120,7 @@ export default {
                 'love-experiment': '/pages/love-experiment/love-experiment',
                 'self-love': '/pages/love-yourself/love-yourself'
             }
-            
+
             uni.navigateTo({
                 url: `${pageMap[this.activeTab]}?sessionId=${item.id}`
             })

@@ -14,8 +14,8 @@
         </view>
 
         <view class="content">
-            <view class="menu-item" @click="goToSettings">
-                <text class="menu-text">个人设置</text>
+            <view class="menu-item" @click="openSettingsModal">
+                <text class="menu-text">信息修改</text>
                 <text class="arrow">></text>
             </view>
 
@@ -23,11 +23,6 @@
                 <text class="menu-text">对话历史</text>
                 <text class="arrow">></text>
             </view>
-
-            <!-- <view class="menu-item" @click="goToFavorites">
-                <text class="menu-text">我的收藏</text>
-                <text class="arrow">></text>
-            </view> -->
 
             <view class="menu-item" @click="goToFeedback">
                 <text class="menu-text">意见反馈</text>
@@ -39,11 +34,65 @@
             </view>
         </view>
 
-        <!-- 上传头像的加载提示 -->
-        <view class="loading-mask" v-if="uploadingAvatar">
-            <view class="loading-content">
-                <view class="loading-spinner"></view>
-                <text class="loading-text">上传中...</text>
+        <view class="settings-modal" v-if="showSettingsModal">
+            <view class="modal-content">
+                <view v-if="modalView === 'main'">
+                    <view class="modal-header">
+                        <text class="back-btn" @click="closeSettingsModal">←</text>
+                        <text class="modal-title">信息修改</text>
+                    </view>
+                    <view class="modal-options">
+                        <view class="option-item" @click="modalView = 'email'">
+                            <text>变更邮箱</text>
+                            <text class="arrow">></text>
+                        </view>
+                        <view class="option-item" @click="modalView = 'password'">
+                            <text>修改密码</text>
+                            <text class="arrow">></text>
+                        </view>
+                    </view>
+                </view>
+
+                <view v-if="modalView === 'email'">
+                    <view class="modal-header">
+                        <text class="back-btn" @click="modalView = 'main'">←</text>
+                        <text class="modal-title">变更邮箱</text>
+                    </view>
+                    <view class="modal-body">
+                        <input class="input" placeholder="请输入新邮箱" v-model="newEmail" @input="validateEmail" />
+                        <text v-if="emailError" class="error-text">{{ emailError }}</text>
+                        <button class="submit-btn" @click="handleChangeEmail">确定</button>
+                    </view>
+                </view>
+
+                <view v-if="modalView === 'password'">
+                    <view class="modal-header">
+                        <text class="back-btn" @click="modalView = 'main'">←</text>
+                        <text class="modal-title">修改密码</text>
+                    </view>
+                    <view class="modal-body">
+                        <view class="password-input-container">
+                            <input class="input" placeholder="请输入旧密码" :password="!showOldPassword"
+                                v-model="oldPassword" />
+                            <text class="eye-icon" @click="showOldPassword = !showOldPassword">{{ showOldPassword ?
+                                '👁️' : '👁️‍🗨️' }}</text>
+                        </view>
+                        <view class="password-input-container">
+                            <input class="input" placeholder="请输入新密码" :password="!showNewPassword" v-model="newPassword"
+                                @input="validatePassword" />
+                            <text class="eye-icon" @click="showNewPassword = !showNewPassword">{{ showNewPassword ?
+                                '👁️' : '👁️‍🗨️' }}</text>
+                        </view>
+                        <view class="password-input-container">
+                            <input class="input" placeholder="请确认新密码" :password="!showConfirmNewPassword"
+                                v-model="confirmNewPassword" />
+                            <text class="eye-icon" @click="showConfirmNewPassword = !showConfirmNewPassword">{{
+                                showConfirmNewPassword ? '👁️' : '👁️‍🗨️' }}</text>
+                        </view>
+                        <text v-if="passwordError" class="error-text">{{ passwordError }}</text>
+                        <button class="submit-btn" @click="handleChangePassword">提交</button>
+                    </view>
+                </view>
             </view>
         </view>
     </view>
@@ -60,7 +109,18 @@ export default {
                 bio: '',
                 avatar_url: null
             },
-            uploadingAvatar: false
+            uploadingAvatar: false,
+            showSettingsModal: false,
+            modalView: 'main', // 'main', 'email', 'password'
+            newEmail: '',
+            emailError: '',
+            oldPassword: '',
+            newPassword: '',
+            confirmNewPassword: '',
+            passwordError: '',
+            showOldPassword: false,
+            showNewPassword: false,
+            showConfirmNewPassword: false,
         }
     },
 
@@ -78,9 +138,7 @@ export default {
                     storage.setUserInfo(userInfo);
                 } catch (error) {
                     console.error('获取用户信息失败:', error);
-                    // 只有在确定是认证错误时才清除token并跳转
                     if (error.statusCode === 401) {
-                        // Token已过期或无效，清除本地存储并跳转到登录页
                         storage.clearToken();
                         storage.clearUserInfo();
                         uni.showToast({
@@ -94,7 +152,6 @@ export default {
                             });
                         }, 2000);
                     } else {
-                        // 其他错误（如网络问题）只显示提示，不跳转
                         uni.showToast({
                             title: '获取用户信息失败',
                             icon: 'none'
@@ -102,7 +159,6 @@ export default {
                     }
                 }
             } else {
-                // 没有token，跳转到登录页
                 uni.redirectTo({
                     url: '/pages/login/login'
                 });
@@ -111,12 +167,9 @@ export default {
 
         getUserAvatar() {
             if (this.userInfo.avatar_url) {
-                // 如果头像URL是完整URL，直接使用
                 if (this.userInfo.avatar_url.startsWith('http')) {
                     return this.userInfo.avatar_url;
                 }
-                // 如果是相对路径，拼接基础URL
-                // const baseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
                 const baseUrl = 'http://127.0.0.1:8000';
                 if (this.userInfo.avatar_url.startsWith('/')) {
                     return baseUrl + this.userInfo.avatar_url;
@@ -124,8 +177,115 @@ export default {
                     return baseUrl + '/' + this.userInfo.avatar_url;
                 }
             }
-            // 默认头像
             return '/static/avatar.png';
+        },
+
+        openSettingsModal() {
+            this.modalView = 'main';
+            this.showSettingsModal = true;
+        },
+
+        closeSettingsModal() {
+            this.showSettingsModal = false;
+            this.newEmail = '';
+            this.emailError = '';
+            this.oldPassword = '';
+            this.newPassword = '';
+            this.confirmNewPassword = '';
+            this.passwordError = '';
+        },
+
+        validateEmail() {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (this.newEmail && !regex.test(this.newEmail)) {
+                this.emailError = '邮箱格式不正确';
+            } else {
+                this.emailError = '';
+            }
+        },
+
+        validatePassword() {
+            const regex = /^(((?=.*[a-zA-Z])(?=.*[0-9]))|((?=.*[a-zA-Z])(?=.*[!]))|((?=.*[0-9])(?=.*[!])))[a-zA-Z0-9!]{6,15}$/;
+            if (this.newPassword && !regex.test(this.newPassword)) {
+                this.passwordError = '密码必须是6-15位的大小写字母、数字和英文感叹号的两种或以上组合';
+            } else {
+                this.passwordError = '';
+            }
+        },
+
+        async handleChangeEmail() {
+            this.validateEmail();
+            if (this.emailError) {
+                return;
+            }
+
+            const token = storage.getToken();
+            try {
+                const updatedUser = await api.updateUserEmail(token, { email: this.newEmail });
+                this.userInfo.email = updatedUser.email;
+                storage.setUserInfo(updatedUser);
+
+                uni.showToast({
+                    title: '邮箱更新成功',
+                    icon: 'success'
+                });
+
+                setTimeout(() => {
+                    this.closeSettingsModal();
+                }, 3000);
+            } catch (error) {
+                console.error('更新邮箱失败:', error);
+                let errorMessage = '更新邮箱失败';
+                if (error.responseData && error.responseData.detail) {
+                    errorMessage = error.responseData.detail;
+                }
+                uni.showToast({
+                    title: errorMessage,
+                    icon: 'none'
+                });
+            }
+        },
+
+        async handleChangePassword() {
+            this.validatePassword();
+            if (this.passwordError) {
+                return;
+            }
+
+            if (this.newPassword !== this.confirmNewPassword) {
+                uni.showToast({
+                    title: '两次输入的新密码不一致',
+                    icon: 'none'
+                });
+                return;
+            }
+
+            const token = storage.getToken();
+            try {
+                await api.updateUserPassword(token, {
+                    old_password: this.oldPassword,
+                    new_password: this.newPassword
+                });
+
+                uni.showToast({
+                    title: '密码修改成功',
+                    icon: 'success'
+                });
+
+                setTimeout(() => {
+                    this.closeSettingsModal();
+                }, 3000);
+            } catch (error) {
+                console.error('修改密码失败:', error);
+                let errorMessage = '修改密码失败';
+                if (error.responseData && error.responseData.detail) {
+                    errorMessage = error.responseData.detail;
+                }
+                uni.showToast({
+                    title: errorMessage,
+                    icon: 'none'
+                });
+            }
         },
 
         changeAvatar() {
@@ -148,15 +308,11 @@ export default {
                     this.uploadingAvatar = true;
 
                     try {
-                        // 上传图片
                         const uploadResult = await api.uploadImage(tempFilePath, token);
-
-                        // 更新用户信息
                         const updatedUser = await api.updateUserInfo(token, {
                             avatar_url: uploadResult.url
                         });
 
-                        // 更新本地用户信息
                         this.userInfo.avatar_url = updatedUser.avatar_url;
                         storage.setUserInfo(updatedUser);
 
@@ -279,25 +435,11 @@ export default {
             });
         },
 
-        goToSettings() {
-            uni.showToast({
-                title: '功能开发中',
-                icon: 'none'
-            })
-        },
-
         goToHistory() {
             uni.navigateTo({
                 url: '/pages/chat-history/chat-history'
             });
         },
-
-        // goToFavorites() {
-        //     uni.showToast({
-        //         title: '功能开发中',
-        //         icon: 'none'
-        //     })
-        // },
 
         goToFeedback() {
             uni.navigateTo({
@@ -433,7 +575,7 @@ export default {
     font-size: 36rpx;
 }
 
-.loading-mask {
+/* .settings-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -443,40 +585,170 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 1000;
 }
 
-.loading-content {
+.modal-content {
     background-color: #fff;
     border-radius: 20rpx;
+    width: 80%;
     padding: 40rpx;
+}
+
+.modal-header {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 40rpx;
 }
 
-.loading-spinner {
-    width: 50rpx;
-    height: 50rpx;
-    border: 5rpx solid #f3f3f3;
-    border-top: 5rpx solid #007aff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20rpx;
-}
-
-.loading-text {
-    font-size: 28rpx;
+.modal-title {
+    font-size: 36rpx;
+    font-weight: bold;
     color: #333;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+.close-btn,
+.back-btn {
+    position: absolute;
+    left: 0;
+    font-size: 40rpx;
+    color: #999;
 }
+
+.modal-options .option-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 30rpx 0;
+    border-bottom: 1rpx solid #eee;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+}
+
+.password-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1rpx solid #ddd;
+    border-radius: 10rpx;
+    padding: 0 20rpx;
+}
+
+.input {
+    flex: 1;
+    height: 80rpx;
+    font-size: 28rpx;
+}
+
+.eye-icon {
+    margin-left: 10rpx;
+}
+
+.submit-btn {
+    background-color: #007aff;
+    color: white;
+    border-radius: 10rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    margin-top: 20rpx;
+}
+
+.error-text {
+    color: red;
+    font-size: 24rpx;
+} */
+ .settings-modal {
+     position: fixed;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background-color: rgba(0, 0, 0, 0.5);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 1000;
+ }
+
+ .modal-content {
+     background-color: #f8f8f8;
+     border-radius: 20rpx;
+     width: 80%;
+     padding: 40rpx;
+ }
+
+ .modal-header {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     position: relative;
+     margin-bottom: 40rpx;
+ }
+
+ .modal-title {
+     font-size: 36rpx;
+     font-weight: bold;
+     color: #333;
+ }
+
+ .close-btn,
+ .back-btn {
+     position: absolute;
+     left: 0;
+     font-size: 40rpx;
+     color: #999;
+ }
+
+ .modal-options .option-item {
+     display: flex;
+     justify-content: space-between;
+     padding: 30rpx 0;
+     border-bottom: 1rpx solid #eee;
+ }
+
+ .modal-body {
+     display: flex;
+     flex-direction: column;
+     gap: 20rpx;
+ }
+
+ .password-input-container {
+     display: flex;
+     align-items: center;
+     width: 100%;
+     border: 1rpx solid #ddd;
+     border-radius: 10rpx;
+     padding: 0 20rpx;
+ }
+
+ .input {
+     flex: 1;
+     height: 80rpx;
+     font-size: 28rpx;
+     border: none;
+     /* Removed individual input border */
+ }
+
+ .eye-icon {
+     margin-left: 10rpx;
+ }
+
+ .submit-btn {
+     background-color: #007aff;
+     color: white;
+     border-radius: 10rpx;
+     height: 80rpx;
+     line-height: 80rpx;
+     margin-top: 20rpx;
+ }
+
+ .error-text {
+     color: red;
+     font-size: 24rpx;
+ }
 </style>

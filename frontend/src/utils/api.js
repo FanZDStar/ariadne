@@ -93,6 +93,30 @@ export const api = {
         });
     },
 
+
+    // 更新用户邮箱
+    updateUserEmail: (token, emailData) => {
+        return request('/auth/users/me/email', {
+            method: 'PUT',
+            data: emailData,
+            header: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 更新用户密码
+    updateUserPassword: (token, passwordData) => {
+        return request('/auth/users/me/password', {
+            method: 'PUT',
+            data: passwordData,
+            header: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
     // 获取用户信息
     getUserInfo: (token) => {
         return request('/auth/users/me', {

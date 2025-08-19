@@ -17,15 +17,24 @@
             </view>
 
             <view class="input-group">
-                <input class="input" placeholder="请输入密码" v-model="password" password @input="validatePassword" />
+                <view class="password-input-container">
+                    <input class="input" placeholder="请输入密码" :password="!showPassword" v-model="password"
+                        @input="validatePassword" />
+                    <text class="eye-icon" @click="showPassword = !showPassword">{{ showPassword ? '👁️' : '👁️‍🗨️'
+                        }}</text>
+                </view>
                 <text v-if="passwordError" class="error-text">{{ passwordError }}</text>
             </view>
-
             <view class="input-group">
-                <input class="input" placeholder="请确认密码" v-model="confirmPassword" password />
+                <view class="password-input-container">
+                    <input class="input" placeholder="请确认密码" :password="!showConfirmPassword"
+                        v-model="confirmPassword" />
+                    <text class="eye-icon" @click="showConfirmPassword = !showConfirmPassword">{{ showConfirmPassword ?
+                        '👁️' : '👁️‍🗨️' }}</text>
+                </view>
             </view>
 
-            <button class="register-btn" @click="handleRegister">注册</button>
+        <button class="register-btn" @click="handleRegister">注册</button>
 
         <view class="login-link">
             <text>已有账号？</text>
@@ -47,7 +56,9 @@ export default {
             confirmPassword: '',
             usernameError: '',
             passwordError: '',
-            emailError: ''
+            emailError: '',
+            showPassword: false,
+            showConfirmPassword: false,
         }
     },
     methods: {
@@ -189,6 +200,10 @@ export default {
 </script>
 
 <style scoped>
+
+/* .eye-icon {
+    margin-left: 90%;
+} */
 .error-text {
     color: red;
     font-size: 24rpx;
@@ -254,6 +269,21 @@ export default {
 
 .link {
     color: #007aff;
+    margin-left: 10rpx;
+}
+
+.password-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1rpx solid #eee;
+}
+
+.input {
+    flex: 1;
+}
+
+.eye-icon {
     margin-left: 10rpx;
 }
 </style>
