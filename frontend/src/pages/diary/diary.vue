@@ -184,7 +184,8 @@ export default {
       }
 
       // 如果是相对路径，拼接基础URL
-      const baseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+      // const baseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+      const baseUrl = 'http://127.0.0.1:8000';
       if (imageUrl.startsWith('/')) {
         return baseUrl + imageUrl;
       } else {

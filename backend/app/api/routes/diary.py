@@ -1,9 +1,1133 @@
-#file:ariadne/backend/app/api/routes/diary.py
+# # # # # #file:ariadne/backend/app/api/routes/diary.py
+# # # # # from fastapi import APIRouter, Depends, HTTPException, status
+# # # # # from sqlalchemy.orm import Session
+# # # # # from sqlalchemy import func, and_
+# # # # # from typing import List, Dict, Any
+# # # # # from datetime import datetime, timedelta
+# # # # # from app.database.session import get_db
+# # # # # from app.models.user import User
+# # # # # from app.models.emotional_diary import EmotionalDiary
+# # # # # from app.models.diary_image import DiaryImage
+# # # # # from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+# # # # # from app.api.deps import get_current_user
+
+# # # # # router = APIRouter(prefix="/diary", tags=["碎碎念"])
+
+# # # # # # ... 保留原有的创建、获取、更新、删除日记的接口 ...
+# # # # # @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+# # # # # def create_diary(
+# # # # #     diary: DiaryCreate,
+# # # # #     db: Session = Depends(get_db),
+# # # # #     current_user: User = Depends(get_current_user)
+# # # # # ):
+# # # # #     """创建新的碎碎念"""
+# # # # #     db_diary = EmotionalDiary(
+# # # # #         user_id=current_user.user_id,
+# # # # #         title=diary.title,
+# # # # #         content=diary.content,
+# # # # #         mood=diary.mood,
+# # # # #         is_private=diary.is_private,
+# # # # #         image_count=len(diary.images)
+# # # # #     )
+    
+# # # # #     db.add(db_diary)
+# # # # #     db.commit()
+# # # # #     db.refresh(db_diary)
+    
+# # # # #     # 添加图片
+# # # # #     for i, image_data in enumerate(diary.images):
+# # # # #         db_image = DiaryImage(
+# # # # #             diary_id=db_diary.diary_id,
+# # # # #             image_url=image_data.image_url,
+# # # # #             image_order=i
+# # # # #         )
+# # # # #         db.add(db_image)
+    
+# # # # #     db.commit()
+# # # # #     db.refresh(db_diary)
+# # # # #     return db_diary
+
+# # # # # @router.get("/", response_model=List[DiaryResponse])
+# # # # # def get_user_diaries(
+# # # # #     skip: int = 0,
+# # # # #     limit: int = None,
+# # # # #     db: Session = Depends(get_db),
+# # # # #     current_user: User = Depends(get_current_user)
+# # # # # ):
+# # # # #     """获取当前用户的所有碎碎念，按时间倒序排列"""
+# # # # #     query = db.query(EmotionalDiary)\
+# # # # #                 .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # # #                 .order_by(EmotionalDiary.created_at.desc())
+# # # # #     if limit is not None:  # 如果提供了 limit 参数，则应用限制
+# # # # #         query = query.offset(skip).limit(limit)
+# # # # #     else:  # 如果未提供 limit 参数，则仅应用 offset
+# # # # #         query = query.offset(skip)
+    
+# # # # #     diaries = query.all()
+# # # # #     return diaries
+
+# # # # # @router.get("/{diary_id}", response_model=DiaryResponse)
+# # # # # def get_diary(
+# # # # #     diary_id: int,
+# # # # #     db: Session = Depends(get_db),
+# # # # #     current_user: User = Depends(get_current_user)
+# # # # # ):
+# # # # #     """获取特定的碎碎念"""
+# # # # #     diary = db.query(EmotionalDiary)\
+# # # # #               .filter(EmotionalDiary.diary_id == diary_id)\
+# # # # #               .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # # #               .first()
+    
+# # # # #     if not diary:
+# # # # #         raise HTTPException(
+# # # # #             status_code=status.HTTP_404_NOT_FOUND,
+# # # # #             detail="Diary not found"
+# # # # #         )
+    
+# # # # #     return diary
+
+# # # # # @router.put("/{diary_id}", response_model=DiaryResponse)
+# # # # # def update_diary(
+# # # # #     diary_id: int,
+# # # # #     diary_update: DiaryUpdate,
+# # # # #     db: Session = Depends(get_db),
+# # # # #     current_user: User = Depends(get_current_user)
+# # # # # ):
+# # # # #     """更新碎碎念"""
+# # # # #     db_diary = db.query(EmotionalDiary)\
+# # # # #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# # # # #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # # #                  .first()
+    
+# # # # #     if not db_diary:
+# # # # #         raise HTTPException(
+# # # # #             status_code=status.HTTP_404_NOT_FOUND,
+# # # # #             detail="Diary not found"
+# # # # #         )
+    
+# # # # #     # 更新字段
+# # # # #     update_data = diary_update.dict(exclude_unset=True)
+# # # # #     for key, value in update_data.items():
+# # # # #         if key != 'images':  # 图片单独处理
+# # # # #             setattr(db_diary, key, value)
+    
+# # # # #     # 更新图片（如果提供了）
+# # # # #     if diary_update.images is not None:
+# # # # #         # 删除现有图片
+# # # # #         db.query(DiaryImage)\
+# # # # #           .filter(DiaryImage.diary_id == diary_id)\
+# # # # #           .delete()
+        
+# # # # #         # 添加新图片
+# # # # #         for i, image_data in enumerate(diary_update.images):
+# # # # #             db_image = DiaryImage(
+# # # # #                 diary_id=diary_id,
+# # # # #                 image_url=image_data.image_url,
+# # # # #                 image_order=i
+# # # # #             )
+# # # # #             db.add(db_image)
+        
+# # # # #         # 更新图片计数
+# # # # #         db_diary.image_count = len(diary_update.images)
+    
+# # # # #     db.commit()
+# # # # #     db.refresh(db_diary)
+# # # # #     return db_diary
+
+# # # # # @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+# # # # # def delete_diary(
+# # # # #     diary_id: int,
+# # # # #     db: Session = Depends(get_db),
+# # # # #     current_user: User = Depends(get_current_user)
+# # # # # ):
+# # # # #     """删除碎碎念"""
+# # # # #     db_diary = db.query(EmotionalDiary)\
+# # # # #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# # # # #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # # #                  .first()
+    
+# # # # #     if not db_diary:
+# # # # #         raise HTTPException(
+# # # # #             status_code=status.HTTP_404_NOT_FOUND,
+# # # # #             detail="Diary not found"
+# # # # #         )
+    
+# # # # #     db.delete(db_diary)
+# # # # #     db.commit()
+# # # # #     return
+
+# # # # # @router.get("/mood-stats/{period}")
+# # # # # def get_mood_statistics(
+# # # # #     period: str,  # "today", "7days", "30days", "60days", "365days", "3days"
+# # # # #     db: Session = Depends(get_db),
+# # # # #     current_user: User = Depends(get_current_user)
+# # # # # ):
+# # # # #     """获取心情统计数据"""
+# # # # #     # 确定时间范围
+# # # # #     end_date = datetime.utcnow()
+# # # # #     if period == "today":
+# # # # #         start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+# # # # #     elif period == "3days":
+# # # # #         start_date = end_date - timedelta(days=3)
+# # # # #     elif period == "7days":
+# # # # #         start_date = end_date - timedelta(days=7)
+# # # # #     elif period == "30days":
+# # # # #         start_date = end_date - timedelta(days=30)
+# # # # #     elif period == "60days":
+# # # # #         start_date = end_date - timedelta(days=60)
+# # # # #     elif period == "365days":
+# # # # #         start_date = end_date - timedelta(days=365)
+# # # # #     else:
+# # # # #         raise HTTPException(status_code=400, detail="Invalid period")
+    
+# # # # #     # 创建心情分数的CASE表达式
+# # # # #     mood_score_case = EmotionalDiary.get_mood_score_case()
+    
+# # # # #     if period == "today":
+# # # # #         # 今天的心情数据，按小时分组
+# # # # #         stats = db.query(
+# # # # #             func.hour(EmotionalDiary.created_at).label('hour'),
+# # # # #             func.avg(mood_score_case).label('avg_mood')
+# # # # #         ).filter(
+# # # # #             and_(
+# # # # #                 EmotionalDiary.user_id == current_user.user_id,
+# # # # #                 EmotionalDiary.created_at >= start_date,
+# # # # #                 EmotionalDiary.created_at <= end_date
+# # # # #             )
+# # # # #         ).group_by(
+# # # # #             func.hour(EmotionalDiary.created_at)
+# # # # #         ).order_by(
+# # # # #             func.hour(EmotionalDiary.created_at)
+# # # # #         ).all()
+        
+# # # # #         # 格式化数据
+# # # # #         result = []
+# # # # #         for stat in stats:
+# # # # #             result.append({
+# # # # #                 "time": f"{stat.hour}:00",
+# # # # #                 "mood_score": round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0
+# # # # #             })
+# # # # #     else:
+# # # # #         # 多天的心情数据，按天分组
+# # # # #         stats = db.query(
+# # # # #             func.date(EmotionalDiary.created_at).label('date'),
+# # # # #             func.avg(mood_score_case).label('avg_mood')
+# # # # #         ).filter(
+# # # # #             and_(
+# # # # #                 EmotionalDiary.user_id == current_user.user_id,
+# # # # #                 EmotionalDiary.created_at >= start_date,
+# # # # #                 EmotionalDiary.created_at <= end_date
+# # # # #             )
+# # # # #         ).group_by(
+# # # # #             func.date(EmotionalDiary.created_at)
+# # # # #         ).order_by(
+# # # # #             func.date(EmotionalDiary.created_at)
+# # # # #         ).all()
+        
+# # # # #         # 格式化数据
+# # # # #         result = []
+# # # # #         for stat in stats:
+# # # # #             result.append({
+# # # # #                 "time": stat.date.strftime('%Y-%m-%d'),
+# # # # #                 "mood_score": round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0
+# # # # #             })
+    
+# # # # #     return {
+# # # # #         "period": period,
+# # # # #         "data": result
+# # # # #     }
+
+# # # # # file:ariadne/backend/app/api/routes/diary.py
+# # # # from fastapi import APIRouter, Depends, HTTPException, status
+# # # # from sqlalchemy.orm import Session
+# # # # from sqlalchemy import func, and_
+# # # # from typing import List, Dict, Any
+# # # # from datetime import datetime, timedelta, date
+# # # # from app.database.session import get_db
+# # # # from app.models.user import User
+# # # # from app.models.emotional_diary import EmotionalDiary
+# # # # from app.models.diary_image import DiaryImage
+# # # # from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+# # # # from app.api.deps import get_current_user
+
+# # # # router = APIRouter(prefix="/diary", tags=["碎碎念"])
+
+# # # # # ... (保留原有的创建、获取、更新、删除日记的接口) ...
+# # # # @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+# # # # def create_diary(
+# # # #     diary: DiaryCreate,
+# # # #     db: Session = Depends(get_db),
+# # # #     current_user: User = Depends(get_current_user)
+# # # # ):
+# # # #     """创建新的碎碎念"""
+# # # #     db_diary = EmotionalDiary(
+# # # #         user_id=current_user.user_id,
+# # # #         title=diary.title,
+# # # #         content=diary.content,
+# # # #         mood=diary.mood,
+# # # #         is_private=diary.is_private,
+# # # #         image_count=len(diary.images)
+# # # #     )
+    
+# # # #     db.add(db_diary)
+# # # #     db.commit()
+# # # #     db.refresh(db_diary)
+    
+# # # #     # 添加图片
+# # # #     for i, image_data in enumerate(diary.images):
+# # # #         db_image = DiaryImage(
+# # # #             diary_id=db_diary.diary_id,
+# # # #             image_url=image_data.image_url,
+# # # #             image_order=i
+# # # #         )
+# # # #         db.add(db_image)
+    
+# # # #     db.commit()
+# # # #     db.refresh(db_diary)
+# # # #     return db_diary
+
+# # # # @router.get("/", response_model=List[DiaryResponse])
+# # # # def get_user_diaries(
+# # # #     skip: int = 0,
+# # # #     limit: int = None,
+# # # #     db: Session = Depends(get_db),
+# # # #     current_user: User = Depends(get_current_user)
+# # # # ):
+# # # #     """获取当前用户的所有碎碎念，按时间倒序排列"""
+# # # #     query = db.query(EmotionalDiary)\
+# # # #                 .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # #                 .order_by(EmotionalDiary.created_at.desc())
+# # # #     if limit is not None:  # 如果提供了 limit 参数，则应用限制
+# # # #         query = query.offset(skip).limit(limit)
+# # # #     else:  # 如果未提供 limit 参数，则仅应用 offset
+# # # #         query = query.offset(skip)
+    
+# # # #     diaries = query.all()
+# # # #     return diaries
+
+# # # # @router.get("/{diary_id}", response_model=DiaryResponse)
+# # # # def get_diary(
+# # # #     diary_id: int,
+# # # #     db: Session = Depends(get_db),
+# # # #     current_user: User = Depends(get_current_user)
+# # # # ):
+# # # #     """获取特定的碎碎念"""
+# # # #     diary = db.query(EmotionalDiary)\
+# # # #               .filter(EmotionalDiary.diary_id == diary_id)\
+# # # #               .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # #               .first()
+    
+# # # #     if not diary:
+# # # #         raise HTTPException(
+# # # #             status_code=status.HTTP_404_NOT_FOUND,
+# # # #             detail="Diary not found"
+# # # #         )
+    
+# # # #     return diary
+
+# # # # @router.put("/{diary_id}", response_model=DiaryResponse)
+# # # # def update_diary(
+# # # #     diary_id: int,
+# # # #     diary_update: DiaryUpdate,
+# # # #     db: Session = Depends(get_db),
+# # # #     current_user: User = Depends(get_current_user)
+# # # # ):
+# # # #     """更新碎碎念"""
+# # # #     db_diary = db.query(EmotionalDiary)\
+# # # #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# # # #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # #                  .first()
+    
+# # # #     if not db_diary:
+# # # #         raise HTTPException(
+# # # #             status_code=status.HTTP_404_NOT_FOUND,
+# # # #             detail="Diary not found"
+# # # #         )
+    
+# # # #     # 更新字段
+# # # #     update_data = diary_update.dict(exclude_unset=True)
+# # # #     for key, value in update_data.items():
+# # # #         if key != 'images':  # 图片单独处理
+# # # #             setattr(db_diary, key, value)
+    
+# # # #     # 更新图片（如果提供了）
+# # # #     if diary_update.images is not None:
+# # # #         # 删除现有图片
+# # # #         db.query(DiaryImage)\
+# # # #           .filter(DiaryImage.diary_id == diary_id)\
+# # # #           .delete()
+        
+# # # #         # 添加新图片
+# # # #         for i, image_data in enumerate(diary_update.images):
+# # # #             db_image = DiaryImage(
+# # # #                 diary_id=diary_id,
+# # # #                 image_url=image_data.image_url,
+# # # #                 image_order=i
+# # # #             )
+# # # #             db.add(db_image)
+        
+# # # #         # 更新图片计数
+# # # #         db_diary.image_count = len(diary_update.images)
+    
+# # # #     db.commit()
+# # # #     db.refresh(db_diary)
+# # # #     return db_diary
+
+# # # # @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+# # # # def delete_diary(
+# # # #     diary_id: int,
+# # # #     db: Session = Depends(get_db),
+# # # #     current_user: User = Depends(get_current_user)
+# # # # ):
+# # # #     """删除碎碎念"""
+# # # #     db_diary = db.query(EmotionalDiary)\
+# # # #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# # # #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # # #                  .first()
+    
+# # # #     if not db_diary:
+# # # #         raise HTTPException(
+# # # #             status_code=status.HTTP_404_NOT_FOUND,
+# # # #             detail="Diary not found"
+# # # #         )
+    
+# # # #     db.delete(db_diary)
+# # # #     db.commit()
+# # # #     return
+
+# # # # @router.get("/mood-stats/{period}")
+# # # # def get_mood_statistics(
+# # # #     period: str,  # "today", "7days", "30days", "60days", "365days", "3days"
+# # # #     db: Session = Depends(get_db),
+# # # #     current_user: User = Depends(get_current_user)
+# # # # ):
+# # # #     """获取心情统计数据，补全缺失日期的默认值"""
+# # # #     end_date = datetime.utcnow()
+# # # #     days = 0
+# # # #     if period == "today":
+# # # #         start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+# # # #     elif period == "3days":
+# # # #         days = 3
+# # # #     elif period == "7days":
+# # # #         days = 7
+# # # #     elif period == "30days":
+# # # #         days = 30
+# # # #     elif period == "60days":
+# # # #         days = 60
+# # # #     elif period == "365days":
+# # # #         days = 365
+# # # #     else:
+# # # #         raise HTTPException(status_code=400, detail="Invalid period")
+
+# # # #     if days > 0:
+# # # #         start_date = end_date - timedelta(days=days - 1)
+# # # #         start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+# # # #     mood_score_case = EmotionalDiary.get_mood_score_case()
+
+# # # #     if period == "today":
+# # # #         stats_query = db.query(
+# # # #             func.hour(EmotionalDiary.created_at).label('hour'),
+# # # #             func.avg(mood_score_case).label('avg_mood')
+# # # #         ).filter(
+# # # #             and_(
+# # # #                 EmotionalDiary.user_id == current_user.user_id,
+# # # #                 EmotionalDiary.created_at >= start_date,
+# # # #                 EmotionalDiary.created_at <= end_date
+# # # #             )
+# # # #         ).group_by('hour').order_by('hour').all()
+# # # #         stats_map = {stat.hour: round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0 for stat in stats_query}
+        
+# # # #         result = []
+# # # #         for hour in range(end_date.hour + 1):
+# # # #             result.append({
+# # # #                 "time": f"{hour:02d}:00",
+# # # #                 "mood_score": stats_map.get(hour, 3.0)
+# # # #             })
+# # # #     else:
+# # # #         stats_query = db.query(
+# # # #             func.date(EmotionalDiary.created_at).label('date'),
+# # # #             func.avg(mood_score_case).label('avg_mood')
+# # # #         ).filter(
+# # # #             and_(
+# # # #                 EmotionalDiary.user_id == current_user.user_id,
+# # # #                 EmotionalDiary.created_at >= start_date,
+# # # #                 EmotionalDiary.created_at <= end_date
+# # # #             )
+# # # #         ).group_by('date').order_by('date').all()
+        
+# # # #         stats_map = {stat.date: round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0 for stat in stats_query}
+        
+# # # #         result = []
+# # # #         current_date = start_date.date()
+# # # #         end_date_date = end_date.date()
+        
+# # # #         while current_date <= end_date_date:
+# # # #             result.append({
+# # # #                 "time": current_date.strftime('%Y-%m-%d'),
+# # # #                 "mood_score": stats_map.get(current_date, 3.0)
+# # # #             })
+# # # #             current_date += timedelta(days=1)
+
+# # # #     return {"period": period, "data": result}
+
+# # # # file:ariadne/backend/app/api/routes/diary.py
+# # # from fastapi import APIRouter, Depends, HTTPException, status
+# # # from sqlalchemy.orm import Session
+# # # from sqlalchemy import func, and_
+# # # from typing import List, Dict, Any
+# # # from datetime import datetime, timedelta, date
+# # # from app.database.session import get_db
+# # # from app.models.user import User
+# # # from app.models.emotional_diary import EmotionalDiary
+# # # from app.models.diary_image import DiaryImage
+# # # from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+# # # from app.api.deps import get_current_user
+
+# # # router = APIRouter(prefix="/diary", tags=["碎碎念"])
+
+# # # # ... (保留原有的创建、获取、更新、删除日记的接口) ...
+# # # @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+# # # def create_diary(
+# # #     diary: DiaryCreate,
+# # #     db: Session = Depends(get_db),
+# # #     current_user: User = Depends(get_current_user)
+# # # ):
+# # #     """创建新的碎碎念"""
+# # #     db_diary = EmotionalDiary(
+# # #         user_id=current_user.user_id,
+# # #         title=diary.title,
+# # #         content=diary.content,
+# # #         mood=diary.mood,
+# # #         is_private=diary.is_private,
+# # #         image_count=len(diary.images)
+# # #     )
+    
+# # #     db.add(db_diary)
+# # #     db.commit()
+# # #     db.refresh(db_diary)
+    
+# # #     # 添加图片
+# # #     for i, image_data in enumerate(diary.images):
+# # #         db_image = DiaryImage(
+# # #             diary_id=db_diary.diary_id,
+# # #             image_url=image_data.image_url,
+# # #             image_order=i
+# # #         )
+# # #         db.add(db_image)
+    
+# # #     db.commit()
+# # #     db.refresh(db_diary)
+# # #     return db_diary
+
+# # # @router.get("/", response_model=List[DiaryResponse])
+# # # def get_user_diaries(
+# # #     skip: int = 0,
+# # #     limit: int = None,
+# # #     db: Session = Depends(get_db),
+# # #     current_user: User = Depends(get_current_user)
+# # # ):
+# # #     """获取当前用户的所有碎碎念，按时间倒序排列"""
+# # #     query = db.query(EmotionalDiary)\
+# # #                 .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # #                 .order_by(EmotionalDiary.created_at.desc())
+# # #     if limit is not None:  # 如果提供了 limit 参数，则应用限制
+# # #         query = query.offset(skip).limit(limit)
+# # #     else:  # 如果未提供 limit 参数，则仅应用 offset
+# # #         query = query.offset(skip)
+    
+# # #     diaries = query.all()
+# # #     return diaries
+
+# # # @router.get("/{diary_id}", response_model=DiaryResponse)
+# # # def get_diary(
+# # #     diary_id: int,
+# # #     db: Session = Depends(get_db),
+# # #     current_user: User = Depends(get_current_user)
+# # # ):
+# # #     """获取特定的碎碎念"""
+# # #     diary = db.query(EmotionalDiary)\
+# # #               .filter(EmotionalDiary.diary_id == diary_id)\
+# # #               .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # #               .first()
+    
+# # #     if not diary:
+# # #         raise HTTPException(
+# # #             status_code=status.HTTP_404_NOT_FOUND,
+# # #             detail="Diary not found"
+# # #         )
+    
+# # #     return diary
+
+# # # @router.put("/{diary_id}", response_model=DiaryResponse)
+# # # def update_diary(
+# # #     diary_id: int,
+# # #     diary_update: DiaryUpdate,
+# # #     db: Session = Depends(get_db),
+# # #     current_user: User = Depends(get_current_user)
+# # # ):
+# # #     """更新碎碎念"""
+# # #     db_diary = db.query(EmotionalDiary)\
+# # #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# # #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # #                  .first()
+    
+# # #     if not db_diary:
+# # #         raise HTTPException(
+# # #             status_code=status.HTTP_404_NOT_FOUND,
+# # #             detail="Diary not found"
+# # #         )
+    
+# # #     # 更新字段
+# # #     update_data = diary_update.dict(exclude_unset=True)
+# # #     for key, value in update_data.items():
+# # #         if key != 'images':  # 图片单独处理
+# # #             setattr(db_diary, key, value)
+    
+# # #     # 更新图片（如果提供了）
+# # #     if diary_update.images is not None:
+# # #         # 删除现有图片
+# # #         db.query(DiaryImage)\
+# # #           .filter(DiaryImage.diary_id == diary_id)\
+# # #           .delete()
+        
+# # #         # 添加新图片
+# # #         for i, image_data in enumerate(diary_update.images):
+# # #             db_image = DiaryImage(
+# # #                 diary_id=diary_id,
+# # #                 image_url=image_data.image_url,
+# # #                 image_order=i
+# # #             )
+# # #             db.add(db_image)
+        
+# # #         # 更新图片计数
+# # #         db_diary.image_count = len(diary_update.images)
+    
+# # #     db.commit()
+# # #     db.refresh(db_diary)
+# # #     return db_diary
+
+# # # @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+# # # def delete_diary(
+# # #     diary_id: int,
+# # #     db: Session = Depends(get_db),
+# # #     current_user: User = Depends(get_current_user)
+# # # ):
+# # #     """删除碎碎念"""
+# # #     db_diary = db.query(EmotionalDiary)\
+# # #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# # #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# # #                  .first()
+    
+# # #     if not db_diary:
+# # #         raise HTTPException(
+# # #             status_code=status.HTTP_404_NOT_FOUND,
+# # #             detail="Diary not found"
+# # #         )
+    
+# # #     db.delete(db_diary)
+# # #     db.commit()
+# # #     return
+
+# # # @router.get("/mood-stats/{period}")
+# # # def get_mood_statistics(
+# # #     period: str,  # "today", "7days", "30days", "60days", "365days", "3days"
+# # #     db: Session = Depends(get_db),
+# # #     current_user: User = Depends(get_current_user)
+# # # ):
+# # #     """获取心情统计数据，补全缺失日期的默认值"""
+# # #     end_date = datetime.utcnow()
+# # #     days = 0
+# # #     if period == "today":
+# # #         # To handle timezone issues, we'll fetch a wider range of data 
+# # #         # and then filter it down to the current date on the Python side.
+# # #         start_date = end_date - timedelta(hours=24)
+# # #         end_date_for_query = end_date + timedelta(hours=24)
+# # #     elif period == "3days":
+# # #         days = 3
+# # #     elif period == "7days":
+# # #         days = 7
+# # #     elif period == "30days":
+# # #         days = 30
+# # #     elif period == "60days":
+# # #         days = 60
+# # #     elif period == "365days":
+# # #         days = 365
+# # #     else:
+# # #         raise HTTPException(status_code=400, detail="Invalid period")
+
+# # #     if days > 0:
+# # #         start_date = end_date - timedelta(days=days - 1)
+# # #         start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+# # #         end_date_for_query = end_date
+
+# # #     mood_score_case = EmotionalDiary.get_mood_score_case()
+
+# # #     if period == "today":
+# # #         stats_query = db.query(
+# # #             EmotionalDiary.created_at,
+# # #             mood_score_case.label('mood_score')
+# # #         ).filter(
+# # #             and_(
+# # #                 EmotionalDiary.user_id == current_user.user_id,
+# # #                 EmotionalDiary.created_at >= start_date,
+# # #                 EmotionalDiary.created_at <= end_date_for_query
+# # #             )
+# # #         ).all()
+
+# # #         # Filter to today's date (local to the server) and average by hour
+# # #         today_stats = {}
+# # #         today_date = datetime.now().date()
+
+# # #         for stat in stats_query:
+# # #             if stat.created_at.date() == today_date:
+# # #                 hour = stat.created_at.hour
+# # #                 if hour not in today_stats:
+# # #                     today_stats[hour] = []
+# # #                 today_stats[hour].append(stat.mood_score)
+
+# # #         result = []
+# # #         for hour in range(datetime.now().hour + 1):
+# # #             mood_scores = today_stats.get(hour)
+# # #             avg_mood = round(sum(mood_scores) / len(mood_scores), 2) if mood_scores else 3.0
+# # #             result.append({
+# # #                 "time": f"{hour:02d}:00",
+# # #                 "mood_score": avg_mood
+# # #             })
+# # #     else:
+# # #         stats_query = db.query(
+# # #             func.date(EmotionalDiary.created_at).label('date'),
+# # #             func.avg(mood_score_case).label('avg_mood')
+# # #         ).filter(
+# # #             and_(
+# # #                 EmotionalDiary.user_id == current_user.user_id,
+# # #                 EmotionalDiary.created_at >= start_date,
+# # #                 EmotionalDiary.created_at <= end_date_for_query
+# # #             )
+# # #         ).group_by('date').order_by('date').all()
+        
+# # #         stats_map = {stat.date: round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0 for stat in stats_query}
+        
+# # #         result = []
+# # #         current_date = start_date.date()
+# # #         end_date_date = end_date.date()
+        
+# # #         while current_date <= end_date_date:
+# # #             result.append({
+# # #                 "time": current_date.strftime('%Y-%m-%d'),
+# # #                 "mood_score": stats_map.get(current_date, 3.0)
+# # #             })
+# # #             current_date += timedelta(days=1)
+
+# # #     return {"period": period, "data": result}
+
+# # # file:ariadne/backend/app/api/routes/diary.py
+# # from fastapi import APIRouter, Depends, HTTPException, status
+# # from sqlalchemy.orm import Session
+# # from sqlalchemy import func, and_
+# # from typing import List, Dict, Any
+# # from datetime import datetime, timedelta, date
+# # from app.database.session import get_db
+# # from app.models.user import User
+# # from app.models.emotional_diary import EmotionalDiary
+# # from app.models.diary_image import DiaryImage
+# # from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+# # from app.api.deps import get_current_user
+
+# # router = APIRouter(prefix="/diary", tags=["碎碎念"])
+
+# # # ... (保留原有的创建、获取、更新、删除日记的接口) ...
+# # @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+# # def create_diary(
+# #     diary: DiaryCreate,
+# #     db: Session = Depends(get_db),
+# #     current_user: User = Depends(get_current_user)
+# # ):
+# #     """创建新的碎碎念"""
+# #     db_diary = EmotionalDiary(
+# #         user_id=current_user.user_id,
+# #         title=diary.title,
+# #         content=diary.content,
+# #         mood=diary.mood,
+# #         is_private=diary.is_private,
+# #         image_count=len(diary.images)
+# #     )
+    
+# #     db.add(db_diary)
+# #     db.commit()
+# #     db.refresh(db_diary)
+    
+# #     # 添加图片
+# #     for i, image_data in enumerate(diary.images):
+# #         db_image = DiaryImage(
+# #             diary_id=db_diary.diary_id,
+# #             image_url=image_data.image_url,
+# #             image_order=i
+# #         )
+# #         db.add(db_image)
+    
+# #     db.commit()
+# #     db.refresh(db_diary)
+# #     return db_diary
+
+# # @router.get("/", response_model=List[DiaryResponse])
+# # def get_user_diaries(
+# #     skip: int = 0,
+# #     limit: int = None,
+# #     db: Session = Depends(get_db),
+# #     current_user: User = Depends(get_current_user)
+# # ):
+# #     """获取当前用户的所有碎碎念，按时间倒序排列"""
+# #     query = db.query(EmotionalDiary)\
+# #                 .filter(EmotionalDiary.user_id == current_user.user_id)\
+# #                 .order_by(EmotionalDiary.created_at.desc())
+# #     if limit is not None:
+# #         query = query.offset(skip).limit(limit)
+# #     else:
+# #         query = query.offset(skip)
+    
+# #     diaries = query.all()
+# #     return diaries
+
+# # @router.get("/{diary_id}", response_model=DiaryResponse)
+# # def get_diary(
+# #     diary_id: int,
+# #     db: Session = Depends(get_db),
+# #     current_user: User = Depends(get_current_user)
+# # ):
+# #     """获取特定的碎碎念"""
+# #     diary = db.query(EmotionalDiary)\
+# #               .filter(EmotionalDiary.diary_id == diary_id)\
+# #               .filter(EmotionalDiary.user_id == current_user.user_id)\
+# #               .first()
+    
+# #     if not diary:
+# #         raise HTTPException(
+# #             status_code=status.HTTP_404_NOT_FOUND,
+# #             detail="Diary not found"
+# #         )
+    
+# #     return diary
+
+# # @router.put("/{diary_id}", response_model=DiaryResponse)
+# # def update_diary(
+# #     diary_id: int,
+# #     diary_update: DiaryUpdate,
+# #     db: Session = Depends(get_db),
+# #     current_user: User = Depends(get_current_user)
+# # ):
+# #     """更新碎碎念"""
+# #     db_diary = db.query(EmotionalDiary)\
+# #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# #                  .first()
+    
+# #     if not db_diary:
+# #         raise HTTPException(
+# #             status_code=status.HTTP_404_NOT_FOUND,
+# #             detail="Diary not found"
+# #         )
+    
+# #     update_data = diary_update.dict(exclude_unset=True)
+# #     for key, value in update_data.items():
+# #         if key != 'images':
+# #             setattr(db_diary, key, value)
+    
+# #     if diary_update.images is not None:
+# #         db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).delete()
+# #         for i, image_data in enumerate(diary_update.images):
+# #             db_image = DiaryImage(
+# #                 diary_id=diary_id,
+# #                 image_url=image_data.image_url,
+# #                 image_order=i
+# #             )
+# #             db.add(db_image)
+# #         db_diary.image_count = len(diary_update.images)
+    
+# #     db.commit()
+# #     db.refresh(db_diary)
+# #     return db_diary
+
+# # @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+# # def delete_diary(
+# #     diary_id: int,
+# #     db: Session = Depends(get_db),
+# #     current_user: User = Depends(get_current_user)
+# # ):
+# #     """删除碎碎念"""
+# #     db_diary = db.query(EmotionalDiary)\
+# #                  .filter(EmotionalDiary.diary_id == diary_id)\
+# #                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+# #                  .first()
+    
+# #     if not db_diary:
+# #         raise HTTPException(
+# #             status_code=status.HTTP_404_NOT_FOUND,
+# #             detail="Diary not found"
+# #         )
+    
+# #     db.delete(db_diary)
+# #     db.commit()
+# #     return
+
+# # @router.get("/mood-stats/{period}")
+# # def get_mood_statistics(
+# #     period: str,  # "3days", "7days", "30days", "60days"
+# #     db: Session = Depends(get_db),
+# #     current_user: User = Depends(get_current_user)
+# # ):
+# #     """获取心情统计数据，补全缺失日期的默认值"""
+# #     end_date = datetime.utcnow()
+# #     days = 0
+# #     if period == "3days":
+# #         days = 3
+# #     elif period == "7days":
+# #         days = 7
+# #     elif period == "30days":
+# #         days = 30
+# #     elif period == "60days":
+# #         days = 60
+# #     else:
+# #         raise HTTPException(status_code=400, detail="Invalid period")
+
+# #     start_date = end_date - timedelta(days=days - 1)
+# #     start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+# #     mood_score_case = EmotionalDiary.get_mood_score_case()
+
+# #     stats_query = db.query(
+# #         func.date(EmotionalDiary.created_at).label('date'),
+# #         func.avg(mood_score_case).label('avg_mood')
+# #     ).filter(
+# #         and_(
+# #             EmotionalDiary.user_id == current_user.user_id,
+# #             EmotionalDiary.created_at >= start_date,
+# #             EmotionalDiary.created_at <= end_date
+# #         )
+# #     ).group_by('date').order_by('date').all()
+    
+# #     stats_map = {stat.date: round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0 for stat in stats_query}
+    
+# #     result = []
+# #     current_date = start_date.date()
+# #     end_date_date = end_date.date()
+    
+# #     while current_date <= end_date_date:
+# #         result.append({
+# #             "time": current_date.strftime('%Y-%m-%d'),
+# #             "mood_score": stats_map.get(current_date, 3.0)
+# #         })
+# #         current_date += timedelta(days=1)
+
+# #     return {"period": period, "data": result}
+
+
+# # file:ariadne/backend/app/api/routes/diary.py
+# from fastapi import APIRouter, Depends, HTTPException, status
+# from sqlalchemy.orm import Session
+# from sqlalchemy import func, and_
+# from typing import List, Dict, Any
+# from datetime import datetime, timedelta, date
+# from app.database.session import get_db
+# from app.models.user import User
+# from app.models.emotional_diary import EmotionalDiary
+# from app.models.diary_image import DiaryImage
+# from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+# from app.api.deps import get_current_user
+
+# router = APIRouter(prefix="/diary", tags=["碎碎念"])
+
+# # ... (保留原有的创建、获取、更新、删除日记的接口) ...
+# @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+# def create_diary(
+#     diary: DiaryCreate,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """创建新的碎碎念"""
+#     db_diary = EmotionalDiary(
+#         user_id=current_user.user_id,
+#         title=diary.title,
+#         content=diary.content,
+#         mood=diary.mood,
+#         is_private=diary.is_private,
+#         image_count=len(diary.images)
+#     )
+    
+#     db.add(db_diary)
+#     db.commit()
+#     db.refresh(db_diary)
+    
+#     # 添加图片
+#     for i, image_data in enumerate(diary.images):
+#         db_image = DiaryImage(
+#             diary_id=db_diary.diary_id,
+#             image_url=image_data.image_url,
+#             image_order=i
+#         )
+#         db.add(db_image)
+    
+#     db.commit()
+#     db.refresh(db_diary)
+#     return db_diary
+
+# @router.get("/", response_model=List[DiaryResponse])
+# def get_user_diaries(
+#     skip: int = 0,
+#     limit: int = None,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """获取当前用户的所有碎碎念，按时间倒序排列"""
+#     query = db.query(EmotionalDiary)\
+#                 .filter(EmotionalDiary.user_id == current_user.user_id)\
+#                 .order_by(EmotionalDiary.created_at.desc())
+#     if limit is not None:
+#         query = query.offset(skip).limit(limit)
+#     else:
+#         query = query.offset(skip)
+    
+#     diaries = query.all()
+#     return diaries
+
+# @router.get("/{diary_id}", response_model=DiaryResponse)
+# def get_diary(
+#     diary_id: int,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """获取特定的碎碎念"""
+#     diary = db.query(EmotionalDiary)\
+#               .filter(EmotionalDiary.diary_id == diary_id)\
+#               .filter(EmotionalDiary.user_id == current_user.user_id)\
+#               .first()
+    
+#     if not diary:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Diary not found"
+#         )
+    
+#     return diary
+
+# @router.put("/{diary_id}", response_model=DiaryResponse)
+# def update_diary(
+#     diary_id: int,
+#     diary_update: DiaryUpdate,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """更新碎碎念"""
+#     db_diary = db.query(EmotionalDiary)\
+#                  .filter(EmotionalDiary.diary_id == diary_id)\
+#                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+#                  .first()
+    
+#     if not db_diary:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Diary not found"
+#         )
+    
+#     update_data = diary_update.dict(exclude_unset=True)
+#     for key, value in update_data.items():
+#         if key != 'images':
+#             setattr(db_diary, key, value)
+    
+#     if diary_update.images is not None:
+#         db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).delete()
+#         for i, image_data in enumerate(diary_update.images):
+#             db_image = DiaryImage(
+#                 diary_id=diary_id,
+#                 image_url=image_data.image_url,
+#                 image_order=i
+#             )
+#             db.add(db_image)
+#         db_diary.image_count = len(diary_update.images)
+    
+#     db.commit()
+#     db.refresh(db_diary)
+#     return db_diary
+
+# @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+# def delete_diary(
+#     diary_id: int,
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """删除碎碎念"""
+#     db_diary = db.query(EmotionalDiary)\
+#                  .filter(EmotionalDiary.diary_id == diary_id)\
+#                  .filter(EmotionalDiary.user_id == current_user.user_id)\
+#                  .first()
+    
+#     if not db_diary:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Diary not found"
+#         )
+    
+#     db.delete(db_diary)
+#     db.commit()
+#     return
+
+# @router.get("/mood-stats/{period}")
+# def get_mood_statistics(
+#     period: str,  # "3days", "7days", "30days", "60days"
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     """获取心情统计数据，补全缺失日期的默认值"""
+#     end_date = datetime.utcnow()
+#     days = 0
+#     if period == "3days":
+#         days = 3
+#     elif period == "7days":
+#         days = 7
+#     elif period == "30days":
+#         days = 30
+#     elif period == "60days":
+#         days = 60
+#     else:
+#         raise HTTPException(status_code=400, detail="Invalid period")
+
+#     start_date = end_date - timedelta(days=days - 1)
+#     start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+#     mood_score_case = EmotionalDiary.get_mood_score_case()
+
+#     stats_query = db.query(
+#         func.date(EmotionalDiary.created_at).label('date'),
+#         func.avg(mood_score_case).label('avg_mood')
+#     ).filter(
+#         and_(
+#             EmotionalDiary.user_id == current_user.user_id,
+#             EmotionalDiary.created_at >= start_date,
+#             EmotionalDiary.created_at <= end_date
+#         )
+#     ).group_by('date').order_by('date').all()
+    
+#     stats_map = {stat.date: round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0 for stat in stats_query}
+    
+#     result = []
+#     current_date = start_date.date()
+#     end_date_date = end_date.date()
+    
+#     while current_date <= end_date_date:
+#         result.append({
+#             "time": current_date.strftime('%Y-%m-%d'),
+#             "mood_score": stats_map.get(current_date, 3.0)
+#         })
+#         current_date += timedelta(days=1)
+
+#     return {"period": period, "data": result}
+
+# file:ariadne/backend/app/api/routes/diary.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_
 from typing import List, Dict, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from app.database.session import get_db
 from app.models.user import User
 from app.models.emotional_diary import EmotionalDiary
@@ -13,7 +1137,7 @@ from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/diary", tags=["碎碎念"])
 
-# ... 保留原有的创建、获取、更新、删除日记的接口 ...
+# ... (保留原有的创建、获取、更新、删除日记的接口) ...
 @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
 def create_diary(
     diary: DiaryCreate,
@@ -58,9 +1182,9 @@ def get_user_diaries(
     query = db.query(EmotionalDiary)\
                 .filter(EmotionalDiary.user_id == current_user.user_id)\
                 .order_by(EmotionalDiary.created_at.desc())
-    if limit is not None:  # 如果提供了 limit 参数，则应用限制
+    if limit is not None:
         query = query.offset(skip).limit(limit)
-    else:  # 如果未提供 limit 参数，则仅应用 offset
+    else:
         query = query.offset(skip)
     
     diaries = query.all()
@@ -105,20 +1229,13 @@ def update_diary(
             detail="Diary not found"
         )
     
-    # 更新字段
     update_data = diary_update.dict(exclude_unset=True)
     for key, value in update_data.items():
-        if key != 'images':  # 图片单独处理
+        if key != 'images':
             setattr(db_diary, key, value)
     
-    # 更新图片（如果提供了）
     if diary_update.images is not None:
-        # 删除现有图片
-        db.query(DiaryImage)\
-          .filter(DiaryImage.diary_id == diary_id)\
-          .delete()
-        
-        # 添加新图片
+        db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).delete()
         for i, image_data in enumerate(diary_update.images):
             db_image = DiaryImage(
                 diary_id=diary_id,
@@ -126,8 +1243,6 @@ def update_diary(
                 image_order=i
             )
             db.add(db_image)
-        
-        # 更新图片计数
         db_diary.image_count = len(diary_update.images)
     
     db.commit()
@@ -158,81 +1273,52 @@ def delete_diary(
 
 @router.get("/mood-stats/{period}")
 def get_mood_statistics(
-    period: str,  # "today", "7days", "30days", "60days", "365days", "3days"
+    period: str,  # "3days", "7days", "30days", "60days"
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """获取心情统计数据"""
-    # 确定时间范围
-    end_date = datetime.utcnow()
-    if period == "today":
-        start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
-    elif period == "3days":
-        start_date = end_date - timedelta(days=3)
+    """获取心情统计数据，补全缺失日期的默认值"""
+    # 确保查询范围覆盖当天的所有时间
+    end_date = datetime.utcnow().replace(hour=23, minute=59, second=59)
+    days = 0
+    if period == "3days":
+        days = 3
     elif period == "7days":
-        start_date = end_date - timedelta(days=7)
+        days = 7
     elif period == "30days":
-        start_date = end_date - timedelta(days=30)
+        days = 30
     elif period == "60days":
-        start_date = end_date - timedelta(days=60)
-    elif period == "365days":
-        start_date = end_date - timedelta(days=365)
+        days = 60
     else:
         raise HTTPException(status_code=400, detail="Invalid period")
+
+    # 计算起始日期
+    start_date = (end_date - timedelta(days=days - 1)).replace(hour=0, minute=0, second=0)
     
-    # 创建心情分数的CASE表达式
     mood_score_case = EmotionalDiary.get_mood_score_case()
+
+    stats_query = db.query(
+        func.date(EmotionalDiary.created_at).label('date'),
+        func.avg(mood_score_case).label('avg_mood')
+    ).filter(
+        and_(
+            EmotionalDiary.user_id == current_user.user_id,
+            EmotionalDiary.created_at >= start_date,
+            EmotionalDiary.created_at <= end_date
+        )
+    ).group_by('date').order_by('date').all()
     
-    if period == "today":
-        # 今天的心情数据，按小时分组
-        stats = db.query(
-            func.hour(EmotionalDiary.created_at).label('hour'),
-            func.avg(mood_score_case).label('avg_mood')
-        ).filter(
-            and_(
-                EmotionalDiary.user_id == current_user.user_id,
-                EmotionalDiary.created_at >= start_date,
-                EmotionalDiary.created_at <= end_date
-            )
-        ).group_by(
-            func.hour(EmotionalDiary.created_at)
-        ).order_by(
-            func.hour(EmotionalDiary.created_at)
-        ).all()
-        
-        # 格式化数据
-        result = []
-        for stat in stats:
-            result.append({
-                "time": f"{stat.hour}:00",
-                "mood_score": round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0
-            })
-    else:
-        # 多天的心情数据，按天分组
-        stats = db.query(
-            func.date(EmotionalDiary.created_at).label('date'),
-            func.avg(mood_score_case).label('avg_mood')
-        ).filter(
-            and_(
-                EmotionalDiary.user_id == current_user.user_id,
-                EmotionalDiary.created_at >= start_date,
-                EmotionalDiary.created_at <= end_date
-            )
-        ).group_by(
-            func.date(EmotionalDiary.created_at)
-        ).order_by(
-            func.date(EmotionalDiary.created_at)
-        ).all()
-        
-        # 格式化数据
-        result = []
-        for stat in stats:
-            result.append({
-                "time": stat.date.strftime('%Y-%m-%d'),
-                "mood_score": round(float(stat.avg_mood), 2) if stat.avg_mood else 3.0
-            })
+    stats_map = {stat.date: round(float(stat.avg_mood), 2) for stat in stats_query}
     
-    return {
-        "period": period,
-        "data": result
-    }
+    result = []
+    current_date = start_date.date()
+    end_date_date = end_date.date()
+    
+    while current_date <= end_date_date:
+        result.append({
+            "time": current_date.strftime('%Y-%m-%d'),
+            "mood_score": stats_map.get(current_date, 3.0)
+        })
+        current_date += timedelta(days=1)
+
+    return {"period": period, "data": result}
