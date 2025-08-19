@@ -7,6 +7,7 @@ from app.models.user import User
 from app.models.tree_hole import TreeHoleWhisper
 from app.models.tree_hole_chat import TreeHoleChat, TreeHoleChatParticipant
 from app.schemas.tree_hole_chat import TreeHoleChatCreate, TreeHoleChat as TreeHoleChatSchema
+from app.schemas.tree_hole import WhisperResponse 
 from app.api.deps import get_current_user
 import random
 
@@ -99,8 +100,25 @@ def get_chat_messages(
     chats = db.query(TreeHoleChat).filter(TreeHoleChat.whisper_id == whisper_id).order_by(TreeHoleChat.created_at).all()
     return chats
 
+@router.delete("/{whisper_id}/leave", status_code=status.HTTP_204_NO_CONTENT)
+def leave_chat(
+    whisper_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """用户退出一个悄悄话聊天"""
+    participant = db.query(TreeHoleChatParticipant).filter(
+        TreeHoleChatParticipant.whisper_id == whisper_id,
+        TreeHoleChatParticipant.user_id == current_user.user_id
+    ).first()
 
-@router.get("/chats/")
+    if not participant:
+        raise HTTPException(status_code=404, detail="你不在这个聊天中")
+
+    db.delete(participant)
+    db.commit()
+    retur
+@router.get("/chats/", response_model=List[WhisperResponse]) # 修改 response_model
 def get_user_chats(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -118,8 +136,15 @@ def get_user_chats(
     ).all()
 
     # 合并并去重
-    all_whispers = {whisper.whisper_id: whisper for whisper in my_whispers}
+    all_whispers_map = {whisper.whisper_id: whisper for whisper in my_whispers}
     for whisper in participated_whispers:
-        all_whispers[whisper.whisper_id] = whisper
+        all_whispers_map[whisper.whisper_id] = whisper
+        
+    all_whispers = list(all_whispers_map.values())
 
-    return list(all_whispers.values())
+    # 为每个聊天计算消息总数
+    for whisper in all_whispers:
+        message_count = db.query(TreeHoleChat).filter(TreeHoleChat.whisper_id == whisper.whisper_id).count()
+        whisper.comment_count = message_count
+
+    return all_whispers

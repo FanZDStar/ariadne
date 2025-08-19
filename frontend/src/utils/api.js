@@ -274,7 +274,27 @@ export const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
-    }
+    },
+    // 删除悄悄话
+    deleteWhisper: (token, whisperId) => {
+        return request(`/tree-hole/${whisperId}`, {
+            method: 'DELETE',
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 退出聊天
+    leaveWhisperChat: (token, whisperId) => {
+        return request(`/tree-hole-chat/${whisperId}/leave`, {
+            method: 'DELETE',
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
 };
 
 // 本地存储工具

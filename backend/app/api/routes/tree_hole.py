@@ -5,6 +5,7 @@ from sqlalchemy import and_, func
 from typing import List
 from app.database.session import get_db
 from app.models.user import User
+from app.models.tree_hole_chat import TreeHoleChatParticipant 
 from app.models.tree_hole import TreeHoleWhisper, TreeHoleComment, TreeHoleLike
 from app.schemas.tree_hole import WhisperCreate, WhisperUpdate, WhisperResponse
 from app.api.deps import get_current_user
@@ -47,6 +48,10 @@ def get_user_whispers(
             TreeHoleLike.user_id == current_user.user_id
         ).first()
         whisper.liked = like is not None
+        
+        # 计算该悄悄话的聊天数
+        chat_count = db.query(TreeHoleChatParticipant).filter(TreeHoleChatParticipant.whisper_id == whisper.whisper_id).count()
+        whisper.comment_count = chat_count
         
     return whispers
 
