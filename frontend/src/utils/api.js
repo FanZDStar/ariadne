@@ -1,4 +1,4 @@
-const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz'; // 后端API地址
+const BASE_URL = 'http://127.0.0.1:8000'; // 后端API地址
 
 // 封装fetch请求
 function request(url, options = {}) {
@@ -9,34 +9,6 @@ function request(url, options = {}) {
             'Authorization': `Bearer ${token}`
         };
     }
-    // return new Promise((resolve, reject) => {
-    //     uni.request({
-    //         url: BASE_URL + url,
-    //         ...options,
-    //         success: async (res) => {
-    //             if (res.statusCode === 401) {
-    //                 // Token过期，尝试刷新Token
-    //                 try {
-    //                     const newToken = await api.refreshToken();
-    //                     storage.setToken(newToken);
-    //                     options.header['Authorization'] = `Bearer ${newToken}`;
-    //                     // 重试请求
-    //                     const retryRes = await request(url, options);
-    //                     resolve(retryRes);
-    //                 } catch (err) {
-    //                     reject(new Error('登录已过期，请重新登录'));
-    //                 }
-    //             } else if (res.statusCode >= 200 && res.statusCode < 300) {
-    //                 resolve(res.data);
-    //             } else {
-    //                 reject(new Error(`HTTP ${res.statusCode}`));
-    //             }
-    //         },
-    //         fail: (err) => {
-    //             reject(new Error('网络请求失败，请检查网络连接'));
-    //         }
-    //     });
-    // });
     return new Promise((resolve, reject) => {
         uni.request({
             url: BASE_URL + url,

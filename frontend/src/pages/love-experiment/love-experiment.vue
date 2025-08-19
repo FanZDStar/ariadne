@@ -1,31 +1,19 @@
 <template>
     <view class="dialog-container">
         <view class="header">
-            <text class="title">恋爱尝试</text>
-            <text class="subtitle">模拟恋爱场景，练习表达和沟通技巧</text>
+            <text class="title">心语练习</text>
+            <text class="subtitle">模拟交际场景，练习表达和沟通技巧</text>
         </view>
 
         <view class="content">
-            <ChatMessages 
-                ref="chatMessages"
-                :messages="chatHistory" 
-                @ai-typing="handleAiTyping" 
-            />
+            <ChatMessages ref="chatMessages" :messages="chatHistory" @ai-typing="handleAiTyping" />
         </view>
-        
+
         <!-- 底部输入框 -->
-        <ChatInput 
-            class="fixed-input"
-            placeholder="请输入你想尝试的恋爱场景或话题..." 
-            @send="handleSend" 
-            :disabled="isAiTyping"
-        />
-        
+        <ChatInput class="fixed-input" placeholder="请输入你想尝试的交际场景或话题..." @send="handleSend" :disabled="isAiTyping" />
+
         <!-- 悬浮保存按钮 -->
-        <SaveButton 
-            :can-save="hasNewMessages && chatHistory.length > 1"
-            @save="saveChatHistory"
-        />
+        <SaveButton :can-save="hasNewMessages && chatHistory.length > 1" @save="saveChatHistory" />
     </view>
 </template>
 
@@ -45,7 +33,7 @@ export default {
     data() {
         return {
             scene: 'love-experiment',
-            welcomeMessage: '你好！我是你的恋爱练习伙伴。我们可以一起模拟各种恋爱场景，帮助你练习表达和沟通技巧。你想尝试什么样的场景呢？'
+            welcomeMessage: '你好！我是你的人际交流练习伙伴。我们可以一起模拟各种人际交往场景，帮助你练习表达和沟通技巧。你想尝试什么样的场景呢？'
         }
     }
 }
@@ -85,7 +73,8 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin-bottom: 120rpx; /* 只为输入框留出空间 */
+    margin-bottom: 120rpx;
+    /* 只为输入框留出空间 */
 }
 
 .fixed-input {
