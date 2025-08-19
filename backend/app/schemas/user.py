@@ -1,30 +1,158 @@
-from pydantic import BaseModel, Field
+# # from pydantic import BaseModel, Field
+# # from typing import Optional
+# # from datetime import datetime
+
+# # # 用户基础模型
+# # class UserBase(BaseModel):
+# #     username: str = Field(..., max_length=15)
+# #     email: Optional[str] = None
+# #     nickname: Optional[str] = Field(None, max_length=6)
+# #     bio: Optional[str] = None
+
+# # # 用户创建模型
+# # class UserCreate(UserBase):
+# #     password: str
+
+# # # 用户更新模型
+# # class UserUpdate(BaseModel):
+# #     nickname: Optional[str] = Field(None, max_length=6)
+# #     bio: Optional[str] = None
+# #     avatar_url: Optional[str] = None
+
+# # # 用户登录模型
+# # class UserLogin(BaseModel):
+# #     username: str
+# #     password: str
+
+# # # 用户响应模型
+# # class UserResponse(UserBase):
+# #     user_id: int
+# #     avatar_url: Optional[str] = None
+# #     created_at: datetime
+# #     is_active: bool
+    
+# #     class Config:
+# #         from_attributes = True
+
+# # # Token模型
+# # class Token(BaseModel):
+# #     access_token: str
+# #     token_type: str
+
+# # # Token数据模型
+# # class TokenData(BaseModel):
+# #     username: Optional[str] = None
+
+# from pydantic import BaseModel, Field, validator
+# from typing import Optional
+# from datetime import datetime
+# import re
+
+# # 用户名和密码的正则表达式
+# USERNAME_REGEX = r"^(?=[a-zA-Z0-9]{2,15}$)(?!^[0-9]+$)(?!^[a-zA-Z]+$)"
+# PASSWORD_REGEX = r"^(?=[a-zA-Z0-9!]{2,}$)(?!^[0-9!]+$)(?!^[a-zA-Z!]+$)(?!^[a-zA-Z0-9]+$)"
+
+# class UserBase(BaseModel):
+#     username: str = Field(..., max_length=15)
+#     email: Optional[str] = None
+#     nickname: Optional[str] = Field(None, max_length=6)
+#     bio: Optional[str] = None
+
+# class UserCreate(UserBase):
+#     password: str
+
+#     @validator('username')
+#     def validate_username(cls, v):
+#         if not re.match(USERNAME_REGEX, v):
+#             raise ValueError('用户名必须是2-15位的大小写字母和数字的组合')
+#         return v
+
+#     @validator('password')
+#     def validate_password(cls, v):
+#         if not re.match(PASSWORD_REGEX, v):
+#             raise ValueError('密码必须是大小写字母、数字和英文感叹号的两种或以上组合')
+#         return v
+    
+#     @validator('email')
+#     def validate_email(cls, v):
+#         if v and not re.match(r"[^@]+@[^@]+\.[^@]+", v):
+#             raise ValueError('邮箱格式不正确')
+#         return v
+
+# class UserLogin(BaseModel):
+#     username: str # This can be username or email
+#     password: str
+
+# class UserUpdate(BaseModel):
+#     nickname: Optional[str] = Field(None, max_length=6)
+#     bio: Optional[str] = None
+#     avatar_url: Optional[str] = None
+
+# class UserResponse(UserBase):
+#     user_id: int
+#     avatar_url: Optional[str] = None
+#     created_at: datetime
+#     is_active: bool
+    
+#     class Config:
+#         from_attributes = True
+
+# class Token(BaseModel):
+#     access_token: str
+#     token_type: str
+
+# class TokenData(BaseModel):
+#     username: Optional[str] = None
+
+from pydantic import BaseModel, Field, validator
 from typing import Optional
 from datetime import datetime
+import re
 
-# 用户基础模型
+# 用户名和密码的正则表达式
+# USERNAME_REGEX = r"^(?=[a-zA-Z0-9]{2,15}$)(?!^[0-9]+$)(?!^[a-zA-Z]+$)"
+# PASSWORD_REGEX = r"^(?=[a-zA-Z0-9!]{6,15}$)(?!^[0-9!]+$)(?!^[a-zA-Z!]+$)(?!^[a-zA-Z0-9]+$)"
+# 用户名和密码的正则表达式
+USERNAME_REGEX = r"^(?=[a-zA-Z0-9]{2,15}$)(?!^[0-9]+$)(?!^[a-zA-Z]+$)"
+# 更新后的密码正则表达式
+PASSWORD_REGEX = r"^(((?=.*[a-zA-Z])(?=.*[0-9]))|((?=.*[a-zA-Z])(?=.*[!]))|((?=.*[0-9])(?=.*[!])))[a-zA-Z0-9!]{6,15}$"
+
 class UserBase(BaseModel):
     username: str = Field(..., max_length=15)
     email: Optional[str] = None
     nickname: Optional[str] = Field(None, max_length=6)
     bio: Optional[str] = None
 
-# 用户创建模型
 class UserCreate(UserBase):
     password: str
 
-# 用户更新模型
+    @validator('username')
+    def validate_username(cls, v):
+        if not re.match(USERNAME_REGEX, v):
+            raise ValueError('用户名必须是2-15位的大小写字母和数字的组合')
+        return v
+
+    @validator('password')
+    def validate_password(cls, v):
+        if not re.match(PASSWORD_REGEX, v):
+            raise ValueError('密码必须是6-15位的大小写字母、数字和英文感叹号的两种或以上组合')
+        return v
+    
+    @validator('email')
+    def validate_email(cls, v):
+        if v and not re.match(r"[^@]+@[^@]+\.[^@]+", v):
+            raise ValueError('邮箱格式不正确')
+        return v
+
+class UserLogin(BaseModel):
+    username: str # This can be username or email
+    password: str
+
 class UserUpdate(BaseModel):
     nickname: Optional[str] = Field(None, max_length=6)
     bio: Optional[str] = None
     avatar_url: Optional[str] = None
 
-# 用户登录模型
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-# 用户响应模型
 class UserResponse(UserBase):
     user_id: int
     avatar_url: Optional[str] = None
@@ -34,11 +162,9 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
-# Token模型
 class Token(BaseModel):
     access_token: str
     token_type: str
 
-# Token数据模型
 class TokenData(BaseModel):
     username: Optional[str] = None

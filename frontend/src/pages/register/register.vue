@@ -5,7 +5,7 @@
             <text class="subtitle">创建您的念念有声账号</text>
         </view>
 
-        <view class="register-form">
+        <!-- <view class="register-form">
             <view class="input-group">
                 <input class="input" placeholder="请输入用户名（最多15个字符）" v-model="username" />
             </view>
@@ -22,13 +22,34 @@
                 <input class="input" placeholder="请确认密码" v-model="confirmPassword" password />
             </view>
 
+            <button class="register-btn" @click="handleRegister">注册</button> -->
+        <view class="register-form">
+            <view class="input-group">
+                <input class="input" placeholder="请输入用户名" v-model="username" @input="validateUsername" />
+                <text v-if="usernameError" class="error-text">{{ usernameError }}</text>
+            </view>
+
+            <view class="input-group">
+                <input class="input" placeholder="请输入邮箱（可选）" v-model="email" @input="validateEmail" />
+                <text v-if="emailError" class="error-text">{{ emailError }}</text>
+            </view>
+
+            <view class="input-group">
+                <input class="input" placeholder="请输入密码" v-model="password" password @input="validatePassword" />
+                <text v-if="passwordError" class="error-text">{{ passwordError }}</text>
+            </view>
+
+            <view class="input-group">
+                <input class="input" placeholder="请确认密码" v-model="confirmPassword" password />
+            </view>
+
             <button class="register-btn" @click="handleRegister">注册</button>
 
-            <view class="login-link">
-                <text>已有账号？</text>
-                <text class="link" @click="goToLogin">立即登录</text>
-            </view>
+        <view class="login-link">
+            <text>已有账号？</text>
+            <text class="link" @click="goToLogin">立即登录</text>
         </view>
+    </view>
     </view>
 </template>
 
@@ -38,14 +59,66 @@ import { api } from '../../utils/api.js';
 export default {
     data() {
         return {
+            // username: '',
+            // email: '',
+            // password: '',
+            // confirmPassword: ''
             username: '',
             email: '',
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            usernameError: '',
+            passwordError: '',
+            emailError: ''
         }
     },
     methods: {
+        validateUsername() {
+            const regex = /^(?=[a-zA-Z0-9]{2,15}$)(?!^[0-9]+$)(?!^[a-zA-Z]+$)/;
+            if (!regex.test(this.username)) {
+                this.usernameError = '用户名必须是2-15位的大小写字母和数字的组合';
+            } else {
+                this.usernameError = '';
+            }
+        },
+        validatePassword() {
+            // 更新后的密码正则表达式
+            const regex = /^(((?=.*[a-zA-Z])(?=.*[0-9]))|((?=.*[a-zA-Z])(?=.*[!]))|((?=.*[0-9])(?=.*[!])))[a-zA-Z0-9!]{6,15}$/;
+            if (!this.password) {
+                this.passwordError = '请输入密码';
+            } else if (!regex.test(this.password)) {
+                this.passwordError = '密码必须是6-15位的大小写字母、数字和英文感叹号的两种或以上组合';
+            } else {
+                this.passwordError = '';
+            }
+        },
+        validateEmail() {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (this.email && !regex.test(this.email)) {
+                this.emailError = '邮箱格式不正确';
+            } else {
+                this.emailError = '';
+            }
+        },
         async handleRegister() {
+
+            this.validateUsername();
+            this.validatePassword();
+            this.validateEmail();
+
+            if (this.usernameError || this.passwordError || this.emailError) {
+                console.log('前端验证失败:', {
+                    usernameError: this.usernameError,
+                    passwordError: this.passwordError,
+                    emailError: this.emailError
+                });
+                uni.showToast({
+                    title: this.usernameError || this.passwordError || this.emailError,
+                    icon: 'none'
+                });
+                return;
+            }
+
             if (!this.username || !this.password) {
                 uni.showToast({
                     title: '请输入用户名和密码',
@@ -138,6 +211,11 @@ export default {
 </script>
 
 <style scoped>
+.error-text {
+    color: red;
+    font-size: 24rpx;
+}
+
 .register-container {
     padding: 40rpx;
     background-color: #f8f8f8;
