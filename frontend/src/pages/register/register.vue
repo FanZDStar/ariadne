@@ -272,15 +272,22 @@ export default {
     margin-left: 10rpx;
 }
 
+.input-group {
+    margin-bottom: 30rpx;
+    border-bottom: 1rpx solid #eee;
+}
+
 .password-input-container {
     display: flex;
     align-items: center;
-    width: 100%;
-    border-bottom: 1rpx solid #eee;
+    border-bottom: none;
 }
 
 .input {
     flex: 1;
+    height: 80rpx;
+    font-size: 32rpx;
+    border: none;
 }
 
 .eye-icon {

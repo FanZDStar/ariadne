@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <view class="profile-container">
         <view class="header">
             <view class="avatar-container" @click="changeAvatar">
@@ -34,7 +34,7 @@
             </view>
         </view>
 
-        <view class="settings-modal" v-if="showSettingsModal">
+        <view class="settings-modal-backdrop" v-if="showSettingsModal" @click.self="closeSettingsModal">
             <view class="modal-content">
                 <view v-if="modalView === 'main'">
                     <view class="modal-header">
@@ -55,19 +55,20 @@
 
                 <view v-if="modalView === 'email'">
                     <view class="modal-header">
-                        <text class="back-btn" @click="modalView = 'main'">←</text>
+                        <text class="back-btn" @click="returnToMainModal">←</text>
                         <text class="modal-title">变更邮箱</text>
                     </view>
                     <view class="modal-body">
                         <input class="input" placeholder="请输入新邮箱" v-model="newEmail" @input="validateEmail" />
                         <text v-if="emailError" class="error-text">{{ emailError }}</text>
+                        <text v-if="emailSuccessMessage" class="success-text">{{ emailSuccessMessage }}</text>
                         <button class="submit-btn" @click="handleChangeEmail">确定</button>
                     </view>
                 </view>
 
                 <view v-if="modalView === 'password'">
                     <view class="modal-header">
-                        <text class="back-btn" @click="modalView = 'main'">←</text>
+                        <text class="back-btn" @click="returnToMainModal">←</text>
                         <text class="modal-title">修改密码</text>
                     </view>
                     <view class="modal-body">
@@ -90,6 +91,109 @@
                                 showConfirmNewPassword ? '👁️' : '👁️‍🗨️' }}</text>
                         </view>
                         <text v-if="passwordError" class="error-text">{{ passwordError }}</text>
+                        <text v-if="passwordSuccessMessage" class="success-text">{{ passwordSuccessMessage }}</text>
+                        <button class="submit-btn" @click="handleChangePassword">提交</button>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template> -->
+<template>
+    <view class="profile-container">
+        <view class="header">
+            <view class="avatar-container" @click="changeAvatar">
+                <image class="avatar" :src="getUserAvatar()" mode="aspectFill"></image>
+                <view class="camera-icon">📷</view>
+            </view>
+            <view class="user-info-container">
+                <text class="username" @click="editNickname">{{ userInfo.nickname || '情感小白' }}</text>
+            </view>
+            <view class="user-desc-container">
+                <text class="user-desc" @click="editBio">{{ userInfo.bio || '情感探索者' }}</text>
+            </view>
+        </view>
+
+        <view class="content">
+            <view class="menu-item" @click="openSettingsModal">
+                <text class="menu-text">信息修改</text>
+                <text class="arrow">></text>
+            </view>
+            <view class="menu-item" @click="goToHistory">
+                <text class="menu-text">对话历史</text>
+                <text class="arrow">></text>
+            </view>
+            <view class="menu-item" @click="goToFeedback">
+                <text class="menu-text">意见反馈</text>
+                <text class="arrow">></text>
+            </view>
+            <view class="menu-item" @click="logout">
+                <text class="menu-text logout">退出登录</text>
+            </view>
+        </view>
+
+        <view class="settings-modal-backdrop" v-if="showSettingsModal" @click.self="closeSettingsModal">
+            <view class="modal-content">
+                <view v-if="modalView === 'main'">
+                    <view class="modal-header">
+                        <text class="back-btn" @click="closeSettingsModal">←</text>
+                        <text class="modal-title">信息修改</text>
+                    </view>
+                    <view class="modal-options">
+                        <view class="option-item" @click="modalView = 'email'">
+                            <text>变更邮箱</text>
+                            <text class="arrow">></text>
+                        </view>
+                        <view class="option-item" @click="modalView = 'password'">
+                            <text>修改密码</text>
+                            <text class="arrow">></text>
+                        </view>
+                    </view>
+                </view>
+
+                <view v-if="modalView === 'email'">
+                    <view class="modal-header">
+                        <text class="back-btn" @click="returnToMainModal">←</text>
+                        <text class="modal-title">变更邮箱</text>
+                    </view>
+                    <view class="modal-body">
+                        <view class="info-row">
+                            <text class="info-label">当前邮箱:</text>
+                            <text class="info-value">{{ userInfo.email || '未设置' }}</text>
+                        </view>
+                        <input class="input" placeholder="请输入新邮箱" v-model="newEmail" @input="validateEmail" />
+                        <text v-if="emailError" class="error-text">{{ emailError }}</text>
+                        <text v-if="emailSuccessMessage" class="success-text">{{ emailSuccessMessage }}</text>
+                        <button class="submit-btn" @click="handleChangeEmail">确定</button>
+                    </view>
+                </view>
+
+                <view v-if="modalView === 'password'">
+                    <view class="modal-header">
+                        <text class="back-btn" @click="returnToMainModal">←</text>
+                        <text class="modal-title">修改密码</text>
+                    </view>
+                    <view class="modal-body">
+                        <view class="password-input-container">
+                            <input class="input" placeholder="请输入旧密码" :password="!showOldPassword"
+                                v-model="oldPassword" />
+                            <text class="eye-icon" @click="showOldPassword = !showOldPassword">{{ showOldPassword ?
+                                '👁️' : '👁️‍🗨️' }}</text>
+                        </view>
+                        <view class="password-input-container">
+                            <input class="input" placeholder="请输入新密码" :password="!showNewPassword" v-model="newPassword"
+                                @input="validatePassword" />
+                            <text class="eye-icon" @click="showNewPassword = !showNewPassword">{{ showNewPassword ?
+                                '👁️' : '👁️‍🗨️' }}</text>
+                        </view>
+                        <view class="password-input-container">
+                            <input class="input" placeholder="请确认新密码" :password="!showConfirmNewPassword"
+                                v-model="confirmNewPassword" />
+                            <text class="eye-icon" @click="showConfirmNewPassword = !showConfirmNewPassword">{{
+                                showConfirmNewPassword ? '👁️' : '👁️‍🗨️' }}</text>
+                        </view>
+                        <text v-if="passwordError" class="error-text">{{ passwordError }}</text>
+                        <text v-if="passwordSuccessMessage" class="success-text">{{ passwordSuccessMessage }}</text>
                         <button class="submit-btn" @click="handleChangePassword">提交</button>
                     </view>
                 </view>
@@ -114,10 +218,12 @@ export default {
             modalView: 'main', // 'main', 'email', 'password'
             newEmail: '',
             emailError: '',
+            emailSuccessMessage: '',
             oldPassword: '',
             newPassword: '',
             confirmNewPassword: '',
             passwordError: '',
+            passwordSuccessMessage: '',
             showOldPassword: false,
             showNewPassword: false,
             showConfirmNewPassword: false,
@@ -187,14 +293,24 @@ export default {
 
         closeSettingsModal() {
             this.showSettingsModal = false;
+            this.clearModalState();
+        },
+
+        returnToMainModal() {
+            this.modalView = 'main';
+            this.clearModalState();
+        },
+
+        clearModalState() {
             this.newEmail = '';
             this.emailError = '';
+            this.emailSuccessMessage = '';
             this.oldPassword = '';
             this.newPassword = '';
             this.confirmNewPassword = '';
             this.passwordError = '';
+            this.passwordSuccessMessage = '';
         },
-
         validateEmail() {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (this.newEmail && !regex.test(this.newEmail)) {
@@ -207,15 +323,57 @@ export default {
         validatePassword() {
             const regex = /^(((?=.*[a-zA-Z])(?=.*[0-9]))|((?=.*[a-zA-Z])(?=.*[!]))|((?=.*[0-9])(?=.*[!])))[a-zA-Z0-9!]{6,15}$/;
             if (this.newPassword && !regex.test(this.newPassword)) {
-                this.passwordError = '密码必须是6-15位的大小写字母、数字和英文感叹号的两种或以上组合';
+                this.passwordError = '新密码必须是6-15位的大小写字母、数字和英文感叹号的两种或以上组合';
             } else {
                 this.passwordError = '';
             }
         },
 
+        // async handleChangeEmail() {
+        //     this.validateEmail();
+        //     if (this.emailError) return;
+
+        //     if (!this.newEmail) {
+        //         this.emailError = '请输入新邮箱';
+        //         return;
+        //     }
+
+        //     const token = storage.getToken();
+        //     try {
+        //         const updatedUser = await api.updateUserEmail(token, { email: this.newEmail });
+        //         this.userInfo.email = updatedUser.email;
+        //         storage.setUserInfo(updatedUser);
+
+        //         this.emailSuccessMessage = '邮箱更新成功';
+
+        //         setTimeout(() => {
+        //             this.closeSettingsModal();
+        //         }, 3000);
+
+        //     } catch (error) {
+        //         console.error('更新邮箱失败:', error);
+        //         if (error.responseData && error.responseData.detail) {
+        //             this.emailError = error.responseData.detail === 'Email already registered' ? '该邮箱已被注册' : error.responseData.detail;
+        //         } else {
+        //             this.emailError = '更新失败，请稍后重试';
+        //         }
+        //     }
+        // },
+
         async handleChangeEmail() {
+            this.emailError = '';
+            this.emailSuccessMessage = '';
+
             this.validateEmail();
-            if (this.emailError) {
+            if (this.emailError) return;
+
+            if (!this.newEmail) {
+                this.emailError = '请输入新邮箱';
+                return;
+            }
+
+            if (this.newEmail === this.userInfo.email) {
+                this.emailError = '新邮箱不能与当前邮箱相同';
                 return;
             }
 
@@ -224,39 +382,35 @@ export default {
                 const updatedUser = await api.updateUserEmail(token, { email: this.newEmail });
                 this.userInfo.email = updatedUser.email;
                 storage.setUserInfo(updatedUser);
-
-                uni.showToast({
-                    title: '邮箱更新成功',
-                    icon: 'success'
-                });
-
+                this.emailSuccessMessage = '邮箱更新成功';
                 setTimeout(() => {
                     this.closeSettingsModal();
                 }, 3000);
             } catch (error) {
                 console.error('更新邮箱失败:', error);
-                let errorMessage = '更新邮箱失败';
                 if (error.responseData && error.responseData.detail) {
-                    errorMessage = error.responseData.detail;
+                    this.emailError = error.responseData.detail === 'Email already registered' ? '该邮箱已被注册' : error.responseData.detail;
+                } else {
+                    this.emailError = '更新失败，请稍后重试';
                 }
-                uni.showToast({
-                    title: errorMessage,
-                    icon: 'none'
-                });
             }
         },
 
         async handleChangePassword() {
+            this.passwordError = '';
+
             this.validatePassword();
             if (this.passwordError) {
                 return;
             }
 
             if (this.newPassword !== this.confirmNewPassword) {
-                uni.showToast({
-                    title: '两次输入的新密码不一致',
-                    icon: 'none'
-                });
+                this.passwordError = '两次输入的新密码不一致';
+                return;
+            }
+
+            if (!this.oldPassword || !this.newPassword) {
+                this.passwordError = '请输入所有密码字段';
                 return;
             }
 
@@ -267,24 +421,19 @@ export default {
                     new_password: this.newPassword
                 });
 
-                uni.showToast({
-                    title: '密码修改成功',
-                    icon: 'success'
-                });
+                this.passwordSuccessMessage = '密码修改成功';
 
                 setTimeout(() => {
                     this.closeSettingsModal();
                 }, 3000);
+
             } catch (error) {
                 console.error('修改密码失败:', error);
-                let errorMessage = '修改密码失败';
                 if (error.responseData && error.responseData.detail) {
-                    errorMessage = error.responseData.detail;
+                    this.passwordError = error.responseData.detail;
+                } else {
+                    this.passwordError = '修改失败，请稍后重试';
                 }
-                uni.showToast({
-                    title: errorMessage,
-                    icon: 'none'
-                });
             }
         },
 
@@ -575,7 +724,7 @@ export default {
     font-size: 36rpx;
 }
 
-/* .settings-modal {
+.settings-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -589,10 +738,11 @@ export default {
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: #f8f8f8;
     border-radius: 20rpx;
-    width: 80%;
+    width: 85%;
     padding: 40rpx;
+    box-sizing: border-box;
 }
 
 .modal-header {
@@ -600,7 +750,7 @@ export default {
     align-items: center;
     justify-content: center;
     position: relative;
-    margin-bottom: 40rpx;
+    margin-bottom: 50rpx;
 }
 
 .modal-title {
@@ -609,10 +759,11 @@ export default {
     color: #333;
 }
 
-.close-btn,
 .back-btn {
     position: absolute;
     left: 0;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 40rpx;
     color: #999;
 }
@@ -620,20 +771,21 @@ export default {
 .modal-options .option-item {
     display: flex;
     justify-content: space-between;
-    padding: 30rpx 0;
+    align-items: center;
+    padding: 30rpx 10rpx;
     border-bottom: 1rpx solid #eee;
 }
 
 .modal-body {
     display: flex;
     flex-direction: column;
-    gap: 20rpx;
+    gap: 30rpx;
 }
 
 .password-input-container {
     display: flex;
     align-items: center;
-    width: 100%;
+    background-color: #fff;
     border: 1rpx solid #ddd;
     border-radius: 10rpx;
     padding: 0 20rpx;
@@ -643,10 +795,13 @@ export default {
     flex: 1;
     height: 80rpx;
     font-size: 28rpx;
+    border: none;
+    /* Removed individual input border */
+    background-color: transparent;
 }
 
 .eye-icon {
-    margin-left: 10rpx;
+    padding-left: 10rpx;
 }
 
 .submit-btn {
@@ -661,94 +816,14 @@ export default {
 .error-text {
     color: red;
     font-size: 24rpx;
-} */
- .settings-modal {
-     position: fixed;
-     top: 0;
-     left: 0;
-     right: 0;
-     bottom: 0;
-     background-color: rgba(0, 0, 0, 0.5);
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     z-index: 1000;
- }
+    margin-top: -15rpx;
+    margin-bottom: 5rpx;
+}
 
- .modal-content {
-     background-color: #f8f8f8;
-     border-radius: 20rpx;
-     width: 80%;
-     padding: 40rpx;
- }
-
- .modal-header {
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     position: relative;
-     margin-bottom: 40rpx;
- }
-
- .modal-title {
-     font-size: 36rpx;
-     font-weight: bold;
-     color: #333;
- }
-
- .close-btn,
- .back-btn {
-     position: absolute;
-     left: 0;
-     font-size: 40rpx;
-     color: #999;
- }
-
- .modal-options .option-item {
-     display: flex;
-     justify-content: space-between;
-     padding: 30rpx 0;
-     border-bottom: 1rpx solid #eee;
- }
-
- .modal-body {
-     display: flex;
-     flex-direction: column;
-     gap: 20rpx;
- }
-
- .password-input-container {
-     display: flex;
-     align-items: center;
-     width: 100%;
-     border: 1rpx solid #ddd;
-     border-radius: 10rpx;
-     padding: 0 20rpx;
- }
-
- .input {
-     flex: 1;
-     height: 80rpx;
-     font-size: 28rpx;
-     border: none;
-     /* Removed individual input border */
- }
-
- .eye-icon {
-     margin-left: 10rpx;
- }
-
- .submit-btn {
-     background-color: #007aff;
-     color: white;
-     border-radius: 10rpx;
-     height: 80rpx;
-     line-height: 80rpx;
-     margin-top: 20rpx;
- }
-
- .error-text {
-     color: red;
-     font-size: 24rpx;
- }
+.success-text {
+    color: green;
+    font-size: 24rpx;
+    margin-top: -15rpx;
+    margin-bottom: 5rpx;
+}
 </style>

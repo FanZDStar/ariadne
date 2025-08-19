@@ -113,6 +113,7 @@ def update_user_me(
     db.refresh(current_user)
     return current_user
 
+
 @router.put("/users/me/email", response_model=UserResponse)
 def update_user_email(
     user_update: UserUpdateEmail,
@@ -120,17 +121,26 @@ def update_user_email(
     current_user: User = Depends(get_current_user)
 ):
     """更新当前用户的邮箱"""
-    # Check if the email already exists
+    # 检查新邮箱是否与当前邮箱相同
+    if user_update.email == current_user.email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="新邮箱不能与当前邮箱相同"
+        )
+        
+    # 检查邮箱是否已被其他用户注册
     db_email = db.query(User).filter(User.email == user_update.email).first()
     if db_email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            detail="该邮箱已被注册"
         )
+
     current_user.email = user_update.email
     db.commit()
     db.refresh(current_user)
     return current_user
+
 @router.put("/users/me/password", response_model=UserResponse)
 def update_user_password(
     user_update: UserUpdatePassword,
