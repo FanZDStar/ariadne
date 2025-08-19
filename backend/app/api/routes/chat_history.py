@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
+import json
+import aiohttp
 
 from app.database.session import get_db
 from app.models.chat_history import ChatSession, ChatMessage
@@ -12,8 +14,73 @@ from app.schemas.chat_history import (
 )
 from app.api.deps import get_current_user
 from app.models.user import User
+from app.core.config import settings
 
 router = APIRouter()
+
+async def generate_title_with_ai(messages: List[dict]) -> str:
+    """使用AI为对话生成标题"""
+    try:
+        # 获取对话内容摘要（最多取前3轮对话）
+        conversation_text = ""
+        count = 0
+        for msg in messages:
+            if count >= 6:  # 最多3轮对话（每轮用户+助手）
+                break
+            conversation_text += f"{msg['role']}: {msg['content']}\n"
+            count += 1
+        
+        # 构建标题生成的prompt
+        title_prompt = f"""
+请为以下对话生成一个简洁的标题（不超过15个字）：
+
+{conversation_text}
+
+要求：
+1. 标题要能概括对话的主要内容或情感主题
+2. 不超过15个字
+3. 语言简洁、有吸引力
+4. 只返回标题内容，不要其他说明
+
+标题："""
+
+        # 调用AI API
+        async with aiohttp.ClientSession() as session:
+            headers = {
+                'Authorization': f'Bearer {settings.ai_api_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            data = {
+                "model": "qwen-plus",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": title_prompt
+                    }
+                ],
+                "temperature": 0.7,
+                "max_tokens": 30
+            }
+            
+            async with session.post(
+                'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+                headers=headers,
+                json=data
+            ) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    ai_title = result['choices'][0]['message']['content'].strip()
+                    # 移除可能的引号和多余字符
+                    ai_title = ai_title.replace('"', '').replace("'", '').strip()
+                    return ai_title[:15]  # 确保不超过15个字
+                else:
+                    print(f"AI API调用失败: {response.status}")
+                    return None
+                    
+    except Exception as e:
+        print(f"AI标题生成失败: {e}")
+        return None
 
 @router.post("/save-chat", response_model=ChatSessionSchema)
 async def save_chat_session(
@@ -72,14 +139,22 @@ async def save_chat_session(
         db.delete(oldest_session)
         db.flush()
     
-    # 生成对话标题（取第一条用户消息的前30个字符）
+    # 生成对话标题
     title = request.title
     if not title:
-        first_user_message = next((msg for msg in request.messages if msg.role == "user"), None)
-        if first_user_message:
-            title = first_user_message.content[:30] + ("..." if len(first_user_message.content) > 30 else "")
+        # 尝试使用AI生成标题
+        messages_dict = [{"role": msg.role, "content": msg.content} for msg in request.messages]
+        ai_title = await generate_title_with_ai(messages_dict)
+        
+        if ai_title:
+            title = ai_title
         else:
-            title = f"{request.scene}对话"
+            # AI生成失败，使用兜底方案
+            first_user_message = next((msg for msg in request.messages if msg.role == "user"), None)
+            if first_user_message:
+                title = first_user_message.content[:30] + ("..." if len(first_user_message.content) > 30 else "")
+            else:
+                title = f"{request.scene}对话"
     
     # 创建新的对话会话
     chat_session = ChatSession(

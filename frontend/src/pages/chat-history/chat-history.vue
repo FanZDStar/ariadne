@@ -16,7 +16,10 @@
                 <view v-for="item in historyList" :key="item.id" class="history-item">
                     <view class="item-content" @click="viewHistoryDetail(item)">
                         <view class="item-header">
-                            <text class="item-title">{{ item.title }}</text>
+                            <view class="title-container">
+                                <text class="item-title">{{ item.title }}</text>
+                                <text class="ai-badge" v-if="item.title && item.title.length <= 15">AI</text>
+                            </view>
                             <text class="item-time">{{ formatTime(item.created_at) }}</text>
                         </view>
                         <text class="item-preview">{{ getPreviewText(item) }}</text>
@@ -224,10 +227,26 @@ export default {
     margin-bottom: 10rpx;
 }
 
+.title-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
 .item-title {
     font-size: 30rpx;
     font-weight: bold;
     color: #333;
+    margin-right: 10rpx;
+}
+
+.ai-badge {
+    background: linear-gradient(45deg, #007aff, #5856d6);
+    color: white;
+    font-size: 18rpx;
+    padding: 2rpx 8rpx;
+    border-radius: 8rpx;
+    font-weight: normal;
 }
 
 .item-time {
