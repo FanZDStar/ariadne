@@ -56,32 +56,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="Registration failed"
         )
 
-# @router.post("/login", response_model=Token)
-# def login_user(user: UserLogin, db: Session = Depends(get_db)):
-#     """用户登录"""
-#     # 查找用户
-#     db_user = db.query(User).filter(User.username == user.username).first()
-#     if not db_user or not verify_password(user.password, db_user.password_hash):
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Incorrect username or password",
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-    
-#     # 更新最后登录时间
-#     from sqlalchemy import func
-#     db_user.last_login = func.now()
-#     db.commit()
-    
-#     # 创建访问令牌
-#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-#     access_token = create_access_token(
-#         data={"sub": user.username}, 
-#         expires_delta=access_token_expires
-#     )
-    
-#     return {"access_token": access_token, "token_type": "bearer"}
-
 @router.post("/login", response_model=Token)
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     """用户登录"""

@@ -1,4 +1,3 @@
-# file:ariadne/backend/app/api/routes/diary.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_

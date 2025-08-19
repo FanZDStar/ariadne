@@ -1,4 +1,3 @@
-#file:e:\Desktop\ariadne\frontend\src\pages/login/login.vue
 <template>
     <view class="login-container">
         <view class="login-header">

@@ -5,24 +5,6 @@
             <text class="subtitle">创建您的念念有声账号</text>
         </view>
 
-        <!-- <view class="register-form">
-            <view class="input-group">
-                <input class="input" placeholder="请输入用户名（最多15个字符）" v-model="username" />
-            </view>
-
-            <view class="input-group">
-                <input class="input" placeholder="请输入邮箱（可选）" v-model="email" />
-            </view>
-
-            <view class="input-group">
-                <input class="input" placeholder="请输入密码" v-model="password" password />
-            </view>
-
-            <view class="input-group">
-                <input class="input" placeholder="请确认密码" v-model="confirmPassword" password />
-            </view>
-
-            <button class="register-btn" @click="handleRegister">注册</button> -->
         <view class="register-form">
             <view class="input-group">
                 <input class="input" placeholder="请输入用户名" v-model="username" @input="validateUsername" />
@@ -59,10 +41,6 @@ import { api } from '../../utils/api.js';
 export default {
     data() {
         return {
-            // username: '',
-            // email: '',
-            // password: '',
-            // confirmPassword: ''
             username: '',
             email: '',
             password: '',
