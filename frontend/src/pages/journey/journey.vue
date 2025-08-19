@@ -15,7 +15,7 @@
                 <text class="card-title">碎碎念</text>
                 <text class="card-desc">记录每天的情感变化和感悟</text>
                 <view class="status">
-                    <text v-if="diaryCount !== null">已记录 {{ diaryCount }} 篇日记</text>
+                    <text v-if="diaryCount !== null">已记录 {{ diaryCount }} 篇碎碎念</text>
                     <text v-else class="loading-text">数据加载中...</text>
                 </view>
             </view>

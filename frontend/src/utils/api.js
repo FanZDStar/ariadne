@@ -159,6 +159,16 @@ export const api = {
         });
     },
 
+    // 删除日记
+    deleteDiary: (token, diaryId) => {
+        return request(`/diary/${diaryId}`, {
+            method: 'DELETE',
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
     // 获取心情统计数据
     getMoodStats: (token, period) => {
         return request(`/diary/mood-stats/${period}`, {
