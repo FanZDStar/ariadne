@@ -34,7 +34,7 @@ CREATE TABLE `chat_contexts`  (
 -- Records of chat_contexts
 -- ----------------------------
 INSERT INTO `chat_contexts` VALUES (1, '自己与自己的对话', '反思感情中的言行举止，获得AI引导和建议', '/static/self-dialog-icon.png', '2025-08-14 16:25:31');
-INSERT INTO `chat_contexts` VALUES (2, '恋爱小尝试', '帮助胆小没有经验的人迈出第一步', '/static/experience-icon.png', '2025-08-14 16:25:31');
+INSERT INTO `chat_contexts` VALUES (2, '心语练习 ', '帮助胆小没有经验的人迈出第一步', '/static/experience-icon.png', '2025-08-14 16:25:31');
 INSERT INTO `chat_contexts` VALUES (3, '爱他人先爱自己', '探讨如何在爱他人之前先学会爱自己', '/static/love-icon.png', '2025-08-14 16:25:31');
 
 -- ----------------------------
@@ -589,8 +589,8 @@ CREATE TABLE `journey_categories`  (
 -- ----------------------------
 -- Records of journey_categories
 -- ----------------------------
-INSERT INTO `journey_categories` VALUES (1, '情感日记', '记录每天的情感变化和感悟', '/static/diary-icon.png', '2025-08-14 16:25:41');
-INSERT INTO `journey_categories` VALUES (2, '成长轨迹', '查看你在情感方面的成长变化', '/static/growth-icon.png', '2025-08-14 16:25:41');
+INSERT INTO `journey_categories` VALUES (1, '碎碎念', '记录每天的情感变化和感悟', '/static/diary-icon.png', '2025-08-14 16:25:41');
+INSERT INTO `journey_categories` VALUES (2, '见心录', '查看你在情感方面的成长变化', '/static/growth-icon.png', '2025-08-14 16:25:41');
 INSERT INTO `journey_categories` VALUES (3, '经验总结', '总结从每段感情中获得的经验', '/static/summary-icon.png', '2025-08-14 16:25:41');
 
 -- ----------------------------
@@ -628,7 +628,7 @@ CREATE TABLE `system_configs`  (
 -- Records of system_configs
 -- ----------------------------
 INSERT INTO `system_configs` VALUES ('ai_model_name', 'gpt-3.5-turbo', '默认AI模型', '2025-08-14 16:26:19');
-INSERT INTO `system_configs` VALUES ('app_name', '恋恋有声', '应用名称', '2025-08-14 16:26:19');
+INSERT INTO `system_configs` VALUES ('app_name', '念念有声', '应用名称', '2025-08-14 16:26:19');
 INSERT INTO `system_configs` VALUES ('app_version', '1.0.0', '应用版本', '2025-08-14 16:26:19');
 INSERT INTO `system_configs` VALUES ('max_chat_history', '50', '最大聊天历史记录数', '2025-08-14 16:26:19');
 

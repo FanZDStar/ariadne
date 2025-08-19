@@ -1,7 +1,7 @@
 <template>
   <view class="growth-track-container">
     <view class="header">
-      <text class="title">成长轨迹</text>
+      <text class="title">见心录</text>
       <text class="subtitle">查看你的情感变化趋势</text>
     </view>
 

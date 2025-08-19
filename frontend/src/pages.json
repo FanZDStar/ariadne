@@ -21,7 +21,7 @@
     {
       "path": "pages/home/home",
       "style": {
-        "navigationBarTitleText": "恋恋有声",
+        "navigationBarTitleText": "念念有声",
         "navigationStyle": "custom"
       }
     },
@@ -86,7 +86,7 @@
     {
       "path": "pages/growth-track/growth-track",
       "style": {
-        "navigationBarTitleText": "成长轨迹",
+        "navigationBarTitleText": "见心录",
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
@@ -94,7 +94,7 @@
     {
       "path": "pages/love-experiment/love-experiment",
       "style": {
-        "navigationBarTitleText": "恋爱小尝试",
+        "navigationBarTitleText": "心语练习 ",
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
@@ -154,14 +154,14 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "恋恋有声",
+    "navigationBarTitleText": "念念有声",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
   },
   "tabBar": {
     "color": "#7A7E83",
     "selectedColor": "#007aff",
-    "borderStyle": "black",
+    "borderStyle": "white",
     "backgroundColor": "#ffffff",
     "list": [
       {

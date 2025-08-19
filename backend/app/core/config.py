@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     # 应用配置
     debug: bool = False
-    project_name: str = "恋恋有声"
+    project_name: str = "念念有声"
 
     # AI相关配置
     ai_api_url: str

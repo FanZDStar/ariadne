@@ -15,7 +15,7 @@
 
         <!-- 默认标题 -->
         <text class="navbar-title" :class="{ 'hidden': showBackToTopHint }">
-          情感日记
+          碎碎念
         </text>
       </view>
     </view>

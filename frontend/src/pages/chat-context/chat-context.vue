@@ -12,7 +12,7 @@
             </view>
 
             <view class="context-item" @click="goToExperience">
-                <text class="item-title">恋爱小尝试</text>
+                <text class="item-title">心语练习 </text>
                 <text class="item-desc">帮助胆小没有经验的人迈出第一步</text>
                 <text class="arrow">></text>
             </view>

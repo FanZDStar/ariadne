@@ -2,7 +2,7 @@
     <view class="register-container">
         <view class="register-header">
             <text class="title">注册账号</text>
-            <text class="subtitle">创建您的恋恋有声账号</text>
+            <text class="subtitle">创建您的念念有声账号</text>
         </view>
 
         <view class="register-form">
@@ -198,7 +198,7 @@ export default {
     <view class="register-container">
         <view class="register-header">
             <text class="title">注册账号</text>
-            <text class="subtitle">创建您的恋恋有声账号</text>
+            <text class="subtitle">创建您的念念有声账号</text>
         </view>
 
         <view class="register-form">

@@ -2,7 +2,7 @@
     <view class="login-container">
         <view class="login-header">
             <image class="logo" src="/static/logo.png"></image>
-            <text class="title">恋恋有声</text>
+            <text class="title">念念有声</text>
             <text class="subtitle">聚焦人文复兴，关注当代年轻人情感问题</text>
         </view>
 
@@ -150,7 +150,7 @@ export default {
     <view class="login-container">
         <view class="login-header">
             <image class="logo" src="/static/logo.png"></image>
-            <text class="title">恋恋有声</text>
+            <text class="title">念念有声</text>
             <text class="subtitle">聚焦人文复兴，关注当代年轻人情感问题</text>
         </view>
 

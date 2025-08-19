@@ -12,7 +12,7 @@
 
         <view class="content">
             <view class="journey-card" @click="goToDiary">
-                <text class="card-title">情感日记</text>
+                <text class="card-title">碎碎念</text>
                 <text class="card-desc">记录每天的情感变化和感悟</text>
                 <view class="status">
                     <text v-if="diaryCount !== null">已记录 {{ diaryCount }} 篇日记</text>
@@ -21,7 +21,7 @@
             </view>
 
             <view class="journey-card" @click="goToGrowthTrack">
-                <text class="card-title">成长轨迹</text>
+                <text class="card-title">见心录</text>
                 <text class="card-desc">查看你在情感方面的成长变化</text>
                 <view class="status">
                     <text v-if="growthScore !== '计算中...'">情感指数：{{ growthScore }}</text>

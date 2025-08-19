@@ -26,7 +26,7 @@
 
 # @app.get("/")
 # def root():
-#     return {"message": "欢迎使用恋恋有声后端API"}
+#     return {"message": "欢迎使用念念有声后端API"}
 
 # @app.get("/health")
 # def health_check():
@@ -74,7 +74,7 @@ app.include_router(api_router)
 
 @app.get("/")
 def root():
-    return {"message": "欢迎使用恋恋有声后端API"}
+    return {"message": "欢迎使用念念有声后端API"}
 
 @app.get("/health")
 def health_check():

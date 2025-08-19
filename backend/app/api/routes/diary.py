@@ -11,7 +11,7 @@ from app.models.diary_image import DiaryImage
 from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
 from app.api.deps import get_current_user
 
-router = APIRouter(prefix="/diary", tags=["情感日记"])
+router = APIRouter(prefix="/diary", tags=["碎碎念"])
 
 # ... 保留原有的创建、获取、更新、删除日记的接口 ...
 @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
@@ -20,7 +20,7 @@ def create_diary(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """创建新的情感日记"""
+    """创建新的碎碎念"""
     db_diary = EmotionalDiary(
         user_id=current_user.user_id,
         title=diary.title,
@@ -54,7 +54,7 @@ def get_user_diaries(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """获取当前用户的所有情感日记，按时间倒序排列"""
+    """获取当前用户的所有碎碎念，按时间倒序排列"""
     query = db.query(EmotionalDiary)\
                 .filter(EmotionalDiary.user_id == current_user.user_id)\
                 .order_by(EmotionalDiary.created_at.desc())
@@ -72,7 +72,7 @@ def get_diary(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """获取特定的情感日记"""
+    """获取特定的碎碎念"""
     diary = db.query(EmotionalDiary)\
               .filter(EmotionalDiary.diary_id == diary_id)\
               .filter(EmotionalDiary.user_id == current_user.user_id)\
@@ -93,7 +93,7 @@ def update_diary(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """更新情感日记"""
+    """更新碎碎念"""
     db_diary = db.query(EmotionalDiary)\
                  .filter(EmotionalDiary.diary_id == diary_id)\
                  .filter(EmotionalDiary.user_id == current_user.user_id)\
@@ -140,7 +140,7 @@ def delete_diary(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """删除情感日记"""
+    """删除碎碎念"""
     db_diary = db.query(EmotionalDiary)\
                  .filter(EmotionalDiary.diary_id == diary_id)\
                  .filter(EmotionalDiary.user_id == current_user.user_id)\

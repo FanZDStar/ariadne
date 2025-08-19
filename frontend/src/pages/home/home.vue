@@ -1,7 +1,7 @@
 <!-- <template>
     <view class="home-container">
         <view class="header">
-            <text class="title">恋恋有声</text>
+            <text class="title">念念有声</text>
             <text class="subtitle">聚焦人文复兴，关注当代年轻人情感问题</text>
             <view class="user-info" v-if="userInfo">
                 <text class="welcome">欢迎，{{ userInfo.nickname || userInfo.username }}</text>
@@ -164,7 +164,7 @@ export default {
 <template>
     <view class="home-container">
         <view class="header">
-            <text class="title">恋恋有声</text>
+            <text class="title">念念有声</text>
             <text class="subtitle">聚焦人文复兴，关注当代年轻人情感问题</text>
             <view class="user-info" v-if="userInfo">
                 <text class="welcome">欢迎，{{ userInfo.nickname || userInfo.username }}</text>
@@ -218,6 +218,11 @@ export default {
     },
 
     onLoad() {
+        this.loadUserInfo();
+    },
+
+    onShow() {
+        // 每次页面显示时都检查用户信息
         this.loadUserInfo();
     },
 
