@@ -175,7 +175,8 @@ export default {
                 if (this.userInfo.avatar_url.startsWith('http')) {
                     return this.userInfo.avatar_url;
                 }
-                const baseUrl = 'http://127.0.0.1:8000';
+                // const baseUrl = 'http://127.0.0.1:8000';
+                const baseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
                 if (this.userInfo.avatar_url.startsWith('/')) {
                     return baseUrl + this.userInfo.avatar_url;
                 } else {

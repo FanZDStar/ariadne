@@ -39,8 +39,8 @@
 
 <script>
 // 使用环境变量的API基础地址
-// const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+// const BASE_URL = 'http://127.0.0.1:8000';
 export default {
     data() {
         return {
