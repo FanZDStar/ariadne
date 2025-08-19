@@ -329,7 +329,6 @@ export default {
   margin-right: 20rpx;
   background-color: #f5f5f5;
   border-radius: 50rpx;
-  white-space: nowrap;
 }
 
 .period-item.active {
@@ -339,6 +338,8 @@ export default {
 .period-text {
   font-size: 28rpx;
   color: #333;
+  /* 修改处：确保文字不换行 */
+  white-space: nowrap;
 }
 
 .period-item.active .period-text {
