@@ -117,7 +117,7 @@ def leave_chat(
 
     db.delete(participant)
     db.commit()
-    retur
+    return
 @router.get("/chats/", response_model=List[WhisperResponse]) # 修改 response_model
 def get_user_chats(
     db: Session = Depends(get_db),

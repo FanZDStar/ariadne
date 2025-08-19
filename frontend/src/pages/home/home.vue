@@ -20,7 +20,7 @@
             <view class="card" @click="goToTips">
                 <image class="card-icon" src="/static/tips-icon.png"></image>
                 <view class="card-text">
-                    <text class="card-title">恋爱小技巧</text>
+                    <text class="card-title">交往小技巧</text>
                     <text class="card-desc">每天一点新鲜感，帮助你迈出第一步</text>
                 </view>
             </view>

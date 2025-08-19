@@ -15,13 +15,14 @@
 #     comment_count = Column(Integer, default=0)
 #     created_at = Column(DateTime, server_default=func.now())
 #     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+#     chatted = Column(Boolean, default=False)
     
 #     # 关联评论
 #     comments = relationship("TreeHoleComment", back_populates="whisper")
 #     # 关联点赞
 #     likes = relationship("TreeHoleLike", back_populates="whisper")
 #     # 关联用户
-#     user = relationship("User", back_populates="whispers")
+#     user = relationship("User")
 
 # class TreeHoleComment(Base):
 #     __tablename__ = "tree_hole_comments"
@@ -48,7 +49,7 @@
 #     # 反向关系
 #     whisper = relationship("TreeHoleWhisper", back_populates="likes")
 #     user = relationship("User")
-#file:ariadne/backend/app/models/tree_hole.py
+
 from sqlalchemy import Column, Integer, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -67,12 +68,14 @@ class TreeHoleWhisper(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     chatted = Column(Boolean, default=False)
     
-    # 关联评论
-    comments = relationship("TreeHoleComment", back_populates="whisper")
-    # 关联点赞
-    likes = relationship("TreeHoleLike", back_populates="whisper")
+    # 关联评论 - 添加 cascade
+    comments = relationship("TreeHoleComment", back_populates="whisper", cascade="all, delete-orphan")
+    # 关联点赞 - 添加 cascade
+    likes = relationship("TreeHoleLike", back_populates="whisper", cascade="all, delete-orphan")
     # 关联用户
-    user = relationship("User")
+    user = relationship("User") # user 关系不需要 cascade
+
+# ... 后面的 TreeHoleComment 和 TreeHoleLike 模型不需要修改 ...
 
 class TreeHoleComment(Base):
     __tablename__ = "tree_hole_comments"

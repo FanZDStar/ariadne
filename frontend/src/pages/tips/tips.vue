@@ -1,7 +1,7 @@
 <template>
     <view class="tips-container">
         <view class="header">
-            <text class="title">恋爱小技巧</text>
+            <text class="title">交往小技巧</text>
             <text class="subtitle">每天一点新鲜感，帮助你迈出第一步</text>
         </view>
 
@@ -13,7 +13,7 @@
 
             <view class="tip-card">
                 <text class="tip-title">2. 倾听对方</text>
-                <text class="tip-content">学会倾听对方的想法和感受，给予关注和回应，这是建立深度连接的重要方式。</text>
+                <text class="tip-content">倾听永远是了解一个人更深层内心的直接途径。学会倾听对方的想法和感受，给予关注和回应，这是建立深度连接的重要方式。</text>
             </view>
 
             <view class="tip-card">
@@ -23,12 +23,12 @@
 
             <view class="tip-card">
                 <text class="tip-title">4. 保持独立</text>
-                <text class="tip-content">在恋爱中保持自己的独立性和个人空间，这样可以让关系更加健康和持久。</text>
+                <text class="tip-content">不论在交友还是在恋爱中都应该保持自己的独立性和个人空间，这样可以让关系更加健康和持久。</text>
             </view>
 
             <view class="tip-card">
                 <text class="tip-title">5. 小惊喜</text>
-                <text class="tip-content">偶尔给对方一些小惊喜，不一定要昂贵，用心准备的小礼物或安排会让对方感受到你的在意。</text>
+                <text class="tip-content">谁说只有恋爱才可以给对方准备一些小惊喜？偶尔给朋友一些小惊喜，不一定要昂贵，用心准备的小礼物或安排会让对方感受到你的在意与真心。</text>
             </view>
         </view>
     </view>
