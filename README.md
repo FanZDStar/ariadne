@@ -16,37 +16,44 @@
 4. 帮助用户记录情感历程，促进自我成长
 
 ## 项目成果
+
 https://ariadne.nuyoahming.xyz
 
 ## 核心功能
 
 ### 1. 情感对话
+
 - 与AI进行一对一情感对话，获得专业建议
 - 多种对话场景：自我反思、恋爱尝试、自我关爱等
 - 对话历史记录，方便回顾和分析
 
 ### 2. 情感日记
+
 - 记录每日心情和情感变化
 - 支持图片上传，丰富日记内容
 - 情绪追踪，可视化情感变化趋势
 - 隐私保护，日记可设置为私密
 
 ### 3. 恋爱小技巧
+
 - 提供实用的恋爱建议和技巧
 - 每日更新，帮助用户提升情感技能
 - 针对不同情况提供个性化建议
 
 ### 4. 感情防护
+
 - 识别恋爱关系中的不公平现象
 - 提供防护建议，帮助用户保护自己
 - 教育用户建立健康的情感边界
 
 ### 5. 心灵树洞
+
 - 匿名倾诉内心秘密和困扰
 - 做倾听者，为他人提供情感支持
 - 构建温暖的互助社区
 
 ### 6. 成长轨迹
+
 - 可视化展示用户的情感成长历程
 - 分析情绪变化趋势
 - 提供个性化的成长建议
@@ -54,11 +61,13 @@ https://ariadne.nuyoahming.xyz
 ## 技术架构
 
 ### 前端
+
 - 使用UniApp框架开发，支持多端部署（H5、小程序、App）
 - Vue.js作为核心框架
 - 响应式设计，适配不同屏幕尺寸
 
 ### 后端
+
 - Python FastAPI框架，提供高性能RESTful API
 - MySQL数据库存储用户数据、日记、对话记录等
 - JWT Token认证机制，确保用户信息安全
@@ -67,6 +76,7 @@ https://ariadne.nuyoahming.xyz
 ## 运行/部署指南
 
 ### 环境要求
+
 - Python 3.8+
 - Node.js 14+
 - MySQL 8.0+
@@ -75,67 +85,72 @@ https://ariadne.nuyoahming.xyz
 ### 后端部署
 
 1. 进入后端目录：
+
    ```bash
    cd backend
    ```
-
 2. 创建并配置环境变量文件：
-   ```bash
-   cp .env.example .env
-   ```
-   
-   在`.env`文件中配置以下内容：
+
+   在 `.env`文件中配置以下内容：
+
    ```
    # 数据库配置
    DATABASE_URL=mysql+pymysql://[用户名]:[密码]@localhost/ariadne
-   
+
    # JWT配置
    SECRET_KEY=your-secret-key-change-in-production
    ALGORITHM=HS256
    ACCESS_TOKEN_EXPIRE_MINUTES=30
-   
-   # 后端AI配置
+
+   # 后端AI配置(可更换为其它大模型)
    ai_api_url=https://api.suanli.cn/v1/chat/completions
    ai_api_key=your-api-key
    ai_model=free:Qwen3-30B-A3B
    ```
-
 3. 创建数据库：
-   - 创建名为`ariadne`的MySQL数据库
-   - 执行`database/ariadne.sql`文件初始化表结构和基础数据
 
+   - 创建名为 `ariadne`的MySQL数据库
+   - 执行 `database/ariadne.sql`文件初始化表结构和基础数据
 4. 安装依赖：
+
    ```bash
    pip install -r requirements.txt
    ```
 
+   或
+
+   ```bash
+   conda env create -f environment.yml
+   ```
 5. 启动服务：
+
    ```bash
    uvicorn app.main:app --reload
    ```
-   
-   后端服务默认运行在`http://localhost:8000`
+
+   后端服务默认运行在 `http://localhost:8000`
 
 ### 前端部署
 
 1. 进入前端目录：
+
    ```bash
    cd frontend
    ```
-
 2. 安装依赖：
+
    ```bash
    npm install
    ```
-
 3. 启动开发服务器：
+
    ```bash
    npm run dev:h5
    ```
-   
-   访问终端提示的本地地址即可预览前端页面
 
+   访问终端提示的本地地址即可预览前端页面
 4. 构建生产版本：
+
    ```bash
    npm run build:h5
    ```
@@ -155,6 +170,7 @@ https://ariadne.nuyoahming.xyz
 ## API文档
 
 后端API使用FastAPI自动生成交互式文档：
+
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
@@ -205,6 +221,7 @@ ariadne/
 ## 联系方式
 
 如有任何问题或建议，请通过以下方式联系我们：
+
 - 提交Issue到项目仓库
 - 发送邮件至项目维护者邮箱
 
