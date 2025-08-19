@@ -55,6 +55,10 @@ class AIConfig:
         """构建请求负载，支持不同 AI 模型的参数格式"""
         system_prompt = PROMPTS.get(scene, PROMPTS["self-dialog"])
         
+        # 确保 system_prompt 是字符串类型
+        if not isinstance(system_prompt, str):
+            system_prompt = str(system_prompt)
+        
         payload = {
             "model": self.model,
             "messages": [{"role": "system", "content": system_prompt}],
@@ -65,8 +69,23 @@ class AIConfig:
         
         # 添加历史对话（最多8条）
         for msg in messages[-8:]:
-            role = "assistant" if msg.role == "ai" else msg.role
-            payload["messages"].append({"role": role, "content": msg.content})
+            # 处理角色映射
+            role = msg.role
+            if role == "ai":
+                role = "assistant"
+            
+            # 确保 content 是字符串类型，处理各种可能的类型
+            content = msg.content
+            if content is None:
+                content = ""
+            elif not isinstance(content, str):
+                content = str(content)
+            
+            # 确保 content 不为空
+            if not content.strip():
+                continue  # 跳过空消息
+            
+            payload["messages"].append({"role": role, "content": content})
         
         return payload
 
