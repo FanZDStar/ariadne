@@ -39,9 +39,16 @@
 
 <script>
 // 使用环境变量的API基础地址
-const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+const BASE_URL = process.env.VUE_APP_API_BASE_URL;
 console.log('当前环境变量 VUE_APP_API_BASE_URL:', process.env.VUE_APP_API_BASE_URL);
 console.log('实际使用的 BASE_URL:', BASE_URL);
+
+// 检查环境变量是否正确配置
+if (!BASE_URL) {
+    console.error('❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!');
+    throw new Error('API基础地址未配置，请检查环境变量 VUE_APP_API_BASE_URL');
+}
+
 // const BASE_URL = 'http://127.0.0.1:8000';
 export default {
     data() {

@@ -223,8 +223,12 @@ export default {
       if (imageUrl.startsWith('http')) {
         return imageUrl;
       }
-      const baseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz';
+      const baseUrl = process.env.VUE_APP_API_BASE_URL;
       // const baseUrl = 'http://127.0.0.1:8000';
+      if (!baseUrl) {
+        console.error('❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!');
+        return imageUrl; // 返回原始路径
+      }
       if (imageUrl.startsWith('/')) {
         return baseUrl + imageUrl;
       } else {
