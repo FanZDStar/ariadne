@@ -1,8 +1,7 @@
 <template>
     <view class="dialog-container">
         <view class="header">
-            <text class="title">心语练习</text>
-            <text class="subtitle">模拟交际场景，练习表达和沟通技巧</text>
+            <image class="header-image" src="../../static/love-experiment.png" mode="widthFix"></image>
         </view>
 
         <view class="content">
@@ -53,19 +52,16 @@ export default {
 .header {
     margin-bottom: 30rpx;
     flex-shrink: 0;
+    text-align: center;
 }
 
-.title {
-    font-size: 36rpx;
-    font-weight: bold;
-    color: #333;
+.header-image {
+    width: 80%;
+    max-width: 500rpx;
+    min-width: 300rpx;
+    max-height: 120rpx;
+    margin: 0 auto;
     display: block;
-    margin-bottom: 15rpx;
-}
-
-.subtitle {
-    font-size: 26rpx;
-    color: #999;
 }
 
 .content {

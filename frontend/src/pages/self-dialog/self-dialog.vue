@@ -68,9 +68,12 @@ export default {
 }
 
 .header-image {
-    width: 100%;
-    max-width: 600rpx;
+    width: 80%;
+    max-width: 500rpx;
+    min-width: 300rpx;
+    max-height: 120rpx;
     margin: 0 auto;
+    display: block;
 }
 
 .content {

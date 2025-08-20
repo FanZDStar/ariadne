@@ -2,8 +2,7 @@
 <template>
     <view class="dialog-container">
         <view class="header">
-            <text class="title">爱他人先爱自己</text>
-            <text class="subtitle">学会爱自己，才能更好地爱他人</text>
+            <image class="header-image" src="../../static/love-yourself.png" mode="widthFix"></image>
         </view>
 
         <view class="content">
@@ -66,19 +65,16 @@ export default {
 .header {
     margin-bottom: 30rpx;
     flex-shrink: 0;
+    text-align: center;
 }
 
-.title {
-    font-size: 36rpx;
-    font-weight: bold;
-    color: #333;
+.header-image {
+    width: 80%;
+    max-width: 500rpx;
+    min-width: 300rpx;
+    max-height: 120rpx;
+    margin: 0 auto;
     display: block;
-    margin-bottom: 15rpx;
-}
-
-.subtitle {
-    font-size: 26rpx;
-    color: #999;
 }
 
 .content {
