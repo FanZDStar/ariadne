@@ -84,76 +84,11 @@ https://ariadne.nuyoahming.xyz
 
 ### 后端部署
 
-1. 进入后端目录：
-
-   ```bash
-   cd backend
-   ```
-2. 创建并配置环境变量文件：
-
-   在 `.env`文件中配置以下内容：
-
-   ```
-   # 数据库配置
-   DATABASE_URL=mysql+pymysql://[用户名]:[密码]@localhost/ariadne
-
-   # JWT配置
-   SECRET_KEY=your-secret-key-change-in-production
-   ALGORITHM=HS256
-   ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-   # 后端AI配置(可更换为其它大模型)
-   ai_api_url=https://api.suanli.cn/v1/chat/completions
-   ai_api_key=your-api-key
-   ai_model=free:Qwen3-30B-A3B
-   ```
-3. 创建数据库：
-
-   - 创建名为 `ariadne`的MySQL数据库
-   - 执行 `database/ariadne.sql`文件初始化表结构和基础数据
-4. 安装依赖：
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   或
-
-   ```bash
-   conda env create -f environment.yml
-   ```
-5. 启动服务：
-
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-   后端服务默认运行在 `http://localhost:8000`
+参见[后端部署文档](backend/README.md)
 
 ### 前端部署
 
-1. 进入前端目录：
-
-   ```bash
-   cd frontend
-   ```
-2. 安装依赖：
-
-   ```bash
-   npm install
-   ```
-3. 启动开发服务器：
-
-   ```bash
-   npm run dev:h5
-   ```
-
-   访问终端提示的本地地址即可预览前端页面
-4. 构建生产版本：
-
-   ```bash
-   npm run build:h5
-   ```
+参见[前端部署文档](frontend/README.md)
 
 ### 数据库配置
 
