@@ -1,5 +1,10 @@
 const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'https://ariadne.nuyoahming.xyz'; // 后端API地址
 
+// 调试信息
+console.log('🔗 环境变量 VUE_APP_API_BASE_URL:', process.env.VUE_APP_API_BASE_URL);
+console.log('🔗 实际使用的 BASE_URL:', BASE_URL);
+console.log('🔗 当前环境 NODE_ENV:', process.env.NODE_ENV);
+
 // 封装fetch请求
 function request(url, options = {}) {
     const token = storage.getToken();

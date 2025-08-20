@@ -72,7 +72,7 @@ export default {
     width: 80%;
     max-width: 500rpx;
     min-width: 300rpx;
-    max-height: 120rpx;
+    max-height: 200rpx;
     margin: 0 auto;
     display: block;
 }

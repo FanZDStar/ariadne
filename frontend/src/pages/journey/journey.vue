@@ -51,6 +51,12 @@ export default {
         this.setRandomBroadcast();
     },
 
+    onShow() {
+        // 每次显示页面时重新加载数据
+        this.loadDiaryCount();
+        this.loadGrowthScore();
+    },
+
     methods: {
         setRandomBroadcast() {
             const randomIndex = Math.floor(Math.random() * broadcasts.length);

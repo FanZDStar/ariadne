@@ -1,8 +1,8 @@
 module.exports = {
   apps: [{
     name: 'ariadne-backend',
-    cwd: '/www/wwwroot/ariadne-backend',
-    script: 'venv/bin/python',
+    cwd: '/www/wwwroot/ariadne-backend/backend',
+    script: 'venv/bin/python3',
     args: '-m uvicorn app.main:app --host 0.0.0.0 --port 8000',
     instances: 1,
     autorestart: true,

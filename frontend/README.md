@@ -9,6 +9,12 @@
 	```powershell
 	npm install
 	```
+3. 配置环境变量
+	- 创建 `.env` 文件，并添加以下内容：
+	```
+	# API 访问地址，举例：本机测试环境
+	VUE_APP_API_BASE_URL=http://localhost:8000
+	```
 3. 启动开发服务器（H5模式）：
 	```powershell
 	npm run dev:h5
