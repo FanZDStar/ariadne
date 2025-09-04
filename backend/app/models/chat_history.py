@@ -1,8 +1,10 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database.session import Base
+from app.utils.encryption import encryption
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
@@ -29,3 +31,14 @@ class ChatMessage(Base):
     
     # 关联关系
     session = relationship("ChatSession", back_populates="messages")
+    
+    # 加密属性处理（聊天记录始终加密）
+    @hybrid_property
+    def decrypted_content(self):
+        """获取解密后的内容"""
+        return encryption.decrypt_text(self.content)
+    
+    @decrypted_content.setter
+    def decrypted_content(self, value):
+        """设置内容（自动加密）"""
+        self.content = encryption.encrypt_text(value)

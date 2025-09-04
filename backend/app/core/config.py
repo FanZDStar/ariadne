@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     ai_max_tokens: int = 800
     ai_top_p: float = 0.9
     ai_timeout: float = 30.0
+    
+    # 数据加密配置
+    encryption_password: str = "ariadne_default_key_2025"
+    
+    # 隐私保护配置
+    data_retention_days: int = 365
+    session_timeout_minutes: int = 30
+    enable_audit_log: bool = True
 
     class Config:
         env_file = ".env"

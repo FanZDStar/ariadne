@@ -1,7 +1,9 @@
 #file:ariadne/backend/app/models/emotional_diary.py
 from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, Boolean, ForeignKey, func, case
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 from app.database.session import Base
+from app.utils.encryption import encryption
 
 class EmotionalDiary(Base):
     __tablename__ = "emotional_diaries"
@@ -18,6 +20,37 @@ class EmotionalDiary(Base):
     
     # 关联图片
     images = relationship("DiaryImage", back_populates="diary")
+    
+    # 加密属性处理
+    @hybrid_property
+    def decrypted_title(self):
+        """获取解密后的标题"""
+        if self.is_private:
+            return encryption.decrypt_text(self.title)
+        return self.title
+    
+    @decrypted_title.setter
+    def decrypted_title(self, value):
+        """设置标题（自动加密私密日记）"""
+        if self.is_private:
+            self.title = encryption.encrypt_text(value)
+        else:
+            self.title = value
+    
+    @hybrid_property
+    def decrypted_content(self):
+        """获取解密后的内容"""
+        if self.is_private:
+            return encryption.decrypt_text(self.content)
+        return self.content
+    
+    @decrypted_content.setter
+    def decrypted_content(self, value):
+        """设置内容（自动加密私密日记）"""
+        if self.is_private:
+            self.content = encryption.encrypt_text(value)
+        else:
+            self.content = value
     
     # # 定义心情分数的映射（用于类方法）
     # MOOD_SCORES = {

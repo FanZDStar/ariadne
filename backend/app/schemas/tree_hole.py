@@ -28,6 +28,10 @@ class WhisperResponse(WhisperBase):
 
     class Config:
         from_attributes = True
+        # 设置字段别名，让content字段从decrypted_content属性读取
+        fields = {
+            'content': {'alias': 'decrypted_content'}
+        }
 
 # 评论模型
 class CommentBase(BaseModel):

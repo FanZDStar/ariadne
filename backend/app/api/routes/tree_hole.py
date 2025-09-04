@@ -21,13 +21,18 @@ def create_whisper(
     """创建新的悄悄话"""
     db_whisper = TreeHoleWhisper(
         user_id=current_user.user_id,
-        content=whisper.content,
         is_anonymous=whisper.is_anonymous
     )
+    
+    # 使用加密属性设置内容，自动处理加密
+    db_whisper.decrypted_content = whisper.content
     
     db.add(db_whisper)
     db.commit()
     db.refresh(db_whisper)
+    
+    # 确保返回解密后的内容
+    db_whisper.content = db_whisper.decrypted_content
     return db_whisper
 
 @router.get("/my-whispers", response_model=List[WhisperResponse])
@@ -53,6 +58,9 @@ def get_user_whispers(
         chat_count = db.query(TreeHoleChatParticipant).filter(TreeHoleChatParticipant.whisper_id == whisper.whisper_id).count()
         whisper.comment_count = chat_count
         
+        # 确保返回解密后的内容
+        whisper.content = whisper.decrypted_content
+        
     return whispers
 
 @router.get("/random", response_model=WhisperResponse)
@@ -73,6 +81,9 @@ def get_random_whisper(
         TreeHoleLike.user_id == current_user.user_id
     ).first()
     whisper.liked = like is not None
+    
+    # 确保返回解密后的内容
+    whisper.content = whisper.decrypted_content
     
     return whisper
 
@@ -98,6 +109,9 @@ def get_public_whispers(
             TreeHoleLike.user_id == current_user.user_id
         ).first()
         whisper.liked = like is not None
+        
+        # 确保返回解密后的内容
+        whisper.content = whisper.decrypted_content
 
     return whispers
 
@@ -132,6 +146,9 @@ def get_whisper(
     ).first()
     whisper.liked = like is not None
     
+    # 确保返回解密后的内容
+    whisper.content = whisper.decrypted_content
+    
     return whisper
 
 @router.put("/{whisper_id}", response_model=WhisperResponse)
@@ -156,10 +173,17 @@ def update_whisper(
     # 更新字段
     update_data = whisper_update.dict(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(db_whisper, key, value)
+        if key == 'content':
+            # 对于内容字段，使用加密属性
+            db_whisper.decrypted_content = value
+        else:
+            setattr(db_whisper, key, value)
     
     db.commit()
     db.refresh(db_whisper)
+    
+    # 确保返回解密后的内容
+    db_whisper.content = db_whisper.decrypted_content
     return db_whisper
 
 @router.delete("/{whisper_id}", status_code=status.HTTP_204_NO_CONTENT)
