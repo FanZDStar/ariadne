@@ -26,6 +26,20 @@
       }
     },
     {
+      "path": "pages/crisis-test/crisis-test",
+      "style": {
+        "navigationBarTitleText": "心理健康测试",
+        "navigationBarBackgroundColor": "#f8f9fa"
+      }
+    },
+    {
+      "path": "pages/crisis-test-enhanced/crisis-test-enhanced",
+      "style": {
+        "navigationBarTitleText": "AI增强危机检测",
+        "navigationBarBackgroundColor": "#f8f9fa"
+      }
+    },
+    {
       "path": "pages/chat-context/chat-context",
       "style": {
         "navigationBarTitleText": "对话选择"

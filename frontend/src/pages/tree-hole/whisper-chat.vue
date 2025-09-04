@@ -29,6 +29,7 @@
 
 <script>
 import { api, storage } from '../../utils/api.js';
+import { CrisisKeywordDetector, CrisisUtils } from '../../utils/crisisApi.js';
 
 export default {
     data() {
@@ -39,13 +40,19 @@ export default {
             newMessage: '',
             selfId: null,
             participants: {},
-            scrollTop: 0
+            scrollTop: 0,
+            // 危机检测相关
+            crisisDetector: null
         };
     },
     onLoad(options) {
         this.whisper_id = options.whisper_id;
         const userInfo = storage.getUserInfo();
         this.selfId = userInfo ? userInfo.user_id : null;
+
+        // 初始化危机检测器
+        this.crisisDetector = new CrisisKeywordDetector();
+
         this.fetchWhisperDetails();
         this.fetchChatHistory();
     },
@@ -72,6 +79,9 @@ export default {
             const token = storage.getToken();
             if (!token) return;
 
+            // 在发送前进行危机检测
+            await this.performCrisisDetection(this.newMessage);
+
             try {
                 await api.sendWhisperChatMessage(token, this.whisper_id, this.newMessage);
                 this.newMessage = '';
@@ -88,6 +98,48 @@ export default {
             this.$nextTick(() => {
                 // A large value to scroll to the bottom
                 this.scrollTop = 999999;
+            });
+        },
+
+        /**
+         * 执行危机检测（树洞聊天版本）
+         */
+        async performCrisisDetection(message) {
+            try {
+                // 前端关键词检测
+                const keywordRisk = this.crisisDetector.detectKeywords(message);
+
+                if (keywordRisk.level !== 'low') {
+                    // 对于树洞聊天，我们采用更温和的提醒方式
+                    this.showTreeHoleCrisisWarning(keywordRisk);
+                }
+
+                // 可选：调用后端API记录（如果需要匿名记录）
+                // await this.logAnonymousCrisisWarning(keywordRisk, message);
+
+            } catch (error) {
+                console.error('树洞危机检测失败:', error);
+            }
+        },
+
+        /**
+         * 显示树洞专用的危机预警
+         */
+        showTreeHoleCrisisWarning(keywordData) {
+            const warningConfig = CrisisUtils.getWarningConfig(keywordData.level);
+
+            uni.showModal({
+                title: `${warningConfig.icon} 温馨提醒`,
+                content: `我们注意到您可能正在经历一些困难。虽然这里是匿名的树洞，但您的感受很重要。\n\n${warningConfig.message}`,
+                showCancel: true,
+                cancelText: '继续倾诉',
+                confirmText: '寻求帮助',
+                confirmColor: warningConfig.color,
+                success: (res) => {
+                    if (res.confirm) {
+                        CrisisUtils.showHelpOptions();
+                    }
+                }
             });
         }
     }

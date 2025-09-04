@@ -2,9 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
+import asyncio
 from app.api import api_router
 from app.database.session import Base, engine
 from app.core.config import settings
+from app.middleware.crisis_monitoring import CrisisMonitoringMiddleware
+from app.services.crisis_monitoring_task import crisis_monitor
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
@@ -30,12 +33,28 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
+# 添加心理危机监控中间件
+app.add_middleware(CrisisMonitoringMiddleware)
+
 # 挂载上传目录为静态文件目录
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(api_router)
+
+@app.on_event("startup")
+async def startup_event():
+    """应用启动时的事件处理"""
+    # 启动心理危机监控任务（可选，根据需要启用）
+    # asyncio.create_task(crisis_monitor.start_monitoring(check_interval_hours=6))
+    pass
+
+@app.on_event("shutdown") 
+async def shutdown_event():
+    """应用关闭时的事件处理"""
+    # 停止监控任务
+    crisis_monitor.stop_monitoring()
 
 @app.get("/")
 def root():

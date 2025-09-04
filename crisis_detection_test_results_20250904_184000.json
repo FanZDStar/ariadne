@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-09-04T18:40:00.230276",
+  "total_tests": 8,
+  "passed_tests": 4,
+  "success_rate": 50.0,
+  "results": [
+    {
+      "test_name": "模糊输入测试",
+      "input": "我想zi sha，感觉zi己没用",
+      "expected": "critical",
+      "actual": "high",
+      "score": 29,
+      "keywords": [
+        "没用"
+      ],
+      "fuzzy_matches": [
+        "zi sha",
+        "zisha",
+        "zi*sha"
+      ],
+      "passed": false
+    },
+    {
+      "test_name": "同音字测试",
+      "input": "想4了，活着没意思",
+      "expected": "critical",
+      "actual": "medium",
+      "score": 16,
+      "keywords": [],
+      "fuzzy_matches": [
+        "想4",
+        "想*4"
+      ],
+      "passed": false
+    },
+    {
+      "test_name": "拆字测试",
+      "input": "自 杀算了，受不了了",
+      "expected": "critical",
+      "actual": "high",
+      "score": 22,
+      "keywords": [
+        "受不了"
+      ],
+      "fuzzy_matches": [
+        "自 杀",
+        "自*杀"
+      ],
+      "passed": false
+    },
+    {
+      "test_name": "英文混合测试",
+      "input": "我want to die，真的很pain",
+      "expected": "high",
+      "actual": "medium",
+      "score": 16,
+      "keywords": [
+        "want to die",
+        "die",
+        "pain"
+      ],
+      "fuzzy_matches": [],
+      "passed": false
+    },
+    {
+      "test_name": "多关键词测试",
+      "input": "感觉绝望，很孤独，没人理解我",
+      "expected": "high",
+      "actual": "high",
+      "score": 29,
+      "keywords": [
+        "绝望",
+        "孤独",
+        "没人理解"
+      ],
+      "fuzzy_matches": [
+        "绝 望",
+        "绝*望"
+      ],
+      "passed": true
+    },
+    {
+      "test_name": "隐晦表达测试",
+      "input": "如果有一天我不在了，你们会想我吗",
+      "expected": "medium",
+      "actual": "medium",
+      "score": 12,
+      "keywords": [
+        "不在了"
+      ],
+      "fuzzy_matches": [],
+      "passed": true
+    },
+    {
+      "test_name": "正常对话测试",
+      "input": "今天天气不错，心情也还可以",
+      "expected": "low",
+      "actual": "low",
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": [],
+      "passed": true
+    },
+    {
+      "test_name": "情绪波动测试",
+      "input": "最近情绪不太好，有点焦虑",
+      "expected": "low",
+      "actual": "low",
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": [],
+      "passed": true
+    }
+  ]
+}

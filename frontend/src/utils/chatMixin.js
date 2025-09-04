@@ -13,6 +13,9 @@ if (!BASE_URL) {
     throw new Error('API基础地址未配置，请检查环境变量 VUE_APP_API_BASE_URL');
 }
 
+// 引入危机检测工具
+import { CrisisKeywordDetector, CrisisUtils } from './crisisApi.js';
+
 export default {
     data() {
         return {
@@ -22,10 +25,18 @@ export default {
             sessionId: null,
             scene: '', // 由具体页面设置
             welcomeMessage: '', // 由具体页面设置
+            // 危机检测相关
+            crisisDetector: null,
+            currentRiskLevel: 'low',
+            showCrisisWarning: false,
+            crisisWarningData: null
         }
     },
 
     onLoad(options) {
+        // 初始化危机检测器
+        this.crisisDetector = new CrisisKeywordDetector();
+
         // 设置欢迎消息
         if (this.welcomeMessage) {
             this.chatHistory = [{
@@ -75,6 +86,9 @@ export default {
          * 处理用户发送消息
          */
         async handleSend(message) {
+            // 首先进行危机检测
+            await this.performCrisisDetection(message);
+
             // 添加用户消息到聊天记录
             this.chatHistory.push({
                 role: 'user',
@@ -151,12 +165,103 @@ export default {
         },
 
         /**
+         * 执行危机检测
+         */
+        async performCrisisDetection(userMessage) {
+            try {
+                // 前端关键词检测
+                const keywordRisk = this.crisisDetector.detectKeywords(userMessage);
+
+                // 调用后端AI分析
+                const response = await uni.request({
+                    url: `${BASE_URL}/crisis/assess-risk`,
+                    method: 'POST',
+                    header: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    },
+                    data: {
+                        content: userMessage,
+                        scene: this.scene,
+                        keyword_score: keywordRisk.score,
+                        enable_ai_analysis: true  // 启用AI增强分析
+                    }
+                });
+
+                if (response.statusCode === 200 && response.data) {
+                    const riskData = response.data;
+                    this.currentRiskLevel = riskData.risk_level;
+
+                    // 根据风险等级显示相应提示
+                    if (riskData.risk_level !== 'low') {
+                        CrisisUtils.showIntelligentWarning(riskData, keywordRisk);
+                        // 记录预警事件
+                        this.logCrisisWarning(riskData, keywordRisk);
+                    }
+                }
+            } catch (error) {
+                console.error('危机检测失败:', error);
+                // 失败时仍然使用前端检测结果
+                if (keywordRisk && keywordRisk.level !== 'low') {
+                    this.showLocalCrisisWarning(keywordRisk);
+                }
+            }
+        },
+
+        /**
+         * 显示本地危机预警
+         */
+        showLocalCrisisWarning(keywordData) {
+            const warningConfig = CrisisUtils.getWarningConfig(keywordData.level);
+
+            uni.showModal({
+                title: warningConfig.title,
+                content: warningConfig.message + '\n\n检测到可能的风险关键词，建议寻求专业帮助。',
+                showCancel: true,
+                cancelText: '继续对话',
+                confirmText: '获取帮助',
+                confirmColor: warningConfig.color,
+                success: (res) => {
+                    if (res.confirm) {
+                        CrisisUtils.showHelpOptions();
+                    }
+                }
+            });
+        },
+
+        /**
+         * 记录危机预警事件
+         */
+        async logCrisisWarning(riskData, keywordData) {
+            try {
+                await uni.request({
+                    url: `${BASE_URL}/crisis/warnings`,
+                    method: 'POST',
+                    header: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    },
+                    data: {
+                        content: riskData.content || '',
+                        risk_level: riskData.risk_level,
+                        risk_score: riskData.risk_score,
+                        detected_keywords: keywordData ? keywordData.keywords : [],
+                        scene: this.scene,
+                        ai_analysis: riskData.ai_analysis || ''
+                    }
+                });
+            } catch (error) {
+                console.error('记录危机预警失败:', error);
+            }
+        },
+
+        /**
          * 调用AI接口获取响应
          * 使用后端统一的prompt管理，不再在前端维护systemPrompt
          */
         async getAIResponse(userMessage) {
             const apiUrl = `${BASE_URL}/ai-dialog`
-            
+
             // 构造历史消息（最多取最近8条消息）
             const messages = this.chatHistory.slice(-8).map(msg => ({
                 role: msg.role,

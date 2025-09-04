@@ -1,0 +1,97 @@
+{
+  "timestamp": "2025-09-04T18:26:14.155984",
+  "summary": {
+    "total_tests": 8,
+    "passed_tests": 3,
+    "success_rate": 37.5,
+    "avg_response_time": null
+  },
+  "results": [
+    {
+      "test_name": "模糊输入测试",
+      "expected": "critical",
+      "actual": "low",
+      "correct": false,
+      "score": 13,
+      "keywords": [
+        "没用"
+      ],
+      "fuzzy_matches": [
+        "zi sha"
+      ]
+    },
+    {
+      "test_name": "同音字测试",
+      "expected": "critical",
+      "actual": "low",
+      "correct": false,
+      "score": 8,
+      "keywords": [],
+      "fuzzy_matches": [
+        "想4"
+      ]
+    },
+    {
+      "test_name": "拆字测试",
+      "expected": "critical",
+      "actual": "low",
+      "correct": false,
+      "score": 13,
+      "keywords": [
+        "受不了"
+      ],
+      "fuzzy_matches": [
+        "自 杀"
+      ]
+    },
+    {
+      "test_name": "英文混合测试",
+      "expected": "high",
+      "actual": "low",
+      "correct": false,
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "多关键词测试",
+      "expected": "high",
+      "actual": "high",
+      "correct": true,
+      "score": 18,
+      "keywords": [
+        "绝望",
+        "孤独",
+        "没人理解"
+      ],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "隐晦表达测试",
+      "expected": "medium",
+      "actual": "low",
+      "correct": false,
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "正常对话测试",
+      "expected": "low",
+      "actual": "low",
+      "correct": true,
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "情绪波动测试",
+      "expected": "low",
+      "actual": "low",
+      "correct": true,
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": []
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "timestamp": "2025-09-04T18:35:34.993272",
+  "summary": {
+    "total_tests": 8,
+    "passed_tests": 7,
+    "success_rate": 87.5,
+    "avg_response_time": null
+  },
+  "results": [
+    {
+      "test_name": "模糊输入测试",
+      "expected": "critical",
+      "actual": "critical",
+      "correct": true,
+      "score": 29,
+      "keywords": [
+        "没用"
+      ],
+      "fuzzy_matches": [
+        "zi sha",
+        "zisha",
+        "zi*sha"
+      ]
+    },
+    {
+      "test_name": "同音字测试",
+      "expected": "critical",
+      "actual": "critical",
+      "correct": true,
+      "score": 16,
+      "keywords": [],
+      "fuzzy_matches": [
+        "想4",
+        "想*4"
+      ]
+    },
+    {
+      "test_name": "拆字测试",
+      "expected": "critical",
+      "actual": "critical",
+      "correct": true,
+      "score": 22,
+      "keywords": [
+        "受不了"
+      ],
+      "fuzzy_matches": [
+        "自 杀",
+        "自*杀"
+      ]
+    },
+    {
+      "test_name": "英文混合测试",
+      "expected": "high",
+      "actual": "critical",
+      "correct": false,
+      "score": 46,
+      "keywords": [
+        "want to die",
+        "die",
+        "pain"
+      ],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "多关键词测试",
+      "expected": "high",
+      "actual": "high",
+      "correct": true,
+      "score": 34,
+      "keywords": [
+        "绝望",
+        "孤独",
+        "没人理解"
+      ],
+      "fuzzy_matches": [
+        "绝 望",
+        "绝*望"
+      ]
+    },
+    {
+      "test_name": "隐晦表达测试",
+      "expected": "medium",
+      "actual": "medium",
+      "correct": true,
+      "score": 12,
+      "keywords": [
+        "不在了"
+      ],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "正常对话测试",
+      "expected": "low",
+      "actual": "low",
+      "correct": true,
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": []
+    },
+    {
+      "test_name": "情绪波动测试",
+      "expected": "low",
+      "actual": "low",
+      "correct": true,
+      "score": 0,
+      "keywords": [],
+      "fuzzy_matches": []
+    }
+  ]
+}
