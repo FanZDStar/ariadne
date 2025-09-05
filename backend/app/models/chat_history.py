@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -15,6 +15,7 @@ class ChatSession(Base):
     title = Column(String(255), nullable=False)  # 对话标题（第一条消息的前30字符）
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    auto_save_enabled = Column(Boolean, default=False, nullable=False)  # 是否启用自动保存（检测到风险后自动标记）
     
     # 关联关系
     messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
