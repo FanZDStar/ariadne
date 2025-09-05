@@ -21,7 +21,10 @@ class User(Base):
     
     # 添加聊天记录关联
     chat_sessions = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
-    whispers = relationship("TreeHoleWhisper", back_populates="user")
+    # whispers = relationship("TreeHoleWhisper", back_populates="user")  # 暂时注释避免初始化问题
     
     # 添加危机预警关联
     crisis_warnings = relationship("CrisisWarning", back_populates="user", cascade="all, delete-orphan")
+    
+    # 添加风险评估报告关联
+    risk_reports = relationship("RiskAssessmentReport", back_populates="user", cascade="all, delete-orphan")

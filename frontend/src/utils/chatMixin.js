@@ -2,6 +2,7 @@
  * 聊天页面通用 mixin
  * 用于减少三个聊天页面的代码重复
  * 统一处理聊天逻辑、AI调用、保存等功能
+ * 增强版：包含自动风险评估和报告功能
  */
 
 // 使用环境变量的API基础地址
@@ -13,8 +14,9 @@ if (!BASE_URL) {
     throw new Error('API基础地址未配置，请检查环境变量 VUE_APP_API_BASE_URL');
 }
 
-// 引入危机检测工具
-import { CrisisKeywordDetector, CrisisUtils } from './crisisApi.js';
+// 引入危机检测相关工具
+import { CrisisKeywordDetector } from './crisisKeywordDetector.js';
+import { CrisisUtils } from './crisisApi.js';
 
 export default {
     data() {
@@ -29,13 +31,21 @@ export default {
             crisisDetector: null,
             currentRiskLevel: 'low',
             showCrisisWarning: false,
-            crisisWarningData: null
+            crisisWarningData: null,
+            // 风险评估相关
+            conversationStartTime: null,
+            hasRiskDetected: false,
+            autoSaveEnabled: true,
+            riskDetectedInSession: false
         }
     },
 
     onLoad(options) {
         // 初始化危机检测器
         this.crisisDetector = new CrisisKeywordDetector();
+
+        // 记录对话开始时间
+        this.conversationStartTime = new Date();
 
         // 设置欢迎消息
         if (this.welcomeMessage) {
@@ -50,177 +60,239 @@ export default {
             this.sessionId = options.sessionId
             this.loadHistorySession(options.sessionId)
         }
+
+        // 检查并显示上次的风险评估报告
+        this.checkAndShowPreviousReport();
+    },
+
+    onUnload() {
+        // 页面卸载时自动生成风险评估报告
+        this.handlePageUnload();
     },
 
     methods: {
         /**
-         * 加载历史对话
+         * AI 调用方法
          */
-        async loadHistorySession(sessionId) {
+        async callAIAPI(messages, scene = 'general') {
+            return new Promise((resolve, reject) => {
+                uni.request({
+                    url: `${BASE_URL}/ai-dialog?t=${Date.now()}`,  // 添加时间戳避免缓存
+                    method: 'POST',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        messages: messages,
+                        scene: scene
+                    },
+                    success: (res) => {
+                        if (res.statusCode === 200) {
+                            resolve(res.data);
+                        } else {
+                            reject(new Error('AI请求失败'));
+                        }
+                    },
+                    fail: (err) => {
+                        let errorMsg = '网络连接失败，请检查网络后重试';
+                        if (err.errMsg && err.errMsg.includes('timeout')) {
+                            errorMsg = 'AI响应超时，请重试';
+                        }
+                        reject(new Error(errorMsg));
+                    }
+                });
+            });
+        },
+
+        /**
+         * 检查并显示上次的风险评估报告
+         */
+        async checkAndShowPreviousReport() {
+            if (!this.sessionId) return;
+
             try {
                 const response = await uni.request({
-                    url: `${BASE_URL}/chat/chat-sessions/${sessionId}`,
+                    url: `${BASE_URL}/risk-assessment/latest-report/${this.sessionId}`,
                     method: 'GET',
                     header: {
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
                     }
-                })
+                });
 
-                if (response.statusCode === 200) {
-                    this.chatHistory = response.data.messages.map(msg => ({
-                        role: msg.role,
-                        content: msg.content,
-                        timestamp: new Date(msg.created_at)
-                    }))
+                if (response.statusCode === 200 && response.data && !response.data.is_viewed) {
+                    // 显示风险评估报告
+                    this.showRiskAssessmentReport(response.data);
                 }
             } catch (error) {
-                console.error('加载历史对话失败:', error)
-                uni.showToast({
-                    title: '加载历史对话失败',
-                    icon: 'none'
-                })
+                console.log('获取风险评估报告失败:', error);
             }
         },
 
         /**
-         * 处理用户发送消息
+         * 显示风险评估报告弹窗
          */
-        async handleSend(message) {
-            // 首先进行危机检测
-            await this.performCrisisDetection(message);
+        showRiskAssessmentReport(report) {
+            const riskLevelText = {
+                'critical': '🚨 高危',
+                'high': '⚠️ 较高',
+                'medium': '⚡ 中等',
+                'low': '✅ 较低'
+            };
 
-            // 添加用户消息到聊天记录
-            this.chatHistory.push({
-                role: 'user',
-                content: message,
-                timestamp: new Date()
-            })
-            this.hasNewMessages = true
-            this.isAiTyping = true
+            const content = `上次对话风险评估结果：
 
-            try {
-                const response = await this.getAIResponse(message)
-                console.log('AI响应内容:', response)
-                this.chatHistory.push({
-                    role: 'assistant',
-                    content: response,
-                    timestamp: new Date()
-                })
-                console.log('聊天历史更新后:', this.chatHistory)
-            } catch (error) {
-                console.error('AI响应错误:', error)
-                this.chatHistory.push({
-                    role: 'assistant',
-                    content: '抱歉，我现在有些困惑，让我们换个角度继续我们的对话吧。你还有其他想要分享的感受吗？',
-                    timestamp: new Date()
-                })
-            } finally {
-                this.isAiTyping = false
-            }
-        },
+风险等级：${riskLevelText[report.overall_risk_level] || report.overall_risk_level}
+风险分数：${report.overall_risk_score.toFixed(1)}/100
+对话消息：${report.total_messages}条（${report.risk_messages_count}条检测到风险）
 
-        /**
-         * 保存聊天历史
-         */
-        async saveChatHistory() {
-            try {
-                const messages = this.chatHistory.filter(msg => msg.role === 'user' || msg.role === 'assistant').map(msg => ({
-                    role: msg.role,
-                    content: msg.content
-                }))
+${report.summary}
 
-                await uni.request({
-                    url: `${BASE_URL}/chat/save-chat`,
-                    method: 'POST',
-                    header: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    },
-                    data: {
-                        scene: this.scene,
-                        messages: messages,
-                        session_id: this.sessionId // 如果是从历史记录进入，传入session_id
+AI专业分析：
+${report.ai_analysis.substring(0, 100)}...
+
+是否查看完整报告？`;
+
+            uni.showModal({
+                title: '💙 心理状态评估报告',
+                content: content,
+                showCancel: true,
+                cancelText: '稍后查看',
+                confirmText: '查看详情',
+                success: (res) => {
+                    if (res.confirm) {
+                        this.viewFullReport(report);
                     }
-                })
+                    // 标记为已查看
+                    this.markReportAsViewed(report.id);
+                }
+            });
+        },
 
-                uni.showToast({
-                    title: '对话已保存',
-                    icon: 'success'
-                })
-                this.hasNewMessages = false
+        /**
+         * 查看完整报告
+         */
+        viewFullReport(report) {
+            uni.navigateTo({
+                url: `/pages/risk-report/report-detail?reportId=${report.id}`
+            });
+        },
+
+        /**
+         * 标记报告为已查看
+         */
+        async markReportAsViewed(reportId) {
+            try {
+                await uni.request({
+                    url: `${BASE_URL}/risk-assessment/mark-viewed`,
+                    method: 'PUT',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: { report_id: reportId }
+                });
             } catch (error) {
-                console.error('保存对话失败:', error)
-                uni.showToast({
-                    title: '保存失败',
-                    icon: 'none'
-                })
+                console.log('标记报告已查看失败:', error);
             }
         },
 
         /**
-         * 处理AI打字状态变化
+         * 处理页面卸载事件 - 生成风险评估报告
          */
-        handleAiTyping(typing) {
-            this.isAiTyping = typing
-        },
+        async handlePageUnload() {
+            if (!this.sessionId || !this.riskDetectedInSession) return;
 
-        /**
-         * 执行危机检测
-         */
-        async performCrisisDetection(userMessage) {
             try {
-                // 前端关键词检测
-                const keywordRisk = this.crisisDetector.detectKeywords(userMessage);
-
-                // 调用后端AI分析
-                const response = await uni.request({
-                    url: `${BASE_URL}/crisis/assess-risk`,
+                // 生成风险评估报告
+                await uni.request({
+                    url: `${BASE_URL}/risk-assessment/generate-report`,
                     method: 'POST',
                     header: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
                     },
                     data: {
-                        content: userMessage,
+                        session_id: this.sessionId,
                         scene: this.scene,
-                        keyword_score: keywordRisk.score,
-                        enable_ai_analysis: true  // 启用AI增强分析
+                        conversation_start_time: this.conversationStartTime,
+                        conversation_end_time: new Date()
                     }
                 });
 
-                if (response.statusCode === 200 && response.data) {
-                    const riskData = response.data;
-                    this.currentRiskLevel = riskData.risk_level;
+                console.log('✅ 风险评估报告已生成');
+            } catch (error) {
+                console.log('生成风险评估报告失败:', error);
+            }
+        },
 
-                    // 根据风险等级显示相应提示
-                    if (riskData.risk_level !== 'low') {
-                        CrisisUtils.showIntelligentWarning(riskData, keywordRisk);
-                        // 记录预警事件
-                        this.logCrisisWarning(riskData, keywordRisk);
+        /**
+         * 增强的危机检测方法（包含自动保存）
+         */
+        async performCrisisDetection(userMessage) {
+            if (!this.crisisDetector) return;
+
+            try {
+                // 执行危机检测
+                const detectionResult = await this.crisisDetector.detectCrisis(userMessage);
+
+                if (detectionResult.isRisk) {
+                    console.log('🚨 检测到风险内容:', detectionResult);
+
+                    this.currentRiskLevel = detectionResult.riskLevel;
+                    this.showCrisisWarning = true;
+                    this.crisisWarningData = detectionResult;
+                    this.riskDetectedInSession = true;
+
+                    // 自动保存会话
+                    if (this.autoSaveEnabled) {
+                        await this.autoSaveSession();
                     }
+
+                    // 显示风险提示
+                    this.showRiskDetectionAlert(detectionResult);
                 }
             } catch (error) {
                 console.error('危机检测失败:', error);
-                // 失败时仍然使用前端检测结果
-                if (keywordRisk && keywordRisk.level !== 'low') {
-                    this.showLocalCrisisWarning(keywordRisk);
+            }
+        },
+
+        /**
+         * 自动保存会话
+         */
+        async autoSaveSession() {
+            if (!this.sessionId && this.chatHistory.length > 0) {
+                try {
+                    await this.saveSession();
+
+                    uni.showToast({
+                        title: '💾 对话已自动保存',
+                        icon: 'success',
+                        duration: 2000
+                    });
+                } catch (error) {
+                    console.log('自动保存失败:', error);
                 }
             }
         },
 
         /**
-         * 显示本地危机预警
+         * 显示风险检测提醒
          */
-        showLocalCrisisWarning(keywordData) {
-            const warningConfig = CrisisUtils.getWarningConfig(keywordData.level);
+        showRiskDetectionAlert(detectionResult) {
+            const riskMessages = {
+                'low': '💙 我注意到您的情绪状态，如需帮助请随时告诉我',
+                'medium': '⚠️ 我感受到您可能正在经历一些困扰，建议与朋友或专业人士交流',
+                'high': '🚨 您提到的内容让我担心，强烈建议寻求专业心理健康支持',
+                'critical': '🆘 请立即寻求专业帮助！如有紧急情况，请拨打心理危机干预热线：400-161-9995'
+            };
 
             uni.showModal({
-                title: warningConfig.title,
-                content: warningConfig.message + '\n\n检测到可能的风险关键词，建议寻求专业帮助。',
+                title: '💙 关爱提醒',
+                content: riskMessages[detectionResult.riskLevel] || riskMessages['medium'],
                 showCancel: true,
-                cancelText: '继续对话',
+                cancelText: '我知道了',
                 confirmText: '获取帮助',
-                confirmColor: warningConfig.color,
                 success: (res) => {
                     if (res.confirm) {
                         CrisisUtils.showHelpOptions();
@@ -230,85 +302,150 @@ export default {
         },
 
         /**
-         * 记录危机预警事件
+         * 处理 AI 输入状态（用于 ChatMessages 组件）
          */
-        async logCrisisWarning(riskData, keywordData) {
+        handleAiTyping(typing) {
+            this.isAiTyping = typing;
+        },
+
+        /**
+         * 处理发送消息事件（用于接收 ChatInput 组件的 send 事件）
+         */
+        handleSend(content) {
+            this.sendMessage(content);
+        },
+
+        /**
+         * 发送消息方法（增强版）
+         */
+        async sendMessage(content) {
+            if (!content.trim()) return;
+
+            // 添加用户消息到聊天历史
+            this.chatHistory.push({
+                role: 'user',
+                content: content
+            });
+
+            // 执行危机检测
+            await this.performCrisisDetection(content);
+
+            // 显示AI正在输入
+            this.isAiTyping = true;
+
             try {
-                await uni.request({
-                    url: `${BASE_URL}/crisis/warnings`,
-                    method: 'POST',
-                    header: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    },
-                    data: {
-                        content: riskData.content || '',
-                        risk_level: riskData.risk_level,
-                        risk_score: riskData.risk_score,
-                        detected_keywords: keywordData ? keywordData.keywords : [],
-                        scene: this.scene,
-                        ai_analysis: riskData.ai_analysis || ''
-                    }
+                // 调用AI API
+                const aiResponse = await this.callAIAPI(this.chatHistory, this.scene);
+
+                // 添加AI响应到聊天历史
+                this.chatHistory.push({
+                    role: 'assistant',
+                    content: aiResponse.content  // 修改为正确的字段名
                 });
+
+                this.hasNewMessages = true;
             } catch (error) {
-                console.error('记录危机预警失败:', error);
+                console.error('AI调用失败:', error);
+                uni.showToast({
+                    title: error.message || 'AI调用失败',
+                    icon: 'none',
+                    duration: 3000
+                });
+            } finally {
+                this.isAiTyping = false;
             }
         },
 
         /**
-         * 调用AI接口获取响应
-         * 使用后端统一的prompt管理，不再在前端维护systemPrompt
+         * 保存聊天历史（用于 SaveButton 组件）
          */
-        async getAIResponse(userMessage) {
-            const apiUrl = `${BASE_URL}/ai-dialog`
+        saveChatHistory() {
+            this.saveSession();
+        },
 
-            // 构造历史消息（最多取最近8条消息）
-            const messages = this.chatHistory.slice(-8).map(msg => ({
-                role: msg.role,
-                content: msg.content
-            }))
+        /**
+         * 保存会话
+         */
+        async saveSession() {
+            if (this.chatHistory.length === 0) {
+                uni.showToast({
+                    title: '暂无对话内容可保存',
+                    icon: 'none'
+                });
+                return;
+            }
 
-            return new Promise((resolve, reject) => {
-                uni.request({
-                    url: apiUrl,
+            try {
+                const response = await uni.request({
+                    url: `${BASE_URL}/chat/save-chat`,
                     method: 'POST',
-                    timeout: 30000,
                     header: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
                     },
                     data: {
-                        messages: messages,
-                        scene: this.scene // 通过scene让后端选择对应的prompt
-                    },
-                    success: (res) => {
-                        console.log('后端AI响应:', res)
-                        if (res.statusCode === 200 && res.data && res.data.content) {
-                            resolve(res.data.content)
-                        } else if (res.statusCode === 401) {
-                            // 认证失败，提示用户重新登录
-                            uni.showToast({
-                                title: '登录已过期，请重新登录',
-                                icon: 'none'
-                            })
-                            // 可以在这里跳转到登录页
-                            // uni.reLaunch({ url: '/pages/login/login' })
-                            reject(new Error('认证失败'))
-                        } else {
-                            reject(new Error(`AI响应格式错误: ${JSON.stringify(res.data)}`))
-                        }
-                    },
-                    fail: (err) => {
-                        console.error('AI请求失败:', err)
-                        // 提供用户友好的错误信息
-                        let errorMsg = '网络连接失败，请检查网络后重试'
-                        if (err.errMsg && err.errMsg.includes('timeout')) {
-                            errorMsg = 'AI服务响应超时，请稍后重试'
-                        }
-                        reject(new Error(errorMsg))
+                        scene: this.scene,
+                        messages: this.chatHistory
                     }
-                })
-            })
+                });
+
+                if (response.statusCode === 200) {
+                    this.sessionId = response.data.id;  // 修改为正确的字段名
+                    uni.showToast({
+                        title: '保存成功',
+                        icon: 'success'
+                    });
+                }
+            } catch (error) {
+                console.error('保存失败:', error);
+                uni.showToast({
+                    title: '保存失败',
+                    icon: 'none'
+                });
+            }
+        },
+
+        /**
+         * 加载历史会话
+         */
+        async loadHistorySession(sessionId) {
+            try {
+                const response = await uni.request({
+                    url: `${BASE_URL}/chat/chat-sessions/${sessionId}`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    this.chatHistory = response.data.messages || [];
+                }
+            } catch (error) {
+                console.error('加载历史会话失败:', error);
+            }
+        },
+
+        /**
+         * 清空聊天记录
+         */
+        clearChat() {
+            uni.showModal({
+                title: '确认清空',
+                content: '确定要清空当前对话吗？此操作不可恢复。',
+                success: (res) => {
+                    if (res.confirm) {
+                        this.chatHistory = this.welcomeMessage ? [{
+                            role: 'assistant',
+                            content: this.welcomeMessage
+                        }] : [];
+                        this.sessionId = null;
+                        this.hasNewMessages = false;
+                        this.riskDetectedInSession = false;
+                        this.conversationStartTime = new Date();
+                    }
+                }
+            });
         }
     }
-}
+};

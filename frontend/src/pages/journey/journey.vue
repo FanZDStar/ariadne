@@ -28,6 +28,20 @@
                     <text v-else class="loading-text">数据加载中...</text>
                 </view>
             </view>
+
+            <view class="journey-card risk-assessment-card" @click="goToRiskReports">
+                <text class="card-title">💙 心理状态评估</text>
+                <text class="card-desc">AI分析你的心理健康状态和风险评估</text>
+                <view class="status">
+                    <text v-if="riskReportCount !== null">已生成 {{ riskReportCount }} 份评估报告</text>
+                    <text v-else class="loading-text">数据加载中...</text>
+                </view>
+                <view class="risk-status" v-if="latestRiskLevel">
+                    <text class="risk-indicator" :class="'risk-' + latestRiskLevel">
+                        {{ getRiskLevelText(latestRiskLevel) }}
+                    </text>
+                </view>
+            </view>
         </view>
     </view>
 </template>
@@ -41,13 +55,17 @@ export default {
         return {
             diaryCount: null,
             growthScore: '计算中...',
-            randomBroadcast: ''
+            randomBroadcast: '',
+            // 风险评估相关数据
+            riskReportCount: null,
+            latestRiskLevel: null
         }
     },
 
     onLoad() {
         this.loadDiaryCount();
         this.loadGrowthScore();
+        this.loadRiskReportData();
         this.setRandomBroadcast();
     },
 
@@ -55,6 +73,7 @@ export default {
         // 每次显示页面时重新加载数据
         this.loadDiaryCount();
         this.loadGrowthScore();
+        this.loadRiskReportData();
     },
 
     methods: {
@@ -118,6 +137,59 @@ export default {
             uni.navigateTo({
                 url: '/pages/growth-track/growth-track'
             });
+        },
+
+        goToRiskReports() {
+            uni.navigateTo({
+                url: '/pages/risk-report/report-history'
+            });
+        },
+
+        async loadRiskReportData() {
+            const token = uni.getStorageSync('access_token');
+            if (!token) {
+                this.riskReportCount = 0;
+                return;
+            }
+
+            try {
+                const response = await uni.request({
+                    url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/risk-assessment/reports-history`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    data: {
+                        page: 1,
+                        page_size: 100 // 获取所有报告来统计数量
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    const reports = response.data.reports || [];
+                    this.riskReportCount = reports.length;
+
+                    // 获取最新的风险等级
+                    if (reports.length > 0) {
+                        this.latestRiskLevel = reports[0].overall_risk_level;
+                    }
+                } else {
+                    this.riskReportCount = 0;
+                }
+            } catch (error) {
+                console.error('获取风险评估报告数据失败:', error);
+                this.riskReportCount = 0;
+            }
+        },
+
+        getRiskLevelText(level) {
+            const levelTexts = {
+                'low': '✅ 状态良好',
+                'medium': '⚡ 需要关注',
+                'high': '⚠️ 较高风险',
+                'critical': '🚨 高度风险'
+            };
+            return levelTexts[level] || '未知状态';
         }
     }
 }
@@ -207,5 +279,43 @@ export default {
 .loading-text {
     color: #999;
     font-style: italic;
+}
+
+/* 风险评估卡片特殊样式 */
+.risk-assessment-card {
+    border-left: 8rpx solid #667eea;
+    position: relative;
+}
+
+.risk-status {
+    margin-top: 20rpx;
+}
+
+.risk-indicator {
+    display: inline-block;
+    padding: 8rpx 16rpx;
+    border-radius: 20rpx;
+    font-size: 24rpx;
+    font-weight: bold;
+}
+
+.risk-low {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.risk-medium {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.risk-high {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.risk-critical {
+    background-color: #ffebee;
+    color: #c62828;
 }
 </style>

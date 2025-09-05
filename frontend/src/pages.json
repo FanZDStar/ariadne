@@ -52,6 +52,22 @@
       }
     },
     {
+      "path": "pages/risk-report/report-detail",
+      "style": {
+        "navigationBarTitleText": "风险评估报告",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/risk-report/report-history",
+      "style": {
+        "navigationBarTitleText": "心理状态历史",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/self-dialog/self-dialog",
       "style": {
         "navigationBarTitleText": "与自己对话"
