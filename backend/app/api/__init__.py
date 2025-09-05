@@ -10,6 +10,7 @@ api_router.include_router(image.router)
 api_router.include_router(feedback.router)
 api_router.include_router(ai_dialog.router)
 api_router.include_router(chat_history.router, prefix="/chat", tags=["chat"])
+api_router.include_router(chat_history.router, prefix="/chat-history", tags=["chat-history"])  # 添加chat-history前缀的路由
 api_router.include_router(tree_hole.router)
 api_router.include_router(tree_hole_chat.router)
 api_router.include_router(crisis_warning.router, prefix="/crisis", tags=["crisis-warning"])
