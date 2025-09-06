@@ -201,16 +201,21 @@ ${report.summary}
          * 查看详细报告
          */
         viewDetailedReport(report) {
-            // 这里可以导航到详细报告页面或显示详细信息
-            // 目前先用模态框显示AI分析内容
-            uni.showModal({
-                title: '🧠 AI心理分析',
-                content: report.ai_analysis.substring(0, 300) + (report.ai_analysis.length > 300 ? '...\n\n点击确定查看完整分析' : ''),
-                showCancel: false,
-                confirmText: '我知道了',
+            // 跳转到报告详情页面
+            uni.navigateTo({
+                url: `/pages/risk-report/report-detail?reportId=${report.report_id}`,
                 success: () => {
-                    // 可以在这里导航到专门的报告页面
-                    console.log('心理评估报告已查看');
+                    console.log('跳转到报告详情页面成功');
+                },
+                fail: (err) => {
+                    console.error('跳转到报告详情页面失败:', err);
+                    // 如果跳转失败，显示简单的模态框作为备选方案
+                    uni.showModal({
+                        title: '🧠 AI心理分析',
+                        content: report.ai_analysis.substring(0, 300) + (report.ai_analysis.length > 300 ? '...\n\n请稍后重试查看完整分析' : ''),
+                        showCancel: false,
+                        confirmText: '我知道了'
+                    });
                 }
             });
         },

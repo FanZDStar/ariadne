@@ -28,6 +28,7 @@ class MarkViewedRequest(BaseModel):
 class RiskAssessmentReportResponse(BaseModel):
     report_id: int
     session_id: int  # 修改为int类型以匹配数据库
+    session_title: str  # 新增：会话标题
     scene: str
     report_title: str
     report_content: str
@@ -77,6 +78,7 @@ async def generate_session_report(
         return RiskAssessmentReportResponse(
             report_id=report.report_id,
             session_id=report.session_id,
+            session_title=report.session.title if report.session else "未知会话",
             scene=report.scene,
             report_title=report.report_title,
             report_content=report.report_content,
@@ -117,6 +119,7 @@ async def get_latest_report(
         return RiskAssessmentReportResponse(
             report_id=report.report_id,
             session_id=report.session_id,
+            session_title=report.session.title if report.session else "未知会话",
             scene=report.scene,
             report_title=report.report_title,
             report_content=report.report_content,
@@ -182,6 +185,7 @@ async def get_reports_history(
             RiskAssessmentReportResponse(
                 report_id=report.report_id,
                 session_id=report.session_id,
+                session_title=report.session.title if report.session else "未知会话",
                 scene=report.scene,
                 report_title=report.report_title,
                 report_content=report.report_content,
@@ -283,6 +287,7 @@ async def get_session_report(
         return RiskAssessmentReportResponse(
             report_id=report.report_id,
             session_id=str(report.session_id),  # 转换为字符串以保持兼容性
+            session_title=report.session.title if report.session else "未知会话",
             scene=report.scene,
             report_title=report.report_title,
             report_content=report.report_content,
@@ -348,6 +353,7 @@ async def get_report_by_id(
         return RiskAssessmentReportResponse(
             report_id=report.report_id,
             session_id=report.session_id,
+            session_title=report.session.title if report.session else "未知会话",
             scene=report.scene,
             report_title=report.report_title,
             report_content=report.report_content,

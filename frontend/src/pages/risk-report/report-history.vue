@@ -49,6 +49,12 @@
                     <text class="report-date">{{ formatDate(report.report_generated_time) }}</text>
                 </view>
 
+                <!-- 会话标题 -->
+                <view class="session-info">
+                    <text class="session-icon">💬</text>
+                    <text class="session-title">{{ report.session_title || '未知会话' }}</text>
+                </view>
+
                 <!-- 报告内容预览 -->
                 <view class="report-preview">
                     <text class="preview-text" v-if="report.summary">
@@ -566,6 +572,30 @@ export default {
 .report-date {
     font-size: 22rpx;
     color: #999;
+}
+
+.session-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15rpx;
+    padding: 8rpx 12rpx;
+    background: #f8f9fa;
+    border-radius: 12rpx;
+}
+
+.session-icon {
+    margin-right: 8rpx;
+    font-size: 20rpx;
+}
+
+.session-title {
+    font-size: 24rpx;
+    color: #333;
+    font-weight: 500;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .report-preview {

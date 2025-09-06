@@ -358,9 +358,11 @@ class RiskAssessmentService:
         return scene_names.get(scene, '对话')
     
     def get_user_latest_report(self, user_id: int, session_id: str) -> Optional[RiskAssessmentReport]:
-        """获取用户指定会话的最新报告"""
+        """获取用户指定会话的最新报告（包含会话标题）"""
         try:
-            report = self.db.query(RiskAssessmentReport).filter(
+            report = self.db.query(RiskAssessmentReport).join(
+                ChatSession, RiskAssessmentReport.session_id == ChatSession.id
+            ).filter(
                 and_(
                     RiskAssessmentReport.user_id == user_id,
                     RiskAssessmentReport.session_id == session_id,
@@ -398,10 +400,12 @@ class RiskAssessmentService:
             return False
     
     def get_user_reports_history(self, user_id: int, limit: int = 10, page: int = 1) -> List[RiskAssessmentReport]:
-        """获取用户的报告历史"""
+        """获取用户的报告历史（包含会话标题）"""
         try:
             offset = (page - 1) * limit
-            reports = self.db.query(RiskAssessmentReport).filter(
+            reports = self.db.query(RiskAssessmentReport).join(
+                ChatSession, RiskAssessmentReport.session_id == ChatSession.id
+            ).filter(
                 RiskAssessmentReport.user_id == user_id
             ).order_by(desc(RiskAssessmentReport.report_generated_time)).offset(offset).limit(limit).all()
             
@@ -412,9 +416,11 @@ class RiskAssessmentService:
             return []
 
     def get_report_by_id(self, report_id: int, user_id: int) -> Optional[RiskAssessmentReport]:
-        """根据报告ID获取报告详情（验证用户权限）"""
+        """根据报告ID获取报告详情（包含会话标题，验证用户权限）"""
         try:
-            report = self.db.query(RiskAssessmentReport).filter(
+            report = self.db.query(RiskAssessmentReport).join(
+                ChatSession, RiskAssessmentReport.session_id == ChatSession.id
+            ).filter(
                 RiskAssessmentReport.report_id == report_id,
                 RiskAssessmentReport.user_id == user_id  # 确保用户只能访问自己的报告
             ).first()

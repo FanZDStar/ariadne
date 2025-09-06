@@ -249,35 +249,66 @@ class PsychologicalAssessmentService:
             # 生成建议
             recommendations = self.generate_recommendations(analysis)
             
-            # 创建报告
-            report = RiskAssessmentReport(
-                user_id=chat_session.user_id,
-                session_id=session_id,
-                scene=chat_session.scene,
-                report_title=f"心理状态评估报告 - {analysis['risk_level'].upper()}风险",
-                report_content=ai_analysis,
-                summary=f"基于{analysis['total_messages']}条消息的分析，检测到{len(analysis['risk_messages'])}条风险消息，整体风险等级为{analysis['risk_level']}。",
-                overall_risk_level=analysis['risk_level'],
-                overall_risk_score=analysis['risk_score'],
-                total_messages=analysis['total_messages'],
-                risk_messages_count=len(analysis['risk_messages']),
-                detected_keywords=analysis['detected_keywords'],
-                risk_trends={"risk_messages": analysis['risk_messages']},
-                ai_analysis=ai_analysis,
-                recommendations=recommendations,
-                conversation_start_time=chat_session.created_at,
-                conversation_end_time=datetime.utcnow(),
-                report_generated_time=datetime.utcnow(),
-                status="completed",
-                is_viewed=False,
-                version=1
-            )
+            # 检查是否已存在该会话的报告
+            existing_report = db.query(RiskAssessmentReport).filter(
+                RiskAssessmentReport.session_id == session_id
+            ).first()
             
-            db.add(report)
-            db.commit()
-            db.refresh(report)
-            
-            print(f"✅ 心理评估报告生成成功：report_id={report.report_id}")
+            if existing_report:
+                # 更新现有报告
+                print(f"🔄 更新现有报告：report_id={existing_report.report_id}")
+                existing_report.report_title = f"心理状态评估报告 - {analysis['risk_level'].upper()}风险"
+                existing_report.report_content = ai_analysis
+                existing_report.summary = f"基于{analysis['total_messages']}条消息的分析，检测到{len(analysis['risk_messages'])}条风险消息，整体风险等级为{analysis['risk_level']}。"
+                existing_report.overall_risk_level = analysis['risk_level']
+                existing_report.overall_risk_score = analysis['risk_score']
+                existing_report.total_messages = analysis['total_messages']
+                existing_report.risk_messages_count = len(analysis['risk_messages'])
+                existing_report.detected_keywords = analysis['detected_keywords']
+                existing_report.risk_trends = {"risk_messages": analysis['risk_messages']}
+                existing_report.ai_analysis = ai_analysis
+                existing_report.recommendations = recommendations
+                existing_report.conversation_end_time = datetime.utcnow()
+                existing_report.report_generated_time = datetime.utcnow()  # 更新生成时间
+                existing_report.version = (existing_report.version or 1) + 1  # 增加版本号
+                
+                db.commit()
+                db.refresh(existing_report)
+                
+                print(f"✅ 心理评估报告更新成功：report_id={existing_report.report_id}, 版本={existing_report.version}")
+                return existing_report
+            else:
+                # 创建新报告
+                print(f"📝 创建新报告...")
+                report = RiskAssessmentReport(
+                    user_id=chat_session.user_id,
+                    session_id=session_id,
+                    scene=chat_session.scene,
+                    report_title=f"心理状态评估报告 - {analysis['risk_level'].upper()}风险",
+                    report_content=ai_analysis,
+                    summary=f"基于{analysis['total_messages']}条消息的分析，检测到{len(analysis['risk_messages'])}条风险消息，整体风险等级为{analysis['risk_level']}。",
+                    overall_risk_level=analysis['risk_level'],
+                    overall_risk_score=analysis['risk_score'],
+                    total_messages=analysis['total_messages'],
+                    risk_messages_count=len(analysis['risk_messages']),
+                    detected_keywords=analysis['detected_keywords'],
+                    risk_trends={"risk_messages": analysis['risk_messages']},
+                    ai_analysis=ai_analysis,
+                    recommendations=recommendations,
+                    conversation_start_time=chat_session.created_at,
+                    conversation_end_time=datetime.utcnow(),
+                    report_generated_time=datetime.utcnow(),
+                    status="completed",
+                    is_viewed=False,
+                    version=1
+                )
+                
+                db.add(report)
+                db.commit()
+                db.refresh(report)
+                
+                print(f"✅ 心理评估报告生成成功：report_id={report.report_id}")
+                return report
             return report
             
         except Exception as e:

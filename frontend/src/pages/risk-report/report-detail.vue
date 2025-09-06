@@ -10,6 +10,15 @@
 
         <!-- 报告内容 -->
         <view class="report-content" v-if="report">
+            <!-- 会话信息 -->
+            <view class="session-section">
+                <text class="section-title">💬 相关会话</text>
+                <view class="session-info">
+                    <text class="session-title">{{ report.session_title || '未知会话' }}</text>
+                    <text class="session-meta">ID: {{ report.session_id }}</text>
+                </view>
+            </view>
+
             <!-- 风险等级概览 -->
             <view class="risk-overview" :class="'risk-' + report.overall_risk_level">
                 <view class="risk-header">
@@ -376,6 +385,30 @@ export default {
     font-weight: bold;
     color: #333;
     margin-bottom: 20rpx;
+}
+
+.session-section {
+    margin-bottom: 30rpx;
+}
+
+.session-info {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 20rpx;
+    border-radius: 16rpx;
+    border-left: 6rpx solid #667eea;
+}
+
+.session-title {
+    display: block;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8rpx;
+}
+
+.session-meta {
+    font-size: 22rpx;
+    color: #666;
 }
 
 .stats-section {
