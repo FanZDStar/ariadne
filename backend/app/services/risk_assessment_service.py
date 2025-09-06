@@ -397,15 +397,30 @@ class RiskAssessmentService:
             self.db.rollback()
             return False
     
-    def get_user_reports_history(self, user_id: int, limit: int = 10) -> List[RiskAssessmentReport]:
+    def get_user_reports_history(self, user_id: int, limit: int = 10, page: int = 1) -> List[RiskAssessmentReport]:
         """获取用户的报告历史"""
         try:
+            offset = (page - 1) * limit
             reports = self.db.query(RiskAssessmentReport).filter(
                 RiskAssessmentReport.user_id == user_id
-            ).order_by(desc(RiskAssessmentReport.report_generated_time)).limit(limit).all()
+            ).order_by(desc(RiskAssessmentReport.report_generated_time)).offset(offset).limit(limit).all()
             
             return reports
             
         except Exception as e:
             logger.error(f"获取用户报告历史失败: {e}")
             return []
+
+    def get_report_by_id(self, report_id: int, user_id: int) -> Optional[RiskAssessmentReport]:
+        """根据报告ID获取报告详情（验证用户权限）"""
+        try:
+            report = self.db.query(RiskAssessmentReport).filter(
+                RiskAssessmentReport.report_id == report_id,
+                RiskAssessmentReport.user_id == user_id  # 确保用户只能访问自己的报告
+            ).first()
+            
+            return report
+            
+        except Exception as e:
+            logger.error(f"获取报告详情失败: {e}")
+            return None

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import json
 import aiohttp
 import re
+import asyncio
 
 from app.database.session import get_db
 from app.models.chat_history import ChatSession, ChatMessage
@@ -16,6 +17,7 @@ from app.schemas.chat_history import (
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.core.config import settings
+from app.services.psychological_assessment_service import psychological_assessment_service
 
 router = APIRouter()
 
@@ -46,6 +48,23 @@ def detect_risk_keywords(content: str) -> bool:
         if keyword in content_lower:
             return True
     return False
+
+async def generate_psychological_report_task(session_id: int):
+    """后台任务：生成心理评估报告"""
+    try:
+        from app.database.session import SessionLocal
+        db = SessionLocal()
+        try:
+            print(f"🧠 开始为会话 {session_id} 生成心理评估报告...")
+            report = await psychological_assessment_service.generate_report(session_id, db)
+            if report:
+                print(f"✅ 心理评估报告生成成功: {report.report_id}")
+            else:
+                print(f"ℹ️ 会话 {session_id} 无需生成心理评估报告")
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"❌ 生成心理评估报告失败: {str(e)}")
 
 async def generate_title_with_ai(messages: List[dict]) -> str:
     """使用AI为对话生成标题"""
@@ -114,6 +133,7 @@ async def generate_title_with_ai(messages: List[dict]) -> str:
 @router.post("/save-chat", response_model=ChatSessionSchema)
 async def save_chat_session(
     request: SaveChatRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -179,6 +199,12 @@ async def save_chat_session(
         db.commit()
         db.refresh(existing_session)
         print(f"✅ 会话更新完成: {existing_session.id}")
+        
+        # 如果检测到风险或会话已启用自动保存，则生成心理评估报告
+        if has_risk or existing_session.auto_save_enabled:
+            print(f"🧠 触发心理评估报告生成 - 会话ID: {existing_session.id}")
+            background_tasks.add_task(generate_psychological_report_task, existing_session.id)
+        
         return existing_session
     
     # 如果没有提供session_id，则创建新会话
@@ -244,6 +270,11 @@ async def save_chat_session(
     
     db.commit()
     db.refresh(chat_session)
+    
+    # 如果检测到风险，则生成心理评估报告
+    if has_risk:
+        print(f"🧠 触发心理评估报告生成 - 新会话ID: {chat_session.id}")
+        background_tasks.add_task(generate_psychological_report_task, chat_session.id)
     
     return chat_session
 @router.get("/chat-sessions", response_model=List[ChatSessionSchema])

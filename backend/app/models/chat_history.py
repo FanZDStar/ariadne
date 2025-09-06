@@ -20,6 +20,7 @@ class ChatSession(Base):
     # 关联关系
     messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
     user = relationship("User", back_populates="chat_sessions")
+    risk_reports = relationship("RiskAssessmentReport", back_populates="session", cascade="all, delete-orphan")  # 添加与风险评估报告的关联
 
 class ChatMessage(Base):
     __tablename__ = "chat_messages"

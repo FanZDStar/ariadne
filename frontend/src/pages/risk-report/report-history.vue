@@ -178,7 +178,8 @@ export default {
                 })
 
                 if (response.statusCode === 200) {
-                    const newReports = response.data.reports || []
+                    // 后端直接返回数组，不是包含在reports字段中
+                    const newReports = response.data || []
 
                     if (isLoadMore) {
                         this.reports = [...this.reports, ...newReports]
@@ -255,7 +256,7 @@ export default {
          */
         viewReport(report) {
             uni.navigateTo({
-                url: `/pages/risk-report/report-detail?reportId=${report.id}`
+                url: `/pages/risk-report/report-detail?reportId=${report.report_id}`
             })
         },
 

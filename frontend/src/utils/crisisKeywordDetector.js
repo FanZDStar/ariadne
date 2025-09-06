@@ -51,6 +51,12 @@ export class CrisisKeywordDetector {
         // 本地关键词检测
         const localResult = this.detectKeywordsLocally(text);
 
+        // 暂时只使用本地检测，避免调用不存在的后端API
+        console.log('🔍 危机检测结果 (仅本地):', localResult);
+        return localResult;
+
+        // TODO: 当后端API可用时启用以下代码
+        /*
         // 如果本地检测到高风险，还要调用后端AI分析
         if (localResult.riskLevel === 'critical' || localResult.riskLevel === 'high') {
             try {
@@ -64,6 +70,7 @@ export class CrisisKeywordDetector {
         }
 
         return localResult;
+        */
     }
 
     /**

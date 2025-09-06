@@ -166,7 +166,8 @@ export default {
                 });
 
                 if (response.statusCode === 200) {
-                    const reports = response.data.reports || [];
+                    // 后端直接返回数组，不是包含在reports字段中
+                    const reports = response.data || [];
                     this.riskReportCount = reports.length;
 
                     // 获取最新的风险等级

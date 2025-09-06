@@ -20,7 +20,7 @@ class RiskAssessmentReport(Base):
     
     report_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    session_id = Column(String(255), nullable=False, index=True)  # 对话会话ID
+    session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False, index=True)  # 对话会话ID - 修改为INT类型并添加外键
     scene = Column(String(100), nullable=False)  # 对话场景
     
     # 报告基本信息
@@ -55,6 +55,7 @@ class RiskAssessmentReport(Base):
     
     # 关联关系
     user = relationship("User", back_populates="risk_reports")
+    session = relationship("ChatSession", back_populates="risk_reports")  # 添加与聊天会话的关联
     
     def to_dict(self):
         return {

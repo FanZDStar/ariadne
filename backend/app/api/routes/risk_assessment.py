@@ -17,7 +17,7 @@ router = APIRouter()
 
 # 请求模型
 class GenerateReportRequest(BaseModel):
-    session_id: str
+    session_id: int  # 修改为int类型
     scene: str
     conversation_start_time: Optional[datetime] = None
 
@@ -27,7 +27,7 @@ class MarkViewedRequest(BaseModel):
 # 响应模型
 class RiskAssessmentReportResponse(BaseModel):
     report_id: int
-    session_id: str
+    session_id: int  # 修改为int类型以匹配数据库
     scene: str
     report_title: str
     report_content: str
@@ -161,7 +161,9 @@ async def mark_report_viewed(
 
 @router.get("/reports-history", response_model=List[RiskAssessmentReportResponse])
 async def get_reports_history(
-    limit: int = 10,
+    page: int = 1,
+    page_size: int = 10,
+    limit: int = None,  # 保持向后兼容
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -170,7 +172,11 @@ async def get_reports_history(
     """
     try:
         service = RiskAssessmentService(db)
-        reports = service.get_user_reports_history(current_user.user_id, limit)
+        
+        # 如果提供了limit参数，使用limit；否则使用page_size
+        effective_limit = limit if limit is not None else page_size
+        
+        reports = service.get_user_reports_history(current_user.user_id, effective_limit, page)
         
         return [
             RiskAssessmentReportResponse(
@@ -248,3 +254,119 @@ async def get_risk_statistics(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取统计信息失败: {str(e)}")
+
+@router.get("/session/{session_id}/report", response_model=RiskAssessmentReportResponse)
+async def get_session_report(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    根据会话ID获取心理评估报告
+    """
+    try:
+        # 查找该会话的最新心理评估报告
+        report = db.query(RiskAssessmentReport).filter(
+            RiskAssessmentReport.session_id == session_id,
+            RiskAssessmentReport.user_id == current_user.user_id
+        ).order_by(RiskAssessmentReport.report_generated_time.desc()).first()
+        
+        if not report:
+            raise HTTPException(status_code=404, detail="未找到该会话的心理评估报告")
+        
+        # 标记为已查看
+        if not report.is_viewed:
+            report.is_viewed = True
+            report.last_viewed_time = datetime.utcnow()
+            db.commit()
+        
+        return RiskAssessmentReportResponse(
+            report_id=report.report_id,
+            session_id=str(report.session_id),  # 转换为字符串以保持兼容性
+            scene=report.scene,
+            report_title=report.report_title,
+            report_content=report.report_content,
+            summary=report.summary,
+            overall_risk_level=report.overall_risk_level,
+            overall_risk_score=report.overall_risk_score,
+            total_messages=report.total_messages,
+            risk_messages_count=report.risk_messages_count,
+            detected_keywords=report.detected_keywords or [],
+            ai_analysis=report.ai_analysis or "",
+            recommendations=report.recommendations or [],
+            conversation_start_time=report.conversation_start_time,
+            conversation_end_time=report.conversation_end_time,
+            report_generated_time=report.report_generated_time,
+            is_viewed=report.is_viewed,
+            version=report.version
+        )
+        
+    except Exception as e:
+        if "未找到" in str(e):
+            raise e
+        raise HTTPException(status_code=500, detail=f"获取报告失败: {str(e)}")
+
+@router.get("/session/{session_id}/has-report")
+async def check_session_has_report(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    检查指定会话是否有心理评估报告
+    """
+    try:
+        report_exists = db.query(RiskAssessmentReport).filter(
+            RiskAssessmentReport.session_id == session_id,
+            RiskAssessmentReport.user_id == current_user.user_id
+        ).first() is not None
+        
+        return {
+            "has_report": report_exists,
+            "session_id": session_id
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"检查报告状态失败: {str(e)}")
+
+@router.get("/reports/{report_id}", response_model=RiskAssessmentReportResponse)
+async def get_report_by_id(
+    report_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    根据报告ID获取报告详情
+    """
+    try:
+        service = RiskAssessmentService(db)
+        report = service.get_report_by_id(report_id, current_user.user_id)
+        
+        if not report:
+            raise HTTPException(status_code=404, detail="报告不存在或无权限访问")
+        
+        return RiskAssessmentReportResponse(
+            report_id=report.report_id,
+            session_id=report.session_id,
+            scene=report.scene,
+            report_title=report.report_title,
+            report_content=report.report_content,
+            summary=report.summary,
+            overall_risk_level=report.overall_risk_level,
+            overall_risk_score=report.overall_risk_score,
+            total_messages=report.total_messages,
+            risk_messages_count=report.risk_messages_count,
+            detected_keywords=report.detected_keywords or [],
+            ai_analysis=report.ai_analysis or "",
+            recommendations=report.recommendations or [],
+            conversation_start_time=report.conversation_start_time,
+            conversation_end_time=report.conversation_end_time,
+            report_generated_time=report.report_generated_time,
+            is_viewed=report.is_viewed,
+            version=report.version
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取报告详情失败: {str(e)}")

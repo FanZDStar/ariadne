@@ -35,7 +35,7 @@ export default {
             // 风险评估相关
             conversationStartTime: null,
             hasRiskDetected: false,
-            autoSaveEnabled: true,
+            autoSaveEnabled: false,  // 默认不启用自动保存，只有检测到风险或从数据库加载时才启用
             riskDetectedInSession: false
         }
     },
@@ -102,6 +102,116 @@ export default {
                         reject(new Error(errorMsg));
                     }
                 });
+            });
+        },
+
+        /**
+         * 检查会话是否有心理评估报告
+         */
+        async checkSessionReport() {
+            if (!this.sessionId) return false;
+
+            try {
+                const response = await uni.request({
+                    url: `${BASE_URL}/risk-assessment/session/${this.sessionId}/has-report`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    return response.data.has_report;
+                }
+            } catch (error) {
+                console.log('检查会话报告失败:', error);
+            }
+            return false;
+        },
+
+        /**
+         * 获取会话的心理评估报告
+         */
+        async getSessionReport() {
+            if (!this.sessionId) return null;
+
+            try {
+                const response = await uni.request({
+                    url: `${BASE_URL}/risk-assessment/session/${this.sessionId}/report`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    return response.data;
+                } else if (response.statusCode === 404) {
+                    return null; // 没有报告
+                }
+            } catch (error) {
+                console.log('获取会话报告失败:', error);
+                if (error.statusCode === 404) {
+                    return null;
+                }
+            }
+            return null;
+        },
+
+        /**
+         * 显示心理评估报告
+         */
+        async showPsychologicalReport() {
+            const report = await this.getSessionReport();
+            if (!report) return;
+
+            const riskLevelText = {
+                'critical': '🚨 高危',
+                'high': '⚠️ 较高',
+                'medium': '⚡ 中等',
+                'low': '✅ 较低'
+            };
+
+            const content = `基于您的对话内容，系统为您生成了心理状态评估报告：
+
+风险等级：${riskLevelText[report.overall_risk_level] || report.overall_risk_level}
+风险分数：${report.overall_risk_score.toFixed(1)}/100
+对话消息：${report.total_messages}条
+
+📋 报告摘要：
+${report.summary}
+
+是否查看完整的AI分析报告？`;
+
+            uni.showModal({
+                title: '🧠 心理状态评估报告',
+                content: content,
+                showCancel: true,
+                cancelText: '稍后查看',
+                confirmText: '查看详情',
+                success: (res) => {
+                    if (res.confirm) {
+                        this.viewDetailedReport(report);
+                    }
+                }
+            });
+        },
+
+        /**
+         * 查看详细报告
+         */
+        viewDetailedReport(report) {
+            // 这里可以导航到详细报告页面或显示详细信息
+            // 目前先用模态框显示AI分析内容
+            uni.showModal({
+                title: '🧠 AI心理分析',
+                content: report.ai_analysis.substring(0, 300) + (report.ai_analysis.length > 300 ? '...\n\n点击确定查看完整分析' : ''),
+                showCancel: false,
+                confirmText: '我知道了',
+                success: () => {
+                    // 可以在这里导航到专门的报告页面
+                    console.log('心理评估报告已查看');
+                }
             });
         },
 
@@ -198,6 +308,55 @@ ${report.ai_analysis.substring(0, 100)}...
         },
 
         /**
+         * 检查会话的自动保存状态
+         */
+        async checkAutoSaveStatus() {
+            if (!this.sessionId) return false;
+
+            try {
+                const response = await uni.request({
+                    url: `${BASE_URL}/chat-history/chat-sessions/${this.sessionId}/auto-save-status`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    this.autoSaveEnabled = response.data.auto_save_enabled;
+                    console.log(`✅ 会话 ${this.sessionId} 自动保存状态: ${this.autoSaveEnabled}`);
+                    return this.autoSaveEnabled;
+                }
+            } catch (error) {
+                console.log('检查自动保存状态失败:', error);
+            }
+            return false;
+        },
+
+        /**
+         * 为会话启用自动保存（用于手动保存的会话）
+         */
+        async enableSessionAutoSave() {
+            if (!this.sessionId) return;
+
+            try {
+                const response = await uni.request({
+                    url: `${BASE_URL}/chat-history/chat-sessions/${this.sessionId}/enable-auto-save`,
+                    method: 'PUT',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    console.log(`✅ 会话 ${this.sessionId} 已启用自动保存`);
+                    return true;
+                }
+            } catch (error) {
+                console.log('启用自动保存失败:', error);
+            }
+            return false;
+        },        /**
          * 处理页面卸载事件 - 生成风险评估报告
          */
         async handlePageUnload() {
@@ -227,7 +386,7 @@ ${report.ai_analysis.substring(0, 100)}...
         },
 
         /**
-         * 增强的危机检测方法（包含自动保存）
+         * 增强的危机检测方法（标记风险但不立即保存）
          */
         async performCrisisDetection(userMessage) {
             if (!this.crisisDetector) return;
@@ -244,10 +403,8 @@ ${report.ai_analysis.substring(0, 100)}...
                     this.crisisWarningData = detectionResult;
                     this.riskDetectedInSession = true;
 
-                    // 自动保存会话
-                    if (this.autoSaveEnabled) {
-                        await this.autoSaveSession();
-                    }
+                    // 不在这里立即保存，等AI回复后再保存
+                    console.log('🔍 标记会话需要自动保存');
 
                     // 显示风险提示
                     this.showRiskDetectionAlert(detectionResult);
@@ -273,6 +430,71 @@ ${report.ai_analysis.substring(0, 100)}...
                 } catch (error) {
                     console.log('自动保存失败:', error);
                 }
+            }
+        },
+
+        /**
+         * 处理风险会话的自动保存逻辑
+         */
+        async handleRiskSessionSave() {
+            // 如果检测到风险或者会话已启用自动保存，则进行保存
+            if (!this.riskDetectedInSession && !this.autoSaveEnabled) {
+                console.log('❌ 不满足自动保存条件');
+                console.log('riskDetectedInSession:', this.riskDetectedInSession);
+                console.log('autoSaveEnabled:', this.autoSaveEnabled);
+                return;
+            }
+
+            // 检查token是否存在
+            const token = uni.getStorageSync('access_token');
+            if (!token) {
+                console.error('❌ 没有access_token，无法保存');
+                uni.showToast({
+                    title: '请先登录',
+                    icon: 'none'
+                });
+                return;
+            }
+
+            try {
+                console.log('💾 风险对话自动保存中...');
+                console.log('当前会话ID:', this.sessionId);
+                console.log('当前聊天历史长度:', this.chatHistory.length);
+                console.log('聊天历史内容:', JSON.stringify(this.chatHistory, null, 2));
+
+                await this.saveSession();
+
+                // 保存成功后检查会话的自动保存状态
+                if (this.sessionId) {
+                    await this.checkAutoSaveStatus();
+
+                    // 如果是因为检测到风险而触发的自动保存，检查是否生成了心理评估报告
+                    if (this.riskDetectedInSession) {
+                        setTimeout(async () => {
+                            try {
+                                const hasReport = await this.checkSessionReport();
+                                if (hasReport) {
+                                    console.log('✅ 自动保存后检测到新的心理评估报告');
+                                    // 显示温和的提示，不打断用户的对话流程
+                                    uni.showToast({
+                                        title: '已生成心理评估报告',
+                                        icon: 'none',
+                                        duration: 2000
+                                    });
+
+                                    // 延迟显示报告详情
+                                    setTimeout(() => {
+                                        this.showPsychologicalReport();
+                                    }, 3000);
+                                }
+                            } catch (error) {
+                                console.log('检查心理评估报告失败:', error);
+                            }
+                        }, 5000); // 5秒后检查，给AI生成报告足够时间
+                    }
+                }
+            } catch (error) {
+                console.log('风险会话保存失败:', error);
             }
         },
 
@@ -321,6 +543,11 @@ ${report.ai_analysis.substring(0, 100)}...
         async sendMessage(content) {
             if (!content.trim()) return;
 
+            // 检查当前会话的自动保存状态
+            if (this.sessionId) {
+                await this.checkAutoSaveStatus();
+            }
+
             // 添加用户消息到聊天历史
             this.chatHistory.push({
                 role: 'user',
@@ -344,6 +571,17 @@ ${report.ai_analysis.substring(0, 100)}...
                 });
 
                 this.hasNewMessages = true;
+
+                // 如果检测到风险或会话已启用自动保存，自动保存完整对话
+                console.log('🔍 检查是否需要自动保存...');
+                console.log('riskDetectedInSession:', this.riskDetectedInSession);
+                console.log('autoSaveEnabled:', this.autoSaveEnabled);
+
+                if (this.riskDetectedInSession || this.autoSaveEnabled) {
+                    console.log('🚨 触发自动保存条件，开始保存对话...');
+                    await this.handleRiskSessionSave();
+                }
+
             } catch (error) {
                 console.error('AI调用失败:', error);
                 uni.showToast({
@@ -376,6 +614,14 @@ ${report.ai_analysis.substring(0, 100)}...
             }
 
             try {
+                const requestData = {
+                    scene: this.scene,
+                    messages: this.chatHistory,
+                    session_id: this.sessionId // 如果有sessionId，则更新现有会话
+                };
+
+                console.log('保存请求数据:', JSON.stringify(requestData, null, 2));
+
                 const response = await uni.request({
                     url: `${BASE_URL}/chat/save-chat`,
                     method: 'POST',
@@ -383,25 +629,65 @@ ${report.ai_analysis.substring(0, 100)}...
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
                         'Content-Type': 'application/json'
                     },
-                    data: {
-                        scene: this.scene,
-                        messages: this.chatHistory
-                    }
+                    data: requestData
                 });
 
+                console.log('保存响应:', response);
+
                 if (response.statusCode === 200) {
-                    this.sessionId = response.data.id;  // 修改为正确的字段名
+                    if (!this.sessionId) {
+                        this.sessionId = response.data.id;  // 首次保存时设置sessionId
+                        console.log('设置新会话ID:', this.sessionId);
+                    }
+
+                    // 重置新消息标志
+                    this.hasNewMessages = false;
+
+                    // 手动保存的会话应该启用自动保存，便于日后继续会话时自动保存
+                    this.autoSaveEnabled = true;
+
+                    // 检查并更新数据库中的自动保存状态
+                    if (this.sessionId) {
+                        await this.enableSessionAutoSave();
+                    }
+
                     uni.showToast({
                         title: '保存成功',
                         icon: 'success'
                     });
+
+                    // 保存成功后，延迟检查是否生成了心理评估报告
+                    setTimeout(async () => {
+                        try {
+                            const hasReport = await this.checkSessionReport();
+                            if (hasReport) {
+                                console.log('✅ 检测到新的心理评估报告');
+                                // 延迟显示报告，让用户先看到保存成功的提示
+                                setTimeout(() => {
+                                    this.showPsychologicalReport();
+                                }, 2000);
+                            }
+                        } catch (error) {
+                            console.log('检查心理评估报告失败:', error);
+                        }
+                    }, 3000); // 3秒后检查，给后台任务足够时间生成报告
                 }
             } catch (error) {
                 console.error('保存失败:', error);
-                uni.showToast({
-                    title: '保存失败',
-                    icon: 'none'
-                });
+                console.error('保存响应详情:', error.response || error);
+
+                if (error.statusCode === 401) {
+                    console.error('❌ 认证失败，token可能过期');
+                    uni.showToast({
+                        title: '登录已过期，请重新登录',
+                        icon: 'none'
+                    });
+                } else {
+                    uni.showToast({
+                        title: '保存失败',
+                        icon: 'none'
+                    });
+                }
             }
         },
 
@@ -420,6 +706,36 @@ ${report.ai_analysis.substring(0, 100)}...
 
                 if (response.statusCode === 200) {
                     this.chatHistory = response.data.messages || [];
+
+                    // 检查该会话的自动保存状态
+                    await this.checkAutoSaveStatus();
+
+                    console.log(`✅ 加载历史会话 ${sessionId}，自动保存状态: ${this.autoSaveEnabled}`);
+
+                    // 检查该会话是否有心理评估报告，如果有且未查看过，则提示用户
+                    setTimeout(async () => {
+                        try {
+                            const hasReport = await this.checkSessionReport();
+                            if (hasReport) {
+                                const report = await this.getSessionReport();
+                                if (report && !report.is_viewed) {
+                                    console.log('📊 发现未查看的心理评估报告');
+                                    uni.showToast({
+                                        title: '发现心理评估报告',
+                                        icon: 'none',
+                                        duration: 2000
+                                    });
+
+                                    // 延迟显示报告
+                                    setTimeout(() => {
+                                        this.showPsychologicalReport();
+                                    }, 2000);
+                                }
+                            }
+                        } catch (error) {
+                            console.log('检查历史会话报告失败:', error);
+                        }
+                    }, 1000);
                 }
             } catch (error) {
                 console.error('加载历史会话失败:', error);
@@ -442,6 +758,7 @@ ${report.ai_analysis.substring(0, 100)}...
                         this.sessionId = null;
                         this.hasNewMessages = false;
                         this.riskDetectedInSession = false;
+                        this.autoSaveEnabled = false;  // 重置自动保存状态
                         this.conversationStartTime = new Date();
                     }
                 }
