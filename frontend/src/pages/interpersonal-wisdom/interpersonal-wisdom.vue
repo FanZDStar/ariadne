@@ -636,7 +636,7 @@ export default {
     color: #666;
 }
 
-.categories-grid {
+/* .categories-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20rpx;
@@ -667,6 +667,44 @@ export default {
 
 .category-count {
     font-size: 24rpx;
+    color: #999;
+} */
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16rpx;
+}
+
+.category-card {
+    background-color: white;
+    border-radius: 16rpx;
+    padding: 24rpx;
+    text-align: center;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.category-card:active {
+    transform: translateY(2rpx);
+}
+
+.category-icon {
+    font-size: 40rpx;
+    display: block;
+    margin-bottom: 12rpx;
+}
+
+.category-name {
+    font-size: 26rpx;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 8rpx;
+}
+
+.category-count {
+    font-size: 22rpx;
     color: #999;
 }
 
@@ -849,5 +887,35 @@ export default {
     padding: 20rpx;
     border-radius: 12rpx;
     text-align: center;
+}
+
+@media (max-width: 750rpx) {
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12rpx;
+    }
+
+    .category-card {
+        padding: 20rpx;
+    }
+
+    .category-icon {
+        font-size: 36rpx;
+    }
+
+    .category-name {
+        font-size: 24rpx;
+    }
+
+    .category-count {
+        font-size: 20rpx;
+    }
+}
+
+@media (max-width: 480rpx) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 16rpx;
+    }
 }
 </style>
