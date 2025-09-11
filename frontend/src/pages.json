@@ -60,6 +60,46 @@
       }
     },
     {
+      "path": "pages/academic-stress/academic-stress",
+      "style": {
+        "navigationBarTitleText": "学业压力疏导",
+        "navigationBarBackgroundColor": "#4CAF50",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/social-anxiety/social-anxiety",
+      "style": {
+        "navigationBarTitleText": "社交焦虑陪伴",
+        "navigationBarBackgroundColor": "#FF9800",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/future-planning/future-planning",
+      "style": {
+        "navigationBarTitleText": "未来规划指导",
+        "navigationBarBackgroundColor": "#9C27B0",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/emotional-growth/emotional-growth",
+      "style": {
+        "navigationBarTitleText": "情感成长陪伴",
+        "navigationBarBackgroundColor": "#E91E63",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/life-balance/life-balance",
+      "style": {
+        "navigationBarTitleText": "生活平衡教练",
+        "navigationBarBackgroundColor": "#607D8B",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/tips/tips",
       "style": {
         "navigationBarTitleText": "交往小技巧"
@@ -110,7 +150,7 @@
     {
       "path": "pages/love-experiment/love-experiment",
       "style": {
-        "navigationBarTitleText": "心语练习 ",
+        "navigationBarTitleText": "心语练习",
         "navigationBarBackgroundColor": "#ffffff",
         "navigationBarTextStyle": "black"
       }
