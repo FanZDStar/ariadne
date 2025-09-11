@@ -206,6 +206,62 @@
       "style": {
         "navigationBarTitleText": "悄悄话"
       }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/interpersonal-wisdom",
+      "style": {
+        "navigationBarTitleText": "人际智慧",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/skill-practice",
+      "style": {
+        "navigationBarTitleText": "技能练习"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/risk-assessment",
+      "style": {
+        "navigationBarTitleText": "关系健康评估"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/scenario-simulation",
+      "style": {
+        "navigationBarTitleText": "情景识别训练"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/personalized-advice",
+      "style": {
+        "navigationBarTitleText": "个性化建议"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/emergency-resources",
+      "style": {
+        "navigationBarTitleText": "应急资源"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/category-skills",
+      "style": {
+        "navigationBarTitleText": "技能分类"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/interactive-practice",
+      "style": {
+        "navigationBarTitleText": "AI对话练习"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/protection-drill",
+      "style": {
+        "navigationBarTitleText": "防护技能训练"
+      }
     }
   ],
   "globalStyle": {

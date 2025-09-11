@@ -17,7 +17,7 @@
                 </view>
             </view>
 
-            <view class="card" @click="goToTips">
+            <!-- <view class="card" @click="goToTips">
                 <image class="card-icon" src="/static/tips-icon.png"></image>
                 <view class="card-text">
                     <text class="card-title">交往小技巧</text>
@@ -30,6 +30,17 @@
                 <view class="card-text">
                     <text class="card-title">感情防护</text>
                     <text class="card-desc">识别恋爱中的不公平，保护自己</text>
+                </view>
+            </view> -->
+
+            <view class="card wisdom-card" @click="goToWisdom">
+                <image class="card-icon" src="/static/wisdom-icon.png"></image>
+                <view class="card-text">
+                    <text class="card-title">人际智慧</text>
+                    <text class="card-desc">提升交往技能，防护情感风险，成为关系达人</text>
+                </view>
+                <view class="card-badge">
+                    <text class="badge-text">新功能</text>
                 </view>
             </view>
 
@@ -85,15 +96,21 @@ export default {
             })
         },
 
-        goToTips() {
-            uni.navigateTo({
-                url: '/pages/tips/tips'
-            })
-        },
+        // goToTips() {
+        //     uni.navigateTo({
+        //         url: '/pages/tips/tips'
+        //     })
+        // },
 
-        goToProtection() {
+        // goToProtection() {
+        //     uni.navigateTo({
+        //         url: '/pages/protection/protection'
+        //     })
+        // },
+
+        goToWisdom() {
             uni.navigateTo({
-                url: '/pages/protection/protection'
+                url: '/pages/interpersonal-wisdom/interpersonal-wisdom'
             })
         },
 
@@ -107,7 +124,7 @@ export default {
 </script>
 
 <style scoped>
-.home-container {
+/* .home-container {
     padding: 40rpx;
     background-color: #f8f8f8;
     min-height: 100vh;
@@ -177,5 +194,141 @@ export default {
 .card-desc {
     font-size: 28rpx;
     color: #999;
+} */
+
+.home-container {
+    padding: 40rpx;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+}
+
+.header {
+    text-align: center;
+    margin-top: 60rpx;
+    margin-bottom: 80rpx;
+}
+
+.title {
+    font-size: 48rpx;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 20rpx;
+}
+
+.subtitle {
+    font-size: 28rpx;
+    color: #999;
+}
+
+.user-info {
+    margin-top: 20rpx;
+}
+
+.welcome {
+    font-size: 32rpx;
+    color: #007aff;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 30rpx;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 20rpx;
+    padding: 40rpx;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.wisdom-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.wisdom-card .card-title {
+    color: white;
+}
+
+.wisdom-card .card-desc {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.card-icon {
+    width: 100rpx;
+    height: 100rpx;
+    margin-right: 30rpx;
+}
+
+.card-text {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 10rpx;
+}
+
+.card-desc {
+    font-size: 28rpx;
+    color: #999;
+}
+
+.card-badge {
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+    background-color: #ff6b6b;
+    color: white;
+    padding: 8rpx 16rpx;
+    border-radius: 20rpx;
+    font-size: 20rpx;
+}
+
+.badge-text {
+    font-size: 20rpx;
+    font-weight: bold;
+}
+
+/* 人际智慧卡片特殊效果 */
+.wisdom-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    border-radius: 20rpx;
+    pointer-events: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+    .card {
+        padding: 30rpx;
+    }
+
+    .card-icon {
+        width: 80rpx;
+        height: 80rpx;
+        margin-right: 20rpx;
+    }
+
+    .card-title {
+        font-size: 32rpx;
+    }
+
+    .card-desc {
+        font-size: 26rpx;
+    }
 }
 </style>
