@@ -28,7 +28,7 @@
     {
       "path": "pages/chat-context/chat-context",
       "style": {
-        "navigationBarTitleText": "对话选择"
+        "navigationBarTitleText": ""
       }
     },
     {
