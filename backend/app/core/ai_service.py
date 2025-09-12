@@ -126,6 +126,24 @@ class AIService:
         
         return payload
     
+#     def _get_system_prompt(self, scene: str) -> str:
+#         """根据场景获取系统提示词"""
+#         if scene == "crisis_analysis":
+#             return """你是一位专业的心理健康顾问，专门进行心理危机评估。请客观、专业地分析用户输入的内容，识别潜在的心理健康风险。
+
+# 分析重点：
+# 1. 自伤或自杀倾向
+# 2. 极端负面情绪
+# 3. 绝望或无助感
+# 4. 社会支持缺失
+# 5. 危机干预需求
+
+# 请用简洁、专业的语言给出评估，控制在100字以内。如果没有明显风险，请给出积极的心理支持建议。"""
+        
+#         # 可以根据需要添加其他场景的提示词
+#         return PROMPTS.get(scene, {}).get("system", "")
+
+
     def _get_system_prompt(self, scene: str) -> str:
         """根据场景获取系统提示词"""
         if scene == "crisis_analysis":
@@ -140,5 +158,15 @@ class AIService:
 
 请用简洁、专业的语言给出评估，控制在100字以内。如果没有明显风险，请给出积极的心理支持建议。"""
         
-        # 可以根据需要添加其他场景的提示词
-        return PROMPTS.get(scene, {}).get("system", "")
+        # 检查PROMPTS字典中是否有对应场景
+        if scene in PROMPTS:
+            # 如果PROMPTS[scene]是字典格式，尝试获取'system'字段
+            prompt_data = PROMPTS[scene]
+            if isinstance(prompt_data, dict):
+                return prompt_data.get("system", prompt_data.get("content", ""))
+            # 如果PROMPTS[scene]是字符串格式，直接返回
+            elif isinstance(prompt_data, str):
+                return prompt_data
+        
+        # 如果没有找到对应场景，返回空字符串
+        return ""

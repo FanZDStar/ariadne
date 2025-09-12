@@ -355,9 +355,15 @@ export default {
             });
         },
 
+        // viewCategorySkills(category) {
+        //     uni.navigateTo({
+        //         url: `/pages/interpersonal-wisdom/category-skills?categoryId=${category.id}`
+        //     });
+        // },
+
         viewCategorySkills(category) {
             uni.navigateTo({
-                url: `/pages/interpersonal-wisdom/category-skills?categoryId=${category.id}`
+                url: `/pages/interpersonal-wisdom/category-detail?categoryId=${category.id}&name=${encodeURIComponent(category.name)}`
             });
         },
 

@@ -262,6 +262,18 @@
       "style": {
         "navigationBarTitleText": "防护技能训练"
       }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/category-detail",
+      "style": {
+        "navigationBarTitleText": "技能分类详情"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/skill-detail",
+      "style": {
+        "navigationBarTitleText": "技能详情"
+      }
     }
   ],
   "globalStyle": {

@@ -11,7 +11,13 @@ from .user_feedback import UserFeedback
 from .feedback_image import FeedbackImage
 from .tree_hole import TreeHoleWhisper
 from .tree_hole_chat import TreeHoleChat
-
+from .skill_categories import SkillCategory
+from .skills import Skill
+from .user_skill_progress import UserSkillProgress
+from .learning_paths import LearningPath
+from .user_learning_path_progress import UserLearningPathProgress
+from .achievements import Achievement
+from .user_achievements import UserAchievement
 # 导出所有模型
 __all__ = [
     "User",
@@ -24,5 +30,12 @@ __all__ = [
     "UserFeedback",
     "FeedbackImage",
     "TreeHoleWhisper",
-    "TreeHoleChat"
+    "TreeHoleChat",
+    "SkillCategory",
+    "Skill",
+    "UserSkillProgress",
+    "LearningPath",
+    "UserLearningPathProgress",
+    "Achievement",
+    "UserAchievement"
 ]

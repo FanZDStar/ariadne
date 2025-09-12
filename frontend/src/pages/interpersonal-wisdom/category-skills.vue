@@ -512,9 +512,15 @@ export default {
     },
 
     methods: {
+        // startRecommendedSkill() {
+        //     uni.navigateTo({
+        //         url: '/pages/interpersonal-wisdom/skill-detail?id=recommended&type=listening'
+        //     });
+        // },
+
         startRecommendedSkill() {
             uni.navigateTo({
-                url: '/pages/interpersonal-wisdom/skill-detail?id=recommended&type=listening'
+                url: '/pages/interpersonal-wisdom/skill-detail?skillId=recommended&type=listening'
             });
         },
 
