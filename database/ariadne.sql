@@ -11,11 +11,41 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 11/09/2025 15:39:23
+ Date: 12/09/2025 13:35:52
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for achievements
+-- ----------------------------
+DROP TABLE IF EXISTS `achievements`;
+CREATE TABLE `achievements`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '成就名称',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '成就描述',
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '成就图标',
+  `category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '成就分类',
+  `unlock_conditions` json NULL COMMENT '解锁条件',
+  `reward_points` int NULL DEFAULT NULL COMMENT '奖励积分',
+  `is_active` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用',
+  `sort_order` int NULL DEFAULT NULL COMMENT '排序序号',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `ix_achievements_id`(`id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of achievements
+-- ----------------------------
+INSERT INTO `achievements` VALUES (1, '入门学习者', '完成第一个技能学习', '🌱', 'learning', '{\"completed_skills\": 1}', 10, 1, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `achievements` VALUES (2, '倾听达人', '掌握所有倾听技巧', '🎧', 'skill_master', '{\"mastered_listening_skills\": true}', 50, 1, 2, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `achievements` VALUES (3, '学习之星', '连续学习7天', '⭐', 'consistency', '{\"consecutive_days\": 7}', 30, 1, 3, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `achievements` VALUES (4, '入门学习者', '完成第一个技能学习', '🌱', 'learning', '{\"completed_skills\": 1}', 10, 1, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+INSERT INTO `achievements` VALUES (5, '倾听达人', '掌握所有倾听技巧', '🎧', 'skill_master', '{\"mastered_listening_skills\": true}', 50, 1, 2, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+INSERT INTO `achievements` VALUES (6, '学习之星', '连续学习7天', '⭐', 'consistency', '{\"consecutive_days\": 7}', 30, 1, 3, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
 
 -- ----------------------------
 -- Table structure for chat_contexts
@@ -735,6 +765,31 @@ CREATE TABLE `journey_favorites`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for learning_paths
+-- ----------------------------
+DROP TABLE IF EXISTS `learning_paths`;
+CREATE TABLE `learning_paths`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '学习路径名称',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '学习路径描述',
+  `level` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '适用水平: beginner/intermediate/advanced',
+  `estimated_duration` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '预估完成时间',
+  `skill_sequence` json NULL COMMENT '技能学习序列',
+  `milestones` json NULL COMMENT '里程碑节点',
+  `prerequisites` json NULL COMMENT '前置要求',
+  `is_active` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用',
+  `sort_order` int NULL DEFAULT NULL COMMENT '排序序号',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `ix_learning_paths_id`(`id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of learning_paths
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mood_trend_analyses
 -- ----------------------------
 DROP TABLE IF EXISTS `mood_trend_analyses`;
@@ -804,6 +859,69 @@ INSERT INTO `risk_assessment_reports` VALUES (10, 13, 25, 'self-dialog', '心理
 INSERT INTO `risk_assessment_reports` VALUES (11, 13, 26, 'self-dialog', '心理状态评估报告 - HIGH风险', '**心理状态评估报告**\n\n---\n\n**一、情绪状态评估**\n\n从对话内容可以看出，用户当前处于极度负面的情绪状态，表现出显著的绝望感、无意义感以及对生活的无力感。关键词如“绝望”“想死”“自残”表明其情绪已处于严重低落状态，可能伴有强烈的抑郁情绪。这种情绪状态通常与重大心理压力、长期情绪积压或潜在的心理障碍有关。\n\n情感波动方面，用户表达情绪较为直接且强烈，显示出较高的情绪脆弱性。在短时间内连续表达极端负面情绪，提示其情绪调节能力较弱，容易受到外界刺激的影响，存在较高的情绪崩溃风险。\n\n---\n\n**二、心理健康风险**\n\n用户明确表达了“想死”“自残”等高风险语言，表明其当前存在**高度的自杀风险和自伤倾向**。根据心理危机评估标准，此类语言通常被视为“自杀意念”的直接表达，尤其是当个体表示“活着没意义”时，说明其对现实的否定已达到极端程度。\n\n结合系统检测出的“高风险等级”和“风险评分30.0”，我们认为用户目前处于**急性心理危机阶段**，需立即进行干预。若缺乏及时有效的心理支持或专业干预，极有可能从言语表达转向实际行为。\n\n---\n\n**三、应对机制分析**\n\n从对话内容来看，用户目前缺乏有效的应对机制，面对痛苦情绪时倾向于通过极端方式（如自残）来缓解内在压力。这表明其**心理韧性较低**，缺乏健康的情绪调节策略和应对技巧。\n\n用户未提及任何积极应对方式（如寻求帮助、情绪表达、兴趣活动等），反映出其可能长期处于压抑状态，缺乏应对生活挑战的资源和信心。\n\n---\n\n**四、社会支持评估**\n\n对话中未提及任何社会支持系统的信息（如家庭、朋友、同事、心理咨询等），无法判断其是否有可信赖的亲友网络或专业支持资源。然而，从其情绪表达的孤立感和无意义感来看，可能存在**社会支持薄弱或情感联结缺失**的问题。\n\n在心理危机干预中，社会支持是降低自杀风险的重要保护性因素。如果用户缺乏稳定的人际支持，其心理风险将进一步升高。\n\n---\n\n**五、专业建议与干预措施**\n\n1. **紧急干预建议**  \n   - **立即联系心理危机干预热线或专业心理咨询师**：建议用户或其身边人拨打当地心理援助热线（如中国心理危机与自杀干预中心热线：010-82951332），获取即时心理支持。\n   - **避免独处，确保有人陪伴**：在情绪最脆弱的阶段，应尽量避免独处，建议联系亲友、同事或信任的人陪伴，以降低冲动行为的发生风险。\n\n2. **短期心理干预建议**  \n   - **尽快接受专业心理评估**：建议用户前往医院精神科或心理咨询机构进行面对面评估，确认是否存在抑郁症或其他情绪障碍，并根据评估结果制定干预方案。\n   - **建立安全计划**：在专业指导下，制定一份“情绪应急计划”，包括识别情绪危机信号、联系支持人员、安全场所、放松技巧等。\n\n3. **中长期心理调适建议**  \n   - **建立健康的情绪表达与调节方式**：如写日记、艺术表达、运动、冥想等，逐步替代自残等伤害性应对方式。\n   - **增强社会联结感**：鼓励用户逐步重建与家人、朋友的情感联系，参与社区活动或兴趣小组，增强归属感和支持感。\n   - **持续心理咨询或治疗**：如有条件，建议接受系统性的心理治疗（如认知行为疗法、正念疗法等），帮助其识别和调整负面思维模式。\n\n4. **家属或朋友建议**  \n   - **保持倾听与陪伴**：不评判、不批评，给予理解和支持。\n   - **关注行为变化**：注意用户是否出现准备自伤的迹象（如整理物品、告别行为等），如有异常，应立即寻求专业帮助。\n   - **协助就医**：陪同用户前往医院或心理咨询机构，帮助其建立求助信心。\n\n---\n\n**结语**\n\n我们深切理解此刻的痛苦与无助，但请相信：**你的生命无比宝贵，情绪的低谷终会过去**。你并不孤单，专业帮助和关心始终存在。请勇敢迈出第一步，寻求支持，给自己一个重新看见希望的机会。\n\n如需进一步心理支持，请随时联系心理健康专业人员或拨打心理援助热线。\n\n——心理健康评估师 敬上', '基于3条消息的分析，检测到2条风险消息，整体风险等级为high。', 'high', 30, 3, 2, '[\"想死\", \"绝望\", \"自残\"]', '{\"risk_messages\": [{\"content\": \"我感觉很绝望，想死 - 会话2\", \"keywords\": [\"想死\", \"绝望\"], \"risk_weight\": 2, \"message_index\": 0}, {\"content\": \"我想自残，活着没意义\", \"keywords\": [\"自残\"], \"risk_weight\": 1, \"message_index\": 2}]}', '**心理状态评估报告**\n\n---\n\n**一、情绪状态评估**\n\n从对话内容可以看出，用户当前处于极度负面的情绪状态，表现出显著的绝望感、无意义感以及对生活的无力感。关键词如“绝望”“想死”“自残”表明其情绪已处于严重低落状态，可能伴有强烈的抑郁情绪。这种情绪状态通常与重大心理压力、长期情绪积压或潜在的心理障碍有关。\n\n情感波动方面，用户表达情绪较为直接且强烈，显示出较高的情绪脆弱性。在短时间内连续表达极端负面情绪，提示其情绪调节能力较弱，容易受到外界刺激的影响，存在较高的情绪崩溃风险。\n\n---\n\n**二、心理健康风险**\n\n用户明确表达了“想死”“自残”等高风险语言，表明其当前存在**高度的自杀风险和自伤倾向**。根据心理危机评估标准，此类语言通常被视为“自杀意念”的直接表达，尤其是当个体表示“活着没意义”时，说明其对现实的否定已达到极端程度。\n\n结合系统检测出的“高风险等级”和“风险评分30.0”，我们认为用户目前处于**急性心理危机阶段**，需立即进行干预。若缺乏及时有效的心理支持或专业干预，极有可能从言语表达转向实际行为。\n\n---\n\n**三、应对机制分析**\n\n从对话内容来看，用户目前缺乏有效的应对机制，面对痛苦情绪时倾向于通过极端方式（如自残）来缓解内在压力。这表明其**心理韧性较低**，缺乏健康的情绪调节策略和应对技巧。\n\n用户未提及任何积极应对方式（如寻求帮助、情绪表达、兴趣活动等），反映出其可能长期处于压抑状态，缺乏应对生活挑战的资源和信心。\n\n---\n\n**四、社会支持评估**\n\n对话中未提及任何社会支持系统的信息（如家庭、朋友、同事、心理咨询等），无法判断其是否有可信赖的亲友网络或专业支持资源。然而，从其情绪表达的孤立感和无意义感来看，可能存在**社会支持薄弱或情感联结缺失**的问题。\n\n在心理危机干预中，社会支持是降低自杀风险的重要保护性因素。如果用户缺乏稳定的人际支持，其心理风险将进一步升高。\n\n---\n\n**五、专业建议与干预措施**\n\n1. **紧急干预建议**  \n   - **立即联系心理危机干预热线或专业心理咨询师**：建议用户或其身边人拨打当地心理援助热线（如中国心理危机与自杀干预中心热线：010-82951332），获取即时心理支持。\n   - **避免独处，确保有人陪伴**：在情绪最脆弱的阶段，应尽量避免独处，建议联系亲友、同事或信任的人陪伴，以降低冲动行为的发生风险。\n\n2. **短期心理干预建议**  \n   - **尽快接受专业心理评估**：建议用户前往医院精神科或心理咨询机构进行面对面评估，确认是否存在抑郁症或其他情绪障碍，并根据评估结果制定干预方案。\n   - **建立安全计划**：在专业指导下，制定一份“情绪应急计划”，包括识别情绪危机信号、联系支持人员、安全场所、放松技巧等。\n\n3. **中长期心理调适建议**  \n   - **建立健康的情绪表达与调节方式**：如写日记、艺术表达、运动、冥想等，逐步替代自残等伤害性应对方式。\n   - **增强社会联结感**：鼓励用户逐步重建与家人、朋友的情感联系，参与社区活动或兴趣小组，增强归属感和支持感。\n   - **持续心理咨询或治疗**：如有条件，建议接受系统性的心理治疗（如认知行为疗法、正念疗法等），帮助其识别和调整负面思维模式。\n\n4. **家属或朋友建议**  \n   - **保持倾听与陪伴**：不评判、不批评，给予理解和支持。\n   - **关注行为变化**：注意用户是否出现准备自伤的迹象（如整理物品、告别行为等），如有异常，应立即寻求专业帮助。\n   - **协助就医**：陪同用户前往医院或心理咨询机构，帮助其建立求助信心。\n\n---\n\n**结语**\n\n我们深切理解此刻的痛苦与无助，但请相信：**你的生命无比宝贵，情绪的低谷终会过去**。你并不孤单，专业帮助和关心始终存在。请勇敢迈出第一步，寻求支持，给自己一个重新看见希望的机会。\n\n如需进一步心理支持，请随时联系心理健康专业人员或拨打心理援助热线。\n\n——心理健康评估师 敬上', '[\"⚠️ 强烈建议联系心理健康专业人士进行评估\", \"🤝 与信任的朋友、家人或心理咨询师交流您的感受\", \"📞 保存心理危机干预热线号码：400-161-9995\", \"🧘 尝试放松技巧，如深呼吸、冥想或轻度运动\", \"📝 记录情绪变化，了解触发因素\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-06 14:18:43', '2025-09-06 06:19:02', '2025-09-06 06:19:02', '2025-09-06 06:45:52', 'completed', 1, 1);
 INSERT INTO `risk_assessment_reports` VALUES (13, 6, 28, 'self-dialog', '心理状态评估报告 - LOW风险', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: CRITICAL\n- **风险分数**: 5.0/100\n- **消息分析**: 共0条消息，其中1条检测到风险\n\n### 检测结果\n- **关键词**: 想死\n\n### AI专业分析\n根据当前对话内容“想死”，结合风险评分（5.0）和关键词检测结果，初步评估该用户可能正经历严重的情绪困扰或心理危机。情绪呈现明显低落与绝望倾向，存在明确的自杀意念表达，需高度重视。目前未见积极情绪或应对表达，缺乏保护性因素。建议立即联系专业心理危机干预机构或拨打心理援助热线，确保个体安全并获得及时支持。\n\n### 建议\n• 立即寻求专业心理健康支持\n• 联系心理危机干预热线\n• 告知信任的朋友或家人\n• 考虑医院心理科就诊\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在2条消息中检测到1条风险消息，整体呈现高风险状态，需要立即关注。', 'critical', 5, 5, 1, '[\"想死\"]', '[{\"timestamp\": \"2025-09-06T06:40:58\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 1}, {\"timestamp\": \"2025-09-06T06:40:58\", \"risk_level\": \"low\", \"risk_score\": 0.0, \"message_index\": 2}]', '根据当前对话内容“想死”，结合风险评分（5.0）和关键词检测结果，初步评估该用户可能正经历严重的情绪困扰或心理危机。情绪呈现明显低落与绝望倾向，存在明确的自杀意念表达，需高度重视。目前未见积极情绪或应对表达，缺乏保护性因素。建议立即联系专业心理危机干预机构或拨打心理援助热线，确保个体安全并获得及时支持。', '[\"立即寻求专业心理健康支持\", \"联系心理危机干预热线\", \"告知信任的朋友或家人\", \"考虑医院心理科就诊\"]', '2025-09-06 06:39:46', '2025-09-06 06:41:50', '2025-09-06 06:41:50', '2025-09-06 06:41:52', 'completed', 1, 3);
 INSERT INTO `risk_assessment_reports` VALUES (15, 6, 30, 'self-dialog', '自我对话对话风险评估报告', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: LOW\n- **风险分数**: 0.0/100\n- **消息分析**: 共0条消息，其中0条检测到风险\n\n### 检测结果\n- **关键词**: 无\n\n### AI专业分析\n从对话内容来看，用户表达了“今天又是无聊的一天”，透露出一定程度的情绪低落和日常生活的单调感。整体心理状态趋于平稳，尚未发现明显风险因素或危机信号，情绪也未出现剧烈波动。情绪变化趋势较为平缓，未见明显起伏。积极因素包括用户愿意表达内心感受，显示出一定的自我觉察能力。建议用户尝试丰富日常活动，如进行轻度运动、阅读或与亲友交流，以提升情绪活力。若长期感到乏味或情绪持续低落，建议寻求专业心理咨询以进一步探索内在需求与情绪来源。\n\n### 建议\n• 保持当前积极的心理状态\n• 继续进行自我关爱练习\n• 维护良好的社交关系\n• 定期进行自我反思\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在1条消息中检测到0条风险消息，整体心理状态相对稳定。', 'low', 0, 3, 0, '[]', '[{\"timestamp\": \"2025-09-11T04:22:11\", \"risk_level\": \"low\", \"risk_score\": 0.0, \"message_index\": 1}]', '从对话内容来看，用户表达了“今天又是无聊的一天”，透露出一定程度的情绪低落和日常生活的单调感。整体心理状态趋于平稳，尚未发现明显风险因素或危机信号，情绪也未出现剧烈波动。情绪变化趋势较为平缓，未见明显起伏。积极因素包括用户愿意表达内心感受，显示出一定的自我觉察能力。建议用户尝试丰富日常活动，如进行轻度运动、阅读或与亲友交流，以提升情绪活力。若长期感到乏味或情绪持续低落，建议寻求专业心理咨询以进一步探索内在需求与情绪来源。', '[\"保持当前积极的心理状态\", \"继续进行自我关爱练习\", \"维护良好的社交关系\", \"定期进行自我反思\"]', '2025-09-11 04:21:57', '2025-09-11 04:22:19', '2025-09-11 04:22:19', '2025-09-11 04:22:21', 'completed', 1, 1);
+
+-- ----------------------------
+-- Table structure for skill_categories
+-- ----------------------------
+DROP TABLE IF EXISTS `skill_categories`;
+CREATE TABLE `skill_categories`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '分类名称',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '分类描述',
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '分类图标',
+  `sort_order` int NULL DEFAULT NULL COMMENT '排序序号',
+  `is_active` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `ix_skill_categories_id`(`id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of skill_categories
+-- ----------------------------
+INSERT INTO `skill_categories` VALUES (1, '沟通表达', '学会清晰、准确、有效的表达自己的想法和感受', '💬', 1, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `skill_categories` VALUES (2, '情感理解', '理解自己和他人的情感，提升情感智慧', '💝', 2, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `skill_categories` VALUES (3, '关系建立', '建立和维护健康、积极的人际关系', '🤝', 3, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `skill_categories` VALUES (4, '特殊情境', '应对特殊场合和复杂人际情境', '🎯', 4, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `skill_categories` VALUES (5, '沟通表达', '学会清晰、准确、有效的表达自己的想法和感受', '💬', 1, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+INSERT INTO `skill_categories` VALUES (6, '情感理解', '理解自己和他人的情感，提升情感智慧', '💝', 2, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+INSERT INTO `skill_categories` VALUES (7, '关系建立', '建立和维护健康、积极的人际关系', '🤝', 3, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+INSERT INTO `skill_categories` VALUES (8, '特殊情境', '应对特殊场合和复杂人际情境', '🎯', 4, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+
+-- ----------------------------
+-- Table structure for skills
+-- ----------------------------
+DROP TABLE IF EXISTS `skills`;
+CREATE TABLE `skills`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '技能名称',
+  `brief` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '技能简介',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '技能详细描述',
+  `difficulty` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '难度级别: basic/intermediate/advanced',
+  `estimated_time` int NULL DEFAULT NULL COMMENT '预估学习时间(分钟)',
+  `learner_count` int NULL DEFAULT NULL COMMENT '学习人数',
+  `objectives` json NULL COMMENT '学习目标列表',
+  `key_points` json NULL COMMENT '核心要点',
+  `practice_steps` json NULL COMMENT '实践步骤',
+  `scenarios` json NULL COMMENT '应用场景',
+  `tags` json NULL COMMENT '技能标签',
+  `category_id` int NOT NULL,
+  `is_active` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用',
+  `sort_order` int NULL DEFAULT NULL COMMENT '排序序号',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `category_id`(`category_id` ASC) USING BTREE,
+  INDEX `ix_skills_id`(`id` ASC) USING BTREE,
+  CONSTRAINT `skills_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `skill_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of skills
+-- ----------------------------
+INSERT INTO `skills` VALUES (1, '主动倾听', '学会用心倾听对方的话语和情感', '主动倾听是建立良好人际关系的基础技能，通过全神贯注地倾听对方，理解其言语和情感，建立深层次的连接。', 'basic', 15, 0, '[\"学会集中注意力倾听对方说话\", \"理解言语背后的情感和需求\", \"通过肢体语言展现倾听态度\", \"运用复述和确认技巧验证理解\"]', '[{\"icon\": \"👀\", \"title\": \"眼神交流\", \"content\": \"保持适当的眼神交流，表达对对方的关注和尊重\", \"example\": \"看着对方的眼睛，偶尔点头表示理解\"}, {\"icon\": \"🤐\", \"title\": \"避免打断\", \"content\": \"让对方完整表达想法，不要急于插话或给建议\", \"example\": \"等对方说完后再回应：\\\"我理解你的意思是...\\\"\"}]', '[{\"tips\": \"将手机调至静音模式，身体面向对方\", \"title\": \"营造倾听环境\", \"description\": \"选择安静、舒适的环境，放下手机等干扰物\"}]', '[{\"id\": 1, \"title\": \"朋友倾诉工作压力\", \"difficulty\": \"基础\", \"description\": \"朋友向你抱怨工作中的困难和压力，需要你的倾听和理解\"}]', '[\"倾听\", \"沟通基础\", \"理解\"]', 1, 1, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
+INSERT INTO `skills` VALUES (2, '主动倾听', '学会用心倾听对方的话语和情感', '主动倾听是建立良好人际关系的基础技能，通过全神贯注地倾听对方，理解其言语和情感，建立深层次的连接。', 'basic', 15, 0, '[\"学会集中注意力倾听对方说话\", \"理解言语背后的情感和需求\", \"通过肢体语言展现倾听态度\", \"运用复述和确认技巧验证理解\"]', '[{\"icon\": \"👀\", \"title\": \"眼神交流\", \"content\": \"保持适当的眼神交流，表达对对方的关注和尊重\", \"example\": \"看着对方的眼睛，偶尔点头表示理解\"}, {\"icon\": \"🤐\", \"title\": \"避免打断\", \"content\": \"让对方完整表达想法，不要急于插话或给建议\", \"example\": \"等对方说完后再回应：\\\"我理解你的意思是...\\\"\"}]', '[{\"tips\": \"将手机调至静音模式，身体面向对方\", \"title\": \"营造倾听环境\", \"description\": \"选择安静、舒适的环境，放下手机等干扰物\"}]', '[{\"id\": 1, \"title\": \"朋友倾诉工作压力\", \"difficulty\": \"基础\", \"description\": \"朋友向你抱怨工作中的困难和压力，需要你的倾听和理解\"}]', '[\"倾听\", \"沟通基础\", \"理解\"]', 1, 1, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
 
 -- ----------------------------
 -- Table structure for system_configs
@@ -1006,6 +1124,31 @@ INSERT INTO `tree_hole_whispers` VALUES (23, 6, 'Z0FBQUFBQm91Vm5YLTFULU9wS3poRU1
 INSERT INTO `tree_hole_whispers` VALUES (24, 6, 'Z0FBQUFBQm91VnNKaXBvV0RPTTBqYUQySmJfRDI4NGU1YUdNSWVIZDFtUmxhcUVtYmVDOWNRSUw4TjVsWTJRaFdQVHRFMURLblU5SlY4U3drQ2FZbFktT3RGelBhQjZONGc9PQ==', 1, 0, 0, '2025-09-04 17:25:29', '2025-09-04 17:25:29', 0);
 
 -- ----------------------------
+-- Table structure for user_achievements
+-- ----------------------------
+DROP TABLE IF EXISTS `user_achievements`;
+CREATE TABLE `user_achievements`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `achievement_id` int NOT NULL,
+  `is_unlocked` tinyint(1) NULL DEFAULT NULL COMMENT '是否已解锁',
+  `progress_data` json NULL COMMENT '进度数据',
+  `unlocked_at` datetime NULL DEFAULT NULL COMMENT '解锁时间',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE,
+  INDEX `achievement_id`(`achievement_id` ASC) USING BTREE,
+  INDEX `ix_user_achievements_id`(`id` ASC) USING BTREE,
+  CONSTRAINT `user_achievements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `user_achievements_ibfk_2` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_achievements
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for user_feedbacks
 -- ----------------------------
 DROP TABLE IF EXISTS `user_feedbacks`;
@@ -1029,6 +1172,36 @@ CREATE TABLE `user_feedbacks`  (
 INSERT INTO `user_feedbacks` VALUES (1, 6, '速度好慢', '运行好差', NULL, 'pending', '2025-08-17 16:05:24', '2025-08-17 16:05:24');
 
 -- ----------------------------
+-- Table structure for user_learning_path_progress
+-- ----------------------------
+DROP TABLE IF EXISTS `user_learning_path_progress`;
+CREATE TABLE `user_learning_path_progress`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `learning_path_id` int NOT NULL,
+  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '状态: not_started/in_progress/completed/paused',
+  `progress` float NULL DEFAULT NULL COMMENT '完成进度 0-100',
+  `current_step` int NULL DEFAULT NULL COMMENT '当前步骤',
+  `completed_skills` json NULL COMMENT '已完成的技能ID列表',
+  `milestone_progress` json NULL COMMENT '里程碑完成状态',
+  `started_at` datetime NULL DEFAULT NULL COMMENT '开始时间',
+  `completed_at` datetime NULL DEFAULT NULL COMMENT '完成时间',
+  `last_activity_at` datetime NULL DEFAULT NULL COMMENT '最后活动时间',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE,
+  INDEX `learning_path_id`(`learning_path_id` ASC) USING BTREE,
+  INDEX `ix_user_learning_path_progress_id`(`id` ASC) USING BTREE,
+  CONSTRAINT `user_learning_path_progress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `user_learning_path_progress_ibfk_2` FOREIGN KEY (`learning_path_id`) REFERENCES `learning_paths` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_learning_path_progress
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for user_sessions
 -- ----------------------------
 DROP TABLE IF EXISTS `user_sessions`;
@@ -1044,6 +1217,36 @@ CREATE TABLE `user_sessions`  (
 
 -- ----------------------------
 -- Records of user_sessions
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for user_skill_progress
+-- ----------------------------
+DROP TABLE IF EXISTS `user_skill_progress`;
+CREATE TABLE `user_skill_progress`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `skill_id` int NOT NULL,
+  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '状态: new/learning/mastered',
+  `progress` float NULL DEFAULT NULL COMMENT '学习进度 0-100',
+  `practice_count` int NULL DEFAULT NULL COMMENT '练习次数',
+  `correct_rate` float NULL DEFAULT NULL COMMENT '正确率',
+  `total_time_spent` int NULL DEFAULT NULL COMMENT '总学习时间(分钟)',
+  `started_at` datetime NULL DEFAULT NULL COMMENT '开始学习时间',
+  `last_practiced_at` datetime NULL DEFAULT NULL COMMENT '最后练习时间',
+  `mastered_at` datetime NULL DEFAULT NULL COMMENT '掌握时间',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE,
+  INDEX `skill_id`(`skill_id` ASC) USING BTREE,
+  INDEX `ix_user_skill_progress_id`(`id` ASC) USING BTREE,
+  CONSTRAINT `user_skill_progress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `user_skill_progress_ibfk_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_skill_progress
 -- ----------------------------
 
 -- ----------------------------
@@ -1079,7 +1282,7 @@ INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTt
 INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-08-19 00:53:50', '2025-08-19 00:53:50', 1, NULL, 0);
 INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0);
 INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-08-14 21:41:38', NULL, 1, NULL, 0);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/eaed2b4d-e60c-4e84-bfb5-2b9680effcb4.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-09-11 15:28:44', '2025-09-11 15:28:44', 1, '2025-09-11 04:22:19', 7);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/eaed2b4d-e60c-4e84-bfb5-2b9680effcb4.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-09-12 13:25:17', '2025-09-12 13:25:17', 1, '2025-09-11 04:22:19', 7);
 INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0);
 INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0);
 INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0);
