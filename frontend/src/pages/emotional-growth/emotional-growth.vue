@@ -1,27 +1,46 @@
 <template>
-    <view class="dialog-container">
+    <view class="dialog-container theme-emotion">
+        <!-- 主题化头部 -->
         <view class="header">
             <view class="header-content">
-                <view class="icon-section">
-                    <text class="header-icon">💝</text>
+                <view class="header-icon">
+                    <text class="icon-emoji">💝</text>
                 </view>
-                <view class="title-section">
-                    <text class="page-title">情感成长陪伴</text>
-                    <text class="page-subtitle">我是您的情感成长引导者小心</text>
+                <view class="header-info">
+                    <text class="header-title">情感成长陪伴</text>
+                    <text class="header-subtitle">我是您的情感成长引导者小心</text>
+                </view>
+                <view class="header-actions">
+                    <view class="action-btn" @click="clearChat">
+                        <text class="action-icon">🗑️</text>
+                    </view>
                 </view>
             </view>
         </view>
 
         <view class="content">
-            <ChatMessages ref="chatMessages" :messages="chatHistory" @ai-typing="handleAiTyping" />
+            <ChatMessages 
+                ref="chatMessages"
+                :messages="chatHistory" 
+                theme="emotion"
+                @ai-typing="handleAiTyping" 
+            />
         </view>
-
-        <!-- 底部输入框 -->
-        <ChatInput class="fixed-input" placeholder="分享您的情感困惑，比如情绪管理、关系处理等..." @send="handleSend"
-            :disabled="isAiTyping" />
-
+        
+        <!-- 底部输入框，类似导航栏效果 -->
+        <ChatInput 
+            class="fixed-input"
+            placeholder="分享您的情感困惑，比如情绪管理、关系处理等..." 
+            theme="emotion"
+            @send="handleSend" 
+            :disabled="isAiTyping"
+        />
+        
         <!-- 悬浮保存按钮 -->
-        <SaveButton :can-save="hasNewMessages && chatHistory.length > 1" @save="saveChatHistory" />
+        <SaveButton 
+            :can-save="hasNewMessages && chatHistory.length > 1"
+            @save="saveChatHistory"
+        />
     </view>
 </template>
 
@@ -49,54 +68,89 @@ export default {
 
 <style scoped>
 .dialog-container {
-    padding: 30rpx;
-    padding-bottom: 0;
-    background: linear-gradient(135deg, #E91E63 0%, #F06292 100%);
     height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: #f8f8f8;
     box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
+/* 情感对话主题 - 蓝色系背景 */
+.theme-emotion {
+    background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);
+}
+
+/* 头部样式 */
 .header {
-    margin-bottom: 30rpx;
     flex-shrink: 0;
+    padding: 20rpx 30rpx;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10rpx);
+    border-bottom: 1rpx solid rgba(0, 0, 0, 0.05);
 }
 
 .header-content {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 20rpx;
-    padding: 30rpx;
     display: flex;
     align-items: center;
-    backdrop-filter: blur(10rpx);
-}
-
-.icon-section {
-    margin-right: 25rpx;
+    gap: 20rpx;
 }
 
 .header-icon {
-    font-size: 60rpx;
-    display: block;
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(41, 182, 246, 0.1), rgba(41, 182, 246, 0.05));
 }
 
-.title-section {
+.icon-emoji {
+    font-size: 36rpx;
+}
+
+.header-info {
     flex: 1;
 }
 
-.page-title {
-    font-size: 36rpx;
-    font-weight: bold;
-    color: #fff;
+.header-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #333;
     display: block;
-    margin-bottom: 8rpx;
+    margin-bottom: 4rpx;
 }
 
-.page-subtitle {
-    font-size: 26rpx;
-    color: rgba(255, 255, 255, 0.8);
-    display: block;
+.header-subtitle {
+    font-size: 24rpx;
+    color: #666;
+    opacity: 0.8;
+}
+
+.header-actions {
+    display: flex;
+    gap: 15rpx;
+}
+
+.action-btn {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.action-icon {
+    font-size: 28rpx;
 }
 
 .content {
@@ -105,9 +159,7 @@ export default {
     flex-direction: column;
     overflow: hidden;
     margin-bottom: 120rpx;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20rpx 20rpx 0 0;
-    padding: 20rpx;
+    padding: 20rpx 30rpx;
 }
 
 .fixed-input {
@@ -119,5 +171,33 @@ export default {
     padding: 20rpx 30rpx;
     box-shadow: 0 -5rpx 20rpx rgba(0, 0, 0, 0.1);
     z-index: 999;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+    .header {
+        padding: 15rpx 25rpx;
+    }
+    
+    .header-icon {
+        width: 60rpx;
+        height: 60rpx;
+    }
+    
+    .icon-emoji {
+        font-size: 28rpx;
+    }
+    
+    .header-title {
+        font-size: 28rpx;
+    }
+    
+    .header-subtitle {
+        font-size: 22rpx;
+    }
+    
+    .content {
+        padding: 15rpx 25rpx;
+    }
 }
 </style>

@@ -1,4 +1,3 @@
-<!-- src/components/ChatMessages.vue -->
 <template>
     <view class="chat-section">
         <scroll-view 
@@ -8,7 +7,8 @@
             scroll-with-animation="true"
             ref="scrollView"
         >
-            <view v-for="(message, index) in displayedMessages" :key="index" :class="['message-container', message.role]">
+            <view v-for="(message, index) in displayedMessages" :key="index" 
+                  :class="['message-container', message.role, { 'message-enter': messageAnimations[index] }]">
                 <view :class="['message', message.role]">
                     <text class="message-text">{{ message.content }}</text>
                     <!-- 为AI消息添加光标闪烁效果 -->
@@ -28,6 +28,12 @@ export default {
         messages: {
             type: Array,
             default: () => []
+        },
+        // 主题配色
+        theme: {
+            type: String,
+            default: 'default', // default, emotion, interpersonal, tree-hole
+            validator: value => ['default', 'emotion', 'interpersonal', 'tree-hole'].includes(value)
         }
     },
     data() {
@@ -35,7 +41,14 @@ export default {
             scrollTop: 0,
             displayedMessages: [],
             typingTimers: {}, // 存储每个消息的打字机定时器
-            isAutoScroll: true
+            isAutoScroll: true,
+            messageAnimations: {} // 消息动画状态
+        }
+    },
+    computed: {
+        // 根据主题返回样式类
+        themeClass() {
+            return `theme-${this.theme}`
         }
     },
     watch: {
@@ -51,14 +64,30 @@ export default {
     mounted() {
         // 初始化显示消息
         this.displayedMessages = JSON.parse(JSON.stringify(this.messages))
+        // 为已存在的消息添加进入动画
+        this.messages.forEach((_, index) => {
+            this.$set(this.messageAnimations, index, false)
+            setTimeout(() => {
+                this.$set(this.messageAnimations, index, true)
+            }, index * 100)
+        })
     },
     methods: {
         handleNewMessages(newMessages) {
             // 确保 displayedMessages 至少与 messages 一样长
             while (this.displayedMessages.length < newMessages.length) {
+                const newIndex = this.displayedMessages.length
                 this.displayedMessages.push({
-                    role: newMessages[this.displayedMessages.length].role,
+                    role: newMessages[newIndex].role,
                     content: ''
+                })
+                
+                // 为新消息添加进入动画
+                this.$set(this.messageAnimations, newIndex, false)
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        this.$set(this.messageAnimations, newIndex, true)
+                    }, 50)
                 })
             }
             
@@ -179,6 +208,14 @@ export default {
 .message-container {
     margin-bottom: 15rpx;
     display: flex;
+    opacity: 0;
+    transform: translateY(30rpx);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message-container.message-enter {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .message-container.user {
@@ -190,28 +227,88 @@ export default {
 }
 
 .message {
-    border-radius: 8rpx;
+    border-radius: 18rpx;
     position: relative;
     word-wrap: break-word;
     word-break: break-word;
     display: inline-block;
     max-width: 80%;
-    padding: 15rpx;
+    padding: 16rpx 20rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10rpx);
+    transition: transform 0.2s ease;
 }
 
+.message:active {
+    transform: scale(0.98);
+}
+
+/* 默认主题 */
 .message.user {
-    background-color: #007aff;
+    background: linear-gradient(135deg, #007aff, #0056d3);
     color: white;
 }
 
 .message.ai {
-    background-color: #f0f0f0;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
     color: #333;
+    border: 1rpx solid #dee2e6;
+}
+
+/* 情感对话主题 - 蓝色系 */
+.theme-emotion .message.user {
+    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+    color: white;
+}
+
+.theme-emotion .message.ai {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    color: #1565c0;
+    border: 1rpx solid #90caf9;
+}
+
+.theme-emotion .chat-section {
+    background: linear-gradient(135deg, #f8fbff, #e8f4f8);
+    border: 2rpx solid #e3f2fd;
+}
+
+/* 人际智慧主题 - 紫色系 */
+.theme-interpersonal .message.user {
+    background: linear-gradient(135deg, #ba68c8, #9c27b0);
+    color: white;
+}
+
+.theme-interpersonal .message.ai {
+    background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+    color: #6a1b9a;
+    border: 1rpx solid #ce93d8;
+}
+
+.theme-interpersonal .chat-section {
+    background: linear-gradient(135deg, #faf5ff, #f0e6ff);
+    border: 2rpx solid #f3e5f5;
+}
+
+/* 心灵树洞主题 - 绿色系 */
+.theme-tree-hole .message.user {
+    background: linear-gradient(135deg, #66bb6a, #4caf50);
+    color: white;
+}
+
+.theme-tree-hole .message.ai {
+    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+    color: #2e7d32;
+    border: 1rpx solid #a5d6a7;
+}
+
+.theme-tree-hole .chat-section {
+    background: linear-gradient(135deg, #f8fff8, #e8f8e8);
+    border: 2rpx solid #e8f5e8;
 }
 
 .message-text {
     font-size: 26rpx;
-    line-height: 1.4;
+    line-height: 1.5;
     white-space: pre-wrap;
     display: block;
 }
@@ -220,7 +317,20 @@ export default {
 .cursor {
     animation: blink 1s infinite;
     font-size: 26rpx;
-    line-height: 1.4;
+    line-height: 1.5;
+    color: #007aff;
+}
+
+.theme-emotion .cursor {
+    color: #29b6f6;
+}
+
+.theme-interpersonal .cursor {
+    color: #9c27b0;
+}
+
+.theme-tree-hole .cursor {
+    color: #4caf50;
 }
 
 .scroll-anchor {
@@ -230,5 +340,17 @@ export default {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+    .message {
+        max-width: 85%;
+        padding: 14rpx 18rpx;
+    }
+    
+    .message-text {
+        font-size: 24rpx;
+    }
 }
 </style>
