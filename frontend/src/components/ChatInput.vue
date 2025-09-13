@@ -77,8 +77,8 @@ export default {
         // 主题配色
         theme: {
             type: String,
-            default: 'default', // default, emotion, interpersonal, tree-hole
-            validator: value => ['default', 'emotion', 'interpersonal', 'tree-hole'].includes(value)
+            default: 'default', // default, emotion, interpersonal, tree-hole, student
+            validator: value => ['default', 'emotion', 'interpersonal', 'tree-hole', 'student'].includes(value)
         },
         // 是否显示输入状态提示
         showTypingIndicator: {
@@ -316,6 +316,16 @@ export default {
     color: #4caf50;
 }
 
+/* 大学生专区主题 - 米黄色系 */
+.theme-student .typing-indicator {
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.theme-student .typing-dots .dot,
+.theme-student .typing-text {
+    color: #ff9800;
+}
+
 .input-container {
     display: flex;
     align-items: flex-end;
@@ -374,7 +384,7 @@ export default {
     transition: all 0.3s ease;
 }
 
-/* 有输入内容且不是禁用状态时显示蓝色 */
+/* 有输入内容且不是禁用状态时显示对应主题色 */
 .submit-btn:not(.disabled) {
     background-color: #007aff;
     color: white;
@@ -387,11 +397,6 @@ export default {
 
 .submit-btn.warning-btn {
     background-color: #ff9500;
-}
-
-.submit-btn.sending {
-    background-color: #5ac8fa;
-    transform: scale(0.95);
 }
 
 .submit-btn:active:not(.disabled) {
@@ -427,6 +432,39 @@ export default {
 .theme-tree-hole .input.typing-active {
     border-color: #4caf50;
     box-shadow: 0 0 0 4rpx rgba(76, 175, 80, 0.1);
+}
+
+/* 大学生专区主题样式 */
+.theme-student .submit-btn:not(.disabled) {
+    background-color: #ff9800;
+}
+
+.theme-student .input:focus,
+.theme-student .input.typing-active {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 4rpx rgba(255, 152, 0, 0.1);
+}
+
+/* 发送状态样式 - 按主题设置 */
+.submit-btn.sending {
+    transform: scale(0.95);
+    background-color: #5ac8fa;
+}
+
+.theme-emotion .submit-btn.sending {
+    background-color: #4fc3f7;
+}
+
+.theme-interpersonal .submit-btn.sending {
+    background-color: #ba68c8;
+}
+
+.theme-tree-hole .submit-btn.sending {
+    background-color: #66bb6a;
+}
+
+.theme-student .submit-btn.sending {
+    background-color: #ffb74d;
 }
 
 .btn-text {

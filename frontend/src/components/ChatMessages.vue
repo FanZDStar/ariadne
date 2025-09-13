@@ -1,5 +1,5 @@
 <template>
-    <view class="chat-section">
+    <view class="chat-section" :class="themeClass">
         <scroll-view 
             class="chat-history" 
             scroll-y="true" 
@@ -32,8 +32,8 @@ export default {
         // 主题配色
         theme: {
             type: String,
-            default: 'default', // default, emotion, interpersonal, tree-hole
-            validator: value => ['default', 'emotion', 'interpersonal', 'tree-hole'].includes(value)
+            default: 'default', // default, emotion, interpersonal, tree-hole, student
+            validator: value => ['default', 'emotion', 'interpersonal', 'tree-hole', 'student'].includes(value)
         }
     },
     data() {
@@ -306,6 +306,23 @@ export default {
     border: 2rpx solid #e8f5e8;
 }
 
+/* 大学生专区主题 - 米黄色系 */
+.theme-student .message.user {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: white;
+}
+
+.theme-student .message.ai {
+    background: linear-gradient(135deg, #fffbf0, #fff3e0);
+    color: #e65100;
+    border: 1rpx solid #ffcc02;
+}
+
+.theme-student .chat-section {
+    background: linear-gradient(135deg, #fffef8, #faf7f0);
+    border: 2rpx solid #fff3e0;
+}
+
 .message-text {
     font-size: 26rpx;
     line-height: 1.5;
@@ -331,6 +348,10 @@ export default {
 
 .theme-tree-hole .cursor {
     color: #4caf50;
+}
+
+.theme-student .cursor {
+    color: #ff9800;
 }
 
 .scroll-anchor {
