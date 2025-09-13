@@ -158,14 +158,29 @@
 
           <view class="modal-body">
             <view class="form-group">
-              <text class="form-label">选择职业</text>
+              <text class="form-label">AI扮演职业</text>
               <view class="profession-grid">
                 <view
-                  v-for="profession in professionOptions"
+                  v-for="profession in aiProfessionOptions"
                   :key="profession"
                   class="profession-item"
-                  :class="{ active: selectedProfession === profession }"
-                  @click="selectedProfession = profession"
+                  :class="{ active: selectedAiProfession === profession }"
+                  @click="selectedAiProfession = profession"
+                >
+                  <text class="profession-text">{{ profession }}</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="form-group">
+              <text class="form-label">我的职业</text>
+              <view class="profession-grid">
+                <view
+                  v-for="profession in myProfessionOptions"
+                  :key="profession"
+                  class="profession-item"
+                  :class="{ active: selectedMyProfession === profession }"
+                  @click="selectedMyProfession = profession"
                 >
                   <text class="profession-text">{{ profession }}</text>
                 </view>
@@ -186,6 +201,32 @@
                 </view>
               </view>
             </view>
+
+            <view class="form-group">
+              <text class="form-label">AI性格特点</text>
+              <view class="personality-grid">
+                <view
+                  v-for="personality in personalityOptions"
+                  :key="personality"
+                  class="personality-item"
+                  :class="{ active: selectedPersonality === personality }"
+                  @click="selectedPersonality = personality"
+                >
+                  <text class="personality-text">{{ personality }}</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="form-group">
+              <text class="form-label">AI背景设定（可选）</text>
+              <textarea
+                v-model="aiBackground"
+                class="background-input"
+                placeholder="请输入AI角色的背景设定，例如：刚毕业的新员工，有3年工作经验，性格比较内向等..."
+                maxlength="200"
+              ></textarea>
+              <text class="char-count">{{ aiBackground.length }}/200</text>
+            </view>
           </view>
 
           <view class="modal-footer">
@@ -194,7 +235,13 @@
             </view>
             <view
               class="modal-btn confirm"
-              :class="{ disabled: !selectedProfession || !selectedAge }"
+              :class="{
+                disabled:
+                  !selectedAiProfession ||
+                  !selectedMyProfession ||
+                  !selectedAge ||
+                  !selectedPersonality,
+              }"
               @click="confirmRoleSelection"
             >
               <text class="btn-text">确认</text>
@@ -260,21 +307,42 @@ export default {
       practiceStats: null,
       // 模型选择相关
       showModelModal: false,
-      selectedProfession: "",
+      selectedAiProfession: "",
+      selectedMyProfession: "",
       selectedAge: "",
-      professionOptions: [
-        "大学生",
-        "上班族",
+      selectedPersonality: "",
+      aiBackground: "",
+      aiProfessionOptions: [
+        "大学同学",
+        "职场同事",
         "老师",
         "医生",
-        "销售员",
+        "销售专员",
         "程序员",
         "设计师",
         "心理咨询师",
         "服务员",
-        "经理",
+        "部门经理",
+        "创业者",
+        "朋友",
+        "陌生人",
+        "面试官",
+        "客户",
+        "合作伙伴",
+      ],
+      myProfessionOptions: [
+        "大学生",
+        "应届毕业生",
+        "职场新人",
+        "资深员工",
+        "管理者",
         "创业者",
         "自由职业者",
+        "求职者",
+        "实习生",
+        "项目经理",
+        "技术专家",
+        "销售代表",
       ],
       ageOptions: [
         "18-22岁",
@@ -283,6 +351,20 @@ export default {
         "36-45岁",
         "46-55岁",
         "55岁以上",
+      ],
+      personalityOptions: [
+        "友善开朗",
+        "严肃认真",
+        "幽默风趣",
+        "温和耐心",
+        "直率坦诚",
+        "细致体贴",
+        "活泼外向",
+        "沉稳内敛",
+        "专业权威",
+        "随和亲切",
+        "积极乐观",
+        "冷静理性",
       ],
     };
   },
@@ -1016,8 +1098,11 @@ export default {
     showModelSelector() {
       this.showModelModal = true;
       // 重置选择
-      this.selectedProfession = "";
+      this.selectedAiProfession = "";
+      this.selectedMyProfession = "";
       this.selectedAge = "";
+      this.selectedPersonality = "";
+      this.aiBackground = "";
     },
 
     hideModelSelector() {
@@ -1025,16 +1110,27 @@ export default {
     },
 
     confirmRoleSelection() {
-      if (!this.selectedProfession || !this.selectedAge) {
+      if (
+        !this.selectedAiProfession ||
+        !this.selectedMyProfession ||
+        !this.selectedAge ||
+        !this.selectedPersonality
+      ) {
         uni.showToast({
-          title: "请选择职业和年龄",
+          title: "请完善必填信息",
           icon: "none",
         });
         return;
       }
 
-      // 构建角色扮演提示语句
-      const roleMessage = `我希望你在该场景中扮演一个${this.selectedAge}的${this.selectedProfession}这样的角色配合我练习，请根据这个身份特点来回应我的对话。`;
+      // 构建详细的角色扮演提示语句
+      let roleMessage = `请在这个场景中扮演一个${this.selectedAge}、性格${this.selectedPersonality}的${this.selectedAiProfession}，与我这个${this.selectedMyProfession}进行对话练习。`;
+
+      if (this.aiBackground.trim()) {
+        roleMessage += `背景设定：${this.aiBackground.trim()}。`;
+      }
+
+      roleMessage += `请根据这个身份特点和背景来自然地回应我的对话，帮助我练习人际交往技巧。`;
 
       // 添加到聊天消息
       this.chatMessages.push({
@@ -1050,16 +1146,22 @@ export default {
       this.isAiTyping = true;
 
       setTimeout(() => {
+        let confirmMessage = `好的！我现在是一个${this.selectedAge}、${this.selectedPersonality}的${this.selectedAiProfession}`;
+        if (this.aiBackground.trim()) {
+          confirmMessage += `，${this.aiBackground.trim()}`;
+        }
+        confirmMessage += `。我会与你这个${this.selectedMyProfession}进行自然的对话。让我们开始练习吧！`;
+
         this.chatMessages.push({
           role: "ai",
-          content: `好的，我现在会以${this.selectedAge}的${this.selectedProfession}的身份与你对话。让我们开始练习吧！`,
+          content: confirmMessage,
           type: "role_confirmation",
         });
         this.isAiTyping = false;
       }, 1000);
 
       uni.showToast({
-        title: `已设置角色：${this.selectedAge}的${this.selectedProfession}`,
+        title: `角色设定完成`,
         icon: "success",
       });
     },
@@ -1547,8 +1649,8 @@ export default {
   background-color: white;
   border-radius: 16rpx;
   width: 90%;
-  max-width: 600rpx;
-  max-height: 80vh;
+  max-width: 700rpx;
+  max-height: 85vh;
   overflow: hidden;
 }
 
@@ -1584,7 +1686,7 @@ export default {
 
 .modal-body {
   padding: 32rpx;
-  max-height: 60vh;
+  max-height: 65vh;
   overflow-y: auto;
 }
 
@@ -1644,6 +1746,56 @@ export default {
   background-color: #667eea;
   border-color: #667eea;
   color: white;
+}
+
+.personality-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.personality-item {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 16rpx 24rpx;
+  font-size: 26rpx;
+  color: #666;
+  text-align: center;
+  min-width: 120rpx;
+}
+
+.personality-item.active {
+  background-color: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+.background-input {
+  width: 100%;
+  min-height: 120rpx;
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.5;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.background-input:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
+.char-count {
+  font-size: 22rpx;
+  color: #999;
+  text-align: right;
+  margin-top: 8rpx;
+  display: block;
 }
 
 .modal-footer {
