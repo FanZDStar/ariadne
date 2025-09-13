@@ -112,7 +112,7 @@
           </view>
         </view>
 
-        <view class="tool-card simulation" @click="startScenarioSimulation">
+        <!-- <view class="tool-card simulation" @click="startScenarioSimulation">
           <view class="tool-header">
             <text class="tool-icon">🎯</text>
             <text class="tool-title">情景识别训练</text>
@@ -121,7 +121,7 @@
           <view class="tool-btn">
             <text class="btn-text">开始训练</text>
           </view>
-        </view>
+        </view> -->
 
         <view class="tool-card advice" @click="getPersonalizedAdvice">
           <view class="tool-header">
