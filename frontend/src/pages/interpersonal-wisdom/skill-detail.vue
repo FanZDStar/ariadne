@@ -133,18 +133,8 @@
 
         <!-- 底部操作区域 -->
         <view class="bottom-actions">
-            <view v-if="skillData.status === 'new'" class="action-btn primary" @click="startLearning">
-                <text class="btn-text">开始学习</text>
-            </view>
-            <view v-else-if="skillData.status === 'learning'" class="action-btn primary" @click="continueLearning">
-                <text class="btn-text">继续学习</text>
-            </view>
-            <view v-else class="action-btn secondary" @click="reviewSkill">
-                <text class="btn-text">复习技能</text>
-            </view>
-
-            <view class="action-btn tertiary" @click="generatePracticeScenario">
-                <text class="btn-text">AI生成场景</text>
+            <view class="action-btn primary" @click="startScenarioPractice">
+                <text class="btn-text">情景演练</text>
             </view>
         </view>
     </view>
@@ -700,43 +690,41 @@ export default {
             this.relatedSkills = relatedSkillsMap[this.skillId] || relatedSkillsMap[1];
         },
 
-        startLearning() {
+        startScenarioPractice() {
+            // 传递完整的技能信息到练习页面
+            const skillParams = {
+                skillId: this.skillData.id,
+                type: 'practice',
+                skillTitle: encodeURIComponent(this.skillData.name),
+                skillContent: encodeURIComponent(this.skillData.description),
+                skillDifficulty: this.skillData.difficulty,
+                skillTags: encodeURIComponent(JSON.stringify(this.skillData.tags)),
+                skillScenarios: encodeURIComponent(JSON.stringify(this.skillData.scenarios || []))
+            };
+
+            const queryString = Object.entries(skillParams)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&');
+
             uni.navigateTo({
-                url: `/pages/interpersonal-wisdom/skill-practice?skillId=${this.skillId}&type=learning`
+                url: `/pages/interpersonal-wisdom/skill-practice?${queryString}`
             });
+        },
+
+        startLearning() {
+            this.startScenarioPractice();
         },
 
         continueLearning() {
-            uni.navigateTo({
-                url: `/pages/interpersonal-wisdom/skill-practice?skillId=${this.skillId}&type=continue`
-            });
+            this.startScenarioPractice();
         },
 
         reviewSkill() {
-            uni.navigateTo({
-                url: `/pages/interpersonal-wisdom/skill-practice?skillId=${this.skillId}&type=review`
-            });
+            this.startScenarioPractice();
         },
 
         async generatePracticeScenario() {
-            try {
-                uni.showLoading({ title: 'AI生成场景中...' });
-
-                // 模拟AI生成场景
-                setTimeout(() => {
-                    uni.hideLoading();
-                    uni.navigateTo({
-                        url: `/pages/interpersonal-wisdom/skill-practice?skillId=${this.skillId}&type=ai-scenario`
-                    });
-                }, 2000);
-
-            } catch (error) {
-                console.error('生成场景失败:', error);
-                uni.showToast({
-                    title: '生成失败',
-                    icon: 'none'
-                });
-            }
+            this.startScenarioPractice();
         },
 
         practiceScenario(scenario) {
@@ -1220,17 +1208,18 @@ export default {
     padding: 24rpx 40rpx;
     box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
     display: flex;
-    gap: 16rpx;
+    justify-content: center;
 }
 
 .action-btn {
-    flex: 1;
-    padding: 24rpx;
-    border-radius: 12rpx;
+    width: 60%;
+    padding: 28rpx 40rpx;
+    border-radius: 16rpx;
     text-align: center;
-    font-size: 28rpx;
+    font-size: 32rpx;
     font-weight: bold;
     transition: all 0.2s ease;
+    box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
 }
 
 .action-btn:active {
