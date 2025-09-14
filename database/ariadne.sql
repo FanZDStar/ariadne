@@ -1303,4 +1303,22 @@ CREATE TRIGGER `update_user_risk_stats` AFTER INSERT ON `risk_assessment_reports
 ;;
 delimiter ;
 
+-- ----------------------------
+-- Table structure for mood_tracker
+-- ----------------------------
+DROP TABLE IF EXISTS `mood_tracker`;
+CREATE TABLE `mood_tracker`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `mood_date` date NOT NULL COMMENT '心情记录日期',
+  `mood_level` tinyint NOT NULL COMMENT '心情档位(1-5档)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_date` (`user_id`, `mood_date`) COMMENT '用户每天只能记录一次心情',
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_mood_date` (`mood_date`),
+  CONSTRAINT `mood_tracker_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='心情晴雨表';
+
 SET FOREIGN_KEY_CHECKS = 1;

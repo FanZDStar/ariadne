@@ -163,7 +163,7 @@
         "navigationBarTitleText": "心灵树洞",
         "navigationBarBackgroundColor": "#87CEEB",
         "navigationBarTextStyle": "black"
-    }
+      }
     },
     {
       "path": "pages/tree-hole/write-whisper",
@@ -252,6 +252,20 @@
       "path": "pages/interpersonal-wisdom/skill-detail",
       "style": {
         "navigationBarTitleText": "技能详情"
+      }
+    },
+    {
+      "path": "pages/tools/self-help-tool",
+      "style": {
+        "navigationBarTitleText": "心理自助工具",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/tools/breathing-practice",
+      "style": {
+        "navigationBarTitleText": "深呼吸练习",
+        "navigationStyle": "custom"
       }
     }
   ],

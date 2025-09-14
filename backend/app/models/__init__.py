@@ -18,6 +18,7 @@ from .learning_paths import LearningPath
 from .user_learning_path_progress import UserLearningPathProgress
 from .achievements import Achievement
 from .user_achievements import UserAchievement
+from .mood_tracker import MoodTracker
 # 导出所有模型
 __all__ = [
     "User",
@@ -37,5 +38,6 @@ __all__ = [
     "LearningPath",
     "UserLearningPathProgress",
     "Achievement",
-    "UserAchievement"
+    "UserAchievement",
+    "MoodTracker"
 ]
