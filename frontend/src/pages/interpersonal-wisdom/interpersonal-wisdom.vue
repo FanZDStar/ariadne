@@ -1411,91 +1411,87 @@ export default {
 
 .weekly-mood {
   margin-bottom: 32rpx;
-  padding: 32rpx 24rpx;
-  background: rgba(241, 245, 249, 0.6);
-  border-radius: 20rpx;
-  border: 1rpx solid rgba(203, 213, 225, 0.5);
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  padding: 24rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  border: 1rpx solid #dee2e6;
 }
 
 .section-subtitle {
   font-size: 28rpx;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 24rpx;
-  display: block;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 20rpx;
   text-align: center;
-  letter-spacing: 0.5rpx;
 }
 
 .mood-table-container {
-  background: #ffffff;
-  border-radius: 16rpx;
+  background-color: #ffffff;
+  border-radius: 8rpx;
+  border: 1rpx solid #e9ecef;
   overflow: hidden;
-  border: 1rpx solid #e2e8f0;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
 }
 
 .table-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
 }
 
 .dates-row {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  background-color: #007aff;
+  color: #ffffff;
 }
 
 .levels-row {
-  background: #ffffff;
-  border-top: 1rpx solid #e2e8f0;
+  background-color: #ffffff;
+  border-top: 1rpx solid #e9ecef;
 }
 
 .table-cell {
   flex: 1;
-  padding: 20rpx 12rpx;
+  padding: 16rpx 8rpx;
   text-align: center;
   font-size: 24rpx;
-  min-height: 64rpx;
+  min-height: 60rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  border-right: 1rpx solid rgba(0, 0, 0, 0.1);
+}
+
+.table-cell:last-child {
+  border-right: none;
 }
 
 .header-cell {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 26rpx;
-  background: rgba(0, 0, 0, 0.1);
-  color: white;
-  min-width: 88rpx;
-  letter-spacing: 0.3rpx;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #ffffff;
+  min-width: 80rpx;
 }
 
 .levels-row .header-cell {
-  background: rgba(59, 130, 246, 0.9);
-  color: white;
+  background-color: #f8f9fa;
+  color: #495057;
+  border-right: 1rpx solid #dee2e6;
 }
 
 .date-cell {
   font-size: 22rpx;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.95);
+  font-weight: 400;
+  color: #ffffff;
 }
 
 .level-cell {
-  font-weight: 600;
-  color: #94a3b8;
+  font-weight: 500;
+  color: #6c757d;
   font-size: 28rpx;
 }
 
 .level-cell.has-data {
-  color: #1e293b;
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.08),
-    rgba(29, 78, 216, 0.05)
-  );
+  color: #495057;
+  background-color: #e7f3ff;
 }
 
 /* 响应式设计 */
@@ -1517,8 +1513,9 @@ export default {
   }
 
   .table-cell {
-    padding: 16rpx 8rpx;
+    padding: 12rpx 6rpx;
     font-size: 22rpx;
+    min-height: 56rpx;
   }
 }
 
@@ -1528,7 +1525,7 @@ export default {
   }
 
   .weekly-mood {
-    padding: 24rpx 16rpx;
+    padding: 20rpx;
   }
 
   .mood-buttons {
@@ -1548,9 +1545,9 @@ export default {
   }
 
   .table-cell {
-    padding: 12rpx 6rpx;
+    padding: 10rpx 4rpx;
     font-size: 20rpx;
-    min-height: 56rpx;
+    min-height: 50rpx;
   }
 }
 
