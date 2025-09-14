@@ -469,66 +469,120 @@ export default {
 <style scoped>
 .wisdom-container {
   padding: 0;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
   min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 40rpx 40rpx;
-  color: white;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  padding: 60rpx 40rpx 60rpx;
+  color: #1976d2;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(144, 202, 249, 0.3);
+  border-radius: 0 0 60rpx 40rpx;
+  margin-bottom: 40rpx;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(227, 242, 253, 0.1);
+  backdrop-filter: blur(10rpx);
 }
 
 .title {
   font-size: 48rpx;
   font-weight: bold;
-  margin-bottom: 10rpx;
+  margin-bottom: 16rpx;
   display: block;
+  position: relative;
+  z-index: 2;
 }
 
 .subtitle {
   font-size: 28rpx;
-  opacity: 0.9;
+  opacity: 0.8;
+  position: relative;
+  z-index: 2;
 }
 
 .nav-tabs {
   display: flex;
-  background-color: white;
-  margin: 0;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10rpx);
+  margin: 0 20rpx;
+  border-radius: 20rpx 20rpx 0 0;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
 }
 
 .tab-item {
   flex: 1;
-  padding: 30rpx 20rpx;
+  padding: 32rpx 20rpx;
   text-align: center;
-  border-bottom: 4rpx solid transparent;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 4rpx;
+  background: linear-gradient(90deg, #42a5f5, #1976d2);
+  border-radius: 2rpx;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-item.active::before {
+  transform: translateX(-50%) scaleX(1);
 }
 
 .tab-item.active {
-  border-bottom-color: #667eea;
-  background-color: #f8f9ff;
+  background: linear-gradient(135deg, rgba(227, 242, 253, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .tab-icon {
   font-size: 32rpx;
   display: block;
   margin-bottom: 8rpx;
+  transition: transform 0.3s ease;
+}
+
+.tab-item.active .tab-icon {
+  transform: scale(1.1);
 }
 
 .tab-text {
   font-size: 24rpx;
   color: #666;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .tab-item.active .tab-text {
-  color: #667eea;
-  font-weight: bold;
+  color: #1976d2;
+  font-weight: 600;
 }
 
 .content-section {
-  padding: 40rpx;
+  padding: 20rpx 40rpx 40rpx;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20rpx);
+  margin: 0 20rpx 40rpx;
+  border-radius: 0 0 32rpx 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
 
 .section-header {
@@ -548,9 +602,10 @@ export default {
   display: flex;
   align-items: center;
   padding: 16rpx 24rpx;
-  background-color: #667eea;
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
   border-radius: 40rpx;
   color: white;
+  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
 }
 
 .refresh-icon {
@@ -563,16 +618,36 @@ export default {
 }
 
 .skill-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
 }
 
 .skill-card.recommended {
-  border: 2rpx solid #667eea;
-  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border: 2rpx solid rgba(66, 165, 245, 0.3);
+  background: linear-gradient(135deg, rgba(227, 242, 253, 0.9) 0%, rgba(255, 255, 255, 0.9) 100%);
+  position: relative;
+}
+
+.skill-card.recommended::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #42a5f5, #1976d2);
+  border-radius: 20rpx 20rpx 0 0;
 }
 
 .skill-header {
@@ -645,8 +720,9 @@ export default {
 }
 
 .action-btn.primary {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
   color: white;
+  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
 }
 
 .action-btn.secondary {
@@ -654,58 +730,43 @@ export default {
   color: #666;
 }
 
-/* .categories-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20rpx;
+.categories-section {
+  margin-top: 40rpx;
+  position: relative;
 }
 
-.category-card {
-    width: calc(50% - 10rpx);
-    background-color: white;
-    border-radius: 16rpx;
-    padding: 32rpx;
-    text-align: center;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+.categories-section::before {
+  content: '';
+  position: absolute;
+  top: -20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, #42a5f5, #1976d2);
+  border-radius: 2rpx;
+  opacity: 0.3;
 }
-
-.category-icon {
-    
-    font-size: 48rpx;
-    display: block;
-    margin-bottom: 16rpx;
-}
-
-.category-name {
-    font-size: 28rpx;
-    font-weight: bold;
-    color: #333;
-    display: block;
-    margin-bottom: 8rpx;
-}
-
-.category-count {
-    font-size: 24rpx;
-    color: #999;
-} */
-
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16rpx;
+  gap: 20rpx;
 }
 
 .category-card {
-  background-color: white;
-  border-radius: 16rpx;
-  padding: 24rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
+  padding: 28rpx;
   text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .category-card:active {
-  transform: translateY(2rpx);
+  transform: translateY(2rpx) scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
 }
 
 .category-icon {
@@ -734,10 +795,18 @@ export default {
 }
 
 .tool-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tool-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
 }
 
 .tool-header {
@@ -765,12 +834,25 @@ export default {
 }
 
 .tool-btn {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
   color: white;
   padding: 20rpx;
   border-radius: 12rpx;
   text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+  transition: all 0.3s ease;
 }
+
+.tool-btn:active {
+  transform: translateY(1rpx);
+  box-shadow: 0 2rpx 8rpx rgba(66, 165, 245, 0.4);
+}
+
+.btn-text {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
 
 .practice-options {
   display: flex;
@@ -779,10 +861,18 @@ export default {
 }
 
 .practice-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.practice-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
 }
 
 .practice-header {
@@ -816,10 +906,12 @@ export default {
 }
 
 .overview-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
 }
 
 .overview-title {
@@ -851,7 +943,7 @@ export default {
 
 .progress-fill {
   height: 100%;
-  background-color: #667eea;
+  background: linear-gradient(90deg, #42a5f5, #1976d2);
   transition: width 0.3s ease;
 }
 
@@ -878,11 +970,19 @@ export default {
 }
 
 .suggestion-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.suggestion-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
 }
 
 .suggestion-title {
@@ -901,11 +1001,18 @@ export default {
 }
 
 .suggestion-action {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
   color: white;
   padding: 20rpx;
   border-radius: 12rpx;
   text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+  transition: all 0.3s ease;
+}
+
+.suggestion-action:active {
+  transform: translateY(1rpx);
+  box-shadow: 0 2rpx 8rpx rgba(66, 165, 245, 0.4);
 }
 
 @media (max-width: 750rpx) {
