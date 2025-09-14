@@ -160,7 +160,8 @@ async def get_recommended_skills(
             all_skills.extend(category_data["skills"])
         
         # 随机选择3-5个技能
-        recommended_count = min(5, len(all_skills))
+        # recommended_count = min(5, len(all_skills))
+        recommended_count = 3;
         recommended_skills = random.sample(all_skills, recommended_count)
         
         return {
