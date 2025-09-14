@@ -88,23 +88,42 @@
         <!-- 评估结果页面 -->
         <view v-if="currentStep === 'result'" class="result-section">
             <view class="result-header">
-                <text class="result-icon">{{ getRiskIcon(assessmentResult.risk_level) }}</text>
+                <text class="result-icon">{{ getScoreIcon(assessmentResult.overall_percentage) }}</text>
                 <text class="result-title">评估完成</text>
                 <text class="result-subtitle">基于你的回答，我们为你生成了专业分析</text>
             </view>
 
             <view class="result-summary">
                 <view class="summary-card">
-                    <text class="summary-title">风险等级</text>
-                    <view class="risk-level" :class="assessmentResult.risk_level">
-                        <text class="level-text">{{ getRiskText(assessmentResult.risk_level) }}</text>
-                        <text class="level-score">{{ assessmentResult.risk_percentage.toFixed(1) }}%</text>
+                    <text class="summary-title">总体得分</text>
+                    <view class="score-level" :class="getScoreLevelClass(assessmentResult.overall_percentage)">
+                        <text class="level-text">{{ assessmentResult.overall_level.level }}</text>
+                        <text class="level-score">{{ assessmentResult.overall_percentage.toFixed(1) }}%</text>
                     </view>
+                    <text class="level-desc">{{ assessmentResult.overall_level.description }}</text>
                 </view>
 
                 <view class="summary-card">
                     <text class="summary-title">关系类型</text>
                     <text class="relation-name">{{ getRelationTypeName(selectedRelationType) }}</text>
+                </view>
+            </view>
+
+            <!-- 维度分析 -->
+            <view class="dimension-analysis" v-if="assessmentResult.dimension_analysis">
+                <text class="analysis-title">📊 各维度表现</text>
+                <view v-for="(dimension, name) in assessmentResult.dimension_analysis" :key="name" class="dimension-item">
+                    <view class="dimension-header">
+                        <text class="dimension-name">{{ name }}</text>
+                        <text class="dimension-score">{{ dimension.percentage.toFixed(1) }}%</text>
+                    </view>
+                    <view class="dimension-bar">
+                        <view class="bar-fill" :style="{ 
+                            width: dimension.percentage + '%',
+                            backgroundColor: getDimensionColor(dimension.percentage)
+                        }"></view>
+                    </view>
+                    <text class="dimension-level">{{ dimension.level.level }}</text>
                 </view>
             </view>
 
@@ -115,11 +134,11 @@
                 </view>
             </view>
 
-            <view class="recommendations" v-if="assessmentResult.recommendations">
+            <view class="recommendations" v-if="assessmentResult.recommendations && assessmentResult.recommendations.length > 0">
                 <text class="rec-title">💡 个性化建议</text>
                 <view v-for="(rec, index) in assessmentResult.recommendations" :key="index" class="rec-item">
                     <view class="rec-header">
-                        <text class="rec-type">{{ rec.type }}</text>
+                        <text class="rec-type">{{ rec.title }}</text>
                         <view class="rec-priority" :class="rec.priority">
                             <text class="priority-text">{{ getPriorityText(rec.priority) }}</text>
                         </view>
@@ -162,38 +181,39 @@ export default {
             isAnalyzing: false,
             relationTypes: [
                 {
-                    id: 'romantic',
-                    name: '恋爱关系',
-                    desc: '评估与恋人的关系健康度',
-                    icon: '💕',
-                    color: '#e91e63',
-                    lightColor: '#fce4ec'
+                    id: 'family',
+                    name: '家庭关系',
+                    desc: '评估与家人的沟通、理解和情感连接',
+                    icon: '�‍👩‍👧‍👦',
+                    color: '#4caf50',
+                    lightColor: '#e8f5e8'
                 },
                 {
                     id: 'friendship',
                     name: '友谊关系',
-                    desc: '评估与朋友的关系质量',
+                    desc: '评估与朋友的信任、支持和互动质量',
                     icon: '👫',
                     color: '#2196f3',
                     lightColor: '#e3f2fd'
                 },
                 {
-                    id: 'family',
-                    name: '家庭关系',
-                    desc: '评估与家人的相处状况',
-                    icon: '👨‍👩‍👧‍👦',
-                    color: '#4caf50',
-                    lightColor: '#e8f5e8'
+                    id: 'romantic',
+                    name: '恋爱关系',
+                    desc: '评估与恋人的情感亲密和关系健康度',
+                    icon: '�',
+                    color: '#e91e63',
+                    lightColor: '#fce4ec'
                 },
                 {
-                    id: 'roommate',
-                    name: '室友关系',
-                    desc: '评估与室友的相处情况',
-                    icon: '🏠',
+                    id: 'mentor',
+                    name: '师生关系',
+                    desc: '评估与导师或老师的学习互动关系',
+                    icon: '👨‍�',
                     color: '#ff9800',
                     lightColor: '#fff3e0'
                 }
-            ]
+            ],
+            sessionToken: '', // 测评会话标识
         }
     },
 
@@ -229,15 +249,20 @@ export default {
                 uni.showLoading({ title: '准备评估题目...' });
 
                 const response = await uni.request({
-                    url: `${process.env.VUE_APP_API_BASE_URL}/emotional-protection/protection/risk-assessment`,
-                    method: 'GET',
+                    url: `${process.env.VUE_APP_API_BASE_URL}/emotional-protection/protection/relationship-assessment/start`,
+                    method: 'POST',
                     header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        relationship_type: this.selectedRelationType
                     }
                 });
 
                 if (response.statusCode === 200) {
-                    this.assessmentQuestions = response.data.assessment_questions;
+                    this.assessmentQuestions = response.data.questions;
+                    this.sessionToken = response.data.session_token;
                     this.currentStep = 'assessment';
                     this.currentQuestionIndex = 0;
                     this.selectedAnswers = {};
@@ -284,20 +309,32 @@ export default {
                 this.isAnalyzing = true;
 
                 const response = await uni.request({
-                    url: `${process.env.VUE_APP_API_BASE_URL}/emotional-protection/protection/risk-assessment/analyze`,
+                    url: `${process.env.VUE_APP_API_BASE_URL}/emotional-protection/protection/relationship-assessment/submit`,
                     method: 'POST',
                     header: {
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
                         'Content-Type': 'application/json'
                     },
                     data: {
-                        answers: this.selectedAnswers,
-                        relationship_type: this.selectedRelationType
+                        session_token: this.sessionToken,
+                        relationship_type: this.selectedRelationType,
+                        answers: this.selectedAnswers
                     }
                 });
 
                 if (response.statusCode === 200) {
-                    this.assessmentResult = response.data;
+                    // 后端返回嵌套结构，需要重新组织数据
+                    const data = response.data;
+                    this.assessmentResult = {
+                        overall_percentage: data.assessment_result.total_score,
+                        overall_level: data.assessment_result.total_level,
+                        dimension_analysis: data.assessment_result.dimension_scores,
+                        ai_analysis: data.ai_analysis,
+                        recommendations: data.recommendations || [],
+                        relationship_name: data.assessment_result.relationship_name,
+                        session_token: data.assessment_result.session_token,
+                        questions_answered: data.assessment_result.questions_answered
+                    };
                     this.currentStep = 'result';
                 }
             } catch (error) {
@@ -318,6 +355,7 @@ export default {
             this.currentQuestionIndex = 0;
             this.selectedAnswers = {};
             this.assessmentResult = null;
+            this.sessionToken = '';
         },
 
         getPersonalizedAdvice() {
@@ -326,24 +364,28 @@ export default {
             });
         },
 
-        getRiskIcon(level) {
-            const icons = {
-                'low': '✅',
-                'medium': '⚠️',
-                'high': '🚨',
-                'critical': '🆘'
-            };
-            return icons[level] || '📊';
+        getScoreIcon(percentage) {
+            if (percentage >= 85) return '🌟';
+            if (percentage >= 70) return '😊';
+            if (percentage >= 55) return '😐';
+            if (percentage >= 40) return '😔';
+            return '😟';
         },
 
-        getRiskText(level) {
-            const texts = {
-                'low': '较低风险',
-                'medium': '中等风险',
-                'high': '较高风险',
-                'critical': '高危风险'
-            };
-            return texts[level] || '未知';
+        getScoreLevelClass(percentage) {
+            if (percentage >= 85) return 'excellent';
+            if (percentage >= 70) return 'good';
+            if (percentage >= 55) return 'average';
+            if (percentage >= 40) return 'below-average';
+            return 'poor';
+        },
+
+        getDimensionColor(percentage) {
+            if (percentage >= 85) return '#52C41A';
+            if (percentage >= 70) return '#1890FF';
+            if (percentage >= 55) return '#FAAD14';
+            if (percentage >= 40) return '#FF7A45';
+            return '#F5222D';
         },
 
         getRelationTypeName(typeId) {
@@ -852,6 +894,97 @@ export default {
 
 .risk-level.critical .level-text {
     color: #d32f2f;
+}
+
+/* 新的评分样式 */
+.score-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-level.excellent .level-text {
+    color: #52C41A;
+}
+
+.score-level.good .level-text {
+    color: #1890FF;
+}
+
+.score-level.average .level-text {
+    color: #FAAD14;
+}
+
+.score-level.below-average .level-text {
+    color: #FF7A45;
+}
+
+.score-level.poor .level-text {
+    color: #F5222D;
+}
+
+.level-desc {
+    font-size: 24rpx;
+    color: #666;
+    text-align: center;
+    margin-top: 8rpx;
+}
+
+/* 维度分析样式 */
+.dimension-analysis {
+    background-color: white;
+    border-radius: 16rpx;
+    padding: 32rpx;
+    margin-bottom: 40rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.dimension-item {
+    margin-bottom: 32rpx;
+}
+
+.dimension-item:last-child {
+    margin-bottom: 0;
+}
+
+.dimension-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12rpx;
+}
+
+.dimension-name {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #333;
+}
+
+.dimension-score {
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #1890FF;
+}
+
+.dimension-bar {
+    height: 20rpx;
+    background-color: #f0f0f0;
+    border-radius: 10rpx;
+    overflow: hidden;
+    margin-bottom: 12rpx;
+    border: 1rpx solid #e8e8e8;
+}
+
+.bar-fill {
+    height: 100%;
+    transition: width 0.8s ease-out;
+    border-radius: 10rpx;
+    box-shadow: inset 0 1rpx 2rpx rgba(255, 255, 255, 0.3);
+}
+
+.dimension-level {
+    font-size: 24rpx;
+    color: #666;
 }
 
 .relation-name {
