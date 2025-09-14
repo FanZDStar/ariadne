@@ -158,14 +158,29 @@
 
           <view class="modal-body">
             <view class="form-group">
-              <text class="form-label">选择职业</text>
+              <text class="form-label">AI扮演职业</text>
               <view class="profession-grid">
                 <view
-                  v-for="profession in professionOptions"
+                  v-for="profession in aiProfessionOptions"
                   :key="profession"
                   class="profession-item"
-                  :class="{ active: selectedProfession === profession }"
-                  @click="selectedProfession = profession"
+                  :class="{ active: selectedAiProfession === profession }"
+                  @click="selectedAiProfession = profession"
+                >
+                  <text class="profession-text">{{ profession }}</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="form-group">
+              <text class="form-label">我的职业</text>
+              <view class="profession-grid">
+                <view
+                  v-for="profession in myProfessionOptions"
+                  :key="profession"
+                  class="profession-item"
+                  :class="{ active: selectedMyProfession === profession }"
+                  @click="selectedMyProfession = profession"
                 >
                   <text class="profession-text">{{ profession }}</text>
                 </view>
@@ -186,6 +201,32 @@
                 </view>
               </view>
             </view>
+
+            <view class="form-group">
+              <text class="form-label">AI性格特点</text>
+              <view class="personality-grid">
+                <view
+                  v-for="personality in personalityOptions"
+                  :key="personality"
+                  class="personality-item"
+                  :class="{ active: selectedPersonality === personality }"
+                  @click="selectedPersonality = personality"
+                >
+                  <text class="personality-text">{{ personality }}</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="form-group">
+              <text class="form-label">情景设定</text>
+              <textarea
+                v-model="aiBackground"
+                class="background-input"
+                :placeholder="aiBackground || '请提供一个合适且具体的情景'"
+                maxlength="200"
+              ></textarea>
+              <text class="char-count">{{ aiBackground.length }}/200</text>
+            </view>
           </view>
 
           <view class="modal-footer">
@@ -194,7 +235,13 @@
             </view>
             <view
               class="modal-btn confirm"
-              :class="{ disabled: !selectedProfession || !selectedAge }"
+              :class="{
+                disabled:
+                  !selectedAiProfession ||
+                  !selectedMyProfession ||
+                  !selectedAge ||
+                  !selectedPersonality,
+              }"
               @click="confirmRoleSelection"
             >
               <text class="btn-text">确认</text>
@@ -260,21 +307,42 @@ export default {
       practiceStats: null,
       // 模型选择相关
       showModelModal: false,
-      selectedProfession: "",
+      selectedAiProfession: "",
+      selectedMyProfession: "",
       selectedAge: "",
-      professionOptions: [
-        "大学生",
-        "上班族",
+      selectedPersonality: "",
+      aiBackground: "",
+      aiProfessionOptions: [
+        "大学同学",
+        "职场同事",
         "老师",
         "医生",
-        "销售员",
+        "销售专员",
         "程序员",
         "设计师",
         "心理咨询师",
         "服务员",
-        "经理",
+        "部门经理",
+        "创业者",
+        "朋友",
+        "陌生人",
+        "面试官",
+        "客户",
+        "合作伙伴",
+      ],
+      myProfessionOptions: [
+        "大学生",
+        "应届毕业生",
+        "职场新人",
+        "资深员工",
+        "管理者",
         "创业者",
         "自由职业者",
+        "求职者",
+        "实习生",
+        "项目经理",
+        "技术专家",
+        "销售代表",
       ],
       ageOptions: [
         "18-22岁",
@@ -283,6 +351,20 @@ export default {
         "36-45岁",
         "46-55岁",
         "55岁以上",
+      ],
+      personalityOptions: [
+        "友善开朗",
+        "严肃认真",
+        "幽默风趣",
+        "温和耐心",
+        "直率坦诚",
+        "细致体贴",
+        "活泼外向",
+        "沉稳内敛",
+        "专业权威",
+        "随和亲切",
+        "积极乐观",
+        "冷静理性",
       ],
     };
   },
@@ -335,16 +417,6 @@ export default {
     //         this.skillInfo = cachedScenario.skill;
     //     }
     // },
-
-    initializeChat() {
-      this.chatMessages = [
-        {
-          role: "ai",
-          content: `现在我们要开始"${this.skillInfo?.title}"的情景练习。我会扮演场景中的角色，请你自然地与我对话，运用你学到的技巧。准备好了吗？`,
-          type: "instruction",
-        },
-      ];
-    },
 
     async loadSkillInfo() {
       // 如果从URL已经获取到skillInfo，则不需要重新加载
@@ -462,13 +534,45 @@ export default {
     },
 
     initializeChat() {
+      // 生成基础情景
+      const baseScenario = this.generateBaseScenario();
+
       this.chatMessages = [
         {
           role: "ai",
-          content: `现在我们开始"${this.skillInfo?.title}"的练习！我会扮演情境中的角色，请你自然地与我对话。让我们开始吧！`,
+          content: `现在我们开始"${this.skillInfo?.title}"的练习！\n\n【情景设定】\n${baseScenario}\n\n我会扮演情境中的角色，请你自然地与我对话，运用你学到的技巧。准备好了吗？`,
           type: "instruction",
         },
       ];
+    },
+
+    generateBaseScenario() {
+      // 根据技能类型生成基础情景
+      const skillBasedScenarios = {
+        ice_breaking: [
+          "你在一个朋友的生日聚会上，注意到角落里有个看起来很有趣但还不认识的人。现在是个打破僵局、开始对话的好机会。",
+          "你刚加入了一个新的兴趣小组，大家正在自由交流。你想要融入这个群体，需要主动与他人建立联系。",
+          "在咖啡厅排队时，你和前面的人因为都在看同一本书而有了共同话题的契机。",
+        ],
+        listen_actively: [
+          "你的朋友看起来心情不太好，主动约你出来聊天。TA似乎有很多话想说，但又有些犹豫。",
+          "在小组讨论中，有同学分享了一个比较私人的经历，现在需要有人给予回应和支持。",
+          "你的室友刚刚经历了一些挫折，正坐在床边默默流泪，你想要了解情况并给予帮助。",
+        ],
+        express_clearly: [
+          "你对朋友最近的某个行为感到困扰，但不想伤害你们的友谊。现在你们有机会私下谈谈。",
+          "在团队项目中，你有不同的想法需要表达，但担心会引起冲突。项目讨论会即将开始。",
+          "你需要向家人表达自己的一个重要决定，但担心他们不理解或不支持。",
+        ],
+      };
+
+      const scenarios = skillBasedScenarios[this.skillInfo?.id] || [
+        "你和一个新认识的人在一个轻松的环境中开始对话，双方都希望能够进行有效的交流。",
+        "在日常生活的某个场合，你遇到了需要运用人际交往技巧的情况。",
+        "你面临一个需要与他人沟通的场景，这是练习和提升交往能力的好机会。",
+      ];
+
+      return scenarios[Math.floor(Math.random() * scenarios.length)];
     },
 
     handleInput() {
@@ -1012,12 +1116,98 @@ export default {
       });
     },
 
+    // 生成具体情景的方法
+    generateSpecificScenario() {
+      const scenarios = {
+        // AI职业 + 我的职业的情景组合
+        "大学同学-大学生": [
+          "我们在图书馆学习，你注意到我看起来有些焦虑，因为明天有一门重要的考试。",
+          "在学校食堂排队时，我们偶然遇到了，我提到最近在准备一个重要的课程作业。",
+          "班级小组讨论课上，我们被分在同一组，需要完成一个团队项目。",
+        ],
+        "职场同事-职场新人": [
+          "这是你入职的第一周，我作为你的同事，在茶水间遇到了你。",
+          "部门会议结束后，我注意到你对刚才讨论的项目似乎有些困惑。",
+          "午休时间，我们在公司楼下的咖啡厅碰面，聊起了工作适应的话题。",
+        ],
+        "面试官-求职者": [
+          "这是一场重要的工作面试，你准时到达了面试地点，我刚刚审阅完你的简历。",
+          "面试进行到一半，我想了解你对这个职位的具体看法和期望。",
+          "面试即将结束，我准备给你一些提问的机会，看看你对公司还有什么想了解的。",
+        ],
+        "老师-大学生": [
+          "课后，你来到我的办公室，似乎对今天讲的内容有些疑问。",
+          "在校园里偶遇，我注意到你最近的学习状态有些不太对劲。",
+          "期中考试结束后，我叫你来办公室讨论你的学习情况。",
+        ],
+        "朋友-大学生": [
+          "我们在咖啡厅见面，我注意到你最近心情不太好，想关心一下你的近况。",
+          "周末聚会上，大家都在聊各自的近况，轮到你分享时你显得有些犹豫。",
+          "深夜时分，我们在宿舍楼下散步，你说有些心事想要倾诉。",
+        ],
+      };
+
+      const key = `${this.selectedAiProfession}-${this.selectedMyProfession}`;
+      const specificScenarios = scenarios[key] || [
+        `我们在一个轻松的环境中相遇，你作为${this.selectedMyProfession}，我作为${this.selectedAiProfession}，我们开始了一段自然的对话。`,
+        `在日常生活中，我们因为某个共同的话题而开始交流，气氛比较融洽。`,
+        `我们在一个需要沟通协作的场合相遇，彼此都希望能够有效地交流。`,
+      ];
+
+      return specificScenarios[
+        Math.floor(Math.random() * specificScenarios.length)
+      ];
+    },
+
+    generateOpeningDialogue() {
+      const openings = {
+        友善开朗: [
+          "嗨！看起来我们有机会聊聊了，你最近怎么样？",
+          "你好！很高兴见到你，我注意到你好像有什么想法？",
+          "哈喽！我觉得我们可以好好聊聊，你觉得呢？",
+        ],
+        严肃认真: [
+          "你好，我想我们需要认真地沟通一下这个问题。",
+          "很好，我们来谈谈吧。我希望能听到你的真实想法。",
+          "请坐，我们有一些重要的事情需要讨论。",
+        ],
+        幽默风趣: [
+          '哎呀，看来我们又要开始"深度交流"了，准备好了吗？',
+          "嘿，我发现聊天总比发呆有趣多了，你说呢？",
+          "好吧，既然我们都在这里，不如来场有趣的对话？",
+        ],
+        温和耐心: [
+          "你好，我注意到你可能有些话想说，我很乐意倾听。",
+          "别着急，我们有充足的时间慢慢聊，你想从哪里开始？",
+          "请放轻松，我们可以随意聊聊，没有压力的。",
+        ],
+        直率坦诚: [
+          "我们直说吧，我觉得有些话需要开诚布公地谈。",
+          "我比较喜欢直接的交流，你有什么想法就直说吧。",
+          "咱们别绕弯子了，我想听听你真实的想法。",
+        ],
+      };
+
+      const personalityOpenings = openings[this.selectedPersonality] || [
+        "你好，我们开始聊聊吧。",
+        "很高兴有机会和你交流。",
+        "我们来谈谈这个话题吧。",
+      ];
+
+      return personalityOpenings[
+        Math.floor(Math.random() * personalityOpenings.length)
+      ];
+    },
+
     // 模型选择相关方法
     showModelSelector() {
       this.showModelModal = true;
       // 重置选择
-      this.selectedProfession = "";
+      this.selectedAiProfession = "";
+      this.selectedMyProfession = "";
       this.selectedAge = "";
+      this.selectedPersonality = "";
+      this.aiBackground = "";
     },
 
     hideModelSelector() {
@@ -1025,16 +1215,29 @@ export default {
     },
 
     confirmRoleSelection() {
-      if (!this.selectedProfession || !this.selectedAge) {
+      if (
+        !this.selectedAiProfession ||
+        !this.selectedMyProfession ||
+        !this.selectedAge ||
+        !this.selectedPersonality
+      ) {
         uni.showToast({
-          title: "请选择职业和年龄",
+          title: "请完善必填信息",
           icon: "none",
         });
         return;
       }
 
-      // 构建角色扮演提示语句
-      const roleMessage = `我希望你在该场景中扮演一个${this.selectedAge}的${this.selectedProfession}这样的角色配合我练习，请根据这个身份特点来回应我的对话。`;
+      // 构建详细的角色扮演提示语句
+      let roleMessage = `请在这个场景中扮演一个${this.selectedAge}、性格${this.selectedPersonality}的${this.selectedAiProfession}，与我这个${this.selectedMyProfession}进行对话练习。`;
+
+      if (this.aiBackground.trim()) {
+        roleMessage += `情景设定：${this.aiBackground.trim()}。`;
+      } else {
+        roleMessage += `请提供一个合适且具体的情景。`;
+      }
+
+      roleMessage += `请根据这个身份特点和情景来自然地回应我的对话，帮助我练习人际交往技巧。`;
 
       // 添加到聊天消息
       this.chatMessages.push({
@@ -1050,16 +1253,29 @@ export default {
       this.isAiTyping = true;
 
       setTimeout(() => {
+        // 生成具体情景
+        const scenarioContent = this.generateSpecificScenario();
+
+        let confirmMessage = `好的！我现在是一个${this.selectedAge}、${this.selectedPersonality}的${this.selectedAiProfession}。`;
+
+        if (this.aiBackground.trim()) {
+          confirmMessage += `\n\n【情景设定】\n${this.aiBackground.trim()}\n\n`;
+        } else {
+          confirmMessage += `\n\n【情景设定】\n${scenarioContent}\n\n`;
+        }
+
+        confirmMessage += this.generateOpeningDialogue();
+
         this.chatMessages.push({
           role: "ai",
-          content: `好的，我现在会以${this.selectedAge}的${this.selectedProfession}的身份与你对话。让我们开始练习吧！`,
+          content: confirmMessage,
           type: "role_confirmation",
         });
         this.isAiTyping = false;
       }, 1000);
 
       uni.showToast({
-        title: `已设置角色：${this.selectedAge}的${this.selectedProfession}`,
+        title: `角色设定完成`,
         icon: "success",
       });
     },
@@ -1529,75 +1745,118 @@ export default {
   font-weight: bold;
 }
 
-/* 模型选择弹窗样式 */
+/* 模型选择弹窗样式 - uniapp风格 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
   background-color: white;
-  border-radius: 16rpx;
-  width: 90%;
-  max-width: 600rpx;
-  max-height: 80vh;
+  border-radius: 24rpx 24rpx 0 0;
+  width: 100%;
+  max-height: 90vh;
   overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.2);
 }
 
 .modal-header {
+  position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 32rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  padding: 40rpx 32rpx 20rpx;
+  border-bottom: 1rpx solid #ebeef5;
 }
 
 .modal-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #303133;
 }
 
 .modal-close {
-  width: 48rpx;
-  height: 48rpx;
+  position: absolute;
+  right: 32rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60rpx;
+  height: 60rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #f5f5f5;
+  background-color: #f5f7fa;
+  transition: background-color 0.2s;
+}
+
+.modal-close:active {
+  background-color: #e4e7ed;
 }
 
 .close-text {
-  font-size: 36rpx;
-  color: #999;
+  font-size: 40rpx;
+  color: #909399;
   line-height: 1;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 .modal-body {
-  padding: 32rpx;
-  max-height: 60vh;
+  padding: 20rpx 32rpx 0;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
 .form-group {
-  margin-bottom: 40rpx;
+  margin-bottom: 48rpx;
 }
 
 .form-label {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #606266;
   display: block;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
+  position: relative;
+}
+
+.form-label::before {
+  content: "";
+  position: absolute;
+  left: -16rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6rpx;
+  height: 32rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 3rpx;
 }
 
 .profession-grid {
@@ -1607,20 +1866,28 @@ export default {
 }
 
 .profession-item {
-  background-color: #f8f9fa;
-  border: 2rpx solid #e9ecef;
-  border-radius: 12rpx;
-  padding: 16rpx 24rpx;
-  font-size: 26rpx;
-  color: #666;
+  background-color: #f5f7fa;
+  border: 2rpx solid #dcdfe6;
+  border-radius: 16rpx;
+  padding: 20rpx 28rpx;
+  font-size: 28rpx;
+  color: #606266;
   text-align: center;
   min-width: 140rpx;
+  transition: all 0.2s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.profession-item:active {
+  transform: scale(0.95);
 }
 
 .profession-item.active {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: #667eea;
   color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
 }
 
 .age-grid {
@@ -1630,51 +1897,139 @@ export default {
 }
 
 .age-item {
-  background-color: #f8f9fa;
-  border: 2rpx solid #e9ecef;
-  border-radius: 12rpx;
-  padding: 16rpx 24rpx;
-  font-size: 26rpx;
-  color: #666;
+  background-color: #f5f7fa;
+  border: 2rpx solid #dcdfe6;
+  border-radius: 16rpx;
+  padding: 20rpx 28rpx;
+  font-size: 28rpx;
+  color: #606266;
   text-align: center;
   min-width: 120rpx;
+  transition: all 0.2s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.age-item:active {
+  transform: scale(0.95);
 }
 
 .age-item.active {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: #667eea;
   color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+}
+
+.personality-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.personality-item {
+  background-color: #f5f7fa;
+  border: 2rpx solid #dcdfe6;
+  border-radius: 16rpx;
+  padding: 20rpx 28rpx;
+  font-size: 28rpx;
+  color: #606266;
+  text-align: center;
+  min-width: 120rpx;
+  transition: all 0.2s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.personality-item:active {
+  transform: scale(0.95);
+}
+
+.personality-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+}
+
+.background-input {
+  width: 100%;
+  min-height: 140rpx;
+  background-color: #fafbfc;
+  border: 2rpx solid #dcdfe6;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #303133;
+  line-height: 1.6;
+  resize: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.background-input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+}
+
+.background-input::placeholder {
+  color: #c0c4cc;
+}
+
+.char-count {
+  font-size: 24rpx;
+  color: #909399;
+  text-align: right;
+  margin-top: 12rpx;
+  display: block;
 }
 
 .modal-footer {
   display: flex;
   padding: 32rpx;
-  border-top: 1rpx solid #f0f0f0;
-  gap: 20rpx;
+  border-top: 1rpx solid #ebeef5;
+  gap: 24rpx;
+  background-color: #fafbfc;
 }
 
 .modal-btn {
   flex: 1;
-  padding: 24rpx;
-  border-radius: 12rpx;
+  padding: 28rpx;
+  border-radius: 16rpx;
   text-align: center;
-  font-size: 28rpx;
-  font-weight: bold;
+  font-size: 32rpx;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.modal-btn:active {
+  transform: scale(0.98);
 }
 
 .modal-btn.cancel {
-  background-color: #f8f9fa;
-  color: #666;
-  border: 1rpx solid #e9ecef;
+  background-color: white;
+  color: #606266;
+  border: 2rpx solid #dcdfe6;
+}
+
+.modal-btn.cancel:active {
+  background-color: #f5f7fa;
 }
 
 .modal-btn.confirm {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.4);
 }
 
 .modal-btn.confirm.disabled {
-  background-color: #ccc;
-  color: #999;
+  background: #c0c4cc;
+  color: white;
+  box-shadow: none;
+  transform: none;
 }
 </style>
