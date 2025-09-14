@@ -1,8 +1,15 @@
 <template>
     <view class="assessment-container">
         <view class="header">
-            <text class="title">关系健康评估</text>
-            <text class="subtitle">评估你当前关系的健康状况，获得专业建议</text>
+            <view class="header-content">
+                <view class="header-icon">
+                    <text class="icon-text">📊</text>
+                </view>
+                <view class="header-text">
+                    <text class="title">关系健康评估</text>
+                    <text class="subtitle">评估你当前关系的健康状况，获得专业建议</text>
+                </view>
+            </view>
         </view>
 
         <!-- 开始评估页面 -->
@@ -27,10 +34,14 @@
                 <text class="section-title">请选择你要评估的关系类型：</text>
                 <view class="type-grid">
                     <view v-for="type in relationTypes" :key="type.id" class="type-card"
-                        :class="{ selected: selectedRelationType === type.id }" @click="selectRelationType(type.id)">
+                        :class="{ selected: selectedRelationType === type.id }" 
+                        :style="selectedRelationType === type.id ? `border-color: ${type.color}; background: linear-gradient(135deg, ${type.lightColor} 0%, #ffffff 100%)` : ''"
+                        @click="selectRelationType(type.id)">
                         <text class="type-icon">{{ type.icon }}</text>
-                        <text class="type-name">{{ type.name }}</text>
-                        <text class="type-desc">{{ type.desc }}</text>
+                        <view class="type-content">
+                            <text class="type-name" :style="selectedRelationType === type.id ? `color: ${type.color}` : ''">{{ type.name }}</text>
+                            <text class="type-desc">{{ type.desc }}</text>
+                        </view>
                     </view>
                 </view>
             </view>
@@ -100,7 +111,7 @@
             <view class="ai-analysis">
                 <text class="analysis-title">🤖 AI专业分析</text>
                 <view class="analysis-content">
-                    <text class="analysis-text">{{ assessmentResult.ai_analysis }}</text>
+                    <view class="formatted-text" v-html="formatAnalysisText(assessmentResult.ai_analysis)"></view>
                 </view>
             </view>
 
@@ -154,25 +165,33 @@ export default {
                     id: 'romantic',
                     name: '恋爱关系',
                     desc: '评估与恋人的关系健康度',
-                    icon: '💕'
+                    icon: '💕',
+                    color: '#e91e63',
+                    lightColor: '#fce4ec'
                 },
                 {
                     id: 'friendship',
                     name: '友谊关系',
                     desc: '评估与朋友的关系质量',
-                    icon: '👫'
+                    icon: '👫',
+                    color: '#2196f3',
+                    lightColor: '#e3f2fd'
                 },
                 {
                     id: 'family',
                     name: '家庭关系',
                     desc: '评估与家人的相处状况',
-                    icon: '👨‍👩‍👧‍👦'
+                    icon: '👨‍👩‍👧‍👦',
+                    color: '#4caf50',
+                    lightColor: '#e8f5e8'
                 },
                 {
                     id: 'roommate',
                     name: '室友关系',
                     desc: '评估与室友的相处情况',
-                    icon: '🏠'
+                    icon: '🏠',
+                    color: '#ff9800',
+                    lightColor: '#fff3e0'
                 }
             ]
         }
@@ -332,6 +351,8 @@ export default {
             return type ? type.name : '未知';
         },
 
+
+
         getPriorityText(priority) {
             const texts = {
                 'urgent': '紧急',
@@ -340,6 +361,32 @@ export default {
                 'low': '参考'
             };
             return texts[priority] || '建议';
+        },
+
+        formatAnalysisText(text) {
+            if (!text) return '';
+            
+            return text
+                // 处理加粗文本 **text** 或 __text__
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="bold-text">$1</strong>')
+                .replace(/__(.*?)__/g, '<strong class="bold-text">$1</strong>')
+                // 处理斜体文本 *text* 或 _text_
+                .replace(/\*(.*?)\*/g, '<em class="italic-text">$1</em>')
+                .replace(/_(.*?)_/g, '<em class="italic-text">$1</em>')
+                // 处理标题 ## text
+                .replace(/^## (.*?)$/gm, '<h3 class="heading-text">$1</h3>')
+                .replace(/^### (.*?)$/gm, '<h4 class="subheading-text">$1</h4>')
+                // 处理列表项 - text 或 * text
+                .replace(/^[-*] (.*?)$/gm, '<div class="list-item">• $1</div>')
+                // 处理数字列表 1. text
+                .replace(/^\d+\. (.*?)$/gm, '<div class="numbered-item">$1</div>')
+                // 处理段落（双换行转为段落分隔）
+                .replace(/\n\s*\n/g, '</p><p class="paragraph">')
+                // 处理单换行（转为行内换行）
+                .replace(/\n/g, '<br class="line-break"/>')
+                // 包装整体内容为段落
+                .replace(/^/, '<p class="paragraph">')
+                .replace(/$/, '</p>');
         }
     }
 }
@@ -348,33 +395,80 @@ export default {
 <style scoped>
 .assessment-container {
     padding: 0;
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
     min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 60rpx 40rpx 40rpx;
-    color: white;
-    text-align: center;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+    padding: 60rpx 40rpx 60rpx;
+    color: #1976d2;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8rpx 32rpx rgba(144, 202, 249, 0.3);
+    border-radius: 0 0 60rpx 40rpx;
+    margin-bottom: 40rpx;
 }
 
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(227, 242, 253, 0.1);
+    backdrop-filter: blur(10rpx);
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+.header-icon {
+    width: 120rpx;
+    height: 120rpx;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 32rpx;
+    backdrop-filter: blur(10rpx);
+    border: 2rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.icon-text {
+    font-size: 56rpx;
+    filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.2));
+}
+
+.header-text {
+    flex: 1;
+}
 .title {
     font-size: 48rpx;
     font-weight: bold;
     margin-bottom: 16rpx;
     display: block;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
     font-size: 28rpx;
     opacity: 0.9;
+    line-height: 1.4;
+    text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
 }
 
 .start-section,
 .questions-section,
 .result-section {
-    padding: 40rpx;
+    padding: 30rpx 40rpx 50rpx;
 }
 
 .intro-card {
@@ -421,73 +515,145 @@ export default {
     line-height: 1.5;
 }
 
+.relation-types {
+    margin-bottom: 50rpx;
+}
+
 .section-title {
-    font-size: 32rpx;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 24rpx;
+    font-size: 34rpx;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 32rpx;
     display: block;
+    text-align: center;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60rpx;
+    height: 4rpx;
+    background: linear-gradient(90deg, #42a5f5, #1976d2);
+    border-radius: 2rpx;
 }
 
 .type-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20rpx;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24rpx;
     margin-bottom: 40rpx;
 }
 
 .type-card {
-    width: calc(50% - 10rpx);
     background-color: white;
-    border-radius: 16rpx;
-    padding: 32rpx;
-    text-align: center;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-    border: 2rpx solid transparent;
-    transition: all 0.3s ease;
+    border-radius: 20rpx;
+    padding: 32rpx 24rpx;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.08);
+    border: 3rpx solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.type-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4rpx;
+    background: linear-gradient(90deg, #42a5f5, #1976d2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
 }
 
 .type-card.selected {
-    border-color: #667eea;
-    background-color: #f8f9ff;
+    transform: translateY(-4rpx);
+    box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+}
+
+.type-card.selected::before {
+    transform: scaleX(1);
 }
 
 .type-icon {
-    font-size: 48rpx;
-    display: block;
-    margin-bottom: 16rpx;
+    font-size: 56rpx;
+    margin-right: 24rpx;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.1));
+}
+
+.type-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .type-name {
-    font-size: 28rpx;
-    font-weight: bold;
+    font-size: 30rpx;
+    font-weight: 600;
     color: #333;
-    display: block;
-    margin-bottom: 8rpx;
+    margin-bottom: 6rpx;
+    line-height: 1.3;
 }
 
 .type-desc {
     font-size: 24rpx;
-    color: #999;
+    color: #666;
+    line-height: 1.4;
+    opacity: 0.9;
 }
 
 .start-actions {
     text-align: center;
+    margin-top: 20rpx;
 }
 
 .start-btn {
-    background-color: #667eea;
+    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
     color: white;
-    padding: 32rpx 80rpx;
-    border-radius: 50rpx;
+    padding: 36rpx 100rpx;
+    border-radius: 60rpx;
     font-size: 32rpx;
-    font-weight: bold;
+    font-weight: 600;
     display: inline-block;
+    box-shadow: 0 8rpx 24rpx rgba(66, 165, 245, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.start-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.start-btn:active::before {
+    left: 100%;
+}
+
+.start-btn:active {
+    transform: translateY(2rpx);
+    box-shadow: 0 6rpx 16rpx rgba(102, 126, 234, 0.25);
 }
 
 .start-btn.disabled {
-    background-color: #ccc;
-    color: #999;
+    background: #e0e0e0;
+    color: #9e9e9e;
+    box-shadow: none;
+    cursor: not-allowed;
 }
 
 .progress-bar {
@@ -500,7 +666,7 @@ export default {
 
 .progress-fill {
     height: 100%;
-    background-color: #667eea;
+    background-color: #42a5f5;
     transition: width 0.3s ease;
 }
 
@@ -546,8 +712,8 @@ export default {
 }
 
 .option-item.selected {
-    border-color: #667eea;
-    background-color: #f0f4ff;
+    border-color: #42a5f5;
+    background-color: #e3f2fd;
 }
 
 .option-radio {
@@ -562,13 +728,13 @@ export default {
 }
 
 .option-item.selected .option-radio {
-    border-color: #667eea;
+    border-color: #42a5f5;
 }
 
 .radio-dot {
     width: 16rpx;
     height: 16rpx;
-    background-color: #667eea;
+    background-color: #42a5f5;
     border-radius: 50%;
 }
 
@@ -594,7 +760,7 @@ export default {
 }
 
 .action-btn.primary {
-    background-color: #667eea;
+    background-color: #42a5f5;
     color: white;
 }
 
@@ -713,13 +879,83 @@ export default {
 .analysis-content {
     background-color: #f8f9fa;
     border-radius: 12rpx;
-    padding: 24rpx;
+    padding: 32rpx 28rpx;
+    border-left: 6rpx solid #42a5f5;
 }
 
 .analysis-text {
     font-size: 28rpx;
     color: #555;
     line-height: 1.7;
+}
+
+.formatted-text {
+    font-size: 28rpx;
+    color: #555;
+    line-height: 1.8;
+}
+
+.formatted-text .paragraph {
+    margin: 0 0 16rpx 0;
+    text-align: justify;
+}
+
+.formatted-text .paragraph:last-child {
+    margin-bottom: 0;
+}
+
+.formatted-text .line-break {
+    margin: 4rpx 0;
+}
+
+.formatted-text .bold-text {
+    font-weight: bold;
+    color: #333;
+}
+
+.formatted-text .italic-text {
+    font-style: italic;
+    color: #666;
+}
+
+.formatted-text .heading-text {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #42a5f5;
+    margin: 24rpx 0 12rpx 0;
+    display: block;
+}
+
+.formatted-text .subheading-text {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #555;
+    margin: 20rpx 0 8rpx 0;
+    display: block;
+}
+
+.formatted-text .list-item {
+    margin: 6rpx 0;
+    padding-left: 16rpx;
+    color: #555;
+    line-height: 1.6;
+}
+
+.formatted-text .numbered-item {
+    margin: 6rpx 0;
+    padding-left: 20rpx;
+    color: #555;
+    position: relative;
+    counter-increment: item;
+    line-height: 1.6;
+}
+
+.formatted-text .numbered-item::before {
+    content: counter(item) ". ";
+    position: absolute;
+    left: 0;
+    color: #42a5f5;
+    font-weight: bold;
 }
 
 .recommendations {
@@ -854,11 +1090,25 @@ export default {
 /* 响应式设计 */
 @media (max-width: 750rpx) {
     .type-grid {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        gap: 20rpx;
     }
 
     .type-card {
-        width: 100%;
+        padding: 28rpx 20rpx;
+    }
+
+    .type-icon {
+        font-size: 48rpx;
+        margin-right: 20rpx;
+    }
+
+    .type-name {
+        font-size: 28rpx;
+    }
+
+    .type-desc {
+        font-size: 22rpx;
     }
 
     .result-summary {
