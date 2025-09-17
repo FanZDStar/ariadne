@@ -11,6 +11,9 @@
             </view>
           </view>
         </view>
+        <view class="favorite-btn" @click="toggleFavorite">
+          <text class="favorite-icon">{{ isFavorited ? '❤️' : '🤍' }}</text>
+        </view>
       </view>
 
       <text class="skill-description">{{ skillData.description }}</text>
@@ -153,6 +156,7 @@ export default {
       categoryId: "",
       skillData: {},
       relatedSkills: [],
+      isFavorited: false, // 收藏状态
     };
   },
 
@@ -160,6 +164,7 @@ export default {
     this.skillId = options.skillId;
     this.categoryId = options.categoryId;
     this.loadSkillDetail();
+    this.checkFavoriteStatus();
   },
 
   methods: {
@@ -259,23 +264,120 @@ export default {
         skillTags: encodeURIComponent(JSON.stringify(this.skillData.tags)),
         scenarioTitle: encodeURIComponent(scenario.title),
         scenarioDescription: encodeURIComponent(scenario.description)
-    };
+      };
 
-    const queryString = Object.entries(practiceParams)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&");
+      const queryString = Object.entries(practiceParams)
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&");
 
-    uni.navigateTo({
-      url: `/pages/interpersonal-wisdom/skill-practice?${queryString}`,
-    });
+      uni.navigateTo({
+        url: `/pages/interpersonal-wisdom/skill-practice?${queryString}`,
+      });
+    },
+
+    viewRelatedSkill(skill) {
+      uni.navigateTo({
+        url: `/pages/interpersonal-wisdom/skill-detail?skillId=${skill.id}&categoryId=${this.categoryId}`,
+      });
+    },
+
+    // 检查收藏状态
+    async checkFavoriteStatus() {
+      try {
+        const token = uni.getStorageSync('access_token');
+        if (!token) return;
+
+        const response = await uni.request({
+          url: 'http://localhost:8000/skill-favorites/check',
+          method: 'GET',
+          header: {
+            'Authorization': `Bearer ${token}`
+          },
+          data: {
+            skill_id: this.skillId
+          }
+        });
+
+        if (response.statusCode === 200) {
+          this.isFavorited = response.data.is_favorited;
+        }
+      } catch (error) {
+        console.error('检查收藏状态失败:', error);
+      }
+    },
+
+    // 切换收藏状态
+    async toggleFavorite() {
+      try {
+        const token = uni.getStorageSync('access_token');
+        if (!token) {
+          uni.showToast({
+            title: '请先登录',
+            icon: 'none'
+          });
+          return;
+        }
+
+        uni.showLoading({ title: this.isFavorited ? '取消收藏中...' : '收藏中...' });
+
+        const url = this.isFavorited
+          ? 'http://localhost:8000/skill-favorites/remove'
+          : 'http://localhost:8000/skill-favorites/add';
+
+        const response = await uni.request({
+          url: url,
+          method: 'POST',
+          header: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          data: {
+            skill_id: this.skillId,
+            category: this.getCategoryFromSkillId(),
+            skill_name: this.skillData.name
+          }
+        });
+
+        if (response.statusCode === 200) {
+          this.isFavorited = !this.isFavorited;
+          uni.showToast({
+            title: this.isFavorited ? '收藏成功' : '取消收藏成功',
+            icon: 'success'
+          });
+        } else {
+          throw new Error('操作失败');
+        }
+      } catch (error) {
+        console.error('收藏操作失败:', error);
+        uni.showToast({
+          title: '操作失败',
+          icon: 'none'
+        });
+      } finally {
+        uni.hideLoading();
+      }
+    },
+
+    // 根据技能ID获取分类
+    getCategoryFromSkillId() {
+      // 从统一数据源中查找技能所属分类
+      const categories = ['communication', 'emotional_expression', 'relationship_building', 'special_scenarios'];
+
+      for (const category of categories) {
+        // 这里可以通过skillsData来判断，简化处理直接返回当前categoryId
+        if (this.categoryId) {
+          return this.categoryId;
+        }
+      }
+
+      // 默认分类逻辑，可以根据skillId的范围来判断
+      const skillNum = parseInt(this.skillId);
+      if (skillNum <= 25) return 'communication';
+      if (skillNum <= 38) return 'emotional_expression';
+      if (skillNum <= 51) return 'relationship_building';
+      return 'special_scenarios';
+    },
   },
-
-  viewRelatedSkill(skill) {
-    uni.navigateTo({
-      url: `/pages/interpersonal-wisdom/skill-detail?skillId=${skill.id}&categoryId=${this.categoryId}`,
-    });
-  },
-},
 };
 </script>
 
@@ -301,6 +403,28 @@ export default {
 
 .skill-basic-info {
   flex: 1;
+}
+
+.favorite-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.favorite-btn:active {
+  transform: scale(0.95);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.favorite-icon {
+  font-size: 36rpx;
 }
 
 .skill-title {

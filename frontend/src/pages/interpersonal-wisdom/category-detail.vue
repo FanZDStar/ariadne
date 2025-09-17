@@ -29,10 +29,8 @@
                     </view>
                     <view class="skill-actions">
                         <view class="action-btn primary" @click.stop="viewSkillDetail(skill)">
-                            <text class="btn-text">开始学习</text>
-                        </view>
-                        <view class="action-btn secondary" @click.stop="addToFavorites(skill)">
-                            <text class="btn-text">收藏</text>
+                            <text class="btn-text">去看看</text>
+                            <text class="btn-arrow">→</text>
                         </view>
                     </view>
                 </view>
@@ -290,13 +288,6 @@ export default {
         startLearning(skill) {
             uni.navigateTo({
                 url: `/pages/interpersonal-wisdom/skill-practice?skillId=${skill.id}&type=learning`
-            });
-        },
-
-        addToFavorites(skill) {
-            uni.showToast({
-                title: '已添加到收藏',
-                icon: 'success'
             });
         },
 
@@ -798,25 +789,77 @@ export default {
 
 .skill-actions {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 16rpx;
 }
 
 .action-btn {
-    flex: 1;
-    padding: 20rpx;
+    width: 33.33%;
+    max-width: 200rpx;
+    padding: 20rpx 16rpx;
     border-radius: 12rpx;
     text-align: center;
-    font-size: 26rpx;
+    font-size: 24rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6rpx;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.action-btn:active {
+    transform: translateY(2rpx);
+    box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
 }
 
 .action-btn.primary {
-    background-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.action-btn.primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-btn.primary:active::before {
+    left: 100%;
 }
 
 .action-btn.secondary {
     background-color: #f0f0f0;
     color: #666;
+    border: 2rpx solid #e0e0e0;
+}
+
+.btn-icon {
+    font-size: 24rpx;
+}
+
+.btn-text {
+    font-size: 26rpx;
+    font-weight: 500;
+}
+
+.btn-arrow {
+    font-size: 20rpx;
+    opacity: 0.8;
+    transition: transform 0.3s ease;
+}
+
+.action-btn:active .btn-arrow {
+    transform: translateX(4rpx);
 }
 
 .skill-footer {

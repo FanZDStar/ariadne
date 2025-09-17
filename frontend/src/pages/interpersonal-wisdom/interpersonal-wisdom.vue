@@ -148,28 +148,17 @@
 
     <!-- 成长档案模块 -->
     <view v-if="activeTab === 'growth'" class="content-section">
-      <view class="growth-overview">
-        <!-- 使用心情晴雨表组件 -->
-        <MoodTracker :is-logged-in="isLoggedIn" @go-to-login="goToLogin" @mood-saved="onMoodSaved"
-          @data-loaded="onMoodDataLoaded" @login-expired="onLoginExpired" @load-error="onMoodLoadError"
-          ref="moodTracker" />
-
-        <view class="overview-card">
-          <text class="overview-title">防护能力</text>
-          <view class="protection-level">
-            <text class="level-text">{{ protectionLevel }}</text>
-            <text class="level-desc">{{ protectionLevelDesc }}</text>
+      <view class="favorites-section">
+        <view class="favorites-card" @click="goToSkillFavorites">
+          <view class="favorites-header">
+            <text class="favorites-icon">💖</text>
+            <text class="favorites-title">技能收藏</text>
+            <text class="favorites-icon">💖</text>
           </view>
-        </view>
-      </view>
-
-      <view class="growth-suggestions">
-        <text class="section-title">成长建议</text>
-        <view v-for="suggestion in growthSuggestions" :key="suggestion.id" class="suggestion-card">
-          <text class="suggestion-title">{{ suggestion.title }}</text>
-          <text class="suggestion-content">{{ suggestion.content }}</text>
-          <view class="suggestion-action" @click="applySuggestion(suggestion)">
-            <text class="action-text">立即行动</text>
+          <text class="favorites-desc">查看和管理你收藏的所有技能</text>
+          <view class="favorites-btn">
+            <text class="btn-text">进入收藏夹</text>
+            <text class="arrow">→</text>
           </view>
         </view>
       </view>
@@ -184,11 +173,10 @@
 
 <script>
 import { api } from "../../utils/api.js";
-import MoodTracker from "../../components/MoodTracker.vue";
 
 export default {
   components: {
-    MoodTracker
+    // 移除MoodTracker组件
   },
   data() {
     return {
@@ -196,9 +184,6 @@ export default {
       recommendedSkills: [],
       skillCategories: [],
       practiceHistory: [],
-      protectionLevel: "良好",
-      protectionLevelDesc: "你具备基本的情感防护意识",
-      growthSuggestions: [],
 
       // 登录状态
       isLoggedIn: false,
@@ -249,7 +234,6 @@ export default {
           this.getRecommendedSkills(),
           this.getSkillCategories(),
           this.loadPracticeHistory(),
-          this.loadGrowthData(),
         ]);
       } catch (error) {
         console.error("初始化数据失败:", error);
@@ -443,19 +427,14 @@ export default {
     },
 
     loadGrowthData() {
-      // 模拟成长数据
-      this.growthSuggestions = [
-        {
-          id: 1,
-          title: "加强情感表达",
-          content: '建议多练习"我"开头的表达方式，能更好地传达你的感受',
-        },
-        {
-          id: 2,
-          title: "提升边界意识",
-          content: "学会在关系中设立清晰的边界，保护自己的情感安全",
-        },
-      ];
+      // 移除原有的成长数据加载逻辑
+    },
+
+    // 跳转到技能收藏页面
+    goToSkillFavorites() {
+      uni.navigateTo({
+        url: '/pages/interpersonal-wisdom/skill-favorites'
+      });
     },
 
     getCategoryIcon(categoryId) {
@@ -484,27 +463,7 @@ export default {
       this.practiceSkill(skill);
     },
 
-    // 组件事件处理方法
-    onMoodSaved(data) {
-      console.log('心情保存成功:', data);
-      // 可以在这里处理心情保存成功后的逻辑
-    },
-
-    onMoodDataLoaded(data) {
-      console.log('心情数据加载完成:', data);
-      // 可以在这里处理数据加载完成后的逻辑
-    },
-
-    onLoginExpired() {
-      console.log('登录已过期');
-      this.isLoggedIn = false;
-      // 可以在这里处理登录过期的逻辑
-    },
-
-    onMoodLoadError(error) {
-      console.error('心情数据加载失败:', error);
-      // 可以在这里处理加载错误的逻辑
-    },
+    // 组件事件处理方法（已移除）
 
     // 回到顶部方法
     backToTop() {
@@ -531,9 +490,106 @@ export default {
   color: #1976d2;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8rpx 32rpx rgba(144, 202, 249, 0.3);
-  border-radius: 0 0 60rpx 40rpx;
-  margin-bottom: 40rpx;
+  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.4);
+}
+
+.favorites-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400rpx;
+}
+
+.favorites-card {
+  background: linear-gradient(135deg,
+      rgba(255, 182, 193, 0.9) 0%,
+      rgba(255, 105, 180, 0.9) 50%,
+      rgba(238, 130, 238, 0.9) 100%);
+  backdrop-filter: blur(10rpx);
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  text-align: center;
+  box-shadow: 0 12rpx 32rpx rgba(255, 105, 180, 0.25);
+  border: 3rpx solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 600rpx;
+  width: 100%;
+}
+
+.favorites-card:active {
+  transform: translateY(4rpx) scale(0.98);
+  box-shadow: 0 8rpx 24rpx rgba(255, 105, 180, 0.35);
+}
+
+.favorites-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24rpx;
+  gap: 16rpx;
+}
+
+.favorites-icon {
+  font-size: 40rpx;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+.favorites-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
+}
+
+.favorites-desc {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  margin-bottom: 32rpx;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.favorites-btn {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10rpx);
+  color: white;
+  padding: 24rpx 40rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.favorites-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.favorites-btn .btn-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.favorites-btn .arrow {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+@keyframes heartbeat {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .header::before {
@@ -926,121 +982,103 @@ export default {
   line-height: 1.5;
 }
 
-.growth-overview {
+.favorites-section {
   display: flex;
-  flex-direction: column;
-  gap: 24rpx;
-  margin-bottom: 40rpx;
-}
-
-.overview-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10rpx);
-  border-radius: 20rpx;
-  padding: 32rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
-}
-
-.overview-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-  display: block;
-}
-
-.progress-item {
-  display: flex;
+  justify-content: center;
   align-items: center;
+  min-height: 400rpx;
+}
+
+.favorites-card {
+  background: linear-gradient(135deg,
+      rgba(255, 182, 193, 0.9) 0%,
+      rgba(255, 105, 180, 0.9) 50%,
+      rgba(238, 130, 238, 0.9) 100%);
+  backdrop-filter: blur(10rpx);
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  text-align: center;
+  box-shadow: 0 12rpx 32rpx rgba(255, 105, 180, 0.25);
+  border: 3rpx solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 600rpx;
+  width: 100%;
+}
+
+.favorites-card:active {
+  transform: translateY(4rpx) scale(0.98);
+  box-shadow: 0 8rpx 24rpx rgba(255, 105, 180, 0.35);
+}
+
+.favorites-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24rpx;
   gap: 16rpx;
 }
 
-.progress-label {
-  font-size: 28rpx;
-  color: #666;
+.favorites-icon {
+  font-size: 40rpx;
+  animation: heartbeat 2s ease-in-out infinite;
 }
 
-.progress-bar {
-  flex: 1;
-  height: 12rpx;
-  background-color: #f0f0f0;
-  border-radius: 6rpx;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #42a5f5, #1976d2);
-  transition: width 0.3s ease;
-}
-
-.progress-text {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.protection-level {
-  text-align: center;
-}
-
-.level-text {
-  font-size: 48rpx;
+.favorites-title {
+  font-size: 40rpx;
   font-weight: bold;
-  color: #4caf50;
-  display: block;
-  margin-bottom: 8rpx;
-}
-
-.level-desc {
-  font-size: 28rpx;
-  color: #666;
-}
-
-.suggestion-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10rpx);
-  border-radius: 20rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.suggestion-card:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
-}
-
-.suggestion-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.suggestion-content {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 24rpx;
-}
-
-.suggestion-action {
-  background: linear-gradient(135deg, #42a5f5, #1976d2);
   color: white;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
+}
+
+.favorites-desc {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  margin-bottom: 32rpx;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.favorites-btn {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10rpx);
+  color: white;
+  padding: 24rpx 40rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
 }
 
-.suggestion-action:active {
-  transform: translateY(1rpx);
-  box-shadow: 0 2rpx 8rpx rgba(66, 165, 245, 0.4);
+.favorites-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.favorites-btn .btn-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.favorites-btn .arrow {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+@keyframes heartbeat {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 @media (max-width: 750rpx) {
