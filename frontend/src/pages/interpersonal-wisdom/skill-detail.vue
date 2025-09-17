@@ -47,11 +47,7 @@
           <text class="section-title">🎯 学习目标</text>
         </view>
         <view class="objectives-list">
-          <view
-            v-for="objective in skillData.objectives"
-            :key="objective"
-            class="objective-item"
-          >
+          <view v-for="objective in skillData.objectives" :key="objective" class="objective-item">
             <text class="objective-icon">•</text>
             <text class="objective-text">{{ objective }}</text>
           </view>
@@ -64,11 +60,7 @@
           <text class="section-title">💡 核心要点</text>
         </view>
         <view class="key-points">
-          <view
-            v-for="point in skillData.keyPoints"
-            :key="point.title"
-            class="point-card"
-          >
+          <view v-for="point in skillData.keyPoints" :key="point.title" class="point-card">
             <view class="point-header">
               <text class="point-icon">{{ point.icon }}</text>
               <text class="point-title">{{ point.title }}</text>
@@ -88,11 +80,7 @@
           <text class="section-title">📋 实践步骤</text>
         </view>
         <view class="practice-steps">
-          <view
-            v-for="(step, index) in skillData.practiceSteps"
-            :key="index"
-            class="step-item"
-          >
+          <view v-for="(step, index) in skillData.practiceSteps" :key="index" class="step-item">
             <view class="step-number">
               <text class="step-text">{{ index + 1 }}</text>
             </view>
@@ -114,12 +102,8 @@
           <text class="section-title">🎭 场景应用</text>
         </view>
         <view class="scenarios">
-          <view
-            v-for="scenario in skillData.scenarios"
-            :key="scenario.id"
-            class="scenario-card"
-            @click="practiceScenario(scenario)"
-          >
+          <view v-for="scenario in skillData.scenarios" :key="scenario.id" class="scenario-card"
+            @click="practiceScenario(scenario)">
             <view class="scenario-header">
               <text class="scenario-title">{{ scenario.title }}</text>
               <text class="scenario-difficulty">{{ scenario.difficulty }}</text>
@@ -139,12 +123,8 @@
           <text class="section-title">🔗 相关技能</text>
         </view>
         <view class="related-skills">
-          <view
-            v-for="skill in relatedSkills"
-            :key="skill.id"
-            class="related-skill-card"
-            @click="viewRelatedSkill(skill)"
-          >
+          <view v-for="skill in relatedSkills" :key="skill.id" class="related-skill-card"
+            @click="viewRelatedSkill(skill)">
             <text class="related-skill-name">{{ skill.name }}</text>
             <text class="related-skill-desc">{{ skill.brief }}</text>
             <view class="related-skill-status" :class="skill.status">
@@ -199,108 +179,10 @@ export default {
       }
     },
 
-    // async mockLoadSkillDetail() {
-    //     // 模拟数据
-    //     this.skillData = {
-    //         id: this.skillId,
-    //         name: '主动倾听',
-    //         description: '主动倾听是建立良好人际关系的基础技能，通过全神贯注地倾听对方，理解其言语和情感，建立深层次的连接。',
-    //         difficulty: 'basic',
-    //         estimatedTime: 15,
-    //         learnerCount: 1234,
-    //         status: 'learning',
-    //         progress: 65,
-    //         tags: ['倾听', '沟通基础', '理解'],
-    //         objectives: [
-    //             '学会集中注意力倾听对方说话',
-    //             '理解言语背后的情感和需求',
-    //             '通过肢体语言展现倾听态度',
-    //             '运用复述和确认技巧验证理解'
-    //         ],
-    //         keyPoints: [
-    //             {
-    //                 icon: '👀',
-    //                 title: '眼神交流',
-    //                 content: '保持适当的眼神交流，表达对对方的关注和尊重',
-    //                 example: '看着对方的眼睛，偶尔点头表示理解'
-    //             },
-    //             {
-    //                 icon: '🤐',
-    //                 title: '避免打断',
-    //                 content: '让对方完整表达想法，不要急于插话或给建议',
-    //                 example: '等对方说完后再回应："我理解你的意思是..."'
-    //             },
-    //             {
-    //                 icon: '🔄',
-    //                 title: '反馈确认',
-    //                 content: '用自己的话复述对方的观点，确认理解正确',
-    //                 example: '"如果我理解正确，你是想说..."'
-    //             }
-    //         ],
-    //         practiceSteps: [
-    //             {
-    //                 title: '营造倾听环境',
-    //                 description: '选择安静、舒适的环境，放下手机等干扰物',
-    //                 tips: '将手机调至静音模式，身体面向对方'
-    //             },
-    //             {
-    //                 title: '专注关注对方',
-    //                 description: '用眼神、肢体语言表达关注，避免思维游离',
-    //                 tips: '点头、"嗯"等简单回应表示你在听'
-    //             },
-    //             {
-    //                 title: '理解情感层面',
-    //                 description: '不仅听懂字面意思，更要理解对方的感受',
-    //                 tips: '注意对方的语调、表情变化'
-    //             },
-    //             {
-    //                 title: '适当回馈确认',
-    //                 description: '用复述、提问等方式确认理解正确',
-    //                 tips: '使用"我听到你说..."、"你的意思是..."等句式'
-    //             }
-    //         ],
-    //         scenarios: [
-    //             {
-    //                 id: 1,
-    //                 title: '朋友倾诉工作压力',
-    //                 description: '朋友向你抱怨工作中的困难和压力，需要你的倾听和理解',
-    //                 difficulty: '基础'
-    //             },
-    //             {
-    //                 id: 2,
-    //                 title: '家人分享生活感受',
-    //                 description: '家人想要分享一天的见闻和感受，需要你的关注',
-    //                 difficulty: '基础'
-    //             },
-    //             {
-    //                 id: 3,
-    //                 title: '同事讨论项目分歧',
-    //                 description: '同事对项目有不同看法，需要倾听并理解各方观点',
-    //                 difficulty: '进阶'
-    //             }
-    //         ]
-    //     };
-
-    //     this.relatedSkills = [
-    //         {
-    //             id: 2,
-    //             name: '情感表达',
-    //             brief: '学会准确表达自己的情感和需求',
-    //             status: 'new'
-    //         },
-    //         {
-    //             id: 3,
-    //             name: '有效提问',
-    //             brief: '通过恰当的提问深入了解对方',
-    //             status: 'learning'
-    //         }
-    //     ];
-    // },
-
     async mockLoadSkillDetail() {
       // 根据不同的 skillId 返回不同的技能数据
       const skillDataMap = {
-        // 沟通表达类技能
+        // 沟通表达类技能 (communication)
         1: {
           id: 1,
           name: "主动倾听",
@@ -684,6 +566,509 @@ export default {
             },
           ],
         },
+        // 添加 category-detail.vue 中缺失的技能数据
+        3: {
+          id: 3,
+          name: "非暴力沟通",
+          description: "学习非暴力沟通的四个步骤：观察、感受、需要、请求，以善意和理解进行沟通。",
+          difficulty: "advanced",
+          estimatedTime: 30,
+          learnerCount: 567,
+          status: "new",
+          progress: 0,
+          tags: ["沟通技巧", "冲突处理"],
+          objectives: [
+            "掌握观察与评判的区别",
+            "准确表达感受而非想法",
+            "识别真正的需要",
+            "提出具体可行的请求",
+          ],
+          keyPoints: [
+            {
+              icon: "👁️",
+              title: "客观观察",
+              content: "区分观察和评判，只描述具体发生的事情",
+              example: "说'你迟到了20分钟'而不是'你总是不守时'",
+            },
+            {
+              icon: "💗",
+              title: "表达感受",
+              content: "用情感词汇表达内心感受",
+              example: "我感到担心，而不是'你让我很生气'",
+            },
+            {
+              icon: "🎯",
+              title: "识别需要",
+              content: "找到感受背后的真正需要",
+              example: "我需要安全感和可预测性",
+            },
+            {
+              icon: "🙏",
+              title: "具体请求",
+              content: "提出具体、可行的行动请求",
+              example: "你愿意提前告诉我如果会迟到吗？",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "观察练习",
+              description: "练习客观描述事件，不加评判",
+              tips: "用录像机视角描述发生的事情",
+            },
+            {
+              title: "感受识别",
+              description: "学会区分感受和想法",
+              tips: "使用感受词汇表，避免'我觉得你...'的表达",
+            },
+            {
+              title: "需要探索",
+              description: "深入了解感受背后的需要",
+              tips: "问自己'我真正需要的是什么？'",
+            },
+            {
+              title: "请求表达",
+              description: "提出具体的行动请求",
+              tips: "确保请求是具体、可行、积极的",
+            },
+          ],
+          scenarios: [
+            {
+              id: 14,
+              title: "处理同事分歧",
+              description: "与同事在工作方式上有分歧，需要协调",
+              difficulty: "进阶",
+            },
+            {
+              id: 15,
+              title: "家庭沟通冲突",
+              description: "家人之间因为生活习惯产生矛盾",
+              difficulty: "高级",
+            },
+          ],
+        },
+        4: {
+          id: 4,
+          name: "情绪识别",
+          description: "通过观察面部表情、语调、肢体语言等准确识别自己和他人的情绪状态。",
+          difficulty: "basic",
+          estimatedTime: 12,
+          learnerCount: 890,
+          status: "mastered",
+          progress: 100,
+          tags: ["情绪识别", "观察力"],
+          objectives: [
+            "识别基本情绪表达",
+            "观察非言语信号",
+            "理解情绪的层次性",
+            "提高情绪觉察能力",
+          ],
+          keyPoints: [
+            {
+              icon: "😊",
+              title: "面部表情",
+              content: "学会从面部表情读取情绪信息",
+              example: "紧皱的眉头可能表示困惑或担忧",
+            },
+            {
+              icon: "🗣️",
+              title: "语调变化",
+              content: "注意语调、语速的变化传达的情绪",
+              example: "语速加快可能表示紧张或兴奋",
+            },
+            {
+              icon: "🤲",
+              title: "肢体语言",
+              content: "观察姿态和手势传达的信息",
+              example: "交叉双臂可能表示防御或不满",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "情绪词汇学习",
+              description: "扩展情绪词汇量，精确表达情绪",
+              tips: "使用情绪轮盘或情绪词汇表",
+            },
+            {
+              title: "观察练习",
+              description: "在日常互动中练习观察他人情绪",
+              tips: "关注一致性和不一致性的信号",
+            },
+          ],
+          scenarios: [
+            {
+              id: 16,
+              title: "识别朋友的隐藏情绪",
+              description: "朋友说没事，但表情和语调显示有问题",
+              difficulty: "基础",
+            },
+          ],
+        },
+        5: {
+          id: 5,
+          name: "情感共鸣",
+          description: "学会站在对方角度思考，理解对方的感受，与他人产生情感共鸣和理解。",
+          difficulty: "intermediate",
+          estimatedTime: 25,
+          learnerCount: 675,
+          status: "learning",
+          progress: 40,
+          tags: ["共情", "理解"],
+          objectives: [
+            "发展换位思考能力",
+            "理解他人的情感体验",
+            "表达共情和理解",
+            "建立情感连接",
+          ],
+          keyPoints: [
+            {
+              icon: "🔄",
+              title: "换位思考",
+              content: "尝试从对方的角度理解情况",
+              example: "如果我是他/她，我会有什么感受？",
+            },
+            {
+              icon: "💭",
+              title: "情感反映",
+              content: "反映对方的情感，让其感受到被理解",
+              example: "听起来你感到很沮丧...",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "角色扮演",
+              description: "通过角色扮演体验不同立场",
+              tips: "想象自己处在对方的处境中",
+            },
+            {
+              title: "情感反映练习",
+              description: "练习反映他人的情感",
+              tips: "使用'你感到...'的句式",
+            },
+          ],
+          scenarios: [
+            {
+              id: 17,
+              title: "理解失业朋友的感受",
+              description: "朋友失业了，需要情感支持",
+              difficulty: "进阶",
+            },
+          ],
+        },
+        6: {
+          id: 6,
+          name: "情绪调节",
+          description: "掌握深呼吸、认知重构等情绪调节技巧，有效管理和调节自己的情绪。",
+          difficulty: "advanced",
+          estimatedTime: 35,
+          learnerCount: 445,
+          status: "new",
+          progress: 0,
+          tags: ["情绪管理", "自我调节"],
+          objectives: [
+            "掌握情绪调节技巧",
+            "提高情绪稳定性",
+            "学会自我安抚",
+            "培养情绪弹性",
+          ],
+          keyPoints: [
+            {
+              icon: "🫁",
+              title: "深呼吸技巧",
+              content: "通过调节呼吸来平静情绪",
+              example: "4-7-8呼吸法：吸气4秒，憋气7秒，呼气8秒",
+            },
+            {
+              icon: "🧠",
+              title: "认知重构",
+              content: "改变对事件的看法来调节情绪",
+              example: "将'糟糕透了'改为'这是个挑战，我能应对'",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "呼吸练习",
+              description: "每天练习深呼吸技巧",
+              tips: "在感到压力时立即使用",
+            },
+            {
+              title: "认知练习",
+              description: "练习识别和改变负面思维",
+              tips: "问自己'还有其他看法吗？'",
+            },
+          ],
+          scenarios: [
+            {
+              id: 18,
+              title: "应对工作压力",
+              description: "工作截止日期临近，感到焦虑",
+              difficulty: "高级",
+            },
+          ],
+        },
+        7: {
+          id: 7,
+          name: "破冰技巧",
+          description: "掌握开场白、话题引导等社交技巧，在新环境中快速与他人建立联系。",
+          difficulty: "basic",
+          estimatedTime: 18,
+          learnerCount: 1123,
+          status: "mastered",
+          progress: 100,
+          tags: ["破冰", "社交"],
+          objectives: [
+            "掌握有效的开场白",
+            "学会话题转换",
+            "建立初步信任",
+            "营造轻松氛围",
+          ],
+          keyPoints: [
+            {
+              icon: "👋",
+              title: "友好开场",
+              content: "用温暖的问候开始对话",
+              example: "你好，我是...很高兴认识你",
+            },
+            {
+              icon: "❓",
+              title: "开放性问题",
+              content: "使用开放性问题引导对话",
+              example: "你觉得今天的活动怎么样？",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "开场白练习",
+              description: "准备几个适用于不同场合的开场白",
+              tips: "保持自然和真诚",
+            },
+          ],
+          scenarios: [
+            {
+              id: 19,
+              title: "聚会认识新朋友",
+              description: "在朋友聚会上主动认识新朋友",
+              difficulty: "基础",
+            },
+          ],
+        },
+        8: {
+          id: 8,
+          name: "信任建立",
+          description: "通过真诚、一致性、可靠性在关系中建立互相信任的基础。",
+          difficulty: "intermediate",
+          estimatedTime: 28,
+          learnerCount: 789,
+          status: "learning",
+          progress: 55,
+          tags: ["信任", "关系维护"],
+          objectives: [
+            "展现真诚态度",
+            "保持行为一致性",
+            "建立可靠形象",
+            "培养信任关系",
+          ],
+          keyPoints: [
+            {
+              icon: "💯",
+              title: "真诚沟通",
+              content: "保持诚实和透明的沟通方式",
+              example: "承认自己的错误和不足",
+            },
+            {
+              icon: "⚖️",
+              title: "言行一致",
+              content: "确保说到做到，建立可信度",
+              example: "承诺的事情一定要履行",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "承诺践行",
+              description: "严格履行对他人的承诺",
+              tips: "不轻易承诺，承诺了就要做到",
+            },
+          ],
+          scenarios: [
+            {
+              id: 20,
+              title: "建立工作伙伴关系",
+              description: "与新同事建立信任的工作关系",
+              difficulty: "进阶",
+            },
+          ],
+        },
+        9: {
+          id: 9,
+          name: "冲突解决",
+          description: "学会协商、妥协、寻找双赢解决方案，有效处理人际冲突和分歧。",
+          difficulty: "advanced",
+          estimatedTime: 40,
+          learnerCount: 234,
+          status: "new",
+          progress: 0,
+          tags: ["冲突处理", "协商"],
+          objectives: [
+            "识别冲突根源",
+            "掌握协商技巧",
+            "寻找双赢方案",
+            "修复关系",
+          ],
+          keyPoints: [
+            {
+              icon: "🔍",
+              title: "根源分析",
+              content: "深入了解冲突的真正原因",
+              example: "区分立场和利益",
+            },
+            {
+              icon: "🤝",
+              title: "协商技巧",
+              content: "运用有效的协商策略",
+              example: "寻找共同点，扩大共同利益",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "倾听练习",
+              description: "在冲突中先倾听对方观点",
+              tips: "理解对方的需求和担忧",
+            },
+          ],
+          scenarios: [
+            {
+              id: 21,
+              title: "解决团队分歧",
+              description: "团队成员对项目方向有不同意见",
+              difficulty: "高级",
+            },
+          ],
+        },
+        10: {
+          id: 10,
+          name: "职场沟通",
+          description: "掌握正式场合的沟通技巧和职场礼仪，在职场环境中有效沟通。",
+          difficulty: "intermediate",
+          estimatedTime: 22,
+          learnerCount: 1567,
+          status: "mastered",
+          progress: 100,
+          tags: ["职场", "正式沟通"],
+          objectives: [
+            "掌握职场礼仪",
+            "学会正式沟通",
+            "提高专业表达",
+            "建立职业形象",
+          ],
+          keyPoints: [
+            {
+              icon: "💼",
+              title: "专业表达",
+              content: "使用恰当的职场语言",
+              example: "用'建议'代替'觉得'",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "邮件写作",
+              description: "练习写作正式的工作邮件",
+              tips: "注意格式和用词的专业性",
+            },
+          ],
+          scenarios: [
+            {
+              id: 22,
+              title: "向上级汇报工作",
+              description: "向领导汇报项目进展",
+              difficulty: "进阶",
+            },
+          ],
+        },
+        11: {
+          id: 11,
+          name: "异地恋维护",
+          description: "学会通过技术手段保持亲密度和信任，维护异地恋关系的特殊技巧。",
+          difficulty: "advanced",
+          estimatedTime: 45,
+          learnerCount: 456,
+          status: "learning",
+          progress: 30,
+          tags: ["异地恋", "关系维护"],
+          objectives: [
+            "保持情感连接",
+            "建立沟通节奏",
+            "处理距离焦虑",
+            "规划未来",
+          ],
+          keyPoints: [
+            {
+              icon: "📱",
+              title: "有效沟通",
+              content: "利用各种技术手段保持联系",
+              example: "视频通话、语音消息、共享日常",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "沟通计划",
+              description: "制定规律的沟通时间表",
+              tips: "考虑双方的时区和作息",
+            },
+          ],
+          scenarios: [
+            {
+              id: 23,
+              title: "应对思念情绪",
+              description: "处理因距离产生的思念和孤独",
+              difficulty: "高级",
+            },
+          ],
+        },
+        12: {
+          id: 12,
+          name: "危机干预",
+          description: "学会识别危机信号，提供适当的支持和帮助，在他人遇到情感危机时提供支持。",
+          difficulty: "advanced",
+          estimatedTime: 50,
+          learnerCount: 123,
+          status: "new",
+          progress: 0,
+          tags: ["危机干预", "支持技巧"],
+          objectives: [
+            "识别危机信号",
+            "提供情感支持",
+            "知晓求助渠道",
+            "保护自身安全",
+          ],
+          keyPoints: [
+            {
+              icon: "🚨",
+              title: "危机识别",
+              content: "学会识别情感危机的警告信号",
+              example: "持续的绝望感、自伤想法等",
+            },
+            {
+              icon: "🤗",
+              title: "支持技巧",
+              content: "提供适当的情感支持",
+              example: "倾听、陪伴，避免说教",
+            },
+          ],
+          practiceSteps: [
+            {
+              title: "倾听技巧",
+              description: "学会在危机时刻有效倾听",
+              tips: "给予充分的关注和耐心",
+            },
+          ],
+          scenarios: [
+            {
+              id: 24,
+              title: "朋友情绪危机",
+              description: "朋友表达了自伤想法",
+              difficulty: "高级",
+            },
+          ],
+        },
       };
 
       // 根据 skillId 获取对应数据，如果没有匹配则使用默认数据
@@ -760,6 +1145,104 @@ export default {
             name: "主动倾听",
             brief: "学会用心倾听对方的话语和情感",
             status: "mastered",
+          },
+        ],
+        6: [
+          {
+            id: 4,
+            name: "情绪识别",
+            brief: "准确识别自己和他人的情绪状态",
+            status: "mastered",
+          },
+          {
+            id: 5,
+            name: "情感共鸣",
+            brief: "与他人产生情感共鸣和理解",
+            status: "learning",
+          },
+        ],
+        7: [
+          {
+            id: 8,
+            name: "信任建立",
+            brief: "在关系中建立互相信任的基础",
+            status: "learning",
+          },
+          {
+            id: 1,
+            name: "主动倾听",
+            brief: "学会用心倾听对方的话语和情感",
+            status: "mastered",
+          },
+        ],
+        8: [
+          {
+            id: 7,
+            name: "破冰技巧",
+            brief: "在新环境中快速与他人建立联系",
+            status: "mastered",
+          },
+          {
+            id: 9,
+            name: "冲突解决",
+            brief: "有效处理人际冲突和分歧",
+            status: "new",
+          },
+        ],
+        9: [
+          {
+            id: 3,
+            name: "非暴力沟通",
+            brief: "以善意和理解进行沟通",
+            status: "new",
+          },
+          {
+            id: 1,
+            name: "主动倾听",
+            brief: "学会用心倾听对方的话语和情感",
+            status: "mastered",
+          },
+        ],
+        10: [
+          {
+            id: 2,
+            name: "情感表达",
+            brief: "准确表达自己的情感和需求",
+            status: "learning",
+          },
+          {
+            id: 7,
+            name: "破冰技巧",
+            brief: "在新环境中快速与他人建立联系",
+            status: "mastered",
+          },
+        ],
+        11: [
+          {
+            id: 2,
+            name: "情感表达",
+            brief: "准确表达自己的情感和需求",
+            status: "learning",
+          },
+          {
+            id: 8,
+            name: "信任建立",
+            brief: "在关系中建立互相信任的基础",
+            status: "learning",
+          },
+        ],
+        12: [
+          {
+            id: 1,
+            name: "主动倾听",
+            brief: "学会用心倾听对方的话语和情感",
+            status: "mastered",
+          },
+          {
+            id: 5,
+            name: "情感共鸣",
+            brief: "与他人产生情感共鸣和理解",
+            status: "learning",
           },
         ],
       };

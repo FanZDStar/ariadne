@@ -8,23 +8,6 @@
                     <text class="category-desc">{{ categoryData.description }}</text>
                 </view>
             </view>
-            <!-- <view class="category-stats">
-                <view class="stat-item">
-                    <text class="stat-number">{{ categoryData.totalSkills }}</text>
-                    <text class="stat-label">技能总数</text>
-                </view>
-                <view class="stat-item">
-                    <text class="stat-number">{{ categoryData.masteredSkills }}</text>
-                    <text class="stat-label">已掌握</text>
-                </view>
-                <view class="stat-item">
-                    <text class="stat-number">{{ progressPercentage }}%</text>
-                    <text class="stat-label">完成度</text>
-                </view>
-            </view>
-            <view class="progress-bar">
-                <view class="progress-fill" :style="{ width: progressPercentage + '%' }"></view>
-            </view> -->
         </view>
 
         <view class="content">
@@ -32,10 +15,10 @@
             <view v-if="recommendedSkills.length > 0" class="section">
                 <view class="section-header">
                     <text class="section-title">🎯 为你推荐</text>
-                    <!-- <text class="section-subtitle">基于你的学习进度智能推荐</text> -->
                 </view>
-                <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended"
-                    @click="viewSkillDetail(skill)">
+                <!-- <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended"
+                    @click="viewSkillDetail(skill)"> -->
+                <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended">
                     <view class="skill-header">
                         <text class="skill-title">{{ skill.name }}</text>
                         <view class="difficulty-badge" :class="skill.difficulty">
@@ -48,13 +31,9 @@
                             <text class="meta-icon">⏱️</text>
                             <text class="meta-text">{{ skill.estimatedTime }}分钟</text>
                         </view>
-                        <view class="meta-item">
-                            <text class="meta-icon">👥</text>
-                            <text class="meta-text">{{ skill.learnerCount }}人学习</text>
-                        </view>
                     </view>
                     <view class="skill-actions">
-                        <view class="action-btn primary" @click.stop="startLearning(skill)">
+                        <view class="action-btn primary" @click.stop="viewSkillDetail(skill)">
                             <text class="btn-text">开始学习</text>
                         </view>
                         <view class="action-btn secondary" @click.stop="addToFavorites(skill)">
@@ -68,31 +47,18 @@
             <view class="section">
                 <view class="section-header">
                     <text class="section-title">📚 全部技能</text>
-                    <!-- <view class="filter-controls">
-                        <view class="filter-btn" :class="{ active: filterType === 'all' }" @click="setFilter('all')">
-                            <text class="filter-text">全部</text>
-                        </view>
-                        <view class="filter-btn" :class="{ active: filterType === 'learned' }"
-                            @click="setFilter('learned')">
-                            <text class="filter-text">已掌握</text>
-                        </view>
-                        <view class="filter-btn" :class="{ active: filterType === 'learning' }"
-                            @click="setFilter('learning')">
-                            <text class="filter-text">学习中</text>
-                        </view>
-                    </view> -->
                 </view>
 
                 <view class="skills-grid">
                     <view v-for="skill in filteredSkills" :key="skill.id" class="skill-card"
                         :class="{ mastered: skill.status === 'mastered', learning: skill.status === 'learning' }"
                         @click="viewSkillDetail(skill)">
-                        <view class="skill-status-indicator" v-if="skill.status === 'mastered'">
+                        <!-- <view class="skill-status-indicator" v-if="skill.status === 'mastered'">
                             <text class="status-icon">✅</text>
                         </view>
                         <view class="skill-status-indicator" v-else-if="skill.status === 'learning'">
                             <text class="status-icon">📖</text>
-                        </view>
+                        </view> -->
 
                         <text class="skill-name">{{ skill.name }}</text>
                         <text class="skill-brief">{{ skill.brief }}</text>
@@ -106,9 +72,9 @@
                                 <text class="difficulty-dot">●</text>
                                 <text class="difficulty-label">{{ getDifficultyText(skill.difficulty) }}</text>
                             </view>
-                            <view v-if="skill.status === 'learning'" class="learning-progress">
+                            <!-- <view v-if="skill.status === 'learning'" class="learning-progress">
                                 <text class="progress-text">{{ skill.progress }}%</text>
-                            </view>
+                            </view> -->
                         </view>
                     </view>
                 </view>
@@ -123,8 +89,6 @@
                     <text class="suggestion-title">{{ learningTip.title }}</text>
                     <text class="suggestion-content">{{ learningTip.content }}</text>
                     <view class="suggestion-action" @click="followSuggestion">
-                        <text class="action-text">了解更多</text>
-                        <text class="action-arrow">→</text>
                     </view>
                 </view>
             </view>
@@ -209,63 +173,6 @@ export default {
                 uni.hideLoading();
             }
         },
-
-        // async mockLoadCategoryData() {
-        //     // 模拟数据
-        //     this.categoryData = {
-        //         id: this.categoryId,
-        //         name: this.categoryName || '沟通表达',
-        //         description: '学会清晰、准确、有效的表达自己的想法和感受',
-        //         icon: '💬',
-        //         totalSkills: 12,
-        //         masteredSkills: 5
-        //     };
-
-        //     this.allSkills = [
-        //         {
-        //             id: 1,
-        //             name: '主动倾听',
-        //             brief: '学会用心倾听对方的话语和情感',
-        //             description: '主动倾听是建立良好人际关系的基础技能，包括关注对方的言语和非言语信息。',
-        //             difficulty: 'basic',
-        //             estimatedTime: 15,
-        //             learnerCount: 1234,
-        //             status: 'mastered',
-        //             tags: ['倾听', '沟通基础'],
-        //             progress: 100
-        //         },
-        //         {
-        //             id: 2,
-        //             name: '情感表达',
-        //             brief: '准确表达自己的情感和需求',
-        //             description: '学会用"我"的句式表达情感，避免指责和批评。',
-        //             difficulty: 'intermediate',
-        //             estimatedTime: 20,
-        //             learnerCount: 956,
-        //             status: 'learning',
-        //             tags: ['情感', '表达'],
-        //             progress: 65
-        //         },
-        //         {
-        //             id: 3,
-        //             name: '非暴力沟通',
-        //             brief: '以善意和理解进行沟通',
-        //             description: '学习非暴力沟通的四个步骤：观察、感受、需要、请求。',
-        //             difficulty: 'advanced',
-        //             estimatedTime: 30,
-        //             learnerCount: 567,
-        //             status: 'new',
-        //             tags: ['沟通技巧', '冲突处理']
-        //         }
-        //     ];
-
-        //     this.recommendedSkills = this.allSkills.filter(skill => skill.status === 'new').slice(0, 2);
-
-        //     this.learningTip = {
-        //         title: '循序渐进的学习方法',
-        //         content: '建议从基础技能开始学习，每天练习15-20分钟，结合实际场景应用，效果更佳。'
-        //     };
-        // },
 
         async mockLoadCategoryData() {
             // 根据不同的 categoryId 返回不同的分类数据
@@ -581,40 +488,6 @@ export default {
     line-height: 1.4;
 }
 
-.category-stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 24rpx;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 36rpx;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 4rpx;
-}
-
-.stat-label {
-    font-size: 22rpx;
-    opacity: 0.8;
-}
-
-.progress-bar {
-    height: 8rpx;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 4rpx;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: #4caf50;
-    transition: width 0.5s ease;
-}
 
 .content {
     padding: 0 40rpx 120rpx;

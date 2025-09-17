@@ -112,17 +112,6 @@
           </view>
         </view>
 
-        <!-- <view class="tool-card simulation" @click="startScenarioSimulation">
-          <view class="tool-header">
-            <text class="tool-icon">🎯</text>
-            <text class="tool-title">情景识别训练</text>
-          </view>
-          <text class="tool-desc">通过模拟场景提升风险识别能力</text>
-          <view class="tool-btn">
-            <text class="btn-text">开始训练</text>
-          </view>
-        </view> -->
-
         <view class="tool-card advice" @click="getPersonalizedAdvice">
           <view class="tool-header">
             <text class="tool-icon">💡</text>
