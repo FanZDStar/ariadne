@@ -39,11 +39,6 @@
           @click="selectSkill(skill)">
           <view class="skill-header">
             <text class="skill-title">{{ skill.title }}</text>
-            <view class="difficulty-badge" :class="skill.difficulty">
-              <text class="difficulty-text">{{
-                getDifficultyText(skill.difficulty)
-              }}</text>
-            </view>
           </view>
           <text class="skill-content">{{ skill.content }}</text>
           <view class="skill-tags">
@@ -68,7 +63,6 @@
               getCategoryIcon(category.id)
             }}</text>
             <text class="category-name">{{ category.name }}</text>
-            <text class="category-count">{{ category.skill_count }}个技巧</text>
           </view>
         </view>
       </view>
@@ -180,6 +174,11 @@
         </view>
       </view>
     </view>
+
+    <!-- 回到顶部按钮 -->
+    <view v-if="showBackToTop" class="back-to-top" @click="backToTop">
+      <text class="back-to-top-icon">↑</text>
+    </view>
   </view>
 </template>
 
@@ -203,6 +202,10 @@ export default {
 
       // 登录状态
       isLoggedIn: false,
+
+      // 回到顶部相关
+      showBackToTop: false,
+      scrollTop: 0,
     };
   },
 
@@ -213,6 +216,17 @@ export default {
   onLoad() {
     this.checkLoginStatus();
     this.initializeData();
+  },
+
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop;
+    // 当滚动距离超过300px时显示回到顶部按钮
+    this.showBackToTop = e.scrollTop > 30;
+  },
+
+  onUnload() {
+    // 页面卸载时清理
+    this.showBackToTop = false;
   },
 
   methods: {
@@ -250,17 +264,74 @@ export default {
       try {
         uni.showLoading({ title: "获取推荐中..." });
 
-        const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL}/social-skills/skills/recommend`,
-          method: "GET",
-          header: {
-            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+        // 使用本地技能数据随机推荐
+        const allSkills = [
+          {
+            id: "listen_actively",
+            title: "积极倾听技巧",
+            content: "学习如何专注、理解并回应他人的话语，建立更深层的连接",
+            tags: ["沟通", "倾听", "理解"]
           },
-        });
+          {
+            id: "topic_transition",
+            title: "非暴力沟通",
+            content: "用非批判性的方式表达需求和感受，减少冲突",
+            tags: ["沟通", "和谐", "表达"]
+          },
+          {
+            id: "emotion_sharing",
+            title: "共情能力培养",
+            content: "理解和感受他人情感，增进人际关系的深度",
+            tags: ["理解", "情感", "连接"]
+          },
+          {
+            id: "express_clearly",
+            title: "建设性反馈",
+            content: "以支持性的方式提供反馈，促进他人成长",
+            tags: ["反馈", "成长", "支持"]
+          },
+          {
+            id: "conflict_resolution",
+            title: "冲突解决策略",
+            content: "有效处理分歧和冲突，寻找双赢解决方案",
+            tags: ["冲突", "解决", "合作"]
+          },
+          {
+            id: "romantic_expression",
+            title: "情感智力提升",
+            content: "识别、理解和管理自己及他人的情感",
+            tags: ["情感", "智力", "管理"]
+          },
+          {
+            id: "boundary_setting",
+            title: "边界设定技巧",
+            content: "在关系中建立健康的边界，保护自己的情感安全",
+            tags: ["边界", "保护", "安全"]
+          },
+          {
+            id: "sincere_gratitude",
+            title: "有效道歉方式",
+            content: "真诚地承认错误并修复关系裂痕",
+            tags: ["道歉", "修复", "真诚"]
+          },
+          {
+            id: "ice_breaking",
+            title: "赞美与认可",
+            content: "恰当地表达欣赏和认可，增强他人的自信",
+            tags: ["赞美", "认可", "鼓励"]
+          },
+          {
+            id: "trust_building",
+            title: "情感表达艺术",
+            content: "以恰当的方式表达情感，增进理解",
+            tags: ["表达", "情感", "艺术"]
+          }
+        ];
 
-        if (response.statusCode === 200) {
-          this.recommendedSkills = response.data.recommended_skills || [];
-        }
+        // 随机选择3个技能进行推荐
+        const shuffled = allSkills.sort(() => 0.5 - Math.random());
+        this.recommendedSkills = shuffled.slice(0, 3);
+
       } catch (error) {
         console.error("获取推荐技巧失败:", error);
         uni.showToast({
@@ -292,8 +363,7 @@ export default {
         url: `/pages/interpersonal-wisdom/skill-practice?skillId=${skill.id
           }&type=practice&skillTitle=${encodeURIComponent(
             skill.title
-          )}&skillContent=${encodeURIComponent(skill.content)}&skillDifficulty=${skill.difficulty
-          }&skillTags=${encodeURIComponent(
+          )}&skillContent=${encodeURIComponent(skill.content)}&skillTags=${encodeURIComponent(
             JSON.stringify(skill.tags)
           )}&skillScenarios=${encodeURIComponent(
             JSON.stringify(skill.scenarios || [])
@@ -388,15 +458,6 @@ export default {
       ];
     },
 
-    getDifficultyText(difficulty) {
-      const map = {
-        basic: "基础",
-        intermediate: "进阶",
-        advanced: "高级",
-      };
-      return map[difficulty] || "基础";
-    },
-
     getCategoryIcon(categoryId) {
       const icons = {
         communication: "💬",
@@ -443,6 +504,14 @@ export default {
     onMoodLoadError(error) {
       console.error('心情数据加载失败:', error);
       // 可以在这里处理加载错误的逻辑
+    },
+
+    // 回到顶部方法
+    backToTop() {
+      uni.pageScrollTo({
+        scrollTop: 0,
+        duration: 300
+      });
     },
   },
 };
@@ -649,27 +718,6 @@ export default {
   color: #333;
 }
 
-.difficulty-badge {
-  padding: 8rpx 16rpx;
-  border-radius: 20rpx;
-  font-size: 20rpx;
-}
-
-.difficulty-badge.basic {
-  background-color: #e8f5e8;
-  color: #4caf50;
-}
-
-.difficulty-badge.intermediate {
-  background-color: #fff3e0;
-  color: #ff9800;
-}
-
-.difficulty-badge.advanced {
-  background-color: #ffebee;
-  color: #f44336;
-}
-
 .skill-content {
   font-size: 28rpx;
   color: #666;
@@ -767,12 +815,6 @@ export default {
   font-weight: bold;
   color: #333;
   display: block;
-  margin-bottom: 8rpx;
-}
-
-.category-count {
-  font-size: 22rpx;
-  color: #999;
 }
 
 .protection-tools {
@@ -1018,16 +1060,60 @@ export default {
   .category-name {
     font-size: 24rpx;
   }
-
-  .category-count {
-    font-size: 20rpx;
-  }
 }
 
 @media (max-width: 480rpx) {
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 16rpx;
+  }
+}
+
+/* 回到顶部按钮样式 */
+.back-to-top {
+  position: fixed;
+  right: 30rpx;
+  bottom: 100rpx;
+  width: 80rpx;
+  height: 80rpx;
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(66, 165, 245, 0.4);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.back-to-top:active {
+  transform: scale(0.9);
+  box-shadow: 0 4rpx 16rpx rgba(66, 165, 245, 0.6);
+}
+
+.back-to-top-icon {
+  font-size: 32rpx;
+  color: white;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* 添加动画效果 */
+.back-to-top {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

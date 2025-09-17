@@ -13,6 +13,9 @@ from app.models.user import User
 
 router = APIRouter()
 
+# 创建logger实例
+logger = logging.getLogger(__name__)
+
 
 SOCIAL_SKILLS_DATABASE = {
     "communication": {
@@ -332,8 +335,13 @@ async def interactive_skill_practice(
 """
 
         ai_service = AIService()
+        logger.info(f"正在调用AI服务，技能ID: {skill_id}")
+        logger.debug(f"AI提示词: {roleplay_prompt[:200]}...")
+        
         messages = [{"role": "user", "content": roleplay_prompt}]
         ai_response = await ai_service.get_response(messages, "social-skills")
+        
+        logger.info(f"AI服务响应: {ai_response[:100] if ai_response else 'None'}")
         
         # 确保ai_response是字符串
         if isinstance(ai_response, str):

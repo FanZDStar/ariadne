@@ -5,11 +5,6 @@
         <view class="skill-basic-info">
           <text class="skill-title">{{ skillData.name }}</text>
           <view class="skill-meta">
-            <view class="difficulty-badge" :class="skillData.difficulty">
-              <text class="difficulty-text">{{
-                getDifficultyText(skillData.difficulty)
-              }}</text>
-            </view>
             <view class="meta-item">
               <text class="meta-icon">⏱️</text>
               <text class="meta-text">{{ skillData.estimatedTime }}分钟</text>
@@ -19,15 +14,6 @@
               <text class="meta-text">{{ skillData.learnerCount }}人学习</text>
             </view>
           </view>
-        </view>
-        <view class="skill-progress" v-if="skillData.status === 'learning'">
-          <view class="progress-circle">
-            <text class="progress-text">{{ skillData.progress }}%</text>
-          </view>
-        </view>
-        <view class="skill-status" v-else-if="skillData.status === 'mastered'">
-          <text class="status-icon">✅</text>
-          <text class="status-text">已掌握</text>
         </view>
       </view>
 
@@ -106,7 +92,6 @@
             @click="practiceScenario(scenario)">
             <view class="scenario-header">
               <text class="scenario-title">{{ scenario.title }}</text>
-              <text class="scenario-difficulty">{{ scenario.difficulty }}</text>
             </view>
             <text class="scenario-description">{{ scenario.description }}</text>
             <view class="scenario-action">
@@ -128,7 +113,6 @@
             @click="practiceScenario(scenario)">
             <view class="scenario-header">
               <text class="scenario-title">{{ scenario.title }}</text>
-              <text class="scenario-difficulty">{{ scenario.difficulty }}</text>
             </view>
             <text class="scenario-description">{{ scenario.description }}</text>
             <view class="scenario-action">
@@ -149,9 +133,6 @@
             @click="viewRelatedSkill(skill)">
             <text class="related-skill-name">{{ skill.name }}</text>
             <text class="related-skill-desc">{{ skill.brief }}</text>
-            <view class="related-skill-status" :class="skill.status">
-              <text class="status-text">{{ getStatusText(skill.status) }}</text>
-            </view>
           </view>
         </view>
       </view>
@@ -205,16 +186,13 @@ export default {
       // 根据不同的 skillId 返回不同的技能数据
       const skillDataMap = {
         // 沟通表达类技能 (communication)
-        1: {
-          id: 1,
+        "listen_actively": {
+          id: "listen_actively",
           name: "主动倾听",
           description:
             "主动倾听是建立良好人际关系的基础技能，通过全神贯注地倾听对方，理解其言语和情感，建立深层次的连接。",
-          difficulty: "basic",
           estimatedTime: 15,
           learnerCount: 1234,
-          status: "mastered",
-          progress: 100,
           tags: ["倾听", "沟通基础", "理解"],
           objectives: [
             "学会集中注意力倾听对方说话",
@@ -269,32 +247,29 @@ export default {
               id: 1,
               title: "朋友倾诉工作压力",
               description: "朋友向你抱怨工作中的困难和压力，需要你的倾听和理解",
-              difficulty: "基础",
+
             },
             {
               id: 2,
               title: "家人分享生活感受",
               description: "家人想要分享一天的见闻和感受，需要你的关注",
-              difficulty: "基础",
+
             },
             {
               id: 3,
               title: "同事讨论项目分歧",
               description: "同事对项目有不同看法，需要倾听并理解各方观点",
-              difficulty: "进阶",
+
             },
           ],
         },
-        2: {
-          id: 2,
+        "express_clearly": {
+          id: "express_clearly",
           name: "情感表达",
           description:
             "学会准确、恰当地表达自己的情感和需求，避免指责和批评，建立更好的情感连接。",
-          difficulty: "intermediate",
           estimatedTime: 20,
           learnerCount: 956,
-          status: "learning",
-          progress: 65,
           tags: ["情感", "表达", "I语句"],
           objectives: [
             '学会使用"我"开头的表达方式',
@@ -349,32 +324,29 @@ export default {
               id: 4,
               title: "向伴侣表达不满",
               description: "伴侣经常迟到，你需要表达自己的感受",
-              difficulty: "进阶",
+
             },
             {
               id: 5,
               title: "向朋友表达关心",
               description: "朋友最近状态不好，你想表达关心",
-              difficulty: "基础",
+
             },
             {
               id: 6,
               title: "工作中表达异议",
               description: "对同事的做法有不同看法，需要表达意见",
-              difficulty: "高级",
+
             },
           ],
         },
-        3: {
-          id: 3,
+        "topic_transition": {
+          id: "topic_transition",
           name: "非暴力沟通",
           description:
             "学习非暴力沟通的四个步骤：观察、感受、需要、请求，以善意和理解进行沟通。",
-          difficulty: "advanced",
           estimatedTime: 30,
           learnerCount: 567,
-          status: "new",
-          progress: 0,
           tags: ["沟通技巧", "冲突处理", "NVC"],
           objectives: [
             "掌握非暴力沟通四步法",
@@ -435,32 +407,29 @@ export default {
               id: 7,
               title: "解决家庭冲突",
               description: "家人之间发生分歧，需要用非暴力沟通解决",
-              difficulty: "高级",
+
             },
             {
               id: 8,
               title: "职场沟通障碍",
               description: "与同事合作出现问题，需要有效沟通",
-              difficulty: "高级",
+
             },
             {
               id: 9,
               title: "朋友关系维护",
               description: "朋友的行为让你困扰，需要真诚沟通",
-              difficulty: "进阶",
+
             },
           ],
         },
-        4: {
-          id: 4,
+        "sincere_gratitude": {
+          id: "sincere_gratitude",
           name: "情绪识别",
           description:
             "通过观察面部表情、语调、肢体语言等线索，准确识别自己和他人的情绪状态。",
-          difficulty: "basic",
           estimatedTime: 12,
           learnerCount: 890,
-          status: "mastered",
-          progress: 100,
           tags: ["情绪识别", "观察力", "情商"],
           objectives: [
             "识别基础情绪：喜怒哀惧",
@@ -510,25 +479,25 @@ export default {
               id: 10,
               title: "识别朋友的真实感受",
               description: '朋友说"我很好"，但你感觉不对劲',
-              difficulty: "基础",
+
             },
             {
               id: 11,
               title: "工作会议情绪解读",
               description: "在团队会议中观察同事们的情绪反应",
-              difficulty: "进阶",
+
             },
           ],
         },
-        5: {
-          id: 5,
+        "romantic_expression": {
+          id: "romantic_expression",
           name: "情感共鸣",
           description: "学会站在对方角度思考，与他人产生情感共鸣和深层理解。",
-          difficulty: "intermediate",
+
           estimatedTime: 25,
           learnerCount: 675,
-          status: "learning",
-          progress: 40,
+
+
           tags: ["共情", "理解", "换位思考"],
           objectives: [
             "提升换位思考能力",
@@ -578,26 +547,26 @@ export default {
               id: 12,
               title: "安慰失恋的朋友",
               description: "朋友刚分手，情绪低落，需要你的理解",
-              difficulty: "进阶",
+
             },
             {
               id: 13,
               title: "理解家人的焦虑",
               description: "家人对未来很担心，你需要理解他们的感受",
-              difficulty: "基础",
+
             },
           ],
         },
         // 添加 category-detail.vue 中缺失的技能数据
-        3: {
-          id: 3,
+        "emotion_sharing": {
+          id: "emotion_sharing",
           name: "非暴力沟通",
           description: "学习非暴力沟通的四个步骤：观察、感受、需要、请求，以善意和理解进行沟通。",
-          difficulty: "advanced",
+
           estimatedTime: 30,
           learnerCount: 567,
-          status: "new",
-          progress: 0,
+
+
           tags: ["沟通技巧", "冲突处理"],
           objectives: [
             "掌握观察与评判的区别",
@@ -658,25 +627,25 @@ export default {
               id: 14,
               title: "处理同事分歧",
               description: "与同事在工作方式上有分歧，需要协调",
-              difficulty: "进阶",
+
             },
             {
               id: 15,
               title: "家庭沟通冲突",
               description: "家人之间因为生活习惯产生矛盾",
-              difficulty: "高级",
+
             },
           ],
         },
-        4: {
-          id: 4,
+        "ice_breaking": {
+          id: "ice_breaking",
           name: "情绪识别",
           description: "通过观察面部表情、语调、肢体语言等准确识别自己和他人的情绪状态。",
-          difficulty: "basic",
+
           estimatedTime: 12,
           learnerCount: 890,
-          status: "mastered",
-          progress: 100,
+
+
           tags: ["情绪识别", "观察力"],
           objectives: [
             "识别基本情绪表达",
@@ -721,19 +690,19 @@ export default {
               id: 16,
               title: "识别朋友的隐藏情绪",
               description: "朋友说没事，但表情和语调显示有问题",
-              difficulty: "基础",
+
             },
           ],
         },
-        5: {
-          id: 5,
+        "trust_building": {
+          id: "trust_building",
           name: "情感共鸣",
           description: "学会站在对方角度思考，理解对方的感受，与他人产生情感共鸣和理解。",
-          difficulty: "intermediate",
+
           estimatedTime: 25,
           learnerCount: 675,
-          status: "learning",
-          progress: 40,
+
+
           tags: ["共情", "理解"],
           objectives: [
             "发展换位思考能力",
@@ -772,19 +741,19 @@ export default {
               id: 17,
               title: "理解失业朋友的感受",
               description: "朋友失业了，需要情感支持",
-              difficulty: "进阶",
+
             },
           ],
         },
-        6: {
-          id: 6,
+        "boundary_setting": {
+          id: "boundary_setting",
           name: "情绪调节",
           description: "掌握深呼吸、认知重构等情绪调节技巧，有效管理和调节自己的情绪。",
-          difficulty: "advanced",
+
           estimatedTime: 35,
           learnerCount: 445,
-          status: "new",
-          progress: 0,
+
+
           tags: ["情绪管理", "自我调节"],
           objectives: [
             "掌握情绪调节技巧",
@@ -823,19 +792,19 @@ export default {
               id: 18,
               title: "应对工作压力",
               description: "工作截止日期临近，感到焦虑",
-              difficulty: "高级",
+
             },
           ],
         },
-        7: {
-          id: 7,
+        "conflict_resolution": {
+          id: "conflict_resolution",
           name: "破冰技巧",
           description: "掌握开场白、话题引导等社交技巧，在新环境中快速与他人建立联系。",
-          difficulty: "basic",
+
           estimatedTime: 18,
           learnerCount: 1123,
-          status: "mastered",
-          progress: 100,
+
+
           tags: ["破冰", "社交"],
           objectives: [
             "掌握有效的开场白",
@@ -869,19 +838,19 @@ export default {
               id: 19,
               title: "聚会认识新朋友",
               description: "在朋友聚会上主动认识新朋友",
-              difficulty: "基础",
+
             },
           ],
         },
-        8: {
-          id: 8,
+        "digital_communication": {
+          id: "digital_communication",
           name: "信任建立",
           description: "通过真诚、一致性、可靠性在关系中建立互相信任的基础。",
-          difficulty: "intermediate",
+
           estimatedTime: 28,
           learnerCount: 789,
-          status: "learning",
-          progress: 55,
+
+
           tags: ["信任", "关系维护"],
           objectives: [
             "展现真诚态度",
@@ -915,19 +884,19 @@ export default {
               id: 20,
               title: "建立工作伙伴关系",
               description: "与新同事建立信任的工作关系",
-              difficulty: "进阶",
+
             },
           ],
         },
-        9: {
-          id: 9,
+        "group_social": {
+          id: "group_social",
           name: "冲突解决",
           description: "学会协商、妥协、寻找双赢解决方案，有效处理人际冲突和分歧。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["冲突处理", "协商"],
           objectives: [
             "识别冲突根源",
@@ -961,19 +930,19 @@ export default {
               id: 21,
               title: "解决团队分歧",
               description: "团队成员对项目方向有不同意见",
-              difficulty: "高级",
+
             },
           ],
         },
         10: {
-          id: 10,
+          id: "listen_actively",
           name: "职场沟通",
           description: "掌握正式场合的沟通技巧和职场礼仪，在职场环境中有效沟通。",
-          difficulty: "intermediate",
+
           estimatedTime: 22,
           learnerCount: 1567,
-          status: "mastered",
-          progress: 100,
+
+
           tags: ["职场", "正式沟通"],
           objectives: [
             "掌握职场礼仪",
@@ -1001,19 +970,19 @@ export default {
               id: 22,
               title: "向上级汇报工作",
               description: "向领导汇报项目进展",
-              difficulty: "进阶",
+
             },
           ],
         },
         11: {
-          id: 11,
+          id: "express_clearly",
           name: "异地恋维护",
           description: "学会通过技术手段保持亲密度和信任，维护异地恋关系的特殊技巧。",
-          difficulty: "advanced",
+
           estimatedTime: 45,
           learnerCount: 456,
-          status: "learning",
-          progress: 30,
+
+
           tags: ["异地恋", "关系维护"],
           objectives: [
             "保持情感连接",
@@ -1041,19 +1010,19 @@ export default {
               id: 23,
               title: "应对思念情绪",
               description: "处理因距离产生的思念和孤独",
-              difficulty: "高级",
+
             },
           ],
         },
         12: {
-          id: 12,
+          id: "topic_transition",
           name: "危机干预",
           description: "学会识别危机信号，提供适当的支持和帮助，在他人遇到情感危机时提供支持。",
-          difficulty: "advanced",
+
           estimatedTime: 50,
           learnerCount: 123,
-          status: "new",
-          progress: 0,
+
+
           tags: ["危机干预", "支持技巧"],
           objectives: [
             "识别危机信号",
@@ -1087,20 +1056,20 @@ export default {
               id: 24,
               title: "朋友情绪危机",
               description: "朋友表达了自伤想法",
-              difficulty: "高级",
+
             },
           ],
         },
         // 沟通表达新增技能 (ID 13-25)
         13: {
-          id: 13,
+          id: "sincere_gratitude",
           name: "清晰表达",
           description: "用简洁明了的语言传达想法，让听众易于理解你的观点和意图。",
-          difficulty: "basic",
+
           estimatedTime: 18,
           learnerCount: 892,
-          status: "new",
-          progress: 0,
+
+
           tags: ["表达", "逻辑", "清晰"],
           objectives: [
             "掌握逻辑清晰的表达结构",
@@ -1120,19 +1089,19 @@ export default {
             {
               title: "工作汇报",
               description: "向上级汇报项目进展，需要简洁明了",
-              difficulty: "基础"
+
             }
           ]
         },
         14: {
-          id: 14,
+          id: "romantic_expression",
           name: "提问技巧",
           description: "学会问出有价值的问题，引导深度对话，获取更多信息。",
-          difficulty: "intermediate",
+
           estimatedTime: 22,
           learnerCount: 723,
-          status: "new",
-          progress: 0,
+
+
           tags: ["提问", "引导", "深度"],
           objectives: [
             "掌握开放式和封闭式提问的使用时机",
@@ -1152,19 +1121,19 @@ export default {
             {
               title: "客户需求调研",
               description: "通过提问了解客户真正需求",
-              difficulty: "进阶"
+
             }
           ]
         },
         15: {
-          id: 15,
+          id: "emotion_sharing",
           name: "肢体语言",
           description: "运用非言语沟通增强表达力，让沟通更有感染力和说服力。",
-          difficulty: "intermediate",
+
           estimatedTime: 25,
           learnerCount: 654,
-          status: "new",
-          progress: 0,
+
+
           tags: ["肢体语言", "非言语", "表达力"],
           objectives: [
             "了解常见肢体语言的含义",
@@ -1184,19 +1153,19 @@ export default {
             {
               title: "演讲表达",
               description: "在公众场合运用肢体语言增强表达效果",
-              difficulty: "进阶"
+
             }
           ]
         },
         16: {
-          id: 16,
+          id: "ice_breaking",
           name: "故事叙述",
           description: "用故事让沟通更有感染力，通过生动的叙述传递信息和情感。",
-          difficulty: "advanced",
+
           estimatedTime: 28,
           learnerCount: 543,
-          status: "new",
-          progress: 0,
+
+
           tags: ["故事", "感染力", "叙述"],
           objectives: [
             "掌握故事的基本结构",
@@ -1216,19 +1185,19 @@ export default {
             {
               title: "团队激励",
               description: "用励志故事激发团队士气",
-              difficulty: "高级"
+
             }
           ]
         },
         17: {
-          id: 17,
+          id: "trust_building",
           name: "反馈给予",
           description: "提供建设性的反馈意见，帮助他人成长而不伤害关系。",
-          difficulty: "intermediate",
+
           estimatedTime: 20,
           learnerCount: 432,
-          status: "new",
-          progress: 0,
+
+
           tags: ["反馈", "建设性", "成长"],
           objectives: [
             "学会STAR反馈模型",
@@ -1248,19 +1217,19 @@ export default {
             {
               title: "员工绩效反馈",
               description: "向下属提供工作表现反馈",
-              difficulty: "进阶"
+
             }
           ]
         },
         18: {
-          id: 18,
+          id: "boundary_setting",
           name: "说服技巧",
           description: "以理服人的说服艺术，通过逻辑和情感双重途径影响他人观点。",
-          difficulty: "advanced",
+
           estimatedTime: 35,
           learnerCount: 321,
-          status: "new",
-          progress: 0,
+
+
           tags: ["说服", "影响力", "逻辑"],
           objectives: [
             "掌握逻辑论证的基本方法",
@@ -1280,7 +1249,7 @@ export default {
             {
               title: "项目提案",
               description: "说服领导支持新项目方案",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1288,11 +1257,11 @@ export default {
           id: 19,
           name: "会议沟通",
           description: "在会议中有效表达观点，参与建设性讨论，推动会议目标达成。",
-          difficulty: "intermediate",
+
           estimatedTime: 26,
           learnerCount: 467,
-          status: "new",
-          progress: 0,
+
+
           tags: ["会议", "团队", "讨论"],
           objectives: [
             "掌握会议发言的时机",
@@ -1312,7 +1281,7 @@ export default {
             {
               title: "部门例会",
               description: "在部门会议中提出改进建议",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -1320,11 +1289,11 @@ export default {
           id: 20,
           name: "演讲技巧",
           description: "克服演讲恐惧，掌握公众演讲的基本技巧和方法。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 289,
-          status: "new",
-          progress: 0,
+
+
           tags: ["演讲", "公众", "自信"],
           objectives: [
             "克服演讲紧张情绪",
@@ -1344,7 +1313,7 @@ export default {
             {
               title: "公司年会发言",
               description: "在年会上做部门工作总结",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1352,11 +1321,11 @@ export default {
           id: 21,
           name: "电话沟通",
           description: "在缺乏视觉线索的情况下，保持清晰有效的电话沟通。",
-          difficulty: "basic",
+
           estimatedTime: 15,
           learnerCount: 378,
-          status: "new",
-          progress: 0,
+
+
           tags: ["电话", "远程", "声音"],
           objectives: [
             "掌握电话沟通的基本礼仪",
@@ -1376,7 +1345,7 @@ export default {
             {
               title: "客户服务电话",
               description: "处理客户投诉或咨询",
-              difficulty: "基础"
+
             }
           ]
         },
@@ -1384,11 +1353,11 @@ export default {
           id: 22,
           name: "书面表达",
           description: "通过文字进行有效沟通，确保信息准确传达。",
-          difficulty: "intermediate",
+
           estimatedTime: 30,
           learnerCount: 198,
-          status: "new",
-          progress: 0,
+
+
           tags: ["书面", "文字", "准确"],
           objectives: [
             "掌握商务写作基本规范",
@@ -1408,7 +1377,7 @@ export default {
             {
               title: "工作邮件",
               description: "撰写项目进展汇报邮件",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -1416,11 +1385,11 @@ export default {
           id: 23,
           name: "跨文化沟通",
           description: "理解文化差异，在跨文化环境中进行敏感而有效的沟通。",
-          difficulty: "advanced",
+
           estimatedTime: 32,
           learnerCount: 156,
-          status: "new",
-          progress: 0,
+
+
           tags: ["跨文化", "多元", "敏感"],
           objectives: [
             "了解主要文化差异类型",
@@ -1440,7 +1409,7 @@ export default {
             {
               title: "国际会议",
               description: "与来自不同国家的同事合作",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1448,11 +1417,11 @@ export default {
           id: 24,
           name: "谈判沟通",
           description: "掌握谈判技巧，通过有效沟通找到互利共赢的解决方案。",
-          difficulty: "advanced",
+
           estimatedTime: 45,
           learnerCount: 134,
-          status: "new",
-          progress: 0,
+
+
           tags: ["谈判", "双赢", "策略"],
           objectives: [
             "掌握谈判前的准备工作",
@@ -1472,7 +1441,7 @@ export default {
             {
               title: "合同谈判",
               description: "与供应商进行合同条款谈判",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1480,11 +1449,11 @@ export default {
           id: 25,
           name: "数字化沟通",
           description: "适应数字时代，掌握视频会议、即时通讯等在线沟通工具。",
-          difficulty: "basic",
+
           estimatedTime: 24,
           learnerCount: 267,
-          status: "new",
-          progress: 0,
+
+
           tags: ["数字化", "在线", "工具"],
           objectives: [
             "熟悉各种在线沟通平台",
@@ -1504,7 +1473,7 @@ export default {
             {
               title: "远程团队会议",
               description: "主持在线团队例会",
-              difficulty: "基础"
+
             }
           ]
         },
@@ -1513,11 +1482,11 @@ export default {
           id: 26,
           name: "情感词汇",
           description: "扩展情感词汇，更精确地描述和表达复杂的情感状态。",
-          difficulty: "basic",
+
           estimatedTime: 20,
           learnerCount: 523,
-          status: "new",
-          progress: 0,
+
+
           tags: ["词汇", "精确表达", "情感"],
           objectives: [
             "建立丰富的情感词汇库",
@@ -1560,19 +1529,19 @@ export default {
               id: 1,
               title: "情感日记",
               description: "用精确的词汇记录每日情感体验",
-              difficulty: "基础"
+
             },
             {
               id: 2,
               title: "情感词汇卡片",
               description: "制作情感词汇卡片，日常练习区分相似情感",
-              difficulty: "基础"
+
             },
             {
               id: 3,
               title: "情感强度标记",
               description: "为同一种情感标记不同强度等级",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -1580,11 +1549,11 @@ export default {
           id: 27,
           name: "同理心训练",
           description: "通过练习增强同理心，更好地理解和回应他人的情感需求。",
-          difficulty: "intermediate",
+
           estimatedTime: 28,
           learnerCount: 467,
-          status: "new",
-          progress: 0,
+
+
           tags: ["同理心", "理解", "回应"],
           objectives: [
             "提升情感敏感度",
@@ -1626,22 +1595,22 @@ export default {
             {
               title: "朋友倾诉",
               description: "朋友遇到困难时提供情感支持",
-              difficulty: "进阶"
+
             },
             {
               title: "观察陌生人情绪",
               description: "在公共场所观察他人情绪表达，练习换位思考",
-              difficulty: "基础"
+
             },
             {
               title: "共情对话练习",
               description: "与家人进行共情对话，理解不同观点",
-              difficulty: "进阶"
+
             },
             {
               title: "同理心反馈",
               description: "在团队中练习给予同理心反馈",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1649,11 +1618,11 @@ export default {
           id: 28,
           name: "情感边界",
           description: "学会在情感交流中保护自己，避免情感过载和耗竭。",
-          difficulty: "advanced",
+
           estimatedTime: 30,
           learnerCount: 389,
-          status: "new",
-          progress: 0,
+
+
           tags: ["边界", "保护", "平衡"],
           objectives: [
             "识别自己的情感边界",
@@ -1673,22 +1642,22 @@ export default {
             {
               title: "过度依赖",
               description: "应对他人过度的情感依赖",
-              difficulty: "高级"
+
             },
             {
               title: "工作情感边界",
               description: "在职场中保持专业的情感距离",
-              difficulty: "进阶"
+
             },
             {
               title: "家庭边界设定",
               description: "在亲密关系中建立健康边界",
-              difficulty: "高级"
+
             },
             {
               title: "自我保护练习",
               description: "识别情感耗竭信号并采取行动",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -1696,11 +1665,11 @@ export default {
           id: 29,
           name: "情绪传染",
           description: "理解和管理情绪的传染性，学会保持情绪稳定。",
-          difficulty: "intermediate",
+
           estimatedTime: 22,
           learnerCount: 312,
-          status: "new",
-          progress: 0,
+
+
           tags: ["情绪传染", "稳定", "管理"],
           objectives: [
             "了解情绪传染的机制",
@@ -1720,22 +1689,22 @@ export default {
             {
               title: "团队危机",
               description: "在团队焦虑时保持冷静和乐观",
-              difficulty: "进阶"
+
             },
             {
               title: "负面环境隔离",
               description: "在充满抱怨的环境中保持积极心态",
-              difficulty: "进阶"
+
             },
             {
               title: "情绪引导练习",
               description: "用积极情绪影响身边的人",
-              difficulty: "高级"
+
             },
             {
               title: "压力传导阻断",
               description: "阻止工作压力向家庭传导",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1743,11 +1712,11 @@ export default {
           id: 30,
           name: "情感支持",
           description: "学会在他人需要时给予恰当的情感支持和安慰。",
-          difficulty: "intermediate",
+
           estimatedTime: 25,
           learnerCount: 456,
-          status: "new",
-          progress: 0,
+
+
           tags: ["支持", "安慰", "陪伴"],
           objectives: [
             "识别他人的支持需求",
@@ -1767,22 +1736,22 @@ export default {
             {
               title: "失恋安慰",
               description: "安慰经历感情挫折的朋友",
-              difficulty: "进阶"
+
             },
             {
               title: "工作挫折支持",
               description: "支持遭遇职场困难的同事",
-              difficulty: "进阶"
+
             },
             {
               title: "家庭变故陪伴",
               description: "陪伴经历家庭变故的亲人",
-              difficulty: "高级"
+
             },
             {
               title: "持续关怀",
               description: "为长期困难的朋友提供持续支持",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1790,11 +1759,11 @@ export default {
           id: 31,
           name: "创伤敏感",
           description: "理解创伤对情感的影响，在交流中保持敏感和谨慎。",
-          difficulty: "advanced",
+
           estimatedTime: 35,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["创伤", "敏感", "谨慎"],
           objectives: [
             "了解创伤的基本知识",
@@ -1814,22 +1783,22 @@ export default {
             {
               title: "创伤康复",
               description: "与经历创伤的人进行支持性对话",
-              difficulty: "高级"
+
             },
             {
               title: "敏感话题处理",
               description: "谨慎处理可能触发创伤的话题",
-              difficulty: "高级"
+
             },
             {
               title: "安全环境营造",
               description: "为创伤康复者创造安全的交流环境",
-              difficulty: "高级"
+
             },
             {
               title: "专业资源链接",
               description: "识别需要专业帮助的情况并做好转介",
-              difficulty: "专家"
+
             }
           ]
         },
@@ -1837,11 +1806,11 @@ export default {
           id: 32,
           name: "情感复原",
           description: "掌握从负面情感经历中恢复和成长的方法。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 198,
-          status: "new",
-          progress: 0,
+
+
           tags: ["复原", "成长", "韧性"],
           objectives: [
             "建立情感韧性",
@@ -1861,22 +1830,22 @@ export default {
             {
               title: "职场挫折",
               description: "从工作失败中恢复并成长",
-              difficulty: "高级"
+
             },
             {
               title: "关系破裂复原",
               description: "从重要关系的结束中重新开始",
-              difficulty: "高级"
+
             },
             {
               title: "失去亲人哀伤",
               description: "处理失去重要人物的哀伤过程",
-              difficulty: "专家"
+
             },
             {
               title: "意外创伤处理",
               description: "从突发事件中恢复并重建生活",
-              difficulty: "专家"
+
             }
           ]
         },
@@ -1884,11 +1853,11 @@ export default {
           id: 33,
           name: "情感表达艺术",
           description: "学会用绘画、音乐、写作等艺术形式表达和处理情感。",
-          difficulty: "intermediate",
+
           estimatedTime: 45,
           learnerCount: 167,
-          status: "new",
-          progress: 0,
+
+
           tags: ["艺术", "创意表达", "处理"],
           objectives: [
             "探索不同的艺术表达形式",
@@ -1908,22 +1877,22 @@ export default {
             {
               title: "情感绘画",
               description: "通过绘画表达内心复杂情感",
-              difficulty: "进阶"
+
             },
             {
               title: "音乐情感日记",
               description: "用音乐记录和表达每日情感",
-              difficulty: "进阶"
+
             },
             {
               title: "诗歌创作疗愈",
               description: "通过写诗处理内心困扰",
-              difficulty: "进阶"
+
             },
             {
               title: "舞蹈情感释放",
               description: "用身体动作表达和释放压抑情感",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1931,11 +1900,11 @@ export default {
           id: 34,
           name: "情感记忆",
           description: "学会处理痛苦的情感记忆，保留积极的情感体验。",
-          difficulty: "advanced",
+
           estimatedTime: 38,
           learnerCount: 145,
-          status: "new",
-          progress: 0,
+
+
           tags: ["记忆", "处理", "保留"],
           objectives: [
             "理解情感记忆的形成机制",
@@ -1955,22 +1924,22 @@ export default {
             {
               title: "童年创伤",
               description: "处理童年的负面情感记忆",
-              difficulty: "高级"
+
             },
             {
               title: "记忆重新叙述",
               description: "用新视角重新理解过去事件",
-              difficulty: "高级"
+
             },
             {
               title: "积极记忆强化",
               description: "培养和强化美好的情感记忆",
-              difficulty: "进阶"
+
             },
             {
               title: "记忆日记疗法",
               description: "通过写作处理复杂的情感记忆",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -1978,11 +1947,11 @@ export default {
           id: 35,
           name: "情感成熟",
           description: "培养情感成熟度，在复杂情况下保持理智。",
-          difficulty: "advanced",
+
           estimatedTime: 42,
           learnerCount: 123,
-          status: "new",
-          progress: 0,
+
+
           tags: ["成熟", "理智", "复杂"],
           objectives: [
             "发展情感自我调节能力",
@@ -2002,22 +1971,22 @@ export default {
             {
               title: "关系冲突",
               description: "在亲密关系冲突中保持成熟",
-              difficulty: "高级"
+
             },
             {
               title: "工作压力管理",
               description: "在高压工作环境中保持情感稳定",
-              difficulty: "高级"
+
             },
             {
               title: "延迟满足练习",
               description: "训练在诱惑面前的自控能力",
-              difficulty: "进阶"
+
             },
             {
               title: "责任承担",
               description: "学会为自己的情感反应负责",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2025,11 +1994,11 @@ export default {
           id: 36,
           name: "情感智慧",
           description: "整合各种情感技能，在生活中智慧地处理情感问题。",
-          difficulty: "advanced",
+
           estimatedTime: 50,
           learnerCount: 89,
-          status: "new",
-          progress: 0,
+
+
           tags: ["智慧", "综合", "应用"],
           objectives: [
             "整合情感认知和技能",
@@ -2049,22 +2018,22 @@ export default {
             {
               title: "人生指导",
               description: "为他人提供情感智慧指导",
-              difficulty: "高级"
+
             },
             {
               title: "复杂决策",
               description: "在情感和理性冲突时做出明智选择",
-              difficulty: "专家"
+
             },
             {
               title: "团队情感管理",
               description: "运用情感智慧管理团队氛围",
-              difficulty: "专家"
+
             },
             {
               title: "生活导师",
               description: "成为他人的情感智慧导师",
-              difficulty: "专家"
+
             }
           ]
         },
@@ -2072,11 +2041,11 @@ export default {
           id: 37,
           name: "正念情感",
           description: "学会不带判断地观察和体验情感，培养情感觉察力。",
-          difficulty: "intermediate",
+
           estimatedTime: 32,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["正念", "觉察", "观察"],
           objectives: [
             "掌握正念观察技巧",
@@ -2096,22 +2065,22 @@ export default {
             {
               title: "情绪冥想",
               description: "在冥想中观察情绪的流动",
-              difficulty: "进阶"
+
             },
             {
               title: "日常觉察练习",
               description: "在日常活动中练习情感觉察",
-              difficulty: "基础"
+
             },
             {
               title: "身体扫描",
               description: "通过身体感觉观察情感变化",
-              difficulty: "进阶"
+
             },
             {
               title: "情感标记",
               description: "正念地标记和命名情感状态",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2119,11 +2088,11 @@ export default {
           id: 38,
           name: "情感沟通",
           description: "学会在亲密关系中开诚布公地讨论情感话题。",
-          difficulty: "advanced",
+
           estimatedTime: 33,
           learnerCount: 178,
-          status: "new",
-          progress: 0,
+
+
           tags: ["沟通", "亲密关系", "开放"],
           objectives: [
             "创造安全的情感对话环境",
@@ -2143,22 +2112,22 @@ export default {
             {
               title: "伴侣对话",
               description: "与伴侣深入讨论情感需求",
-              difficulty: "高级"
+
             },
             {
               title: "家庭情感分享",
               description: "在家庭中开放地讨论情感话题",
-              difficulty: "进阶"
+
             },
             {
               title: "友谊深化",
               description: "与朋友分享更深层的情感体验",
-              difficulty: "进阶"
+
             },
             {
               title: "情感冲突处理",
               description: "在情感分歧时保持开放沟通",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2167,11 +2136,11 @@ export default {
           id: 39,
           name: "自我介绍",
           description: "学会在不同场合进行恰当且有吸引力的自我介绍。",
-          difficulty: "basic",
+
           estimatedTime: 15,
           learnerCount: 612,
-          status: "new",
-          progress: 0,
+
+
           tags: ["介绍", "第一印象", "基础"],
           objectives: [
             "掌握自我介绍的基本结构",
@@ -2191,7 +2160,7 @@ export default {
             {
               title: "职场聚会",
               description: "在公司新人欢迎会上自我介绍",
-              difficulty: "基础"
+
             }
           ]
         },
@@ -2199,11 +2168,11 @@ export default {
           id: 40,
           name: "破冰对话",
           description: "掌握开启对话的技巧，在各种社交场合自然地开始交流。",
-          difficulty: "basic",
+
           estimatedTime: 18,
           learnerCount: 578,
-          status: "new",
-          progress: 0,
+
+
           tags: ["破冰", "开场", "社交"],
           objectives: [
             "学会观察环境寻找话题",
@@ -2245,7 +2214,7 @@ export default {
             {
               title: "电梯偶遇",
               description: "在电梯里与陌生同事开始对话",
-              difficulty: "基础"
+
             }
           ]
         },
@@ -2253,11 +2222,11 @@ export default {
           id: 41,
           name: "共同话题",
           description: "快速找到和他人的共同兴趣点，建立话题连接。",
-          difficulty: "intermediate",
+
           estimatedTime: 22,
           learnerCount: 445,
-          status: "new",
-          progress: 0,
+
+
           tags: ["共同点", "兴趣", "连接"],
           objectives: [
             "学会探索对方的兴趣爱好",
@@ -2277,7 +2246,7 @@ export default {
             {
               title: "咖啡厅邂逅",
               description: "与邻桌客人发现共同兴趣",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2285,11 +2254,11 @@ export default {
           id: 42,
           name: "信任建立",
           description: "通过言行一致和真诚沟通，逐步建立他人对你的信任。",
-          difficulty: "advanced",
+
           estimatedTime: 35,
           learnerCount: 367,
-          status: "new",
-          progress: 0,
+
+
           tags: ["信任", "真诚", "一致性"],
           objectives: [
             "展现真实可靠的品格",
@@ -2309,7 +2278,7 @@ export default {
             {
               title: "团队协作",
               description: "在项目中建立队友信任",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2317,11 +2286,11 @@ export default {
           id: 43,
           name: "社交恐惧",
           description: "克服社交焦虑，在人群中保持自然和自信。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 523,
-          status: "new",
-          progress: 0,
+
+
           tags: ["恐惧", "焦虑", "自信"],
           objectives: [
             "理解社交恐惧的根源",
@@ -2341,7 +2310,7 @@ export default {
             {
               title: "大型聚会",
               description: "在陌生人很多的派对中社交",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2349,11 +2318,11 @@ export default {
           id: 44,
           name: "网络社交",
           description: "在数字化时代学会线上社交，建立虚拟关系。",
-          difficulty: "intermediate",
+
           estimatedTime: 25,
           learnerCount: 734,
-          status: "new",
-          progress: 0,
+
+
           tags: ["线上", "数字", "虚拟"],
           objectives: [
             "掌握线上沟通的特点",
@@ -2373,7 +2342,7 @@ export default {
             {
               title: "微信群聊",
               description: "在工作群中建立良好关系",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2381,11 +2350,11 @@ export default {
           id: 45,
           name: "跨文化交流",
           description: "在多元文化环境中建立跨文化的友谊和合作关系。",
-          difficulty: "advanced",
+
           estimatedTime: 45,
           learnerCount: 289,
-          status: "new",
-          progress: 0,
+
+
           tags: ["文化", "多元", "国际"],
           objectives: [
             "了解不同文化的社交习俗",
@@ -2405,7 +2374,7 @@ export default {
             {
               title: "国际会议",
               description: "与来自不同国家的同事建立关系",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2413,11 +2382,11 @@ export default {
           id: 46,
           name: "关系维护",
           description: "学会维持长期的人际关系，保持联系和关心。",
-          difficulty: "intermediate",
+
           estimatedTime: 30,
           learnerCount: 456,
-          status: "new",
-          progress: 0,
+
+
           tags: ["维护", "长期", "关心"],
           objectives: [
             "建立定期联系的习惯",
@@ -2437,7 +2406,7 @@ export default {
             {
               title: "老友重聚",
               description: "与多年未见的朋友重新建立联系",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2445,11 +2414,11 @@ export default {
           id: 47,
           name: "关系边界",
           description: "在建立关系的同时保持适当的个人边界。",
-          difficulty: "advanced",
+
           estimatedTime: 28,
           learnerCount: 334,
-          status: "new",
-          progress: 0,
+
+
           tags: ["边界", "平衡", "个人空间"],
           objectives: [
             "识别自己的交往边界",
@@ -2469,7 +2438,7 @@ export default {
             {
               title: "过度依赖",
               description: "应对朋友的过度情感依赖",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2477,11 +2446,11 @@ export default {
           id: 48,
           name: "群体融入",
           description: "快速融入新的群体或团队，建立归属感。",
-          difficulty: "intermediate",
+
           estimatedTime: 32,
           learnerCount: 567,
-          status: "new",
-          progress: 0,
+
+
           tags: ["融入", "群体", "归属感"],
           objectives: [
             "观察群体的文化和规则",
@@ -2501,7 +2470,7 @@ export default {
             {
               title: "新部门入职",
               description: "快速融入新的工作团队",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2509,11 +2478,11 @@ export default {
           id: 49,
           name: "社交影响力",
           description: "学会在群体中发挥积极影响，成为受欢迎的人。",
-          difficulty: "advanced",
+
           estimatedTime: 38,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["影响力", "魅力", "领导力"],
           objectives: [
             "发展个人魅力和感染力",
@@ -2533,7 +2502,7 @@ export default {
             {
               title: "团队士气",
               description: "在团队低潮时提升大家的士气",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2541,11 +2510,11 @@ export default {
           id: 50,
           name: "关系修复",
           description: "学会修复受损的人际关系，重建信任和友谊。",
-          difficulty: "advanced",
+
           estimatedTime: 35,
           learnerCount: 198,
-          status: "new",
-          progress: 0,
+
+
           tags: ["修复", "和解", "重建"],
           objectives: [
             "勇敢面对关系中的问题",
@@ -2565,7 +2534,7 @@ export default {
             {
               title: "友谊危机",
               description: "修复因误解而破裂的友谊",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2573,11 +2542,11 @@ export default {
           id: 51,
           name: "社交礼仪",
           description: "掌握各种场合的社交礼仪，展现良好的个人修养。",
-          difficulty: "basic",
+
           estimatedTime: 20,
           learnerCount: 678,
-          status: "new",
-          progress: 0,
+
+
           tags: ["礼仪", "修养", "场合"],
           objectives: [
             "了解基本的社交礼仪规范",
@@ -2597,7 +2566,7 @@ export default {
             {
               title: "商务晚宴",
               description: "在正式商务晚宴中展现礼仪",
-              difficulty: "基础"
+
             }
           ]
         },
@@ -2606,11 +2575,11 @@ export default {
           id: 52,
           name: "医患沟通",
           description: "在医疗环境中进行有效的医患沟通，建立信任和理解。",
-          difficulty: "advanced",
+
           estimatedTime: 45,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["医疗", "专业", "信任"],
           objectives: [
             "学会用患者能理解的语言解释病情",
@@ -2630,7 +2599,7 @@ export default {
             {
               title: "告知诊断",
               description: "向患者告知重大疾病诊断",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2638,11 +2607,11 @@ export default {
           id: 53,
           name: "师生互动",
           description: "在教育环境中建立良好的师生关系，促进学习效果。",
-          difficulty: "intermediate",
+
           estimatedTime: 35,
           learnerCount: 456,
-          status: "new",
-          progress: 0,
+
+
           tags: ["教育", "师生", "学习"],
           objectives: [
             "创造开放包容的学习环境",
@@ -2662,7 +2631,7 @@ export default {
             {
               title: "课堂讨论",
               description: "引导学生进行深度课堂讨论",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2670,11 +2639,11 @@ export default {
           id: 54,
           name: "客服技巧",
           description: "在客户服务中处理各种客户问题，维护良好的客户关系。",
-          difficulty: "intermediate",
+
           estimatedTime: 30,
           learnerCount: 567,
-          status: "new",
-          progress: 0,
+
+
           tags: ["服务", "客户", "问题解决"],
           objectives: [
             "保持耐心和专业的服务态度",
@@ -2694,7 +2663,7 @@ export default {
             {
               title: "产品投诉",
               description: "处理客户对产品质量的投诉",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2702,11 +2671,11 @@ export default {
           id: 55,
           name: "销售沟通",
           description: "在销售过程中建立客户信任，实现双赢的销售结果。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 389,
-          status: "new",
-          progress: 0,
+
+
           tags: ["销售", "说服", "双赢"],
           objectives: [
             "了解客户真实需求",
@@ -2726,7 +2695,7 @@ export default {
             {
               title: "大客户谈判",
               description: "与重要客户进行合作洽谈",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2734,11 +2703,11 @@ export default {
           id: 56,
           name: "法庭辩论",
           description: "在法律环境中进行有效的论证和辩护，保护当事人权益。",
-          difficulty: "advanced",
+
           estimatedTime: 50,
           learnerCount: 156,
-          status: "new",
-          progress: 0,
+
+
           tags: ["法律", "辩论", "逻辑"],
           objectives: [
             "构建清晰的论证逻辑",
@@ -2758,7 +2727,7 @@ export default {
             {
               title: "民事诉讼",
               description: "在民事案件中为当事人辩护",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2766,11 +2735,11 @@ export default {
           id: 57,
           name: "媒体采访",
           description: "在媒体面前表达观点，管理公众形象和信息传递。",
-          difficulty: "advanced",
+
           estimatedTime: 35,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["媒体", "公关", "形象"],
           objectives: [
             "准备关键信息和观点",
@@ -2790,7 +2759,7 @@ export default {
             {
               title: "危机公关",
               description: "在公司危机时接受媒体采访",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2798,11 +2767,11 @@ export default {
           id: 58,
           name: "心理咨询",
           description: "在心理咨询中建立安全的治疗关系，帮助来访者成长。",
-          difficulty: "advanced",
+
           estimatedTime: 60,
           learnerCount: 178,
-          status: "new",
-          progress: 0,
+
+
           tags: ["心理", "治疗", "成长"],
           objectives: [
             "建立安全的咨询关系",
@@ -2822,7 +2791,7 @@ export default {
             {
               title: "抑郁咨询",
               description: "帮助抑郁症来访者重建希望",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2830,11 +2799,11 @@ export default {
           id: 59,
           name: "跨国商务",
           description: "在国际商务环境中进行有效的跨文化商务沟通。",
-          difficulty: "advanced",
+
           estimatedTime: 45,
           learnerCount: 267,
-          status: "new",
-          progress: 0,
+
+
           tags: ["国际", "商务", "文化"],
           objectives: [
             "了解不同国家的商务文化",
@@ -2854,7 +2823,7 @@ export default {
             {
               title: "国际合作",
               description: "与日本公司洽谈合作项目",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2862,11 +2831,11 @@ export default {
           id: 60,
           name: "家庭调解",
           description: "在家庭矛盾中发挥调解作用，促进家庭和谐。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 345,
-          status: "new",
-          progress: 0,
+
+
           tags: ["家庭", "调解", "和谐"],
           objectives: [
             "理解家庭动力学",
@@ -2886,7 +2855,7 @@ export default {
             {
               title: "婆媳矛盾",
               description: "调解家庭中的婆媳关系问题",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2894,11 +2863,11 @@ export default {
           id: 61,
           name: "团队建设",
           description: "在团队建设活动中促进成员间的信任和合作。",
-          difficulty: "intermediate",
+
           estimatedTime: 35,
           learnerCount: 456,
-          status: "new",
-          progress: 0,
+
+
           tags: ["团队", "建设", "合作"],
           objectives: [
             "设计有效的团建活动",
@@ -2918,7 +2887,7 @@ export default {
             {
               title: "新团队组建",
               description: "为新成立的项目团队进行团建",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2926,11 +2895,11 @@ export default {
           id: 62,
           name: "志愿服务",
           description: "在志愿服务中与受助者建立尊重平等的关系。",
-          difficulty: "intermediate",
+
           estimatedTime: 30,
           learnerCount: 523,
-          status: "new",
-          progress: 0,
+
+
           tags: ["志愿", "服务", "平等"],
           objectives: [
             "以尊重的态度提供帮助",
@@ -2950,7 +2919,7 @@ export default {
             {
               title: "社区服务",
               description: "为社区独居老人提供帮助",
-              difficulty: "进阶"
+
             }
           ]
         },
@@ -2958,11 +2927,11 @@ export default {
           id: 63,
           name: "学术交流",
           description: "在学术环境中进行有效的学术讨论和知识分享。",
-          difficulty: "advanced",
+
           estimatedTime: 40,
           learnerCount: 198,
-          status: "new",
-          progress: 0,
+
+
           tags: ["学术", "研究", "交流"],
           objectives: [
             "清晰表达研究观点",
@@ -2982,7 +2951,7 @@ export default {
             {
               title: "学术会议",
               description: "在国际学术会议上展示研究成果",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -2990,11 +2959,11 @@ export default {
           id: 64,
           name: "危机干预",
           description: "在心理危机情况下进行有效的干预和支持。",
-          difficulty: "advanced",
+
           estimatedTime: 55,
           learnerCount: 145,
-          status: "new",
-          progress: 0,
+
+
           tags: ["危机", "干预", "支持"],
           objectives: [
             "识别自杀或自伤风险",
@@ -3014,7 +2983,7 @@ export default {
             {
               title: "自杀预防",
               description: "帮助有自杀倾向的朋友",
-              difficulty: "高级"
+
             }
           ]
         },
@@ -3022,11 +2991,11 @@ export default {
           id: 65,
           name: "网络调解",
           description: "在网络争议中发挥调解作用，化解网络冲突。",
-          difficulty: "advanced",
+
           estimatedTime: 30,
           learnerCount: 234,
-          status: "new",
-          progress: 0,
+
+
           tags: ["网络", "调解", "冲突"],
           objectives: [
             "理解网络沟通的特点",
@@ -3046,7 +3015,7 @@ export default {
             {
               title: "网络争论",
               description: "调解社交媒体上的激烈争论",
-              difficulty: "高级"
+
             }
           ]
         }
@@ -3056,180 +3025,158 @@ export default {
       const skillData = skillDataMap[this.skillId] || skillDataMap[1];
       this.skillData = skillData;
 
-      // 相关技能推荐
-      const relatedSkillsMap = {
-        1: [
-          {
-            id: 2,
-            name: "情感表达",
-            brief: "准确表达自己的情感和需求",
-            status: "new",
-          },
-          {
-            id: 4,
-            name: "情绪识别",
-            brief: "准确识别自己和他人的情绪状态",
-            status: "mastered",
-          },
-        ],
-        2: [
-          {
-            id: 1,
-            name: "主动倾听",
-            brief: "学会用心倾听对方的话语和情感",
-            status: "mastered",
-          },
-          {
-            id: 3,
-            name: "非暴力沟通",
-            brief: "以善意和理解进行沟通",
-            status: "new",
-          },
-        ],
-        3: [
-          {
-            id: 2,
-            name: "情感表达",
-            brief: "准确表达自己的情感和需求",
-            status: "learning",
-          },
-          {
-            id: 5,
-            name: "情感共鸣",
-            brief: "与他人产生情感共鸣和理解",
-            status: "learning",
-          },
-        ],
-        4: [
-          {
-            id: 5,
-            name: "情感共鸣",
-            brief: "与他人产生情感共鸣和理解",
-            status: "learning",
-          },
-          {
-            id: 1,
-            name: "主动倾听",
-            brief: "学会用心倾听对方的话语和情感",
-            status: "mastered",
-          },
-        ],
-        5: [
-          {
-            id: 4,
-            name: "情绪识别",
-            brief: "准确识别自己和他人的情绪状态",
-            status: "mastered",
-          },
-          {
-            id: 1,
-            name: "主动倾听",
-            brief: "学会用心倾听对方的话语和情感",
-            status: "mastered",
-          },
-        ],
-        6: [
-          {
-            id: 4,
-            name: "情绪识别",
-            brief: "准确识别自己和他人的情绪状态",
-            status: "mastered",
-          },
-          {
-            id: 5,
-            name: "情感共鸣",
-            brief: "与他人产生情感共鸣和理解",
-            status: "learning",
-          },
-        ],
-        7: [
-          {
-            id: 8,
-            name: "信任建立",
-            brief: "在关系中建立互相信任的基础",
-            status: "learning",
-          },
-          {
-            id: 1,
-            name: "主动倾听",
-            brief: "学会用心倾听对方的话语和情感",
-            status: "mastered",
-          },
-        ],
-        8: [
-          {
-            id: 7,
-            name: "破冰技巧",
-            brief: "在新环境中快速与他人建立联系",
-            status: "mastered",
-          },
-          {
-            id: 9,
-            name: "冲突解决",
-            brief: "有效处理人际冲突和分歧",
-            status: "new",
-          },
-        ],
-        9: [
-          {
-            id: 3,
-            name: "非暴力沟通",
-            brief: "以善意和理解进行沟通",
-            status: "new",
-          },
-          {
-            id: 1,
-            name: "主动倾听",
-            brief: "学会用心倾听对方的话语和情感",
-            status: "mastered",
-          },
-        ],
-        10: [
-          {
-            id: 2,
-            name: "情感表达",
-            brief: "准确表达自己的情感和需求",
-            status: "learning",
-          },
-          {
-            id: 7,
-            name: "破冰技巧",
-            brief: "在新环境中快速与他人建立联系",
-            status: "mastered",
-          },
-        ],
-        11: [
-          {
-            id: 2,
-            name: "情感表达",
-            brief: "准确表达自己的情感和需求",
-            status: "learning",
-          },
-          {
-            id: 8,
-            name: "信任建立",
-            brief: "在关系中建立互相信任的基础",
-            status: "learning",
-          },
-        ],
-        12: [
-          {
-            id: 1,
-            name: "主动倾听",
-            brief: "学会用心倾听对方的话语和情感",
-            status: "mastered",
-          },
-          {
-            id: 5,
-            name: "情感共鸣",
-            brief: "与他人产生情感共鸣和理解",
-            status: "learning",
-          },
-        ],
+      // 相关技能推荐 - 基于分类的动态推荐
+      this.relatedSkills = this.generateRelatedSkills();
+    },
+
+    generateRelatedSkills() {
+      // 根据分类定义技能范围
+      const categorySkillRanges = {
+        'communication': { start: 1, end: 25, name: '沟通表达' },
+        'emotional_expression': { start: 26, end: 38, name: '情感理解' },
+        'relationship_building': { start: 39, end: 51, name: '关系建立' },
+        'special_scenarios': { start: 52, end: 65, name: '特殊情境' }
       };
 
-      this.relatedSkills =
-        relatedSkillsMap[this.skillId] || relatedSkillsMap[1];
+      // 确定当前技能的分类
+      let currentCategory = null;
+      for (const [categoryId, range] of Object.entries(categorySkillRanges)) {
+        if (this.skillId >= range.start && this.skillId <= range.end) {
+          currentCategory = categoryId;
+          break;
+        }
+      }
+
+      // 如果没有找到分类，使用传入的categoryId
+      if (!currentCategory) {
+        currentCategory = this.categoryId || 'communication';
+      }
+
+      // 获取当前分类下所有技能的ID列表
+      const categoryRange = categorySkillRanges[currentCategory];
+      const skillIds = [];
+      for (let i = categoryRange.start; i <= categoryRange.end; i++) {
+        if (i !== parseInt(this.skillId)) { // 排除当前技能
+          skillIds.push(i);
+        }
+      }
+
+      // 如果技能数量不足2个，从其他分类补充
+      if (skillIds.length < 2) {
+        const otherCategories = Object.keys(categorySkillRanges).filter(cat => cat !== currentCategory);
+        for (const otherCategory of otherCategories) {
+          const otherRange = categorySkillRanges[otherCategory];
+          for (let i = otherRange.start; i <= otherRange.end; i++) {
+            if (skillIds.length >= 4) break; // 最多准备4个候选
+            skillIds.push(i);
+          }
+          if (skillIds.length >= 4) break;
+        }
+      }
+
+      // 随机选择2个技能
+      const selectedSkills = this.getRandomSkills(skillIds, 2);
+
+      // 构建技能详情数据
+      return selectedSkills.map(skillId => this.getSkillBrief(skillId));
+    },
+
+    getRandomSkills(skillIds, count) {
+      const shuffled = [...skillIds].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    },
+
+    getSkillBrief(skillId) {
+      // 技能名称和简介数据
+      const skillBriefs = {
+        // 沟通表达 (1-25)
+        1: { name: "主动倾听", brief: "学会用心倾听对方的话语和情感" },
+        2: { name: "情感表达", brief: "准确表达自己的情感和需求" },
+        3: { name: "非暴力沟通", brief: "以善意和理解进行沟通" },
+        4: { name: "情绪识别", brief: "准确识别自己和他人的情绪状态" },
+        5: { name: "情感共鸣", brief: "与他人产生情感共鸣和理解" },
+        6: { name: "情绪调节", brief: "学会管理和调节自己的情绪" },
+        7: { name: "破冰技巧", brief: "在新环境中快速与他人建立联系" },
+        8: { name: "信任建立", brief: "在关系中建立互相信任的基础" },
+        9: { name: "冲突解决", brief: "有效处理人际冲突和分歧" },
+        10: { name: "职场沟通", brief: "在工作环境中进行专业有效的沟通" },
+        11: { name: "异地恋维护", brief: "维护远距离恋爱关系的技巧" },
+        12: { name: "危机干预", brief: "在紧急情况下提供心理支持" },
+        13: { name: "清晰表达", brief: "用简洁明了的语言传达想法" },
+        14: { name: "提问技巧", brief: "学会问出有价值的问题" },
+        15: { name: "肢体语言", brief: "运用身体语言增强沟通效果" },
+        16: { name: "故事叙述", brief: "用故事让沟通更有感染力" },
+        17: { name: "公众演讲", brief: "在公众场合自信地表达观点" },
+        18: { name: "说服技巧", brief: "学会以理服人的说服方法" },
+        19: { name: "谈判协商", brief: "在谈判中达成双赢结果" },
+        20: { name: "书面表达", brief: "通过文字清晰传达思想" },
+        21: { name: "跨文化沟通", brief: "与不同文化背景的人有效交流" },
+        22: { name: "团队协作沟通", brief: "在团队中促进有效协作" },
+        23: { name: "客户沟通", brief: "与客户建立良好的沟通关系" },
+        24: { name: "反馈技巧", brief: "给予和接受建设性反馈" },
+        25: { name: "在线沟通", brief: "掌握数字化时代的沟通技巧" },
+
+        // 情感理解 (26-38)
+        26: { name: "情感词汇", brief: "扩展情感词汇，精确表达感受" },
+        27: { name: "同理心训练", brief: "增强理解他人情感的能力" },
+        28: { name: "情感边界", brief: "在情感交流中保护自己" },
+        29: { name: "情绪传染", brief: "理解和管理情绪的传染性" },
+        30: { name: "情感支持", brief: "给予他人恰当的情感支持" },
+        31: { name: "创伤敏感", brief: "在交流中保持创伤敏感性" },
+        32: { name: "情感复原", brief: "从负面情感经历中恢复" },
+        33: { name: "情感表达艺术", brief: "用艺术形式表达和处理情感" },
+        34: { name: "情感记忆", brief: "处理痛苦的情感记忆" },
+        35: { name: "情感成熟", brief: "在复杂情况下保持情感理智" },
+        36: { name: "情感智慧", brief: "智慧地处理各种情感问题" },
+        37: { name: "正念情感", brief: "不带判断地观察和体验情感" },
+        38: { name: "情感沟通", brief: "在亲密关系中开诚布公交流" },
+
+        // 关系建立 (39-51)
+        39: { name: "自我介绍", brief: "在不同场合进行恰当的自我介绍" },
+        40: { name: "破冰对话", brief: "自然地开启对话和交流" },
+        41: { name: "共同话题", brief: "快速找到和他人的共同兴趣点" },
+        42: { name: "信任建立", brief: "通过真诚沟通建立信任" },
+        43: { name: "社交恐惧", brief: "克服社交焦虑，保持自信" },
+        44: { name: "网络社交", brief: "建立和维护线上人际关系" },
+        45: { name: "跨文化交流", brief: "建立跨文化的友谊和合作" },
+        46: { name: "关系维护", brief: "维持长期的人际关系" },
+        47: { name: "关系边界", brief: "保持适当的个人边界" },
+        48: { name: "群体融入", brief: "快速融入新的群体或团队" },
+        49: { name: "社交影响力", brief: "在群体中发挥积极影响" },
+        50: { name: "关系修复", brief: "修复受损的人际关系" },
+        51: { name: "社交礼仪", brief: "掌握各种场合的社交礼仪" },
+
+        // 特殊情境 (52-65)
+        52: { name: "医患沟通", brief: "在医疗环境中进行有效沟通" },
+        53: { name: "师生互动", brief: "建立良好的教育关系" },
+        54: { name: "客服技巧", brief: "处理客户问题和投诉" },
+        55: { name: "销售沟通", brief: "在销售中建立客户信任" },
+        56: { name: "法庭辩论", brief: "在法律环境中进行有效论证" },
+        57: { name: "媒体采访", brief: "面对媒体表达观点和管理形象" },
+        58: { name: "心理咨询", brief: "建立安全的治疗关系" },
+        59: { name: "跨国商务", brief: "进行跨文化商务沟通" },
+        60: { name: "家庭调解", brief: "在家庭矛盾中发挥调解作用" },
+        61: { name: "团队建设", brief: "促进团队成员间的信任合作" },
+        62: { name: "志愿服务", brief: "与受助者建立尊重平等关系" },
+        63: { name: "学术交流", brief: "进行有效的学术讨论" },
+        64: { name: "危机干预", brief: "在心理危机中进行有效干预" },
+        65: { name: "网络调解", brief: "化解网络争议和冲突" }
+      };
+
+      const skillData = skillBriefs[skillId];
+      if (!skillData) {
+        return {
+          id: skillId,
+          name: `技能${skillId}`,
+          brief: "暂无描述",
+        };
+      }
+
+      return {
+        id: skillId,
+        name: skillData.name,
+        brief: skillData.brief
+      };
     },
 
     startScenarioPractice() {
@@ -3239,7 +3186,6 @@ export default {
         type: "practice",
         skillTitle: encodeURIComponent(this.skillData.name),
         skillContent: encodeURIComponent(this.skillData.description),
-        skillDifficulty: this.skillData.difficulty,
         skillTags: encodeURIComponent(JSON.stringify(this.skillData.tags)),
         skillScenarios: encodeURIComponent(
           JSON.stringify(this.skillData.scenarios || [])
@@ -3281,24 +3227,6 @@ export default {
       uni.navigateTo({
         url: `/pages/interpersonal-wisdom/skill-detail?skillId=${skill.id}&categoryId=${this.categoryId}`,
       });
-    },
-
-    getDifficultyText(difficulty) {
-      const map = {
-        basic: "基础",
-        intermediate: "进阶",
-        advanced: "高级",
-      };
-      return map[difficulty] || "未知";
-    },
-
-    getStatusText(status) {
-      const map = {
-        new: "未开始",
-        learning: "学习中",
-        mastered: "已掌握",
-      };
-      return map[status] || "未知";
     },
   },
 };
@@ -3342,30 +3270,6 @@ export default {
   flex-wrap: wrap;
 }
 
-.difficulty-badge {
-  padding: 8rpx 16rpx;
-  border-radius: 12rpx;
-  font-size: 22rpx;
-}
-
-.difficulty-badge.basic {
-  background-color: rgba(76, 175, 80, 0.2);
-  color: #4caf50;
-  border: 1rpx solid rgba(76, 175, 80, 0.3);
-}
-
-.difficulty-badge.intermediate {
-  background-color: rgba(255, 152, 0, 0.2);
-  color: #ff9800;
-  border: 1rpx solid rgba(255, 152, 0, 0.3);
-}
-
-.difficulty-badge.advanced {
-  background-color: rgba(244, 67, 54, 0.2);
-  color: #f44336;
-  border: 1rpx solid rgba(244, 67, 54, 0.3);
-}
-
 .meta-item {
   display: flex;
   align-items: center;
@@ -3377,51 +3281,6 @@ export default {
 }
 
 .meta-text {
-  font-size: 22rpx;
-  opacity: 0.9;
-}
-
-.skill-progress {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.progress-circle {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  border: 4rpx solid rgba(255, 255, 255, 0.3);
-  border-top-color: #4caf50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: rotate 2s linear infinite;
-}
-
-@keyframes rotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.progress-text {
-  font-size: 20rpx;
-  font-weight: bold;
-}
-
-.skill-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.status-icon {
-  font-size: 32rpx;
-}
-
-.status-text {
   font-size: 22rpx;
   opacity: 0.9;
 }
@@ -3657,14 +3516,6 @@ export default {
   color: #333;
 }
 
-.scenario-difficulty {
-  font-size: 22rpx;
-  color: #667eea;
-  background-color: #f0f4ff;
-  padding: 6rpx 12rpx;
-  border-radius: 12rpx;
-}
-
 .scenario-description {
   font-size: 26rpx;
   color: #666;
@@ -3720,27 +3571,6 @@ export default {
 .related-skill-desc {
   font-size: 24rpx;
   color: #666;
-}
-
-.related-skill-status {
-  padding: 8rpx 16rpx;
-  border-radius: 12rpx;
-  font-size: 22rpx;
-}
-
-.related-skill-status.new {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.related-skill-status.learning {
-  background-color: #fff3e0;
-  color: #ff9800;
-}
-
-.related-skill-status.mastered {
-  background-color: #e8f5e8;
-  color: #4caf50;
 }
 
 .bottom-actions {
