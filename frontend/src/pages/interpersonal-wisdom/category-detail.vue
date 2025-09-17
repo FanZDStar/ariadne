@@ -114,6 +114,7 @@
 
 <script>
 import BackToTop from '@/components/BackToTop.vue'
+import { skillsData, getSkillsByCategory, getSkillById, categories } from '@/data/skillsData.js'
 export default {
     components: {
         BackToTop
@@ -237,1001 +238,43 @@ export default {
         },
 
         async mockLoadCategoryData() {
-            // 根据不同的 categoryId 返回不同的分类数据
-            const categoryDataMap = {
-                'communication': {
-                    id: this.categoryId,
-                    name: '沟通表达',
-                    description: '学会清晰、准确、有效的表达自己的想法和感受',
-                    icon: '💬',
-                    totalSkills: 15,
-                    masteredSkills: 5,
-                    skills: [
-                        {
-                            id: 1,
-                            name: '主动倾听',
-                            brief: '学会用心倾听对方的话语和情感',
-                            description: '主动倾听是建立良好人际关系的基础技能，包括关注对方的言语和非言语信息。',
-                            estimatedTime: 15,
-                            learnerCount: 1234,
-                            status: 'mastered',
-                            tags: ['倾听', '沟通基础'],
-                            progress: 100
-                        },
-                        {
-                            id: 2,
-                            name: '情感表达',
-                            brief: '准确表达自己的情感和需求',
-                            description: '学会用"我"的句式表达情感，避免指责和批评。',
-                            estimatedTime: 20,
-                            learnerCount: 956,
-                            status: 'learning',
-                            tags: ['情感', '表达'],
-                            progress: 65
-                        },
-                        {
-                            id: 3,
-                            name: '非暴力沟通',
-                            brief: '以善意和理解进行沟通',
-                            description: '学习非暴力沟通的四个步骤：观察、感受、需要、请求。',
-                            estimatedTime: 30,
-                            learnerCount: 567,
-                            status: 'new',
-                            tags: ['沟通技巧', '冲突处理']
-                        },
-                        {
-                            id: 13,
-                            name: '清晰表达',
-                            brief: '用简洁明了的语言传达想法',
-                            description: '掌握逻辑清晰、条理分明的表达技巧，让听众易于理解。',
-                            estimatedTime: 18,
-                            learnerCount: 892,
-                            status: 'new',
-                            tags: ['表达', '逻辑']
-                        },
-                        {
-                            id: 14,
-                            name: '提问技巧',
-                            brief: '学会问出有价值的问题',
-                            description: '掌握开放式和封闭式提问的使用时机，引导深度对话。',
-                            estimatedTime: 22,
-                            learnerCount: 723,
-                            status: 'learning',
-                            tags: ['提问', '引导'],
-                            progress: 45
-                        },
-                        {
-                            id: 15,
-                            name: '肢体语言',
-                            brief: '运用非言语沟通增强表达力',
-                            description: '学会使用手势、表情、姿态等非言语信号支持口语表达。',
-                            estimatedTime: 25,
-                            learnerCount: 654,
-                            status: 'new',
-                            tags: ['肢体语言', '非言语']
-                        },
-                        {
-                            id: 16,
-                            name: '故事叙述',
-                            brief: '用故事让沟通更有感染力',
-                            description: '掌握讲故事的技巧，让信息传递更生动有趣。',
-                            estimatedTime: 28,
-                            learnerCount: 543,
-                            status: 'new',
-                            tags: ['故事', '感染力']
-                        },
-                        {
-                            id: 17,
-                            name: '反馈给予',
-                            brief: '提供建设性的反馈意见',
-                            description: '学会给予具体、及时、有帮助的反馈，促进他人成长。',
-                            estimatedTime: 20,
-                            learnerCount: 432,
-                            status: 'new',
-                            tags: ['反馈', '建设性']
-                        },
-                        {
-                            id: 18,
-                            name: '说服技巧',
-                            brief: '以理服人的说服艺术',
-                            description: '掌握逻辑论证、情感共鸣等说服技巧，影响他人观点。',
-                            estimatedTime: 35,
-                            learnerCount: 321,
-                            status: 'new',
-                            tags: ['说服', '影响力']
-                        },
-                        {
-                            id: 19,
-                            name: '会议沟通',
-                            brief: '在会议中有效表达观点',
-                            description: '学会在团队会议中清晰表达想法，参与建设性讨论。',
-                            estimatedTime: 26,
-                            learnerCount: 467,
-                            status: 'learning',
-                            tags: ['会议', '团队'],
-                            progress: 30
-                        },
-                        {
-                            id: 20,
-                            name: '演讲技巧',
-                            brief: '公众场合的自信表达',
-                            description: '克服演讲恐惧，掌握公众演讲的基本技巧和方法。',
-                            estimatedTime: 40,
-                            learnerCount: 289,
-                            status: 'new',
-                            tags: ['演讲', '公众']
-                        },
-                        {
-                            id: 21,
-                            name: '电话沟通',
-                            brief: '通过电话进行有效沟通',
-                            description: '在缺乏视觉线索的情况下，保持清晰有效的电话沟通。',
-                            estimatedTime: 15,
-                            learnerCount: 378,
-                            status: 'new',
-                            tags: ['电话', '远程']
-                        },
-                        {
-                            id: 22,
-                            name: '书面表达',
-                            brief: '通过文字进行有效沟通',
-                            description: '掌握邮件、报告等书面沟通的技巧，确保信息准确传达。',
-                            estimatedTime: 30,
-                            learnerCount: 198,
-                            status: 'new',
-                            tags: ['书面', '文字']
-                        },
-                        {
-                            id: 23,
-                            name: '跨文化沟通',
-                            brief: '在多元文化环境中沟通',
-                            description: '理解文化差异，在跨文化环境中进行敏感而有效的沟通。',
-                            estimatedTime: 32,
-                            learnerCount: 156,
-                            status: 'new',
-                            tags: ['跨文化', '多元']
-                        },
-                        {
-                            id: 24,
-                            name: '谈判沟通',
-                            brief: '在谈判中达成双赢',
-                            description: '掌握谈判技巧，通过有效沟通找到互利共赢的解决方案。',
-                            estimatedTime: 45,
-                            learnerCount: 134,
-                            status: 'new',
-                            tags: ['谈判', '双赢']
-                        },
-                        {
-                            id: 25,
-                            name: '数字化沟通',
-                            brief: '在线上平台进行有效沟通',
-                            description: '适应数字时代，掌握视频会议、即时通讯等在线沟通工具。',
-                            estimatedTime: 24,
-                            learnerCount: 267,
-                            status: 'new',
-                            tags: ['数字化', '在线']
-                        }
-                    ],
-                    learningTips: [
-                        {
-                            title: '循序渐进的学习方法',
-                            content: '建议从基础技能开始学习，每天练习15-20分钟，结合实际场景应用，效果更佳。'
-                        },
-                        {
-                            title: '倾听练习技巧',
-                            content: '练习时关注对方的语调、语速变化，记住关键词汇，适时给予回应和反馈。'
-                        },
-                        {
-                            title: '镜像练习法',
-                            content: '对着镜子练习表达，观察自己的面部表情和肢体语言，提升非言语沟通能力。'
-                        },
-                        {
-                            title: '情感词汇扩展',
-                            content: '建立个人情感词汇库，学会用更精确的词语描述自己的感受和情绪状态。'
-                        },
-                        {
-                            title: '日常对话记录',
-                            content: '每天记录一次成功的沟通经历，分析什么因素让对话变得顺畅和有效。'
-                        },
-                        {
-                            title: '5W1H提问法',
-                            content: '学会使用谁、什么、何时、何地、为何、如何的提问方式，让沟通更加深入。'
-                        },
-                        {
-                            title: '身体语言观察',
-                            content: '观察他人的姿态、手势、眼神，练习从非言语信号中获取更多沟通信息。'
-                        },
-                        {
-                            title: '换位思考训练',
-                            content: '在每次对话后，尝试站在对方角度重新审视整个对话过程和自己的表现。'
-                        },
-                        {
-                            title: '冲突处理步骤',
-                            content: '面对分歧时：先冷静、再倾听、找共同点、提出解决方案、达成共识。'
-                        },
-                        {
-                            title: '积极反馈技巧',
-                            content: '使用"我注意到..."、"我欣赏..."的句式给予他人积极的反馈和认可。'
-                        },
-                        {
-                            title: '沉默的力量',
-                            content: '学会在对话中适当使用沉默，给对方思考和表达的时间和空间。'
-                        },
-                        {
-                            title: '话题转换技巧',
-                            content: '掌握自然过渡话题的方法："说到这个...""这让我想到...""顺便问一下..."'
-                        },
-                        {
-                            title: '情绪调节预备',
-                            content: '在重要对话前，先调节自己的情绪状态，保持开放和积极的心态。'
-                        },
-                        {
-                            title: '文化敏感度培养',
-                            content: '了解不同文化背景下的沟通习惯，提升跨文化交流的适应能力。'
-                        },
-                        {
-                            title: '反思日志习惯',
-                            content: '每周写一次沟通反思日志，记录进步、挑战和下周的改进目标。'
-                        },
-                        {
-                            title: '实践环境创造',
-                            content: '主动寻找或创造沟通练习的机会，如参与讨论、志愿服务等活动。'
-                        }
-                    ]
-                },
-                'emotional_expression': {
-                    id: this.categoryId,
-                    name: '情感理解',
-                    description: '理解自己和他人的情感，提升情感智慧',
-                    icon: '💝',
-                    totalSkills: 15,
-                    masteredSkills: 3,
-                    skills: [
-                        {
-                            id: 4,
-                            name: '情绪识别',
-                            brief: '准确识别自己和他人的情绪状态',
-                            description: '通过观察面部表情、语调、肢体语言等识别情绪。',
-                            estimatedTime: 12,
-                            learnerCount: 890,
-                            status: 'mastered',
-                            tags: ['情绪识别', '观察力'],
-                            progress: 100
-                        },
-                        {
-                            id: 5,
-                            name: '情感共鸣',
-                            brief: '与他人产生情感共鸣和理解',
-                            description: '学会站在对方角度思考，理解对方的感受。',
-                            estimatedTime: 25,
-                            learnerCount: 675,
-                            status: 'learning',
-                            tags: ['共情', '理解'],
-                            progress: 40
-                        },
-                        {
-                            id: 6,
-                            name: '情绪调节',
-                            brief: '有效管理和调节自己的情绪',
-                            description: '掌握深呼吸、认知重构等情绪调节技巧。',
-                            estimatedTime: 35,
-                            learnerCount: 445,
-                            status: 'new',
-                            tags: ['情绪管理', '自我调节']
-                        },
-                        {
-                            id: 26,
-                            name: '情感词汇',
-                            brief: '丰富情感表达的词汇库',
-                            description: '扩展情感词汇，更精确地描述和表达复杂的情感状态。',
-                            estimatedTime: 20,
-                            learnerCount: 523,
-                            status: 'new',
-                            tags: ['词汇', '精确表达']
-                        },
-                        {
-                            id: 27,
-                            name: '同理心训练',
-                            brief: '提升理解他人感受的能力',
-                            description: '通过练习增强同理心，更好地理解和回应他人的情感需求。',
-                            estimatedTime: 28,
-                            learnerCount: 467,
-                            status: 'learning',
-                            tags: ['同理心', '理解'],
-                            progress: 55
-                        },
-                        {
-                            id: 28,
-                            name: '情感边界',
-                            brief: '建立健康的情感边界',
-                            description: '学会在情感交流中保护自己，避免情感过载和耗竭。',
-                            estimatedTime: 30,
-                            learnerCount: 389,
-                            status: 'new',
-                            tags: ['边界', '保护']
-                        },
-                        {
-                            id: 29,
-                            name: '情绪传染',
-                            brief: '理解和管理情绪的传染性',
-                            description: '认识情绪如何在人群中传播，学会保持情绪稳定。',
-                            estimatedTime: 22,
-                            learnerCount: 312,
-                            status: 'new',
-                            tags: ['情绪传染', '稳定']
-                        },
-                        {
-                            id: 30,
-                            name: '情感支持',
-                            brief: '为他人提供有效的情感支持',
-                            description: '学会在他人需要时给予恰当的情感支持和安慰。',
-                            estimatedTime: 25,
-                            learnerCount: 456,
-                            status: 'new',
-                            tags: ['支持', '安慰']
-                        },
-                        {
-                            id: 31,
-                            name: '创伤敏感',
-                            brief: '对他人创伤经历保持敏感',
-                            description: '理解创伤对情感的影响，在交流中保持敏感和谨慎。',
-                            estimatedTime: 35,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['创伤', '敏感']
-                        },
-                        {
-                            id: 32,
-                            name: '情感复原',
-                            brief: '从情感创伤中恢复的技能',
-                            description: '掌握从负面情感经历中恢复和成长的方法。',
-                            estimatedTime: 40,
-                            learnerCount: 198,
-                            status: 'new',
-                            tags: ['复原', '成长']
-                        },
-                        {
-                            id: 33,
-                            name: '情感表达艺术',
-                            brief: '通过艺术形式表达情感',
-                            description: '学会用绘画、音乐、写作等艺术形式表达和处理情感。',
-                            estimatedTime: 45,
-                            learnerCount: 167,
-                            status: 'new',
-                            tags: ['艺术', '创意表达']
-                        },
-                        {
-                            id: 34,
-                            name: '情感记忆',
-                            brief: '管理和处理情感记忆',
-                            description: '学会处理痛苦的情感记忆，保留积极的情感体验。',
-                            estimatedTime: 38,
-                            learnerCount: 145,
-                            status: 'new',
-                            tags: ['记忆', '处理']
-                        },
-                        {
-                            id: 35,
-                            name: '情感成熟',
-                            brief: '培养情感成熟度',
-                            description: '发展成熟的情感处理能力，在复杂情况下保持理智。',
-                            estimatedTime: 42,
-                            learnerCount: 123,
-                            status: 'learning',
-                            tags: ['成熟', '理智'],
-                            progress: 25
-                        },
-                        {
-                            id: 36,
-                            name: '情感智慧',
-                            brief: '综合运用情感理解技能',
-                            description: '整合各种情感技能，在生活中智慧地处理情感问题。',
-                            estimatedTime: 50,
-                            learnerCount: 89,
-                            status: 'new',
-                            tags: ['智慧', '综合']
-                        },
-                        {
-                            id: 37,
-                            name: '正念情感',
-                            brief: '以正念方式体验情感',
-                            description: '学会不带判断地观察和体验情感，培养情感觉察力。',
-                            estimatedTime: 32,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['正念', '觉察']
-                        },
-                        {
-                            id: 38,
-                            name: '情感沟通',
-                            brief: '在关系中进行情感沟通',
-                            description: '学会在亲密关系中开诚布公地讨论情感话题。',
-                            estimatedTime: 33,
-                            learnerCount: 178,
-                            status: 'new',
-                            tags: ['沟通', '亲密关系']
-                        }
-                    ],
-                    learningTips: [
-                        {
-                            title: '情感智慧提升要点',
-                            content: '多观察自己的情绪变化，练习表达感受而非情绪，培养换位思考的习惯。'
-                        },
-                        {
-                            title: '情绪日记记录法',
-                            content: '每天记录3-5个情绪瞬间，包括触发事件、情绪名称、身体感受和应对方式。'
-                        },
-                        {
-                            title: '情绪轮盘工具',
-                            content: '使用情绪轮盘识别具体情感，从"生气"细分为"恼怒""愤怒""烦躁"等。'
-                        },
-                        {
-                            title: '身体扫描技巧',
-                            content: '定期进行身体情绪扫描，注意紧张、疼痛等身体信号传达的情绪信息。'
-                        },
-                        {
-                            title: '呼吸调节练习',
-                            content: '掌握4-7-8呼吸法：吸气4秒，屏息7秒，呼气8秒，有效调节情绪状态。'
-                        },
-                        {
-                            title: '情感验证练习',
-                            content: '对自己说："我现在感到...这很正常"，学会接纳而非判断自己的情感。'
-                        },
-                        {
-                            title: '共情地图绘制',
-                            content: '观察他人时绘制共情地图：他们说什么、做什么、想什么、感受什么。'
-                        },
-                        {
-                            title: '情绪粒度训练',
-                            content: '扩大情绪词汇量，学会区分"失望""沮丧""绝望"等细微情感差别。'
-                        },
-                        {
-                            title: '触发点识别',
-                            content: '记录个人情绪触发模式，识别哪些情况容易让自己产生强烈情绪反应。'
-                        },
-                        {
-                            title: '正念观察法',
-                            content: '如观察云朵般观察情绪的来去，不评判、不抓取、不推拒，只是觉察。'
-                        },
-                        {
-                            title: '情感表达升级',
-                            content: '从"我很累"升级为"我感到身心俱疲，需要一些休息和支持"。'
-                        },
-                        {
-                            title: '他人情绪镜像',
-                            content: '观察他人时，想象如果自己处于同样情境会有什么感受，提升共情能力。'
-                        },
-                        {
-                            title: '情绪调色板',
-                            content: '为不同情绪分配颜色，用视觉化方式理解和表达复杂的情感状态。'
-                        },
-                        {
-                            title: '价值观情感链接',
-                            content: '思考强烈情绪背后触及了哪些核心价值观，理解情感的深层意义。'
-                        },
-                        {
-                            title: '情感支持网络',
-                            content: '建立情感支持系统，识别在不同情况下能提供情感理解的人群。'
-                        },
-                        {
-                            title: '元情绪认知',
-                            content: '观察自己对情绪的情绪：对愤怒感到羞耻、对悲伤感到恐惧等二级情绪。'
-                        }
-                    ]
-                },
-                'relationship_building': {
-                    id: this.categoryId,
-                    name: '关系建立',
-                    description: '建立和维护健康、积极的人际关系',
-                    icon: '🤝',
-                    totalSkills: 16,
-                    masteredSkills: 2,
-                    skills: [
-                        {
-                            id: 7,
-                            name: '破冰技巧',
-                            brief: '在新环境中快速与他人建立联系',
-                            description: '掌握开场白、话题引导等社交技巧。',
-                            estimatedTime: 18,
-                            learnerCount: 1123,
-                            status: 'mastered',
-                            tags: ['破冰', '社交'],
-                            progress: 100
-                        },
-                        {
-                            id: 8,
-                            name: '信任建立',
-                            brief: '在关系中建立互相信任的基础',
-                            description: '通过真诚、一致性、可靠性建立信任关系。',
-                            estimatedTime: 28,
-                            learnerCount: 789,
-                            status: 'learning',
-                            tags: ['信任', '关系维护'],
-                            progress: 55
-                        },
-                        {
-                            id: 9,
-                            name: '冲突解决',
-                            brief: '有效处理人际冲突和分歧',
-                            description: '学会协商、妥协、寻找双赢解决方案。',
-                            estimatedTime: 40,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['冲突处理', '协商']
-                        },
-                        {
-                            id: 39,
-                            name: '社交礼仪',
-                            brief: '掌握基本的社交礼仪规范',
-                            description: '学习不同场合的礼仪要求，给他人留下良好印象。',
-                            estimatedTime: 22,
-                            learnerCount: 567,
-                            status: 'new',
-                            tags: ['礼仪', '印象']
-                        },
-                        {
-                            id: 40,
-                            name: '关系维护',
-                            brief: '长期维护人际关系的技巧',
-                            description: '学会投资和维护长期的人际关系，保持联系的温度。',
-                            estimatedTime: 35,
-                            learnerCount: 423,
-                            status: 'learning',
-                            tags: ['维护', '长期'],
-                            progress: 40
-                        },
-                        {
-                            id: 41,
-                            name: '网络建立',
-                            brief: '构建有效的人脉网络',
-                            description: '学会策略性地建立和扩展个人及职业人脉网络。',
-                            estimatedTime: 45,
-                            learnerCount: 345,
-                            status: 'new',
-                            tags: ['人脉', '网络']
-                        },
-                        {
-                            id: 42,
-                            name: '深度交流',
-                            brief: '进行有意义的深度对话',
-                            description: '超越表面寒暄，学会引导和参与有深度的对话。',
-                            estimatedTime: 38,
-                            learnerCount: 289,
-                            status: 'new',
-                            tags: ['深度', '对话']
-                        },
-                        {
-                            id: 43,
-                            name: '关系修复',
-                            brief: '修复受损的人际关系',
-                            description: '学会在关系出现问题时进行有效的修复和重建。',
-                            estimatedTime: 42,
-                            learnerCount: 198,
-                            status: 'new',
-                            tags: ['修复', '重建']
-                        },
-                        {
-                            id: 44,
-                            name: '团队合作',
-                            brief: '在团队中建立协作关系',
-                            description: '学会在团队环境中建立有效的工作关系和协作模式。',
-                            estimatedTime: 30,
-                            learnerCount: 456,
-                            status: 'learning',
-                            tags: ['团队', '协作'],
-                            progress: 60
-                        },
-                        {
-                            id: 45,
-                            name: '领导关系',
-                            brief: '与上级建立良好工作关系',
-                            description: '学会与领导建立专业而良好的工作关系，获得支持。',
-                            estimatedTime: 32,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['领导', '工作关系']
-                        },
-                        {
-                            id: 46,
-                            name: '友谊建立',
-                            brief: '建立真挚的友谊关系',
-                            description: '学会识别和培养真正的友谊，建立互相支持的朋友圈。',
-                            estimatedTime: 40,
-                            learnerCount: 678,
-                            status: 'new',
-                            tags: ['友谊', '朋友圈']
-                        },
-                        {
-                            id: 47,
-                            name: '恋爱关系',
-                            brief: '建立健康的恋爱关系',
-                            description: '学会在恋爱中建立平等、尊重、支持的关系模式。',
-                            estimatedTime: 50,
-                            learnerCount: 345,
-                            status: 'new',
-                            tags: ['恋爱', '健康关系']
-                        },
-                        {
-                            id: 48,
-                            name: '家庭关系',
-                            brief: '维护和改善家庭关系',
-                            description: '学会处理家庭内部关系，促进家庭和谐与理解。',
-                            estimatedTime: 45,
-                            learnerCount: 567,
-                            status: 'new',
-                            tags: ['家庭', '和谐']
-                        },
-                        {
-                            id: 49,
-                            name: '跨代关系',
-                            brief: '与不同年龄群体建立关系',
-                            description: '学会与不同年龄段的人建立良好关系，促进代际理解。',
-                            estimatedTime: 28,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['跨代', '理解']
-                        },
-                        {
-                            id: 50,
-                            name: '文化适应',
-                            brief: '在不同文化环境中建立关系',
-                            description: '学会在多元文化环境中建立跨文化的人际关系。',
-                            estimatedTime: 35,
-                            learnerCount: 156,
-                            status: 'new',
-                            tags: ['跨文化', '适应']
-                        },
-                        {
-                            id: 51,
-                            name: '关系评估',
-                            brief: '评估人际关系的健康度',
-                            description: '学会客观评估关系质量，识别需要改进的关系。',
-                            estimatedTime: 25,
-                            learnerCount: 123,
-                            status: 'new',
-                            tags: ['评估', '质量']
-                        }
-                    ],
-                    learningTips: [
-                        {
-                            title: '关系建立核心原则',
-                            content: '真诚是最好的社交技巧，保持一致性和可靠性，学会给予和接受。'
-                        },
-                        {
-                            title: '首次印象优化',
-                            content: '保持微笑、主动问候、记住对方名字、展现真诚兴趣，为关系打下良好基础。'
-                        },
-                        {
-                            title: '共同点发掘法',
-                            content: '主动寻找共同兴趣、经历或价值观，建立连接的桥梁和对话基础。'
-                        },
-                        {
-                            title: '渐进式信任建立',
-                            content: '从小事开始兑现承诺，逐步建立可靠形象，让信任在互动中自然增长。'
-                        },
-                        {
-                            title: '积极关注技巧',
-                            content: '记住对方提到的重要事情，下次见面时主动询问，显示你的关心和重视。'
-                        },
-                        {
-                            title: '边界意识培养',
-                            content: '学会在亲密和独立之间找平衡，尊重彼此的个人空间和隐私需求。'
-                        },
-                        {
-                            title: '冲突预防策略',
-                            content: '及时沟通不适感受，避免小问题积累成大矛盾，保持关系的健康状态。'
-                        },
-                        {
-                            title: '感恩表达习惯',
-                            content: '定期表达感谢和欣赏，让对方感受到在关系中的价值和重要性。'
-                        },
-                        {
-                            title: '关系投资理念',
-                            content: '像投资一样经营关系：定期投入时间、精力和关注，期待长期回报。'
-                        },
-                        {
-                            title: '支持网络构建',
-                            content: '主动为他人提供帮助和支持，同时学会在需要时寻求帮助。'
-                        },
-                        {
-                            title: '关系深度分层',
-                            content: '识别不同层次的关系需求，从点头之交到深度友谊的不同维护方式。'
-                        },
-                        {
-                            title: '互惠原则应用',
-                            content: '在关系中保持给予和接受的平衡，避免单方面付出或接受的失衡。'
-                        },
-                        {
-                            title: '关系修复技能',
-                            content: '学会在关系受损时主动修复：承认错误、表达歉意、制定改进计划。'
-                        },
-                        {
-                            title: '社交能量管理',
-                            content: '了解自己的社交能量模式，在精力充沛时投入重要关系的建设。'
-                        },
-                        {
-                            title: '关系质量评估',
-                            content: '定期评估关系的健康度：是否平等、支持、成长、带来正能量。'
-                        },
-                        {
-                            title: '长期承诺意识',
-                            content: '将关系视为长期承诺，在困难时选择坚持和努力而非轻易放弃。'
-                        }
-                    ]
-                },
-                'special_scenarios': {
-                    id: this.categoryId,
-                    name: '特殊情境',
-                    description: '应对特殊场合和复杂人际情境',
-                    icon: '🎯',
-                    totalSkills: 16,
-                    masteredSkills: 1,
-                    skills: [
-                        {
-                            id: 10,
-                            name: '职场沟通',
-                            brief: '在职场环境中有效沟通',
-                            description: '掌握正式场合的沟通技巧和职场礼仪。',
-                            estimatedTime: 22,
-                            learnerCount: 1567,
-                            status: 'mastered',
-                            tags: ['职场', '正式沟通'],
-                            progress: 100
-                        },
-                        {
-                            id: 11,
-                            name: '异地恋维护',
-                            brief: '维护异地恋关系的特殊技巧',
-                            description: '学会通过技术手段保持亲密度和信任。',
-                            estimatedTime: 45,
-                            learnerCount: 456,
-                            status: 'learning',
-                            tags: ['异地恋', '关系维护'],
-                            progress: 30
-                        },
-                        {
-                            id: 12,
-                            name: '危机干预',
-                            brief: '在他人遇到情感危机时提供支持',
-                            description: '学会识别危机信号，提供适当的支持和帮助。',
-                            estimatedTime: 50,
-                            learnerCount: 123,
-                            status: 'new',
-                            tags: ['危机干预', '支持技巧']
-                        },
-                        {
-                            id: 52,
-                            name: '客户服务',
-                            brief: '在服务行业中的沟通技巧',
-                            description: '学会在服务客户时保持专业和耐心，处理各种客户需求。',
-                            estimatedTime: 30,
-                            learnerCount: 789,
-                            status: 'new',
-                            tags: ['客服', '专业']
-                        },
-                        {
-                            id: 53,
-                            name: '医患沟通',
-                            brief: '医疗环境中的特殊沟通',
-                            description: '学会在医疗场景中进行敏感而有效的沟通。',
-                            estimatedTime: 40,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['医疗', '敏感']
-                        },
-                        {
-                            id: 54,
-                            name: '法律咨询',
-                            brief: '法律场景中的沟通技巧',
-                            description: '学会在法律咨询和诉讼中进行准确清晰的沟通。',
-                            estimatedTime: 45,
-                            learnerCount: 156,
-                            status: 'new',
-                            tags: ['法律', '准确']
-                        },
-                        {
-                            id: 55,
-                            name: '教育沟通',
-                            brief: '教育环境中的沟通方法',
-                            description: '学会在教学和培训中进行有效的知识传递和互动。',
-                            estimatedTime: 35,
-                            learnerCount: 567,
-                            status: 'learning',
-                            tags: ['教育', '传递'],
-                            progress: 45
-                        },
-                        {
-                            id: 56,
-                            name: '销售沟通',
-                            brief: '销售场景中的说服技巧',
-                            description: '学会在销售过程中建立信任，了解需求，促成交易。',
-                            estimatedTime: 38,
-                            learnerCount: 678,
-                            status: 'new',
-                            tags: ['销售', '说服']
-                        },
-                        {
-                            id: 57,
-                            name: '媒体应对',
-                            brief: '面对媒体时的沟通策略',
-                            description: '学会在面对媒体采访时保持冷静，传达准确信息。',
-                            estimatedTime: 42,
-                            learnerCount: 89,
-                            status: 'new',
-                            tags: ['媒体', '策略']
-                        },
-                        {
-                            id: 58,
-                            name: '社区沟通',
-                            brief: '在社区活动中的沟通技巧',
-                            description: '学会在社区建设和邻里关系中进行有效沟通。',
-                            estimatedTime: 25,
-                            learnerCount: 345,
-                            status: 'new',
-                            tags: ['社区', '邻里']
-                        },
-                        {
-                            id: 59,
-                            name: '志愿服务',
-                            brief: '志愿服务中的沟通方式',
-                            description: '学会在志愿活动中与受助者和其他志愿者有效沟通。',
-                            estimatedTime: 28,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['志愿', '服务']
-                        },
-                        {
-                            id: 60,
-                            name: '应急沟通',
-                            brief: '紧急情况下的沟通方法',
-                            description: '学会在紧急情况下保持冷静，进行有效的危机沟通。',
-                            estimatedTime: 35,
-                            learnerCount: 167,
-                            status: 'new',
-                            tags: ['应急', '危机']
-                        },
-                        {
-                            id: 61,
-                            name: '政府沟通',
-                            brief: '与政府部门沟通的技巧',
-                            description: '学会在与政府机构交涉时使用恰当的沟通方式。',
-                            estimatedTime: 32,
-                            learnerCount: 123,
-                            status: 'new',
-                            tags: ['政府', '交涉']
-                        },
-                        {
-                            id: 62,
-                            name: '国际交流',
-                            brief: '国际环境中的沟通技巧',
-                            description: '学会在国际交流中展现文化敏感性和专业素养。',
-                            estimatedTime: 48,
-                            learnerCount: 78,
-                            status: 'new',
-                            tags: ['国际', '文化敏感']
-                        },
-                        {
-                            id: 63,
-                            name: '老年沟通',
-                            brief: '与老年人沟通的特殊技巧',
-                            description: '学会与老年人进行耐心、尊重的沟通，考虑其特殊需求。',
-                            estimatedTime: 30,
-                            learnerCount: 345,
-                            status: 'new',
-                            tags: ['老年', '耐心']
-                        },
-                        {
-                            id: 64,
-                            name: '儿童沟通',
-                            brief: '与儿童有效沟通的方法',
-                            description: '学会用儿童能理解的方式进行沟通，建立信任关系。',
-                            estimatedTime: 33,
-                            learnerCount: 456,
-                            status: 'learning',
-                            tags: ['儿童', '信任'],
-                            progress: 70
-                        },
-                        {
-                            id: 65,
-                            name: '残障沟通',
-                            brief: '与残障人士沟通的技巧',
-                            description: '学会以尊重和包容的态度与残障人士进行有效沟通。',
-                            estimatedTime: 28,
-                            learnerCount: 234,
-                            status: 'new',
-                            tags: ['残障', '包容']
-                        }
-                    ],
-                    learningTips: [
-                        {
-                            title: '特殊情境应对策略',
-                            content: '每种情境都有其特殊性，重要的是保持灵活性和适应性，必要时寻求专业帮助。'
-                        },
-                        {
-                            title: '职场层级沟通',
-                            content: '向上沟通简明扼要，平级沟通协作共赢，向下沟通耐心指导，建立良好职场关系。'
-                        },
-                        {
-                            title: '跨文化敏感度',
-                            content: '了解不同文化的沟通方式、价值观差异，避免文化误解，增进国际交流效果。'
-                        },
-                        {
-                            title: '数字化沟通礼仪',
-                            content: '掌握邮件、即时消息、视频会议的沟通规范，在线上也保持专业和礼貌。'
-                        },
-                        {
-                            title: '危机沟通管理',
-                            content: '在突发情况下保持冷静，先倾听理解，再提供支持，必要时引导寻求专业帮助。'
-                        },
-                        {
-                            title: '代际沟通桥梁',
-                            content: '理解不同年龄群体的沟通特点，找到共同语言，促进跨代理解和协作。'
-                        },
-                        {
-                            title: '远程关系维护',
-                            content: '通过定期视频通话、共同活动、创意表达等方式，克服距离障碍维护亲密关系。'
-                        },
-                        {
-                            title: '高压环境沟通',
-                            content: '在紧张、竞争环境中保持专业性，控制情绪，以事实和数据为基础进行沟通。'
-                        },
-                        {
-                            title: '群体动力学应用',
-                            content: '在团队或群体中识别不同角色，学会引导讨论、化解分歧、促进共识达成。'
-                        },
-                        {
-                            title: '敏感话题处理',
-                            content: '面对争议性话题时保持中性立场，引导理性讨论，避免激化矛盾。'
-                        },
-                        {
-                            title: '权力差异平衡',
-                            content: '在上下级关系中找到权力平衡点，既维护权威又保持人文关怀。'
-                        },
-                        {
-                            title: '多元化团队协调',
-                            content: '在多元化环境中发挥每个人的优势，创造包容性的沟通氛围。'
-                        },
-                        {
-                            title: '压力下的情绪管理',
-                            content: '在高压情境下识别和管理自己的情绪反应，保持理性决策能力。'
-                        },
-                        {
-                            title: '复杂利益协调',
-                            content: '在多方利益冲突中寻找平衡点，通过沟通找到各方都能接受的解决方案。'
-                        },
-                        {
-                            title: '创伤知情沟通',
-                            content: '识别他人可能的创伤背景，采用安全、支持性的沟通方式，避免二次伤害。'
-                        },
-                        {
-                            title: '紧急情况指挥',
-                            content: '在紧急情况下快速建立指挥体系，清晰传达指令，协调各方资源。'
-                        }
-                    ]
-                }
-            };
+            // 使用统一的技能数据源
+            const categoryData = categories[this.categoryId];
+            if (!categoryData) {
+                console.error('未找到分类数据:', this.categoryId);
+                return;
+            }
 
-            // 根据 categoryId 获取对应数据，如果没有匹配则使用默认数据
-            const categoryData = categoryDataMap[this.categoryId] || categoryDataMap['communication'];
+            // 获取该分类下的所有技能
+            const skills = getSkillsByCategory(this.categoryId);
+
+            // 为技能添加学习状态（模拟数据）
+            const skillsWithStatus = skills.map(skill => ({
+                ...skill,
+                status: this.getRandomStatus(),
+                progress: skill.status === 'learning' ? Math.floor(Math.random() * 100) : (skill.status === 'mastered' ? 100 : 0)
+            }));
 
             this.categoryData = {
-                id: categoryData.id,
-                name: categoryData.name,
-                description: categoryData.description,
-                icon: categoryData.icon,
-                totalSkills: categoryData.totalSkills,
-                masteredSkills: categoryData.masteredSkills
+                ...categoryData,
+                totalSkills: skills.length,
+                masteredSkills: skillsWithStatus.filter(s => s.status === 'mastered').length
             };
 
-            this.allSkills = categoryData.skills;
-            this.recommendedSkills = this.allSkills.filter(skill => skill.status === 'new').slice(0, 2);
-            this.learningTips = categoryData.learningTips || [];
+            this.allSkills = skillsWithStatus;
 
-            // 随机选择一个学习建议
-            this.learningTip = this.getRandomTip();
+            // 推荐技能（随机选择3个未掌握的技能）
+            const unmastered = skillsWithStatus.filter(s => s.status !== 'mastered');
+            this.recommendedSkills = unmastered
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
 
-            // 开始定时器
-            this.startTipTimer();
+            // 学习建议
+            this.learningTips = this.getDefaultLearningTips();
+            this.learningTip = this.learningTips[0];
+
+            // 定时轮播学习建议
+            this.startTipRotation();
         },
 
         setFilter(type) {
@@ -1262,21 +305,6 @@ export default {
                 url: '/pages/interpersonal-wisdom/learning-assistant'
             });
         },
-
-        // showLearningPlan() {
-        //     uni.showModal({
-        //         title: '制定学习计划',
-        //         content: `为"${this.categoryData.name}"制定个性化学习计划？\n\n系统将根据你的水平和目标推荐最适合的学习路径。`,
-        //         confirmText: '开始制定',
-        //         success: (res) => {
-        //             if (res.confirm) {
-        //                 uni.navigateTo({
-        //                     url: `/pages/interpersonal-wisdom/learning-path?categoryId=${this.categoryId}&action=create`
-        //                 });
-        //             }
-        //         }
-        //     });
-        // },
 
         // 随机选择一个学习建议
         getRandomTip() {
@@ -1358,6 +386,52 @@ export default {
             }
 
             return pages;
+        },
+
+        getRandomStatus() {
+            const statuses = ['new', 'learning', 'mastered'];
+            const weights = [0.6, 0.3, 0.1]; // 60%新技能，30%学习中，10%已掌握
+            const random = Math.random();
+            let sum = 0;
+            for (let i = 0; i < statuses.length; i++) {
+                sum += weights[i];
+                if (random < sum) {
+                    return statuses[i];
+                }
+            }
+            return 'new';
+        },
+
+        getDefaultLearningTips() {
+            return [
+                {
+                    title: '循序渐进的学习方法',
+                    content: '建议从基础技能开始学习，每天练习15-20分钟，结合实际场景应用，效果更佳。'
+                },
+                {
+                    title: '实践应用建议',
+                    content: '理论学习后要及时实践，在日常生活中寻找应用机会，加深理解和记忆。'
+                },
+                {
+                    title: '反思总结习惯',
+                    content: '每次练习后进行反思总结，记录进步和需要改进的地方，持续优化。'
+                },
+                {
+                    title: '个性化学习路径',
+                    content: '根据自己的特点和需求，制定个性化的学习计划和目标。'
+                },
+                {
+                    title: '社群学习支持',
+                    content: '加入学习社群，与他人交流经验，获得支持和鼓励。'
+                }
+            ];
+        },
+
+        startTipRotation() {
+            this.clearTipTimer();
+            this.tipTimer = setInterval(() => {
+                this.learningTip = this.getRandomTip();
+            }, 30000);
         },
 
         // 设置过滤器时重置页码
