@@ -15,12 +15,10 @@
                 <view class="section-header">
                     <text class="section-title">🎯 为你推荐</text>
                 </view>
-                <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended">
+                <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended"
+                    :class="`skill-color-${skill.id % 12 + 1}`">
                     <view class="skill-header">
                         <text class="skill-title">{{ skill.name }}</text>
-                        <view class="difficulty-badge" :class="skill.difficulty">
-                            <text class="difficulty-text">{{ getDifficultyText(skill.difficulty) }}</text>
-                        </view>
                     </view>
                     <text class="skill-description">{{ skill.description }}</text>
                     <view class="skill-meta">
@@ -44,12 +42,17 @@
             <view class="section">
                 <view class="section-header">
                     <text class="section-title">📚 全部技能</text>
+                    <view class="skills-count">
+                        <text class="count-text">{{ paginationInfo.start }}-{{ paginationInfo.end }} / {{
+                            paginationInfo.total }}</text>
+                    </view>
                 </view>
 
                 <view class="skills-grid">
-                    <view v-for="skill in filteredSkills" :key="skill.id" class="skill-card"
-                        :class="{ mastered: skill.status === 'mastered', learning: skill.status === 'learning' }"
-                        @click="viewSkillDetail(skill)">
+                    <view v-for="skill in filteredSkills" :key="skill.id" class="skill-card" :class="[
+                        { mastered: skill.status === 'mastered', learning: skill.status === 'learning' },
+                        `skill-color-${skill.id % 12 + 1}`
+                    ]" @click="viewSkillDetail(skill)">
 
                         <text class="skill-name">{{ skill.name }}</text>
                         <text class="skill-brief">{{ skill.brief }}</text>
@@ -57,12 +60,31 @@
                         <view class="skill-tags">
                             <text v-for="tag in skill.tags" :key="tag" class="skill-tag">{{ tag }}</text>
                         </view>
+                    </view>
+                </view>
 
-                        <view class="skill-footer">
-                            <view class="difficulty-indicator" :class="skill.difficulty">
-                                <text class="difficulty-dot">●</text>
-                                <text class="difficulty-label">{{ getDifficultyText(skill.difficulty) }}</text>
+                <!-- 分页器 -->
+                <view v-if="totalPages > 1" class="pagination">
+                    <view class="pagination-info">
+                        <text class="pagination-text">第 {{ currentPage }} 页，共 {{ totalPages }} 页</text>
+                    </view>
+                    <view class="pagination-controls">
+                        <view class="pagination-btn" :class="{ disabled: currentPage <= 1 }"
+                            @click="goToPage(currentPage - 1)">
+                            <text class="btn-text">上一页</text>
+                        </view>
+
+                        <view class="pagination-numbers">
+                            <view v-for="page in getVisiblePages()" :key="page" class="page-number"
+                                :class="{ active: page === currentPage, ellipsis: page === '...' }"
+                                @click="page !== '...' ? goToPage(page) : null">
+                                <text class="page-text">{{ page }}</text>
                             </view>
+                        </view>
+
+                        <view class="pagination-btn" :class="{ disabled: currentPage >= totalPages }"
+                            @click="goToPage(currentPage + 1)">
+                            <text class="btn-text">下一页</text>
                         </view>
                     </view>
                 </view>
@@ -107,7 +129,9 @@ export default {
             learningTip: {},
             learningTips: [], // 存储所有学习建议
             currentTipIndex: 0, // 当前显示的建议索引
-            tipTimer: null // 定时器
+            tipTimer: null, // 定时器
+            currentPage: 1, // 当前页码
+            pageSize: 5 // 每页显示的技能数量
         }
     },
 
@@ -118,6 +142,26 @@ export default {
         },
 
         filteredSkills() {
+            let skills = [];
+            switch (this.filterType) {
+                case 'learned':
+                    skills = this.allSkills.filter(skill => skill.status === 'mastered');
+                    break;
+                case 'learning':
+                    skills = this.allSkills.filter(skill => skill.status === 'learning');
+                    break;
+                default:
+                    skills = this.allSkills;
+            }
+
+            // 计算分页
+            const startIndex = (this.currentPage - 1) * this.pageSize;
+            const endIndex = startIndex + this.pageSize;
+            return skills.slice(startIndex, endIndex);
+        },
+
+        // 获取所有过滤后的技能（用于计算总页数）
+        allFilteredSkills() {
             switch (this.filterType) {
                 case 'learned':
                     return this.allSkills.filter(skill => skill.status === 'mastered');
@@ -126,6 +170,25 @@ export default {
                 default:
                     return this.allSkills;
             }
+        },
+
+        // 总页数
+        totalPages() {
+            return Math.ceil(this.allFilteredSkills.length / this.pageSize);
+        },
+
+        // 分页信息
+        paginationInfo() {
+            const total = this.allFilteredSkills.length;
+            const start = (this.currentPage - 1) * this.pageSize + 1;
+            const end = Math.min(this.currentPage * this.pageSize, total);
+            return {
+                total,
+                start,
+                end,
+                current: this.currentPage,
+                totalPages: this.totalPages
+            };
         }
     },
 
@@ -181,7 +244,7 @@ export default {
                     name: '沟通表达',
                     description: '学会清晰、准确、有效的表达自己的想法和感受',
                     icon: '💬',
-                    totalSkills: 12,
+                    totalSkills: 15,
                     masteredSkills: 5,
                     skills: [
                         {
@@ -189,7 +252,6 @@ export default {
                             name: '主动倾听',
                             brief: '学会用心倾听对方的话语和情感',
                             description: '主动倾听是建立良好人际关系的基础技能，包括关注对方的言语和非言语信息。',
-                            difficulty: 'basic',
                             estimatedTime: 15,
                             learnerCount: 1234,
                             status: 'mastered',
@@ -201,7 +263,6 @@ export default {
                             name: '情感表达',
                             brief: '准确表达自己的情感和需求',
                             description: '学会用"我"的句式表达情感，避免指责和批评。',
-                            difficulty: 'intermediate',
                             estimatedTime: 20,
                             learnerCount: 956,
                             status: 'learning',
@@ -213,11 +274,142 @@ export default {
                             name: '非暴力沟通',
                             brief: '以善意和理解进行沟通',
                             description: '学习非暴力沟通的四个步骤：观察、感受、需要、请求。',
-                            difficulty: 'advanced',
                             estimatedTime: 30,
                             learnerCount: 567,
                             status: 'new',
                             tags: ['沟通技巧', '冲突处理']
+                        },
+                        {
+                            id: 13,
+                            name: '清晰表达',
+                            brief: '用简洁明了的语言传达想法',
+                            description: '掌握逻辑清晰、条理分明的表达技巧，让听众易于理解。',
+                            estimatedTime: 18,
+                            learnerCount: 892,
+                            status: 'new',
+                            tags: ['表达', '逻辑']
+                        },
+                        {
+                            id: 14,
+                            name: '提问技巧',
+                            brief: '学会问出有价值的问题',
+                            description: '掌握开放式和封闭式提问的使用时机，引导深度对话。',
+                            estimatedTime: 22,
+                            learnerCount: 723,
+                            status: 'learning',
+                            tags: ['提问', '引导'],
+                            progress: 45
+                        },
+                        {
+                            id: 15,
+                            name: '肢体语言',
+                            brief: '运用非言语沟通增强表达力',
+                            description: '学会使用手势、表情、姿态等非言语信号支持口语表达。',
+                            estimatedTime: 25,
+                            learnerCount: 654,
+                            status: 'new',
+                            tags: ['肢体语言', '非言语']
+                        },
+                        {
+                            id: 16,
+                            name: '故事叙述',
+                            brief: '用故事让沟通更有感染力',
+                            description: '掌握讲故事的技巧，让信息传递更生动有趣。',
+                            estimatedTime: 28,
+                            learnerCount: 543,
+                            status: 'new',
+                            tags: ['故事', '感染力']
+                        },
+                        {
+                            id: 17,
+                            name: '反馈给予',
+                            brief: '提供建设性的反馈意见',
+                            description: '学会给予具体、及时、有帮助的反馈，促进他人成长。',
+                            estimatedTime: 20,
+                            learnerCount: 432,
+                            status: 'new',
+                            tags: ['反馈', '建设性']
+                        },
+                        {
+                            id: 18,
+                            name: '说服技巧',
+                            brief: '以理服人的说服艺术',
+                            description: '掌握逻辑论证、情感共鸣等说服技巧，影响他人观点。',
+                            estimatedTime: 35,
+                            learnerCount: 321,
+                            status: 'new',
+                            tags: ['说服', '影响力']
+                        },
+                        {
+                            id: 19,
+                            name: '会议沟通',
+                            brief: '在会议中有效表达观点',
+                            description: '学会在团队会议中清晰表达想法，参与建设性讨论。',
+                            estimatedTime: 26,
+                            learnerCount: 467,
+                            status: 'learning',
+                            tags: ['会议', '团队'],
+                            progress: 30
+                        },
+                        {
+                            id: 20,
+                            name: '演讲技巧',
+                            brief: '公众场合的自信表达',
+                            description: '克服演讲恐惧，掌握公众演讲的基本技巧和方法。',
+                            estimatedTime: 40,
+                            learnerCount: 289,
+                            status: 'new',
+                            tags: ['演讲', '公众']
+                        },
+                        {
+                            id: 21,
+                            name: '电话沟通',
+                            brief: '通过电话进行有效沟通',
+                            description: '在缺乏视觉线索的情况下，保持清晰有效的电话沟通。',
+                            estimatedTime: 15,
+                            learnerCount: 378,
+                            status: 'new',
+                            tags: ['电话', '远程']
+                        },
+                        {
+                            id: 22,
+                            name: '书面表达',
+                            brief: '通过文字进行有效沟通',
+                            description: '掌握邮件、报告等书面沟通的技巧，确保信息准确传达。',
+                            estimatedTime: 30,
+                            learnerCount: 198,
+                            status: 'new',
+                            tags: ['书面', '文字']
+                        },
+                        {
+                            id: 23,
+                            name: '跨文化沟通',
+                            brief: '在多元文化环境中沟通',
+                            description: '理解文化差异，在跨文化环境中进行敏感而有效的沟通。',
+                            estimatedTime: 32,
+                            learnerCount: 156,
+                            status: 'new',
+                            tags: ['跨文化', '多元']
+                        },
+                        {
+                            id: 24,
+                            name: '谈判沟通',
+                            brief: '在谈判中达成双赢',
+                            description: '掌握谈判技巧，通过有效沟通找到互利共赢的解决方案。',
+                            estimatedTime: 45,
+                            learnerCount: 134,
+                            status: 'new',
+                            tags: ['谈判', '双赢']
+                        },
+                        {
+                            id: 25,
+                            name: '数字化沟通',
+                            brief: '在线上平台进行有效沟通',
+                            description: '适应数字时代，掌握视频会议、即时通讯等在线沟通工具。',
+                            estimatedTime: 24,
+                            learnerCount: 267,
+                            status: 'new',
+                            tags: ['数字化', '在线']
                         }
                     ],
                     learningTips: [
@@ -292,7 +484,7 @@ export default {
                     name: '情感理解',
                     description: '理解自己和他人的情感，提升情感智慧',
                     icon: '💝',
-                    totalSkills: 10,
+                    totalSkills: 15,
                     masteredSkills: 3,
                     skills: [
                         {
@@ -300,7 +492,6 @@ export default {
                             name: '情绪识别',
                             brief: '准确识别自己和他人的情绪状态',
                             description: '通过观察面部表情、语调、肢体语言等识别情绪。',
-                            difficulty: 'basic',
                             estimatedTime: 12,
                             learnerCount: 890,
                             status: 'mastered',
@@ -312,7 +503,6 @@ export default {
                             name: '情感共鸣',
                             brief: '与他人产生情感共鸣和理解',
                             description: '学会站在对方角度思考，理解对方的感受。',
-                            difficulty: 'intermediate',
                             estimatedTime: 25,
                             learnerCount: 675,
                             status: 'learning',
@@ -324,11 +514,142 @@ export default {
                             name: '情绪调节',
                             brief: '有效管理和调节自己的情绪',
                             description: '掌握深呼吸、认知重构等情绪调节技巧。',
-                            difficulty: 'advanced',
                             estimatedTime: 35,
                             learnerCount: 445,
                             status: 'new',
                             tags: ['情绪管理', '自我调节']
+                        },
+                        {
+                            id: 26,
+                            name: '情感词汇',
+                            brief: '丰富情感表达的词汇库',
+                            description: '扩展情感词汇，更精确地描述和表达复杂的情感状态。',
+                            estimatedTime: 20,
+                            learnerCount: 523,
+                            status: 'new',
+                            tags: ['词汇', '精确表达']
+                        },
+                        {
+                            id: 27,
+                            name: '同理心训练',
+                            brief: '提升理解他人感受的能力',
+                            description: '通过练习增强同理心，更好地理解和回应他人的情感需求。',
+                            estimatedTime: 28,
+                            learnerCount: 467,
+                            status: 'learning',
+                            tags: ['同理心', '理解'],
+                            progress: 55
+                        },
+                        {
+                            id: 28,
+                            name: '情感边界',
+                            brief: '建立健康的情感边界',
+                            description: '学会在情感交流中保护自己，避免情感过载和耗竭。',
+                            estimatedTime: 30,
+                            learnerCount: 389,
+                            status: 'new',
+                            tags: ['边界', '保护']
+                        },
+                        {
+                            id: 29,
+                            name: '情绪传染',
+                            brief: '理解和管理情绪的传染性',
+                            description: '认识情绪如何在人群中传播，学会保持情绪稳定。',
+                            estimatedTime: 22,
+                            learnerCount: 312,
+                            status: 'new',
+                            tags: ['情绪传染', '稳定']
+                        },
+                        {
+                            id: 30,
+                            name: '情感支持',
+                            brief: '为他人提供有效的情感支持',
+                            description: '学会在他人需要时给予恰当的情感支持和安慰。',
+                            estimatedTime: 25,
+                            learnerCount: 456,
+                            status: 'new',
+                            tags: ['支持', '安慰']
+                        },
+                        {
+                            id: 31,
+                            name: '创伤敏感',
+                            brief: '对他人创伤经历保持敏感',
+                            description: '理解创伤对情感的影响，在交流中保持敏感和谨慎。',
+                            estimatedTime: 35,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['创伤', '敏感']
+                        },
+                        {
+                            id: 32,
+                            name: '情感复原',
+                            brief: '从情感创伤中恢复的技能',
+                            description: '掌握从负面情感经历中恢复和成长的方法。',
+                            estimatedTime: 40,
+                            learnerCount: 198,
+                            status: 'new',
+                            tags: ['复原', '成长']
+                        },
+                        {
+                            id: 33,
+                            name: '情感表达艺术',
+                            brief: '通过艺术形式表达情感',
+                            description: '学会用绘画、音乐、写作等艺术形式表达和处理情感。',
+                            estimatedTime: 45,
+                            learnerCount: 167,
+                            status: 'new',
+                            tags: ['艺术', '创意表达']
+                        },
+                        {
+                            id: 34,
+                            name: '情感记忆',
+                            brief: '管理和处理情感记忆',
+                            description: '学会处理痛苦的情感记忆，保留积极的情感体验。',
+                            estimatedTime: 38,
+                            learnerCount: 145,
+                            status: 'new',
+                            tags: ['记忆', '处理']
+                        },
+                        {
+                            id: 35,
+                            name: '情感成熟',
+                            brief: '培养情感成熟度',
+                            description: '发展成熟的情感处理能力，在复杂情况下保持理智。',
+                            estimatedTime: 42,
+                            learnerCount: 123,
+                            status: 'learning',
+                            tags: ['成熟', '理智'],
+                            progress: 25
+                        },
+                        {
+                            id: 36,
+                            name: '情感智慧',
+                            brief: '综合运用情感理解技能',
+                            description: '整合各种情感技能，在生活中智慧地处理情感问题。',
+                            estimatedTime: 50,
+                            learnerCount: 89,
+                            status: 'new',
+                            tags: ['智慧', '综合']
+                        },
+                        {
+                            id: 37,
+                            name: '正念情感',
+                            brief: '以正念方式体验情感',
+                            description: '学会不带判断地观察和体验情感，培养情感觉察力。',
+                            estimatedTime: 32,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['正念', '觉察']
+                        },
+                        {
+                            id: 38,
+                            name: '情感沟通',
+                            brief: '在关系中进行情感沟通',
+                            description: '学会在亲密关系中开诚布公地讨论情感话题。',
+                            estimatedTime: 33,
+                            learnerCount: 178,
+                            status: 'new',
+                            tags: ['沟通', '亲密关系']
                         }
                     ],
                     learningTips: [
@@ -403,7 +724,7 @@ export default {
                     name: '关系建立',
                     description: '建立和维护健康、积极的人际关系',
                     icon: '🤝',
-                    totalSkills: 8,
+                    totalSkills: 16,
                     masteredSkills: 2,
                     skills: [
                         {
@@ -411,7 +732,6 @@ export default {
                             name: '破冰技巧',
                             brief: '在新环境中快速与他人建立联系',
                             description: '掌握开场白、话题引导等社交技巧。',
-                            difficulty: 'basic',
                             estimatedTime: 18,
                             learnerCount: 1123,
                             status: 'mastered',
@@ -423,7 +743,6 @@ export default {
                             name: '信任建立',
                             brief: '在关系中建立互相信任的基础',
                             description: '通过真诚、一致性、可靠性建立信任关系。',
-                            difficulty: 'intermediate',
                             estimatedTime: 28,
                             learnerCount: 789,
                             status: 'learning',
@@ -435,11 +754,142 @@ export default {
                             name: '冲突解决',
                             brief: '有效处理人际冲突和分歧',
                             description: '学会协商、妥协、寻找双赢解决方案。',
-                            difficulty: 'advanced',
                             estimatedTime: 40,
                             learnerCount: 234,
                             status: 'new',
                             tags: ['冲突处理', '协商']
+                        },
+                        {
+                            id: 39,
+                            name: '社交礼仪',
+                            brief: '掌握基本的社交礼仪规范',
+                            description: '学习不同场合的礼仪要求，给他人留下良好印象。',
+                            estimatedTime: 22,
+                            learnerCount: 567,
+                            status: 'new',
+                            tags: ['礼仪', '印象']
+                        },
+                        {
+                            id: 40,
+                            name: '关系维护',
+                            brief: '长期维护人际关系的技巧',
+                            description: '学会投资和维护长期的人际关系，保持联系的温度。',
+                            estimatedTime: 35,
+                            learnerCount: 423,
+                            status: 'learning',
+                            tags: ['维护', '长期'],
+                            progress: 40
+                        },
+                        {
+                            id: 41,
+                            name: '网络建立',
+                            brief: '构建有效的人脉网络',
+                            description: '学会策略性地建立和扩展个人及职业人脉网络。',
+                            estimatedTime: 45,
+                            learnerCount: 345,
+                            status: 'new',
+                            tags: ['人脉', '网络']
+                        },
+                        {
+                            id: 42,
+                            name: '深度交流',
+                            brief: '进行有意义的深度对话',
+                            description: '超越表面寒暄，学会引导和参与有深度的对话。',
+                            estimatedTime: 38,
+                            learnerCount: 289,
+                            status: 'new',
+                            tags: ['深度', '对话']
+                        },
+                        {
+                            id: 43,
+                            name: '关系修复',
+                            brief: '修复受损的人际关系',
+                            description: '学会在关系出现问题时进行有效的修复和重建。',
+                            estimatedTime: 42,
+                            learnerCount: 198,
+                            status: 'new',
+                            tags: ['修复', '重建']
+                        },
+                        {
+                            id: 44,
+                            name: '团队合作',
+                            brief: '在团队中建立协作关系',
+                            description: '学会在团队环境中建立有效的工作关系和协作模式。',
+                            estimatedTime: 30,
+                            learnerCount: 456,
+                            status: 'learning',
+                            tags: ['团队', '协作'],
+                            progress: 60
+                        },
+                        {
+                            id: 45,
+                            name: '领导关系',
+                            brief: '与上级建立良好工作关系',
+                            description: '学会与领导建立专业而良好的工作关系，获得支持。',
+                            estimatedTime: 32,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['领导', '工作关系']
+                        },
+                        {
+                            id: 46,
+                            name: '友谊建立',
+                            brief: '建立真挚的友谊关系',
+                            description: '学会识别和培养真正的友谊，建立互相支持的朋友圈。',
+                            estimatedTime: 40,
+                            learnerCount: 678,
+                            status: 'new',
+                            tags: ['友谊', '朋友圈']
+                        },
+                        {
+                            id: 47,
+                            name: '恋爱关系',
+                            brief: '建立健康的恋爱关系',
+                            description: '学会在恋爱中建立平等、尊重、支持的关系模式。',
+                            estimatedTime: 50,
+                            learnerCount: 345,
+                            status: 'new',
+                            tags: ['恋爱', '健康关系']
+                        },
+                        {
+                            id: 48,
+                            name: '家庭关系',
+                            brief: '维护和改善家庭关系',
+                            description: '学会处理家庭内部关系，促进家庭和谐与理解。',
+                            estimatedTime: 45,
+                            learnerCount: 567,
+                            status: 'new',
+                            tags: ['家庭', '和谐']
+                        },
+                        {
+                            id: 49,
+                            name: '跨代关系',
+                            brief: '与不同年龄群体建立关系',
+                            description: '学会与不同年龄段的人建立良好关系，促进代际理解。',
+                            estimatedTime: 28,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['跨代', '理解']
+                        },
+                        {
+                            id: 50,
+                            name: '文化适应',
+                            brief: '在不同文化环境中建立关系',
+                            description: '学会在多元文化环境中建立跨文化的人际关系。',
+                            estimatedTime: 35,
+                            learnerCount: 156,
+                            status: 'new',
+                            tags: ['跨文化', '适应']
+                        },
+                        {
+                            id: 51,
+                            name: '关系评估',
+                            brief: '评估人际关系的健康度',
+                            description: '学会客观评估关系质量，识别需要改进的关系。',
+                            estimatedTime: 25,
+                            learnerCount: 123,
+                            status: 'new',
+                            tags: ['评估', '质量']
                         }
                     ],
                     learningTips: [
@@ -514,7 +964,7 @@ export default {
                     name: '特殊情境',
                     description: '应对特殊场合和复杂人际情境',
                     icon: '🎯',
-                    totalSkills: 15,
+                    totalSkills: 16,
                     masteredSkills: 1,
                     skills: [
                         {
@@ -522,7 +972,6 @@ export default {
                             name: '职场沟通',
                             brief: '在职场环境中有效沟通',
                             description: '掌握正式场合的沟通技巧和职场礼仪。',
-                            difficulty: 'intermediate',
                             estimatedTime: 22,
                             learnerCount: 1567,
                             status: 'mastered',
@@ -534,7 +983,6 @@ export default {
                             name: '异地恋维护',
                             brief: '维护异地恋关系的特殊技巧',
                             description: '学会通过技术手段保持亲密度和信任。',
-                            difficulty: 'advanced',
                             estimatedTime: 45,
                             learnerCount: 456,
                             status: 'learning',
@@ -546,11 +994,152 @@ export default {
                             name: '危机干预',
                             brief: '在他人遇到情感危机时提供支持',
                             description: '学会识别危机信号，提供适当的支持和帮助。',
-                            difficulty: 'advanced',
                             estimatedTime: 50,
                             learnerCount: 123,
                             status: 'new',
                             tags: ['危机干预', '支持技巧']
+                        },
+                        {
+                            id: 52,
+                            name: '客户服务',
+                            brief: '在服务行业中的沟通技巧',
+                            description: '学会在服务客户时保持专业和耐心，处理各种客户需求。',
+                            estimatedTime: 30,
+                            learnerCount: 789,
+                            status: 'new',
+                            tags: ['客服', '专业']
+                        },
+                        {
+                            id: 53,
+                            name: '医患沟通',
+                            brief: '医疗环境中的特殊沟通',
+                            description: '学会在医疗场景中进行敏感而有效的沟通。',
+                            estimatedTime: 40,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['医疗', '敏感']
+                        },
+                        {
+                            id: 54,
+                            name: '法律咨询',
+                            brief: '法律场景中的沟通技巧',
+                            description: '学会在法律咨询和诉讼中进行准确清晰的沟通。',
+                            estimatedTime: 45,
+                            learnerCount: 156,
+                            status: 'new',
+                            tags: ['法律', '准确']
+                        },
+                        {
+                            id: 55,
+                            name: '教育沟通',
+                            brief: '教育环境中的沟通方法',
+                            description: '学会在教学和培训中进行有效的知识传递和互动。',
+                            estimatedTime: 35,
+                            learnerCount: 567,
+                            status: 'learning',
+                            tags: ['教育', '传递'],
+                            progress: 45
+                        },
+                        {
+                            id: 56,
+                            name: '销售沟通',
+                            brief: '销售场景中的说服技巧',
+                            description: '学会在销售过程中建立信任，了解需求，促成交易。',
+                            estimatedTime: 38,
+                            learnerCount: 678,
+                            status: 'new',
+                            tags: ['销售', '说服']
+                        },
+                        {
+                            id: 57,
+                            name: '媒体应对',
+                            brief: '面对媒体时的沟通策略',
+                            description: '学会在面对媒体采访时保持冷静，传达准确信息。',
+                            estimatedTime: 42,
+                            learnerCount: 89,
+                            status: 'new',
+                            tags: ['媒体', '策略']
+                        },
+                        {
+                            id: 58,
+                            name: '社区沟通',
+                            brief: '在社区活动中的沟通技巧',
+                            description: '学会在社区建设和邻里关系中进行有效沟通。',
+                            estimatedTime: 25,
+                            learnerCount: 345,
+                            status: 'new',
+                            tags: ['社区', '邻里']
+                        },
+                        {
+                            id: 59,
+                            name: '志愿服务',
+                            brief: '志愿服务中的沟通方式',
+                            description: '学会在志愿活动中与受助者和其他志愿者有效沟通。',
+                            estimatedTime: 28,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['志愿', '服务']
+                        },
+                        {
+                            id: 60,
+                            name: '应急沟通',
+                            brief: '紧急情况下的沟通方法',
+                            description: '学会在紧急情况下保持冷静，进行有效的危机沟通。',
+                            estimatedTime: 35,
+                            learnerCount: 167,
+                            status: 'new',
+                            tags: ['应急', '危机']
+                        },
+                        {
+                            id: 61,
+                            name: '政府沟通',
+                            brief: '与政府部门沟通的技巧',
+                            description: '学会在与政府机构交涉时使用恰当的沟通方式。',
+                            estimatedTime: 32,
+                            learnerCount: 123,
+                            status: 'new',
+                            tags: ['政府', '交涉']
+                        },
+                        {
+                            id: 62,
+                            name: '国际交流',
+                            brief: '国际环境中的沟通技巧',
+                            description: '学会在国际交流中展现文化敏感性和专业素养。',
+                            estimatedTime: 48,
+                            learnerCount: 78,
+                            status: 'new',
+                            tags: ['国际', '文化敏感']
+                        },
+                        {
+                            id: 63,
+                            name: '老年沟通',
+                            brief: '与老年人沟通的特殊技巧',
+                            description: '学会与老年人进行耐心、尊重的沟通，考虑其特殊需求。',
+                            estimatedTime: 30,
+                            learnerCount: 345,
+                            status: 'new',
+                            tags: ['老年', '耐心']
+                        },
+                        {
+                            id: 64,
+                            name: '儿童沟通',
+                            brief: '与儿童有效沟通的方法',
+                            description: '学会用儿童能理解的方式进行沟通，建立信任关系。',
+                            estimatedTime: 33,
+                            learnerCount: 456,
+                            status: 'learning',
+                            tags: ['儿童', '信任'],
+                            progress: 70
+                        },
+                        {
+                            id: 65,
+                            name: '残障沟通',
+                            brief: '与残障人士沟通的技巧',
+                            description: '学会以尊重和包容的态度与残障人士进行有效沟通。',
+                            estimatedTime: 28,
+                            learnerCount: 234,
+                            status: 'new',
+                            tags: ['残障', '包容']
                         }
                     ],
                     learningTips: [
@@ -674,29 +1263,20 @@ export default {
             });
         },
 
-        showLearningPlan() {
-            uni.showModal({
-                title: '制定学习计划',
-                content: `为"${this.categoryData.name}"制定个性化学习计划？\n\n系统将根据你的水平和目标推荐最适合的学习路径。`,
-                confirmText: '开始制定',
-                success: (res) => {
-                    if (res.confirm) {
-                        uni.navigateTo({
-                            url: `/pages/interpersonal-wisdom/learning-path?categoryId=${this.categoryId}&action=create`
-                        });
-                    }
-                }
-            });
-        },
-
-        getDifficultyText(difficulty) {
-            const map = {
-                'basic': '基础',
-                'intermediate': '进阶',
-                'advanced': '高级'
-            };
-            return map[difficulty] || '未知';
-        },
+        // showLearningPlan() {
+        //     uni.showModal({
+        //         title: '制定学习计划',
+        //         content: `为"${this.categoryData.name}"制定个性化学习计划？\n\n系统将根据你的水平和目标推荐最适合的学习路径。`,
+        //         confirmText: '开始制定',
+        //         success: (res) => {
+        //             if (res.confirm) {
+        //                 uni.navigateTo({
+        //                     url: `/pages/interpersonal-wisdom/learning-path?categoryId=${this.categoryId}&action=create`
+        //                 });
+        //             }
+        //         }
+        //     });
+        // },
 
         // 随机选择一个学习建议
         getRandomTip() {
@@ -730,6 +1310,60 @@ export default {
                 icon: 'success',
                 duration: 1000
             });
+        },
+
+        // 跳转到指定页码
+        goToPage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.currentPage = page;
+        },
+
+        // 获取可见的页码数组
+        getVisiblePages() {
+            const total = this.totalPages;
+            const current = this.currentPage;
+            const pages = [];
+
+            if (total <= 7) {
+                // 如果总页数小于等于7，显示所有页码
+                for (let i = 1; i <= total; i++) {
+                    pages.push(i);
+                }
+            } else {
+                // 如果总页数大于7，显示部分页码
+                if (current <= 4) {
+                    // 当前页在前面
+                    for (let i = 1; i <= 5; i++) {
+                        pages.push(i);
+                    }
+                    pages.push('...');
+                    pages.push(total);
+                } else if (current >= total - 3) {
+                    // 当前页在后面
+                    pages.push(1);
+                    pages.push('...');
+                    for (let i = total - 4; i <= total; i++) {
+                        pages.push(i);
+                    }
+                } else {
+                    // 当前页在中间
+                    pages.push(1);
+                    pages.push('...');
+                    for (let i = current - 1; i <= current + 1; i++) {
+                        pages.push(i);
+                    }
+                    pages.push('...');
+                    pages.push(total);
+                }
+            }
+
+            return pages;
+        },
+
+        // 设置过滤器时重置页码
+        setFilter(type) {
+            this.filterType = type;
+            this.currentPage = 1; // 重置到第一页
         }
     }
 }
@@ -796,6 +1430,19 @@ export default {
     font-size: 32rpx;
     font-weight: bold;
     color: #333;
+}
+
+.skills-count {
+    display: flex;
+    align-items: center;
+}
+
+.count-text {
+    font-size: 24rpx;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 6rpx 12rpx;
+    border-radius: 12rpx;
 }
 
 .tip-controls {
@@ -871,8 +1518,10 @@ export default {
 }
 
 .skill-card.recommended {
-    border: 2rpx solid #667eea;
     background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+    border-top: 2rpx solid #667eea;
+    border-right: 2rpx solid #667eea;
+    border-bottom: 2rpx solid #667eea;
 }
 
 .skill-card.mastered {
@@ -881,6 +1530,128 @@ export default {
 
 .skill-card.learning {
     border-left: 6rpx solid #ff9800;
+}
+
+/* 技能卡片彩色边框样式 */
+.skill-card.skill-color-1 {
+    border-left: 6rpx solid #FF6B6B;
+    /* 珊瑚红 */
+}
+
+.skill-card.skill-color-2 {
+    border-left: 6rpx solid #4ECDC4;
+    /* 青绿色 */
+}
+
+.skill-card.skill-color-3 {
+    border-left: 6rpx solid #45B7D1;
+    /* 天空蓝 */
+}
+
+.skill-card.skill-color-4 {
+    border-left: 6rpx solid #96CEB4;
+    /* 薄荷绿 */
+}
+
+.skill-card.skill-color-5 {
+    border-left: 6rpx solid #FECA57;
+    /* 阳光黄 */
+}
+
+.skill-card.skill-color-6 {
+    border-left: 6rpx solid #FF9FF3;
+    /* 粉紫色 */
+}
+
+.skill-card.skill-color-7 {
+    border-left: 6rpx solid #54A0FF;
+    /* 蓝紫色 */
+}
+
+.skill-card.skill-color-8 {
+    border-left: 6rpx solid #5F27CD;
+    /* 深紫色 */
+}
+
+.skill-card.skill-color-9 {
+    border-left: 6rpx solid #00D2D3;
+    /* 青蓝色 */
+}
+
+.skill-card.skill-color-10 {
+    border-left: 6rpx solid #FF9F43;
+    /* 橙色 */
+}
+
+.skill-card.skill-color-11 {
+    border-left: 6rpx solid #10AC84;
+    /* 翠绿色 */
+}
+
+.skill-card.skill-color-12 {
+    border-left: 6rpx solid #EE5A6F;
+    /* 玫瑰红 */
+}
+
+/* 已掌握技能的边框样式覆盖（保持原色但增加亮度） */
+.skill-card.mastered.skill-color-1 {
+    border-left: 6rpx solid #FF8A8A;
+}
+
+.skill-card.mastered.skill-color-2 {
+    border-left: 6rpx solid #6EDED4;
+}
+
+.skill-card.mastered.skill-color-3 {
+    border-left: 6rpx solid #65C7E1;
+}
+
+.skill-card.mastered.skill-color-4 {
+    border-left: 6rpx solid #A6DEC4;
+}
+
+.skill-card.mastered.skill-color-5 {
+    border-left: 6rpx solid #FEDA77;
+}
+
+.skill-card.mastered.skill-color-6 {
+    border-left: 6rpx solid #FFAFF3;
+}
+
+.skill-card.mastered.skill-color-7 {
+    border-left: 6rpx solid #74B0FF;
+}
+
+.skill-card.mastered.skill-color-8 {
+    border-left: 6rpx solid #7F47DD;
+}
+
+.skill-card.mastered.skill-color-9 {
+    border-left: 6rpx solid #20E2E3;
+}
+
+.skill-card.mastered.skill-color-10 {
+    border-left: 6rpx solid #FFAF63;
+}
+
+.skill-card.mastered.skill-color-11 {
+    border-left: 6rpx solid #30BCA4;
+}
+
+.skill-card.mastered.skill-color-12 {
+    border-left: 6rpx solid #FE7A8F;
+}
+
+/* 学习中技能的边框样式（添加渐变效果） */
+.skill-card.learning::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6rpx;
+    height: 100%;
+    background: linear-gradient(180deg, var(--skill-color) 0%, var(--skill-color) 60%, #FFD700 100%);
+    border-radius: 0 0 0 16rpx;
 }
 
 .skill-status-indicator {
@@ -913,27 +1684,6 @@ export default {
     color: #666;
     line-height: 1.5;
     margin-bottom: 20rpx;
-}
-
-.difficulty-badge {
-    padding: 8rpx 16rpx;
-    border-radius: 12rpx;
-    font-size: 20rpx;
-}
-
-.difficulty-badge.basic {
-    background-color: #e8f5e8;
-    color: #4caf50;
-}
-
-.difficulty-badge.intermediate {
-    background-color: #fff3e0;
-    color: #ff9800;
-}
-
-.difficulty-badge.advanced {
-    background-color: #ffebee;
-    color: #f44336;
 }
 
 .skill-meta {
@@ -1001,29 +1751,6 @@ export default {
     align-items: center;
 }
 
-.difficulty-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8rpx;
-    font-size: 22rpx;
-}
-
-.difficulty-indicator.basic {
-    color: #4caf50;
-}
-
-.difficulty-indicator.intermediate {
-    color: #ff9800;
-}
-
-.difficulty-indicator.advanced {
-    color: #f44336;
-}
-
-.difficulty-dot {
-    font-size: 16rpx;
-}
-
 .learning-progress {
     font-size: 22rpx;
     color: #667eea;
@@ -1034,6 +1761,96 @@ export default {
     display: grid;
     grid-template-columns: 1fr;
     gap: 20rpx;
+}
+
+/* 分页器样式 */
+.pagination {
+    margin-top: 40rpx;
+    padding: 24rpx;
+    background-color: white;
+    border-radius: 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.pagination-info {
+    text-align: center;
+    margin-bottom: 20rpx;
+}
+
+.pagination-text {
+    font-size: 24rpx;
+    color: #666;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16rpx;
+}
+
+.pagination-btn {
+    padding: 12rpx 20rpx;
+    background-color: #667eea;
+    color: white;
+    border-radius: 8rpx;
+    font-size: 24rpx;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn.disabled {
+    background-color: #f0f0f0;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-btn:not(.disabled):active {
+    transform: scale(0.95);
+    background-color: #5a6fd8;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 8rpx;
+    align-items: center;
+}
+
+.page-number {
+    min-width: 64rpx;
+    height: 64rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8rpx;
+    font-size: 24rpx;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.page-number:not(.ellipsis) {
+    background-color: #f8f9fa;
+    color: #666;
+}
+
+.page-number.active {
+    background-color: #667eea;
+    color: white;
+    font-weight: bold;
+}
+
+.page-number.ellipsis {
+    background-color: transparent;
+    color: #999;
+    cursor: default;
+}
+
+.page-number:not(.active):not(.ellipsis):active {
+    transform: scale(0.95);
+    background-color: #e9ecef;
+}
+
+.page-text {
+    font-size: 24rpx;
 }
 
 .suggestion-card {

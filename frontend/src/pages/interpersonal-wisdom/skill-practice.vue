@@ -48,10 +48,7 @@
                 </view>
             </view>
         </view> -->
-    <view
-      v-if="practiceType === 'scenario' && scenarioData"
-      class="scenario-section"
-    >
+    <view v-if="practiceType === 'scenario' && scenarioData" class="scenario-section">
       <view class="scenario-card">
         <view class="scenario-header">
           <text class="scenario-title">🎬 练习场景</text>
@@ -74,10 +71,7 @@
       </view>
     </view>
     <!-- 交互练习模式 -->
-    <view
-      v-if="practiceType === 'practice' || practiceMode === 'interactive'"
-      class="interactive-section"
-    >
+    <view v-if="practiceType === 'practice' || practiceMode === 'interactive'" class="interactive-section">
       <view class="practice-guide">
         <text class="guide-title">💡 练习指导</text>
         <text class="guide-text">
@@ -89,12 +83,7 @@
 
       <!-- 聊天区域 -->
       <view class="chat-area">
-        <view
-          v-for="(message, index) in chatMessages"
-          :key="index"
-          class="message-item"
-          :class="message.role"
-        >
+        <view v-for="(message, index) in chatMessages" :key="index" class="message-item" :class="message.role">
           <view class="message-avatar">
             <text class="avatar-text">{{
               message.role === "user" ? "我" : "AI"
@@ -125,29 +114,16 @@
           <view class="model-btn" @click="showModelSelector">
             <text class="model-text">选择模型</text>
           </view>
-          <textarea
-            v-model="userInput"
-            class="input-field"
-            placeholder="输入你的回应..."
-            :disabled="isAiTyping"
-            @input="handleInput"
-          ></textarea>
-          <view
-            class="send-btn"
-            :class="{ disabled: !userInput.trim() || isAiTyping }"
-            @click="sendMessage"
-          >
+          <textarea v-model="userInput" class="input-field" placeholder="输入你的回应..." :disabled="isAiTyping"
+            @input="handleInput"></textarea>
+          <view class="send-btn" :class="{ disabled: !userInput.trim() || isAiTyping }" @click="sendMessage">
             <text class="send-text">发送</text>
           </view>
         </view>
       </view>
 
       <!-- 选择模型弹窗 -->
-      <view
-        v-if="showModelModal"
-        class="modal-overlay"
-        @click="hideModelSelector"
-      >
+      <view v-if="showModelModal" class="modal-overlay" @click="hideModelSelector">
         <view class="modal-content" @click.stop>
           <view class="modal-header">
             <text class="modal-title">选择角色模型</text>
@@ -160,13 +136,8 @@
             <view class="form-group">
               <text class="form-label">AI扮演职业</text>
               <view class="profession-grid">
-                <view
-                  v-for="profession in aiProfessionOptions"
-                  :key="profession"
-                  class="profession-item"
-                  :class="{ active: selectedAiProfession === profession }"
-                  @click="selectedAiProfession = profession"
-                >
+                <view v-for="profession in aiProfessionOptions" :key="profession" class="profession-item"
+                  :class="{ active: selectedAiProfession === profession }" @click="selectedAiProfession = profession">
                   <text class="profession-text">{{ profession }}</text>
                 </view>
               </view>
@@ -175,13 +146,8 @@
             <view class="form-group">
               <text class="form-label">我的职业</text>
               <view class="profession-grid">
-                <view
-                  v-for="profession in myProfessionOptions"
-                  :key="profession"
-                  class="profession-item"
-                  :class="{ active: selectedMyProfession === profession }"
-                  @click="selectedMyProfession = profession"
-                >
+                <view v-for="profession in myProfessionOptions" :key="profession" class="profession-item"
+                  :class="{ active: selectedMyProfession === profession }" @click="selectedMyProfession = profession">
                   <text class="profession-text">{{ profession }}</text>
                 </view>
               </view>
@@ -190,13 +156,8 @@
             <view class="form-group">
               <text class="form-label">选择年龄段</text>
               <view class="age-grid">
-                <view
-                  v-for="age in ageOptions"
-                  :key="age"
-                  class="age-item"
-                  :class="{ active: selectedAge === age }"
-                  @click="selectedAge = age"
-                >
+                <view v-for="age in ageOptions" :key="age" class="age-item" :class="{ active: selectedAge === age }"
+                  @click="selectedAge = age">
                   <text class="age-text">{{ age }}</text>
                 </view>
               </view>
@@ -205,13 +166,8 @@
             <view class="form-group">
               <text class="form-label">AI性格特点</text>
               <view class="personality-grid">
-                <view
-                  v-for="personality in personalityOptions"
-                  :key="personality"
-                  class="personality-item"
-                  :class="{ active: selectedPersonality === personality }"
-                  @click="selectedPersonality = personality"
-                >
+                <view v-for="personality in personalityOptions" :key="personality" class="personality-item"
+                  :class="{ active: selectedPersonality === personality }" @click="selectedPersonality = personality">
                   <text class="personality-text">{{ personality }}</text>
                 </view>
               </view>
@@ -219,12 +175,8 @@
 
             <view class="form-group">
               <text class="form-label">情景设定</text>
-              <textarea
-                v-model="aiBackground"
-                class="background-input"
-                :placeholder="aiBackground || '请提供一个合适且具体的情景'"
-                maxlength="200"
-              ></textarea>
+              <textarea v-model="aiBackground" class="background-input" :placeholder="aiBackground || '请提供一个合适且具体的情景'"
+                maxlength="200"></textarea>
               <text class="char-count">{{ aiBackground.length }}/200</text>
             </view>
           </view>
@@ -233,17 +185,13 @@
             <view class="modal-btn cancel" @click="hideModelSelector">
               <text class="btn-text">取消</text>
             </view>
-            <view
-              class="modal-btn confirm"
-              :class="{
-                disabled:
-                  !selectedAiProfession ||
-                  !selectedMyProfession ||
-                  !selectedAge ||
-                  !selectedPersonality,
-              }"
-              @click="confirmRoleSelection"
-            >
+            <view class="modal-btn confirm" :class="{
+              disabled:
+                !selectedAiProfession ||
+                !selectedMyProfession ||
+                !selectedAge ||
+                !selectedPersonality,
+            }" @click="confirmRoleSelection">
               <text class="btn-text">确认</text>
             </view>
           </view>
@@ -683,9 +631,8 @@ export default {
             if (result.practice_completed) {
               this.practiceCompleted = true;
               this.practiceResult = {
-                feedback: `很棒的练习！你在"${
-                  this.skillInfo?.title || this.skillInfo?.name
-                }"的情景对话中表现出色。`,
+                feedback: `很棒的练习！你在"${this.skillInfo?.title || this.skillInfo?.name
+                  }"的情景对话中表现出色。`,
                 score: Math.floor(Math.random() * 20) + 80,
                 improvements: [
                   "在真实情况下也可以尝试运用这些技巧",
@@ -807,6 +754,275 @@ export default {
           "我能感受到你的用心，这对我来说很重要。",
           "谢谢你总是这么贴心，有你在我身边我很安心。",
         ],
+        // 沟通表达新增技能 (ID 13-25)
+        13: [ // 非正式场合交流
+          "我们今天聊得很轻松，这种感觉真好。",
+          "你总是能让谈话变得有趣，我很喜欢这样。",
+          "我们可以随便聊聊，不用那么拘束。",
+        ],
+        14: [ // 正式场合表达
+          "感谢您给我这个机会在此发言。",
+          "我很荣幸能在这个重要场合与大家分享。",
+          "请允许我正式地表达我的观点。",
+        ],
+        15: [ // 书面沟通
+          "您的邮件我已收到，我会仔细考虑您的建议。",
+          "关于您提到的事项，我会以书面形式详细回复。",
+          "我们还是用文字记录下来比较好。",
+        ],
+        16: [ // 跨代沟通
+          "我想了解您那个年代的经历，能跟我分享吗？",
+          "现在的年轻人想法确实和我们那时候不太一样。",
+          "我们虽然年龄不同，但我相信能找到共同语言。",
+        ],
+        17: [ // 群体演讲
+          "感谢大家今天的到来，我很激动能在这里分享。",
+          "我希望我的分享能给大家带来一些启发。",
+          "有什么问题欢迎大家随时提出。",
+        ],
+        18: [ // 辩论技巧
+          "我理解您的观点，但我有不同的看法。",
+          "让我从另一个角度来分析这个问题。",
+          "证据显示我们需要重新考虑这个问题。",
+        ],
+        19: [ // 说服技巧
+          "我想您一定会看到这个建议的价值。",
+          "让我们一起来看看这样做的好处。",
+          "我相信您会做出明智的决定。",
+        ],
+        20: [ // 故事叙述
+          "让我给你讲一个有趣的故事。",
+          "这让我想起了一件往事...",
+          "你的经历让我想起了我自己的故事。",
+        ],
+        21: [ // 幽默运用
+          "你总是能让我笑起来，真是太好了。",
+          "哈哈，你这个比喻太生动了！",
+          "你的幽默感总是让气氛变得轻松。",
+        ],
+        22: [ // 情感沟通
+          "我想和你分享我内心真实的感受。",
+          "能够对你敞开心扉，我感到很安全。",
+          "谢谢你愿意听我说这些。",
+        ],
+        23: [ // 赞美表达
+          "谢谢你的夸奖，这让我很开心。",
+          "你也很棒，我们互相学习吧。",
+          "能得到你的认可对我来说很重要。",
+        ],
+        24: [ // 批评反馈
+          "我知道你是为我好，我会认真考虑的。",
+          "谢谢你的诚实反馈，我需要改进。",
+          "我会努力改正的，希望你能继续支持我。",
+        ],
+        25: [ // 远程沟通
+          "虽然我们不在一个地方，但我感觉我们很近。",
+          "视频通话让我们的交流更加直接。",
+          "技术真的让远程交流变得容易多了。",
+        ],
+        // 情感理解新增技能 (ID 26-38)
+        26: [ // 情感词汇
+          "你用这个词形容得很准确，我确实是这种感觉。",
+          "我需要更精确地表达我的情感状态。",
+          "谢谢你帮我找到了合适的词语。",
+        ],
+        27: [ // 同理心训练
+          "你能理解我的感受，这让我很感动。",
+          "谢谢你站在我的角度想问题。",
+          "你的共情让我感到被理解了。",
+        ],
+        28: [ // 情感边界
+          "我需要一些时间来处理自己的情绪。",
+          "我很乐意帮你，但我也要照顾好自己。",
+          "我们都需要保持情感的平衡。",
+        ],
+        29: [ // 情绪传染
+          "你的好心情感染了我，我也开心起来了。",
+          "我努力不让负面情绪影响到别人。",
+          "我们一起保持积极的态度吧。",
+        ],
+        30: [ // 情感支持
+          "有你的支持我感觉好多了。",
+          "我知道你会一直在我身边。",
+          "谢谢你在我困难时陪伴我。",
+        ],
+        31: [ // 创伤敏感
+          "我需要慢慢来，这对我来说有点难。",
+          "谢谢你的耐心和理解。",
+          "我还没准备好谈论这个话题。",
+        ],
+        32: [ // 情感复原
+          "我正在从那段经历中慢慢恢复。",
+          "虽然很困难，但我相信会好起来的。",
+          "我学会了从挫折中成长。",
+        ],
+        33: [ // 情感表达艺术
+          "我想用画画来表达我的心情。",
+          "音乐能够表达我无法言喻的感受。",
+          "创作让我的情感得到了释放。",
+        ],
+        34: [ // 情感记忆
+          "那段回忆现在对我来说有了不同的意义。",
+          "我正在学习如何处理过去的痛苦。",
+          "好的回忆让我更有力量面对困难。",
+        ],
+        35: [ // 情感成熟
+          "我学会了控制自己的冲动。",
+          "成熟就是学会承担情感责任。",
+          "我在理性和感性之间找到了平衡。",
+        ],
+        36: [ // 情感智慧
+          "我开始理解情感背后的深层需求。",
+          "智慧地处理情感需要时间和经验。",
+          "我愿意分享我的情感智慧。",
+        ],
+        37: [ // 正念情感
+          "我正在观察自己的情绪变化。",
+          "不评判地体验情感是很好的练习。",
+          "正念让我更了解自己的内心。",
+        ],
+        38: [ // 情感沟通
+          "我想坦诚地和你分享我的感受。",
+          "在亲密关系中开放地沟通很重要。",
+          "谢谢你愿意听我表达真实的情感。",
+        ],
+        // 关系建立新增技能 (ID 39-51)
+        39: [ // 自我介绍
+          "很高兴认识你！让我介绍一下自己。",
+          "谢谢你的介绍，现在轮到我了。",
+          "我想让你更了解我一些。",
+        ],
+        40: [ // 破冰对话
+          "这个活动很有趣，你觉得呢？",
+          "我们聊聊天吧，别那么拘束。",
+          "你好！我注意到你也在这里。",
+        ],
+        41: [ // 共同话题
+          "哇，你也喜欢这个！我们有共同爱好呢。",
+          "看来我们想法很相似。",
+          "这让我想起了我的经历，和你的很像。",
+        ],
+        42: [ // 信任建立
+          "我说到做到，你可以相信我。",
+          "建立信任需要时间，我愿意等待。",
+          "我希望通过行动证明我的可靠性。",
+        ],
+        43: [ // 社交恐惧
+          "我有点紧张，但我想尝试和你聊天。",
+          "虽然我不太擅长社交，但我想努力。",
+          "谢谢你的耐心，这对我来说有点困难。",
+        ],
+        44: [ // 网络社交
+          "线上聊天也能感受到你的热情。",
+          "虽然不能面对面，但我们的交流很真诚。",
+          "技术让我们能够跨越距离交流。",
+        ],
+        45: [ // 跨文化交流
+          "我想了解你的文化背景。",
+          "文化差异让我们的交流更有趣。",
+          "尽管背景不同，我们还是能找到共同点。",
+        ],
+        46: [ // 关系维护
+          "我想我们应该保持联系。",
+          "虽然时间过去了，但我们的友谊依然珍贵。",
+          "我会记得这些重要的时刻。",
+        ],
+        47: [ // 关系边界
+          "我需要一些个人空间，希望你能理解。",
+          "我们的友谊很重要，但我也需要保持独立。",
+          "我尊重你的边界，也希望你尊重我的。",
+        ],
+        48: [ // 群体融入
+          "我想融入这个团队，你能帮我吗？",
+          "作为新人，我正在努力适应这里。",
+          "我希望能为这个群体贡献自己的力量。",
+        ],
+        49: [ // 社交影响力
+          "我希望能够激励和鼓舞身边的人。",
+          "让我们一起创造积极的氛围。",
+          "我相信我们能够互相影响，变得更好。",
+        ],
+        50: [ // 关系修复
+          "我想我们需要谈谈我们之间的问题。",
+          "我愿意为我的错误道歉。",
+          "我们的关系对我很重要，我想修复它。",
+        ],
+        51: [ // 社交礼仪
+          "请允许我按照礼仪来进行这次对话。",
+          "我想展现良好的教养和修养。",
+          "适当的礼仪让我们的交流更愉快。",
+        ],
+        // 特殊情境新增技能 (ID 52-65)
+        52: [ // 医患沟通
+          "医生，我有些担心，能详细解释一下吗？",
+          "谢谢您的耐心解释，我现在明白了。",
+          "我相信您的专业建议。",
+        ],
+        53: [ // 师生互动
+          "老师，我对这个问题有不同的看法。",
+          "感谢您的指导，我学到了很多。",
+          "您能再解释一下这个概念吗？",
+        ],
+        54: [ // 客服技巧
+          "谢谢您的耐心服务，问题解决了。",
+          "我对服务有些不满意，希望能得到改善。",
+          "您的专业态度让我很满意。",
+        ],
+        55: [ // 销售沟通
+          "您的建议很有道理，我需要考虑一下。",
+          "这个产品确实符合我的需求。",
+          "我想了解更多的细节信息。",
+        ],
+        56: [ // 法庭辩论
+          "我对这个论点有异议。",
+          "证据显示情况并非如此。",
+          "我要为我的当事人争取权益。",
+        ],
+        57: [ // 媒体采访
+          "我想澄清一下刚才的报道。",
+          "这个问题涉及多个方面。",
+          "我需要谨慎地回答这个问题。",
+        ],
+        58: [ // 心理咨询
+          "我觉得在这里很安全，可以敞开心扉。",
+          "谢谢您的理解和支持。",
+          "这个过程对我很有帮助。",
+        ],
+        59: [ // 跨国商务
+          "我们需要考虑文化差异的影响。",
+          "这个合作对双方都有益处。",
+          "我们用国际化的视野来看这个问题。",
+        ],
+        60: [ // 家庭调解
+          "家庭和睦对所有人都很重要。",
+          "我们需要互相理解和包容。",
+          "让我们为了家庭的幸福一起努力。",
+        ],
+        61: [ // 团队建设
+          "这个团建活动很有意义。",
+          "我们的团队合作越来越好了。",
+          "让我们一起为团队目标努力。",
+        ],
+        62: [ // 志愿服务
+          "谢谢您的帮助，我很感激。",
+          "我想为社区贡献自己的力量。",
+          "帮助他人让我感到很有意义。",
+        ],
+        63: [ // 学术交流
+          "您的研究观点很有启发性。",
+          "我们可以在这个领域合作研究。",
+          "学术讨论让我们都受益匪浅。",
+        ],
+        64: [ // 危机干预
+          "谢谢您在我最困难时陪伴我。",
+          "我现在感觉好一些了。",
+          "您的帮助对我来说很重要。",
+        ],
+        65: [ // 网络调解
+          "让我们理性地讨论这个问题。",
+          "网络环境需要我们共同维护。",
+          "我们应该用善意来化解误解。",
+        ],
       };
 
       const responses = roleplayResponses[this.skillId] || [
@@ -858,9 +1074,8 @@ export default {
         if (Math.random() < 0.3 && this.chatMessages.length > 8) {
           this.practiceCompleted = true;
           this.practiceResult = {
-            feedback: `很棒的情景对话练习！你在"${
-              this.skillInfo?.title || this.skillInfo?.name
-            }"中展现了良好的沟通技巧。`,
+            feedback: `很棒的情景对话练习！你在"${this.skillInfo?.title || this.skillInfo?.name
+              }"中展现了良好的沟通技巧。`,
             score: Math.floor(Math.random() * 20) + 80,
             improvements: [
               "在真实情况下运用这些技巧",
@@ -928,9 +1143,8 @@ export default {
         if (Math.random() < 0.3 && this.chatMessages.length > 6) {
           this.practiceCompleted = true;
           this.practiceResult = {
-            feedback: `太棒了！你在"${
-              this.skillInfo?.title || this.skillInfo?.name
-            }"的练习中表现出色。继续在实际生活中运用这些技巧，会让你的人际关系更加和谐！`,
+            feedback: `太棒了！你在"${this.skillInfo?.title || this.skillInfo?.name
+              }"的练习中表现出色。继续在实际生活中运用这些技巧，会让你的人际关系更加和谐！`,
             score: Math.floor(Math.random() * 20) + 80, // 80-100分
             improvements: [
               "继续在日常对话中练习这些技巧",
@@ -1024,7 +1238,7 @@ export default {
       ) {
         const randomScenarioTitle =
           this.skillInfo.scenarios[
-            Math.floor(Math.random() * this.skillInfo.scenarios.length)
+          Math.floor(Math.random() * this.skillInfo.scenarios.length)
           ];
         const scenarioContent = this.generateScenarioContentFromTitle(
           randomScenarioTitle,
@@ -1041,10 +1255,8 @@ export default {
       // 基于技能类型生成场景
       const skillBasedTemplates = {
         ice_breaking: [
-          `你在${
-            (this.skillInfo.scenarios && this.skillInfo.scenarios[0]) || "聚会"
-          }上遇到了一个看起来很有趣的人，但你们还不认识。现在是开始对话的好时机，尝试用${
-            this.skillInfo.title
+          `你在${(this.skillInfo.scenarios && this.skillInfo.scenarios[0]) || "聚会"
+          }上遇到了一个看起来很有趣的人，但你们还不认识。现在是开始对话的好时机，尝试用${this.skillInfo.title
           }来打破僵局...`,
           `你刚加入一个新的学习小组，大家都在自由交流。你想要融入其中，需要运用${this.skillInfo.title}来开启对话...`,
         ],
@@ -1606,6 +1818,7 @@ export default {
 }
 
 @keyframes typing {
+
   0%,
   80%,
   100% {
@@ -1890,6 +2103,7 @@ export default {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1899,6 +2113,7 @@ export default {
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0);
   }
