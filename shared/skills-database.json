@@ -1,0 +1,3414 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-09-17T00:00:00Z",
+    "totalSkills": 65,
+    "source": "frontend/skillsData.js"
+  },
+  "categories": {
+    "communication": {
+      "name": "沟通交流",
+      "skills": [
+        {
+          "id": "listen_actively",
+          "numeric_id": 1,
+          "title": "主动倾听",
+          "content": "真正的倾听不只是听到声音，而是理解对方的情感和需求。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "express_clearly",
+          "numeric_id": 2,
+          "title": "清晰表达",
+          "content": "用'我'开头的句式表达感受，避免指责性语言。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "topic_transition",
+          "numeric_id": 3,
+          "title": "话题延续",
+          "content": "通过提问和分享相关经历来延续话题。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "conflict_resolution",
+          "numeric_id": 4,
+          "title": "冲突解决",
+          "content": "学会以建设性方式处理人际冲突。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "empathy_building",
+          "numeric_id": 5,
+          "title": "共情建立",
+          "content": "培养理解他人情感的能力。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "boundary_setting",
+          "numeric_id": 6,
+          "title": "技能6",
+          "content": "技能6的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "small_talk",
+          "numeric_id": 7,
+          "title": "技能7",
+          "content": "技能7的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "deep_conversation",
+          "numeric_id": 8,
+          "title": "技能8",
+          "content": "技能8的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "feedback_giving",
+          "numeric_id": 9,
+          "title": "技能9",
+          "content": "技能9的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "feedback_receiving",
+          "numeric_id": 10,
+          "title": "技能10",
+          "content": "技能10的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "apology_skills",
+          "numeric_id": 11,
+          "title": "技能11",
+          "content": "技能11的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "appreciation_expression",
+          "numeric_id": 12,
+          "title": "技能12",
+          "content": "技能12的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "question_asking",
+          "numeric_id": 13,
+          "title": "技能13",
+          "content": "技能13的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "story_telling",
+          "numeric_id": 14,
+          "title": "技能14",
+          "content": "技能14的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "humor_usage",
+          "numeric_id": 15,
+          "title": "技能15",
+          "content": "技能15的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "emotional_regulation",
+          "numeric_id": 16,
+          "title": "技能16",
+          "content": "技能16的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "trust_building",
+          "numeric_id": 17,
+          "title": "技能17",
+          "content": "技能17的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "cultural_sensitivity",
+          "numeric_id": 18,
+          "title": "技能18",
+          "content": "技能18的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "digital_communication",
+          "numeric_id": 19,
+          "title": "技能19",
+          "content": "技能19的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "group_discussion",
+          "numeric_id": 20,
+          "title": "技能20",
+          "content": "技能20的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "presentation_skills",
+          "numeric_id": 21,
+          "title": "技能21",
+          "content": "技能21的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "negotiation_basics",
+          "numeric_id": 22,
+          "title": "技能22",
+          "content": "技能22的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "persuasion_ethics",
+          "numeric_id": 23,
+          "title": "技能23",
+          "content": "技能23的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "active_listening_advanced",
+          "numeric_id": 24,
+          "title": "技能24",
+          "content": "技能24的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        },
+        {
+          "id": "nonverbal_communication",
+          "numeric_id": 25,
+          "title": "技能25",
+          "content": "技能25的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "communication"
+        }
+      ]
+    },
+    "emotional_expression": {
+      "name": "情感表达",
+      "skills": [
+        {
+          "id": "feeling_sharing",
+          "numeric_id": 26,
+          "title": "技能26",
+          "content": "技能26的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "comfort_providing",
+          "numeric_id": 27,
+          "title": "技能27",
+          "content": "技能27的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "celebration_sharing",
+          "numeric_id": 28,
+          "title": "技能28",
+          "content": "技能28的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "disappointment_handling",
+          "numeric_id": 29,
+          "title": "失望处理",
+          "content": "学会健康地表达和处理失望情绪。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "anger_management",
+          "numeric_id": 30,
+          "title": "愤怒管理",
+          "content": "识别愤怒触发点，学会建设性表达。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "sadness_expression",
+          "numeric_id": 31,
+          "title": "悲伤表达",
+          "content": "允许自己感受悲伤，寻求情感支持。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "joy_sharing",
+          "numeric_id": 32,
+          "title": "快乐分享",
+          "content": "学会与他人分享快乐时光。",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "fear_discussion",
+          "numeric_id": 33,
+          "title": "技能33",
+          "content": "技能33的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "surprise_reaction",
+          "numeric_id": 34,
+          "title": "技能34",
+          "content": "技能34的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "emotional_validation",
+          "numeric_id": 35,
+          "title": "技能35",
+          "content": "技能35的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "emotional_boundaries",
+          "numeric_id": 36,
+          "title": "技能36",
+          "content": "技能36的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "vulnerability_sharing",
+          "numeric_id": 37,
+          "title": "技能37",
+          "content": "技能37的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        },
+        {
+          "id": "emotional_support",
+          "numeric_id": 38,
+          "title": "技能38",
+          "content": "技能38的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "emotional_expression"
+        }
+      ]
+    },
+    "relationship_building": {
+      "name": "关系建立",
+      "skills": [
+        {
+          "id": "friendship_building",
+          "numeric_id": 39,
+          "title": "技能39",
+          "content": "技能39的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "romantic_expression",
+          "numeric_id": 40,
+          "title": "技能40",
+          "content": "技能40的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "family_communication",
+          "numeric_id": 41,
+          "title": "技能41",
+          "content": "技能41的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "colleague_interaction",
+          "numeric_id": 42,
+          "title": "技能42",
+          "content": "技能42的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "mentor_relationship",
+          "numeric_id": 43,
+          "title": "技能43",
+          "content": "技能43的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "network_building",
+          "numeric_id": 44,
+          "title": "技能44",
+          "content": "技能44的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "intimacy_development",
+          "numeric_id": 45,
+          "title": "技能45",
+          "content": "技能45的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "trust_repair",
+          "numeric_id": 46,
+          "title": "技能46",
+          "content": "技能46的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "relationship_maintenance",
+          "numeric_id": 47,
+          "title": "技能47",
+          "content": "技能47的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "social_integration",
+          "numeric_id": 48,
+          "title": "技能48",
+          "content": "技能48的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "community_participation",
+          "numeric_id": 49,
+          "title": "技能49",
+          "content": "技能49的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "leadership_development",
+          "numeric_id": 50,
+          "title": "技能50",
+          "content": "技能50的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        },
+        {
+          "id": "team_collaboration",
+          "numeric_id": 51,
+          "title": "技能51",
+          "content": "技能51的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "relationship_building"
+        }
+      ]
+    },
+    "special_scenarios": {
+      "name": "特殊场景",
+      "skills": [
+        {
+          "id": "crisis_support",
+          "numeric_id": 52,
+          "title": "技能52",
+          "content": "技能52的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "grief_support",
+          "numeric_id": 53,
+          "title": "技能53",
+          "content": "技能53的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "celebration_participation",
+          "numeric_id": 54,
+          "title": "技能54",
+          "content": "技能54的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "conflict_mediation",
+          "numeric_id": 55,
+          "title": "技能55",
+          "content": "技能55的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "public_speaking",
+          "numeric_id": 56,
+          "title": "技能56",
+          "content": "技能56的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "job_interview",
+          "numeric_id": 57,
+          "title": "技能57",
+          "content": "技能57的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "customer_service",
+          "numeric_id": 58,
+          "title": "技能58",
+          "content": "技能58的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "teaching_communication",
+          "numeric_id": 59,
+          "title": "技能59",
+          "content": "技能59的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "healthcare_communication",
+          "numeric_id": 60,
+          "title": "技能60",
+          "content": "技能60的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "legal_communication",
+          "numeric_id": 61,
+          "title": "技能61",
+          "content": "技能61的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "cross_cultural",
+          "numeric_id": 62,
+          "title": "技能62",
+          "content": "技能62的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "intergenerational",
+          "numeric_id": 63,
+          "title": "技能63",
+          "content": "技能63的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "disability_inclusion",
+          "numeric_id": 64,
+          "title": "技能64",
+          "content": "技能64的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        },
+        {
+          "id": "crisis_intervention",
+          "numeric_id": 65,
+          "title": "技能65",
+          "content": "技能65的练习内容",
+          "difficulty": "intermediate",
+          "tags": [
+            "人际交往",
+            "练习"
+          ],
+          "scenarios": [
+            "日常交流",
+            "社交场合",
+            "人际互动"
+          ],
+          "category": "special_scenarios"
+        }
+      ]
+    }
+  },
+  "skills": {
+    "listen_actively": {
+      "id": "listen_actively",
+      "numeric_id": 1,
+      "title": "主动倾听",
+      "content": "真正的倾听不只是听到声音，而是理解对方的情感和需求。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "1": {
+      "id": "listen_actively",
+      "numeric_id": 1,
+      "title": "主动倾听",
+      "content": "真正的倾听不只是听到声音，而是理解对方的情感和需求。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "express_clearly": {
+      "id": "express_clearly",
+      "numeric_id": 2,
+      "title": "清晰表达",
+      "content": "用'我'开头的句式表达感受，避免指责性语言。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "2": {
+      "id": "express_clearly",
+      "numeric_id": 2,
+      "title": "清晰表达",
+      "content": "用'我'开头的句式表达感受，避免指责性语言。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "topic_transition": {
+      "id": "topic_transition",
+      "numeric_id": 3,
+      "title": "话题延续",
+      "content": "通过提问和分享相关经历来延续话题。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "3": {
+      "id": "topic_transition",
+      "numeric_id": 3,
+      "title": "话题延续",
+      "content": "通过提问和分享相关经历来延续话题。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "conflict_resolution": {
+      "id": "conflict_resolution",
+      "numeric_id": 4,
+      "title": "冲突解决",
+      "content": "学会以建设性方式处理人际冲突。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "4": {
+      "id": "conflict_resolution",
+      "numeric_id": 4,
+      "title": "冲突解决",
+      "content": "学会以建设性方式处理人际冲突。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "empathy_building": {
+      "id": "empathy_building",
+      "numeric_id": 5,
+      "title": "共情建立",
+      "content": "培养理解他人情感的能力。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "5": {
+      "id": "empathy_building",
+      "numeric_id": 5,
+      "title": "共情建立",
+      "content": "培养理解他人情感的能力。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "boundary_setting": {
+      "id": "boundary_setting",
+      "numeric_id": 6,
+      "title": "技能6",
+      "content": "技能6的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "6": {
+      "id": "boundary_setting",
+      "numeric_id": 6,
+      "title": "技能6",
+      "content": "技能6的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "small_talk": {
+      "id": "small_talk",
+      "numeric_id": 7,
+      "title": "技能7",
+      "content": "技能7的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "7": {
+      "id": "small_talk",
+      "numeric_id": 7,
+      "title": "技能7",
+      "content": "技能7的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "deep_conversation": {
+      "id": "deep_conversation",
+      "numeric_id": 8,
+      "title": "技能8",
+      "content": "技能8的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "8": {
+      "id": "deep_conversation",
+      "numeric_id": 8,
+      "title": "技能8",
+      "content": "技能8的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "feedback_giving": {
+      "id": "feedback_giving",
+      "numeric_id": 9,
+      "title": "技能9",
+      "content": "技能9的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "9": {
+      "id": "feedback_giving",
+      "numeric_id": 9,
+      "title": "技能9",
+      "content": "技能9的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "feedback_receiving": {
+      "id": "feedback_receiving",
+      "numeric_id": 10,
+      "title": "技能10",
+      "content": "技能10的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "10": {
+      "id": "feedback_receiving",
+      "numeric_id": 10,
+      "title": "技能10",
+      "content": "技能10的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "apology_skills": {
+      "id": "apology_skills",
+      "numeric_id": 11,
+      "title": "技能11",
+      "content": "技能11的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "11": {
+      "id": "apology_skills",
+      "numeric_id": 11,
+      "title": "技能11",
+      "content": "技能11的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "appreciation_expression": {
+      "id": "appreciation_expression",
+      "numeric_id": 12,
+      "title": "技能12",
+      "content": "技能12的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "12": {
+      "id": "appreciation_expression",
+      "numeric_id": 12,
+      "title": "技能12",
+      "content": "技能12的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "question_asking": {
+      "id": "question_asking",
+      "numeric_id": 13,
+      "title": "技能13",
+      "content": "技能13的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "13": {
+      "id": "question_asking",
+      "numeric_id": 13,
+      "title": "技能13",
+      "content": "技能13的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "story_telling": {
+      "id": "story_telling",
+      "numeric_id": 14,
+      "title": "技能14",
+      "content": "技能14的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "14": {
+      "id": "story_telling",
+      "numeric_id": 14,
+      "title": "技能14",
+      "content": "技能14的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "humor_usage": {
+      "id": "humor_usage",
+      "numeric_id": 15,
+      "title": "技能15",
+      "content": "技能15的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "15": {
+      "id": "humor_usage",
+      "numeric_id": 15,
+      "title": "技能15",
+      "content": "技能15的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "emotional_regulation": {
+      "id": "emotional_regulation",
+      "numeric_id": 16,
+      "title": "技能16",
+      "content": "技能16的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "16": {
+      "id": "emotional_regulation",
+      "numeric_id": 16,
+      "title": "技能16",
+      "content": "技能16的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "trust_building": {
+      "id": "trust_building",
+      "numeric_id": 17,
+      "title": "技能17",
+      "content": "技能17的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "17": {
+      "id": "trust_building",
+      "numeric_id": 17,
+      "title": "技能17",
+      "content": "技能17的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "cultural_sensitivity": {
+      "id": "cultural_sensitivity",
+      "numeric_id": 18,
+      "title": "技能18",
+      "content": "技能18的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "18": {
+      "id": "cultural_sensitivity",
+      "numeric_id": 18,
+      "title": "技能18",
+      "content": "技能18的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "digital_communication": {
+      "id": "digital_communication",
+      "numeric_id": 19,
+      "title": "技能19",
+      "content": "技能19的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "19": {
+      "id": "digital_communication",
+      "numeric_id": 19,
+      "title": "技能19",
+      "content": "技能19的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "group_discussion": {
+      "id": "group_discussion",
+      "numeric_id": 20,
+      "title": "技能20",
+      "content": "技能20的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "20": {
+      "id": "group_discussion",
+      "numeric_id": 20,
+      "title": "技能20",
+      "content": "技能20的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "presentation_skills": {
+      "id": "presentation_skills",
+      "numeric_id": 21,
+      "title": "技能21",
+      "content": "技能21的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "21": {
+      "id": "presentation_skills",
+      "numeric_id": 21,
+      "title": "技能21",
+      "content": "技能21的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "negotiation_basics": {
+      "id": "negotiation_basics",
+      "numeric_id": 22,
+      "title": "技能22",
+      "content": "技能22的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "22": {
+      "id": "negotiation_basics",
+      "numeric_id": 22,
+      "title": "技能22",
+      "content": "技能22的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "persuasion_ethics": {
+      "id": "persuasion_ethics",
+      "numeric_id": 23,
+      "title": "技能23",
+      "content": "技能23的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "23": {
+      "id": "persuasion_ethics",
+      "numeric_id": 23,
+      "title": "技能23",
+      "content": "技能23的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "active_listening_advanced": {
+      "id": "active_listening_advanced",
+      "numeric_id": 24,
+      "title": "技能24",
+      "content": "技能24的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "24": {
+      "id": "active_listening_advanced",
+      "numeric_id": 24,
+      "title": "技能24",
+      "content": "技能24的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "nonverbal_communication": {
+      "id": "nonverbal_communication",
+      "numeric_id": 25,
+      "title": "技能25",
+      "content": "技能25的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "25": {
+      "id": "nonverbal_communication",
+      "numeric_id": 25,
+      "title": "技能25",
+      "content": "技能25的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "communication"
+    },
+    "feeling_sharing": {
+      "id": "feeling_sharing",
+      "numeric_id": 26,
+      "title": "技能26",
+      "content": "技能26的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "26": {
+      "id": "feeling_sharing",
+      "numeric_id": 26,
+      "title": "技能26",
+      "content": "技能26的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "comfort_providing": {
+      "id": "comfort_providing",
+      "numeric_id": 27,
+      "title": "技能27",
+      "content": "技能27的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "27": {
+      "id": "comfort_providing",
+      "numeric_id": 27,
+      "title": "技能27",
+      "content": "技能27的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "celebration_sharing": {
+      "id": "celebration_sharing",
+      "numeric_id": 28,
+      "title": "技能28",
+      "content": "技能28的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "28": {
+      "id": "celebration_sharing",
+      "numeric_id": 28,
+      "title": "技能28",
+      "content": "技能28的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "disappointment_handling": {
+      "id": "disappointment_handling",
+      "numeric_id": 29,
+      "title": "失望处理",
+      "content": "学会健康地表达和处理失望情绪。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "29": {
+      "id": "disappointment_handling",
+      "numeric_id": 29,
+      "title": "失望处理",
+      "content": "学会健康地表达和处理失望情绪。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "anger_management": {
+      "id": "anger_management",
+      "numeric_id": 30,
+      "title": "愤怒管理",
+      "content": "识别愤怒触发点，学会建设性表达。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "30": {
+      "id": "anger_management",
+      "numeric_id": 30,
+      "title": "愤怒管理",
+      "content": "识别愤怒触发点，学会建设性表达。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "sadness_expression": {
+      "id": "sadness_expression",
+      "numeric_id": 31,
+      "title": "悲伤表达",
+      "content": "允许自己感受悲伤，寻求情感支持。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "31": {
+      "id": "sadness_expression",
+      "numeric_id": 31,
+      "title": "悲伤表达",
+      "content": "允许自己感受悲伤，寻求情感支持。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "joy_sharing": {
+      "id": "joy_sharing",
+      "numeric_id": 32,
+      "title": "快乐分享",
+      "content": "学会与他人分享快乐时光。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "32": {
+      "id": "joy_sharing",
+      "numeric_id": 32,
+      "title": "快乐分享",
+      "content": "学会与他人分享快乐时光。",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "fear_discussion": {
+      "id": "fear_discussion",
+      "numeric_id": 33,
+      "title": "技能33",
+      "content": "技能33的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "33": {
+      "id": "fear_discussion",
+      "numeric_id": 33,
+      "title": "技能33",
+      "content": "技能33的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "surprise_reaction": {
+      "id": "surprise_reaction",
+      "numeric_id": 34,
+      "title": "技能34",
+      "content": "技能34的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "34": {
+      "id": "surprise_reaction",
+      "numeric_id": 34,
+      "title": "技能34",
+      "content": "技能34的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "emotional_validation": {
+      "id": "emotional_validation",
+      "numeric_id": 35,
+      "title": "技能35",
+      "content": "技能35的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "35": {
+      "id": "emotional_validation",
+      "numeric_id": 35,
+      "title": "技能35",
+      "content": "技能35的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "emotional_boundaries": {
+      "id": "emotional_boundaries",
+      "numeric_id": 36,
+      "title": "技能36",
+      "content": "技能36的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "36": {
+      "id": "emotional_boundaries",
+      "numeric_id": 36,
+      "title": "技能36",
+      "content": "技能36的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "vulnerability_sharing": {
+      "id": "vulnerability_sharing",
+      "numeric_id": 37,
+      "title": "技能37",
+      "content": "技能37的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "37": {
+      "id": "vulnerability_sharing",
+      "numeric_id": 37,
+      "title": "技能37",
+      "content": "技能37的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "emotional_support": {
+      "id": "emotional_support",
+      "numeric_id": 38,
+      "title": "技能38",
+      "content": "技能38的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "38": {
+      "id": "emotional_support",
+      "numeric_id": 38,
+      "title": "技能38",
+      "content": "技能38的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "emotional_expression"
+    },
+    "friendship_building": {
+      "id": "friendship_building",
+      "numeric_id": 39,
+      "title": "技能39",
+      "content": "技能39的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "39": {
+      "id": "friendship_building",
+      "numeric_id": 39,
+      "title": "技能39",
+      "content": "技能39的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "romantic_expression": {
+      "id": "romantic_expression",
+      "numeric_id": 40,
+      "title": "技能40",
+      "content": "技能40的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "40": {
+      "id": "romantic_expression",
+      "numeric_id": 40,
+      "title": "技能40",
+      "content": "技能40的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "family_communication": {
+      "id": "family_communication",
+      "numeric_id": 41,
+      "title": "技能41",
+      "content": "技能41的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "41": {
+      "id": "family_communication",
+      "numeric_id": 41,
+      "title": "技能41",
+      "content": "技能41的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "colleague_interaction": {
+      "id": "colleague_interaction",
+      "numeric_id": 42,
+      "title": "技能42",
+      "content": "技能42的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "42": {
+      "id": "colleague_interaction",
+      "numeric_id": 42,
+      "title": "技能42",
+      "content": "技能42的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "mentor_relationship": {
+      "id": "mentor_relationship",
+      "numeric_id": 43,
+      "title": "技能43",
+      "content": "技能43的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "43": {
+      "id": "mentor_relationship",
+      "numeric_id": 43,
+      "title": "技能43",
+      "content": "技能43的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "network_building": {
+      "id": "network_building",
+      "numeric_id": 44,
+      "title": "技能44",
+      "content": "技能44的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "44": {
+      "id": "network_building",
+      "numeric_id": 44,
+      "title": "技能44",
+      "content": "技能44的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "intimacy_development": {
+      "id": "intimacy_development",
+      "numeric_id": 45,
+      "title": "技能45",
+      "content": "技能45的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "45": {
+      "id": "intimacy_development",
+      "numeric_id": 45,
+      "title": "技能45",
+      "content": "技能45的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "trust_repair": {
+      "id": "trust_repair",
+      "numeric_id": 46,
+      "title": "技能46",
+      "content": "技能46的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "46": {
+      "id": "trust_repair",
+      "numeric_id": 46,
+      "title": "技能46",
+      "content": "技能46的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "relationship_maintenance": {
+      "id": "relationship_maintenance",
+      "numeric_id": 47,
+      "title": "技能47",
+      "content": "技能47的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "47": {
+      "id": "relationship_maintenance",
+      "numeric_id": 47,
+      "title": "技能47",
+      "content": "技能47的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "social_integration": {
+      "id": "social_integration",
+      "numeric_id": 48,
+      "title": "技能48",
+      "content": "技能48的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "48": {
+      "id": "social_integration",
+      "numeric_id": 48,
+      "title": "技能48",
+      "content": "技能48的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "community_participation": {
+      "id": "community_participation",
+      "numeric_id": 49,
+      "title": "技能49",
+      "content": "技能49的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "49": {
+      "id": "community_participation",
+      "numeric_id": 49,
+      "title": "技能49",
+      "content": "技能49的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "leadership_development": {
+      "id": "leadership_development",
+      "numeric_id": 50,
+      "title": "技能50",
+      "content": "技能50的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "50": {
+      "id": "leadership_development",
+      "numeric_id": 50,
+      "title": "技能50",
+      "content": "技能50的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "team_collaboration": {
+      "id": "team_collaboration",
+      "numeric_id": 51,
+      "title": "技能51",
+      "content": "技能51的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "51": {
+      "id": "team_collaboration",
+      "numeric_id": 51,
+      "title": "技能51",
+      "content": "技能51的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "relationship_building"
+    },
+    "crisis_support": {
+      "id": "crisis_support",
+      "numeric_id": 52,
+      "title": "技能52",
+      "content": "技能52的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "52": {
+      "id": "crisis_support",
+      "numeric_id": 52,
+      "title": "技能52",
+      "content": "技能52的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "grief_support": {
+      "id": "grief_support",
+      "numeric_id": 53,
+      "title": "技能53",
+      "content": "技能53的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "53": {
+      "id": "grief_support",
+      "numeric_id": 53,
+      "title": "技能53",
+      "content": "技能53的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "celebration_participation": {
+      "id": "celebration_participation",
+      "numeric_id": 54,
+      "title": "技能54",
+      "content": "技能54的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "54": {
+      "id": "celebration_participation",
+      "numeric_id": 54,
+      "title": "技能54",
+      "content": "技能54的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "conflict_mediation": {
+      "id": "conflict_mediation",
+      "numeric_id": 55,
+      "title": "技能55",
+      "content": "技能55的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "55": {
+      "id": "conflict_mediation",
+      "numeric_id": 55,
+      "title": "技能55",
+      "content": "技能55的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "public_speaking": {
+      "id": "public_speaking",
+      "numeric_id": 56,
+      "title": "技能56",
+      "content": "技能56的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "56": {
+      "id": "public_speaking",
+      "numeric_id": 56,
+      "title": "技能56",
+      "content": "技能56的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "job_interview": {
+      "id": "job_interview",
+      "numeric_id": 57,
+      "title": "技能57",
+      "content": "技能57的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "57": {
+      "id": "job_interview",
+      "numeric_id": 57,
+      "title": "技能57",
+      "content": "技能57的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "customer_service": {
+      "id": "customer_service",
+      "numeric_id": 58,
+      "title": "技能58",
+      "content": "技能58的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "58": {
+      "id": "customer_service",
+      "numeric_id": 58,
+      "title": "技能58",
+      "content": "技能58的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "teaching_communication": {
+      "id": "teaching_communication",
+      "numeric_id": 59,
+      "title": "技能59",
+      "content": "技能59的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "59": {
+      "id": "teaching_communication",
+      "numeric_id": 59,
+      "title": "技能59",
+      "content": "技能59的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "healthcare_communication": {
+      "id": "healthcare_communication",
+      "numeric_id": 60,
+      "title": "技能60",
+      "content": "技能60的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "60": {
+      "id": "healthcare_communication",
+      "numeric_id": 60,
+      "title": "技能60",
+      "content": "技能60的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "legal_communication": {
+      "id": "legal_communication",
+      "numeric_id": 61,
+      "title": "技能61",
+      "content": "技能61的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "61": {
+      "id": "legal_communication",
+      "numeric_id": 61,
+      "title": "技能61",
+      "content": "技能61的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "cross_cultural": {
+      "id": "cross_cultural",
+      "numeric_id": 62,
+      "title": "技能62",
+      "content": "技能62的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "62": {
+      "id": "cross_cultural",
+      "numeric_id": 62,
+      "title": "技能62",
+      "content": "技能62的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "intergenerational": {
+      "id": "intergenerational",
+      "numeric_id": 63,
+      "title": "技能63",
+      "content": "技能63的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "63": {
+      "id": "intergenerational",
+      "numeric_id": 63,
+      "title": "技能63",
+      "content": "技能63的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "disability_inclusion": {
+      "id": "disability_inclusion",
+      "numeric_id": 64,
+      "title": "技能64",
+      "content": "技能64的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "64": {
+      "id": "disability_inclusion",
+      "numeric_id": 64,
+      "title": "技能64",
+      "content": "技能64的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "crisis_intervention": {
+      "id": "crisis_intervention",
+      "numeric_id": 65,
+      "title": "技能65",
+      "content": "技能65的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    },
+    "65": {
+      "id": "crisis_intervention",
+      "numeric_id": 65,
+      "title": "技能65",
+      "content": "技能65的练习内容",
+      "difficulty": "intermediate",
+      "tags": [
+        "人际交往",
+        "练习"
+      ],
+      "scenarios": [
+        "日常交流",
+        "社交场合",
+        "人际互动"
+      ],
+      "category": "special_scenarios"
+    }
+  },
+  "id_mapping": {
+    "1": "listen_actively",
+    "2": "express_clearly",
+    "3": "topic_transition",
+    "4": "conflict_resolution",
+    "5": "empathy_building",
+    "6": "boundary_setting",
+    "7": "small_talk",
+    "8": "deep_conversation",
+    "9": "feedback_giving",
+    "10": "feedback_receiving",
+    "11": "apology_skills",
+    "12": "appreciation_expression",
+    "13": "question_asking",
+    "14": "story_telling",
+    "15": "humor_usage",
+    "16": "emotional_regulation",
+    "17": "trust_building",
+    "18": "cultural_sensitivity",
+    "19": "digital_communication",
+    "20": "group_discussion",
+    "21": "presentation_skills",
+    "22": "negotiation_basics",
+    "23": "persuasion_ethics",
+    "24": "active_listening_advanced",
+    "25": "nonverbal_communication",
+    "26": "feeling_sharing",
+    "27": "comfort_providing",
+    "28": "celebration_sharing",
+    "29": "disappointment_handling",
+    "30": "anger_management",
+    "31": "sadness_expression",
+    "32": "joy_sharing",
+    "33": "fear_discussion",
+    "34": "surprise_reaction",
+    "35": "emotional_validation",
+    "36": "emotional_boundaries",
+    "37": "vulnerability_sharing",
+    "38": "emotional_support",
+    "39": "friendship_building",
+    "40": "romantic_expression",
+    "41": "family_communication",
+    "42": "colleague_interaction",
+    "43": "mentor_relationship",
+    "44": "network_building",
+    "45": "intimacy_development",
+    "46": "trust_repair",
+    "47": "relationship_maintenance",
+    "48": "social_integration",
+    "49": "community_participation",
+    "50": "leadership_development",
+    "51": "team_collaboration",
+    "52": "crisis_support",
+    "53": "grief_support",
+    "54": "celebration_participation",
+    "55": "conflict_mediation",
+    "56": "public_speaking",
+    "57": "job_interview",
+    "58": "customer_service",
+    "59": "teaching_communication",
+    "60": "healthcare_communication",
+    "61": "legal_communication",
+    "62": "cross_cultural",
+    "63": "intergenerational",
+    "64": "disability_inclusion",
+    "65": "crisis_intervention"
+  }
+}

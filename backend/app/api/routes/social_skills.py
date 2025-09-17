@@ -10,131 +10,15 @@ from app.core.ai_service import AIService
 from app.core.prompts import PROMPTS
 from app.api.deps import get_current_user
 from app.models.user import User
+from app.core.skills_data import skills_manager, get_legacy_database
 
 router = APIRouter()
 
 # 创建logger实例
 logger = logging.getLogger(__name__)
 
-
-SOCIAL_SKILLS_DATABASE = {
-    "communication": {
-        "name": "沟通交流",
-        "skills": [
-            {
-                "id": "listen_actively",
-                "title": "主动倾听",
-                "content": "真正的倾听不只是听到声音，而是理解对方的情感和需求。保持眼神接触，适时点头回应，重复对方的关键信息来确认理解。",
-                "difficulty": "basic",
-                "tags": ["倾听", "理解", "共情"],
-                "scenarios": ["朋友倾诉烦恼", "恋人分享心事", "同学讨论问题"]
-            },
-            {
-                "id": "express_clearly",
-                "title": "清晰表达",
-                "content": "用'我'开头的句式表达感受，避免指责性语言。比如说'我感到...'而不是'你总是...'，这样能减少对方的防御心理。",
-                "difficulty": "basic",
-                "tags": ["表达", "沟通", "情感"],
-                "scenarios": ["表达不满", "提出需求", "分享感受"]
-            },
-            {
-                "id": "topic_transition",
-                "title": "话题延续",
-                "content": "通过提问和分享相关经历来延续话题。使用'这让我想到...'或'你刚说的...很有趣'等过渡语，让对话自然流动。",
-                "difficulty": "intermediate",
-                "tags": ["话题", "聊天", "技巧"],
-                "scenarios": ["初次约会", "朋友聚会", "课堂讨论"]
-            }
-        ]
-    },
-    "emotional_expression": {
-        "name": "情感表达",
-        "skills": [
-            {
-                "id": "sincere_gratitude",
-                "title": "真诚感谢",
-                "content": "具体说出对方帮助你的地方和你的感受，比如'谢谢你昨天陪我到很晚，让我感觉没那么孤单'比简单的'谢谢'更有力量。",
-                "difficulty": "basic",
-                "tags": ["感谢", "真诚", "情感"],
-                "scenarios": ["朋友帮忙", "恋人关怀", "他人善意"]
-            },
-            {
-                "id": "romantic_expression",
-                "title": "浪漫表达",
-                "content": "浪漫不在于华丽的词藻，而在于细节的观察和真实的感受。注意对方的喜好，在合适的时机表达你的在意。",
-                "difficulty": "intermediate",
-                "tags": ["浪漫", "恋爱", "表达"],
-                "scenarios": ["情人节", "纪念日", "日常惊喜"]
-            },
-            {
-                "id": "emotion_sharing",
-                "title": "情绪分享",
-                "content": "学会在适当的时候分享自己的脆弱，这会增进彼此的信任。选择安全的人和合适的时机，坦诚分享内心的感受。",
-                "difficulty": "advanced",
-                "tags": ["信任", "分享", "深度"],
-                "scenarios": ["深度交流", "关系深化", "情感支持"]
-            }
-        ]
-    },
-    "relationship_building": {
-        "name": "关系建立",
-        "skills": [
-            {
-                "id": "ice_breaking",
-                "title": "破冰技巧",
-                "content": "从环境、共同话题或轻松话题开始。观察对方的兴趣点，用开放性问题引导对话，让对方有分享的欲望。",
-                "difficulty": "basic",
-                "tags": ["破冰", "初见", "社交"],
-                "scenarios": ["新同学", "聚会认识", "社团活动"]
-            },
-            {
-                "id": "trust_building",
-                "title": "信任建立",
-                "content": "信任需要时间积累。始终保持诚实，遵守承诺，在小事上展现可靠性，逐步建立深度信任关系。",
-                "difficulty": "intermediate",
-                "tags": ["信任", "可靠", "深度"],
-                "scenarios": ["友谊深化", "恋爱关系", "团队合作"]
-            },
-            {
-                "id": "boundary_setting",
-                "title": "边界设立",
-                "content": "健康的关系需要清晰的边界。温和但坚定地表达你的底线，尊重对方的边界，在尊重中建立安全感。",
-                "difficulty": "advanced",
-                "tags": ["边界", "尊重", "健康"],
-                "scenarios": ["关系界定", "个人空间", "价值坚持"]
-            }
-        ]
-    },
-    "special_scenarios": {
-        "name": "特殊场景",
-        "skills": [
-            {
-                "id": "conflict_resolution",
-                "title": "冲突处理",
-                "content": "冲突时保持冷静，先理解对方的立场，再表达自己的观点。寻找共同点，用合作而非对抗的方式解决问题。",
-                "difficulty": "advanced",
-                "tags": ["冲突", "解决", "沟通"],
-                "scenarios": ["恋人争吵", "朋友分歧", "团队矛盾"]
-            },
-            {
-                "id": "digital_communication",
-                "title": "数字社交",
-                "content": "线上聊天时注意语气和表情包的使用，及时回复显示尊重，重要的话题最好面对面或语音交流。",
-                "difficulty": "intermediate",
-                "tags": ["线上", "社交媒体", "聊天"],
-                "scenarios": ["微信聊天", "社交软件", "远程关系"]
-            },
-            {
-                "id": "group_social",
-                "title": "群体社交",
-                "content": "在群体中要平衡参与度，既不要过于抢风头，也不要过于沉默。学会倾听不同观点，做好话题的引导者和连接者。",
-                "difficulty": "intermediate",
-                "tags": ["群体", "聚会", "领导力"],
-                "scenarios": ["朋友聚会", "班级活动", "社团讨论"]
-            }
-        ]
-    }
-}
+# 使用新的统一数据源（向后兼容）
+SOCIAL_SKILLS_DATABASE = get_legacy_database()
 
 @router.get("/skills/categories")
 async def get_skill_categories():
@@ -185,15 +69,8 @@ async def generate_skill_scenario(
 ):
     """为特定技能生成AI练习场景"""
     try:
-        # 查找技能
-        skill = None
-        for category_data in SOCIAL_SKILLS_DATABASE.values():
-            for s in category_data["skills"]:
-                if s["id"] == skill_id:
-                    skill = s
-                    break
-            if skill:
-                break
+        # 查找技能 - 使用新的数据管理器
+        skill = skills_manager.get_skill_by_id(skill_id)
         
         if not skill:
             raise HTTPException(status_code=404, detail="技能不存在")
@@ -274,21 +151,32 @@ async def interactive_skill_practice(
         chat_history = practice_data.get("chat_history", [])  # 新增：对话历史
         is_first_message = practice_data.get("is_first_message", False)  # 新增：是否首次消息
         
+        # 添加调试日志
+        logger.info(f"收到交互式练习请求 - skill_id: {skill_id}, user_response: {user_response[:50] if user_response else 'None'}")
+        logger.info(f"scenario_context: {scenario_context[:100] if scenario_context else 'None'}")
+        logger.info(f"is_first_message: {is_first_message}, chat_history length: {len(chat_history) if chat_history else 0}")
+        
         if not skill_id or not user_response:
+            logger.error(f"缺少必要参数 - skill_id: {skill_id}, user_response: {user_response}")
             raise HTTPException(status_code=400, detail="缺少必要参数")
         
-        # 查找技能
-        skill = None
-        for category_data in SOCIAL_SKILLS_DATABASE.values():
-            for s in category_data["skills"]:
-                if s["id"] == skill_id:
-                    skill = s
-                    break
-            if skill:
-                break
+        # 查找技能 - 使用新的数据管理器
+        skill = skills_manager.get_skill_by_id(skill_id)
         
+        # 如果找不到技能，记录日志但继续处理
         if not skill:
-            raise HTTPException(status_code=404, detail="技能不存在")
+            logger.warning(f"未找到技能 {skill_id}，使用默认技能信息")
+            # 创建一个基本的技能对象作为后备
+            skill = {
+                "id": str(skill_id),
+                "title": "人际交往技巧",
+                "content": "通过练习提升人际交往能力",
+                "difficulty": "intermediate",
+                "tags": ["人际交往", "练习"],
+                "scenarios": ["日常交流", "社交场合", "人际互动"]
+            }
+        
+        logger.info(f"找到技能: {skill.get('title', 'Unknown')}")
         
         # 构建角色扮演对话提示词
         if is_first_message:
@@ -343,6 +231,11 @@ async def interactive_skill_practice(
         
         logger.info(f"AI服务响应: {ai_response[:100] if ai_response else 'None'}")
         
+        # 检查AI响应是否包含错误信息
+        if ai_response and any(error_word in ai_response for error_word in ["AI服务", "配置错误", "不可用", "暂时不可用", "技术问题"]):
+            logger.warning(f"AI服务返回错误响应: {ai_response}")
+            raise Exception(f"AI服务异常: {ai_response}")
+        
         # 确保ai_response是字符串
         if isinstance(ai_response, str):
             response_content = ai_response
@@ -362,6 +255,10 @@ async def interactive_skill_practice(
         
     except Exception as e:
         logger.error(f"角色扮演对话失败: {str(e)}")
+        logger.error(f"异常详情: {type(e).__name__}")
+        import traceback
+        logger.error(f"异常堆栈: {traceback.format_exc()}")
+        
         # 返回备用回应
         fallback_responses = {
             "conflict_resolution": "我理解你的想法，但我们是不是可以找个都能接受的解决方案？",
@@ -371,6 +268,7 @@ async def interactive_skill_practice(
         }
         
         fallback_content = fallback_responses.get(skill_id, "我明白你的意思，让我们继续聊聊吧。")
+        logger.info(f"使用备用回应: {fallback_content}")
         
         return {
             "skill": skill if 'skill' in locals() else {"id": skill_id, "title": "交往技巧"},
@@ -441,15 +339,8 @@ async def get_practice_feedback(
         if not skill_id or not user_response:
             raise HTTPException(status_code=400, detail="缺少必要参数")
         
-        # 查找技能
-        skill = None
-        for category_data in SOCIAL_SKILLS_DATABASE.values():
-            for s in category_data["skills"]:
-                if s["id"] == skill_id:
-                    skill = s
-                    break
-            if skill:
-                break
+        # 查找技能 - 使用新的数据管理器
+        skill = skills_manager.get_skill_by_id(skill_id)
         
         if not skill:
             raise HTTPException(status_code=404, detail="技能不存在")
