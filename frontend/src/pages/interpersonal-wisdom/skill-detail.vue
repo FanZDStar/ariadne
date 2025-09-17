@@ -75,7 +75,7 @@
       </view>
 
       <!-- 实践步骤 -->
-      <view class="section">
+      <view class="section" v-if="skillData.practiceSteps && skillData.practiceSteps.length > 0">
         <view class="section-header">
           <text class="section-title">📋 实践步骤</text>
         </view>
@@ -97,12 +97,34 @@
       </view>
 
       <!-- 场景应用 -->
-      <view class="section">
+      <view class="section" v-if="skillData.scenarios && skillData.scenarios.length > 0">
         <view class="section-header">
           <text class="section-title">🎭 场景应用</text>
         </view>
         <view class="scenarios">
           <view v-for="scenario in skillData.scenarios" :key="scenario.id" class="scenario-card"
+            @click="practiceScenario(scenario)">
+            <view class="scenario-header">
+              <text class="scenario-title">{{ scenario.title }}</text>
+              <text class="scenario-difficulty">{{ scenario.difficulty }}</text>
+            </view>
+            <text class="scenario-description">{{ scenario.description }}</text>
+            <view class="scenario-action">
+              <text class="action-text">开始练习</text>
+              <text class="action-arrow">→</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 实践场景 (fallback for practiceScenarios) -->
+      <view class="section"
+        v-if="skillData.practiceScenarios && skillData.practiceScenarios.length > 0 && (!skillData.scenarios || skillData.scenarios.length === 0)">
+        <view class="section-header">
+          <text class="section-title">🎭 实践场景</text>
+        </view>
+        <view class="scenarios">
+          <view v-for="(scenario, index) in skillData.practiceScenarios" :key="index" class="scenario-card"
             @click="practiceScenario(scenario)">
             <view class="scenario-header">
               <text class="scenario-title">{{ scenario.title }}</text>
@@ -1511,18 +1533,43 @@ export default {
               example: "从'生气'细分为'恼怒''愤怒''烦躁'"
             }
           ],
-          practiceScenarios: [
+          practiceSteps: [
             {
+              title: "建立情感词汇库",
+              description: "收集和学习不同层次的情感词汇",
+              tips: "从基础情感词开始，逐步扩展到更具体的表达"
+            },
+            {
+              title: "日常情感标记",
+              description: "在日常生活中用精确词汇标记自己的情感",
+              tips: "每天至少用三个不同的情感词汇描述心情"
+            },
+            {
+              title: "情感强度练习",
+              description: "学会区分同一种情感的不同强度",
+              tips: "用1-10的强度等级来描述情感程度"
+            },
+            {
+              title: "实际应用练习",
+              description: "在与他人交流时运用精确的情感表达",
+              tips: "避免使用'好'、'不好'等模糊词汇"
+            }
+          ],
+          scenarios: [
+            {
+              id: 1,
               title: "情感日记",
               description: "用精确的词汇记录每日情感体验",
               difficulty: "基础"
             },
             {
+              id: 2,
               title: "情感词汇卡片",
               description: "制作情感词汇卡片，日常练习区分相似情感",
               difficulty: "基础"
             },
             {
+              id: 3,
               title: "情感强度标记",
               description: "为同一种情感标记不同强度等级",
               difficulty: "进阶"
@@ -1551,6 +1598,28 @@ export default {
               title: "共情地图",
               content: "观察他人的说、做、想、感",
               example: "他说什么、做什么、想什么、感受什么"
+            }
+          ],
+          practiceSteps: [
+            {
+              title: "观察练习",
+              description: "仔细观察他人的非语言信号和情绪表现",
+              tips: "注意面部表情、肢体语言、语调变化"
+            },
+            {
+              title: "换位思考",
+              description: "尝试站在对方的角度理解问题",
+              tips: "问自己：如果我是他们，我会有什么感受？"
+            },
+            {
+              title: "情感反映",
+              description: "用语言反映你观察到的对方情感",
+              tips: "使用'你似乎感到...'、'我注意到你...'等表达"
+            },
+            {
+              title: "恰当回应",
+              description: "根据对方的情感状态给予合适的回应",
+              tips: "倾听而不急于给建议，陪伴而不试图解决"
             }
           ],
           practiceScenarios: [
@@ -2148,6 +2217,28 @@ export default {
               title: "环境观察",
               content: "从当下情境中寻找自然话题",
               example: "这个活动很有趣呢，你是怎么知道的？"
+            }
+          ],
+          practiceSteps: [
+            {
+              title: "环境扫描",
+              description: "进入新环境时先观察周围的人和事",
+              tips: "注意活动主题、装饰、其他人的状态等可聊的话题"
+            },
+            {
+              title: "安全开场",
+              description: "选择中性、积极的话题开始对话",
+              tips: "避免个人隐私话题，从当下共同体验开始"
+            },
+            {
+              title: "观察反应",
+              description: "注意对方的回应，调整对话方向",
+              tips: "如果对方回应积极就继续，如果冷淡就礼貌结束"
+            },
+            {
+              title: "自然过渡",
+              description: "从破冰话题自然过渡到更深入的交流",
+              tips: "根据对方的兴趣点展开进一步的对话"
             }
           ],
           practiceScenarios: [
