@@ -151,12 +151,18 @@ async def interactive_skill_practice(
         chat_history = practice_data.get("chat_history", [])  # 新增：对话历史
         is_first_message = practice_data.get("is_first_message", False)  # 新增：是否首次消息
         
-        # 添加调试日志
-        logger.info(f"收到交互式练习请求 - skill_id: {skill_id}, user_response: {user_response[:50] if user_response else 'None'}")
-        logger.info(f"scenario_context: {scenario_context[:100] if scenario_context else 'None'}")
-        logger.info(f"is_first_message: {is_first_message}, chat_history length: {len(chat_history) if chat_history else 0}")
+        # 添加详细的控制台打印信息
+        print("\n" + "="*80)
+        print("🎯 【技能练习会话开始】")
+        print("="*80)
+        print(f"📋 技能ID: {skill_id}")
+        print(f"👤 用户说: {user_response}")
+        print(f"🎬 场景背景: {scenario_context}")
+        print(f"🔄 是否首次对话: {is_first_message}")
+        print(f"📚 历史对话数量: {len(chat_history) if chat_history else 0}")
         
         if not skill_id or not user_response:
+            print("❌ 缺少必要参数")
             logger.error(f"缺少必要参数 - skill_id: {skill_id}, user_response: {user_response}")
             raise HTTPException(status_code=400, detail="缺少必要参数")
         
@@ -165,6 +171,7 @@ async def interactive_skill_practice(
         
         # 如果找不到技能，记录日志但继续处理
         if not skill:
+            print(f"⚠️ 未找到技能 {skill_id}，使用默认技能信息")
             logger.warning(f"未找到技能 {skill_id}，使用默认技能信息")
             # 创建一个基本的技能对象作为后备
             skill = {
@@ -176,34 +183,51 @@ async def interactive_skill_practice(
                 "scenarios": ["日常交流", "社交场合", "人际互动"]
             }
         
+        print(f"✅ 技能信息:")
+        print(f"   📖 技能名称: {skill.get('title', 'Unknown')}")
+        print(f"   📝 技能描述: {skill.get('content', 'N/A')}")
+        print(f"   🏷️ 技能标签: {', '.join(skill.get('tags', []))}")
+        
         logger.info(f"找到技能: {skill.get('title', 'Unknown')}")
         
-        # 构建角色扮演对话提示词
+        # 构建角色扮演对话提示词 - 修正角色设定
         if is_first_message:
-            # 首次对话，AI介绍场景并开始扮演
+            # 首次对话，AI扮演需要帮助的人，用户练习技能
             roleplay_prompt = f"""
-你现在要与用户进行"{skill['title']}"技能的情景练习。请你完全进入角色扮演模式。
+你现在要与用户进行"{skill['title']}"技能的情景练习。
+
+**重要角色设定：**
+- 你要扮演场景中**需要帮助的人**（如：心情不好的朋友、遇到困难的同学、感到失望的室友等）
+- 用户要练习"{skill['title']}"技能，扮演**提供帮助的人**（如：倾听者、劝说者、支持者）
 
 练习场景：{scenario_context}
 
-重要指示：
-1. 你要扮演场景中的相关角色（如：朋友、恋人、室友、同学等）
-2. 完全代入角色，用第一人称与用户对话
-3. 不要进行分析或指导，只要自然地对话
-4. 根据场景情况合理回应用户
-5. 保持角色的情感状态和个性特点
-6. 以自然、友善的方式与用户对话
+**你的角色任务：**
+1. 扮演需要帮助、支持或倾听的人
+2. 表达出相应的情感状态（失望、难过、困惑、压力等）
+3. 给用户提供练习"{skill['title']}"技能的机会
+4. 用第一人称自然对话，不要跳出角色
+5. 不要主动提供解决方案，而是表达需要帮助的状态
+
+举例说明：
+- 如果是"主动倾听"：你扮演想要倾诉的朋友，用户练习倾听技巧
+- 如果是"失望处理"：你扮演感到失望的人，用户练习安慰和支持技巧
+- 如果是"冲突解决"：你扮演有分歧的一方，用户练习调解和沟通技巧
 
 用户刚说：{user_response}
 
-请作为场景中的角色自然回应，不要说教或分析。
+请作为需要帮助的角色开始对话，让用户有机会练习"{skill['title']}"技能。
 """
         else:
-            # 继续对话，基于历史记录
-            history_text = "\n".join([f"{'用户' if msg.get('role') == 'user' else '角色'}：{msg.get('content', '')}" for msg in chat_history[-6:]])  # 最近6条历史
+            # 继续对话，基于历史记录 - 维持AI作为需要帮助的人的角色
+            history_text = "\n".join([f"{'用户' if msg.get('role') == 'user' else '我'}：{msg.get('content', '')}" for msg in chat_history[-6:]])  # 最近6条历史
             
             roleplay_prompt = f"""
 你正在与用户进行"{skill['title']}"技能的情景角色扮演练习。
+
+**角色设定提醒：**
+- 你扮演：需要帮助、支持或倾听的人
+- 用户扮演：练习"{skill['title']}"技能的帮助者
 
 练习场景：{scenario_context}
 
@@ -212,27 +236,52 @@ async def interactive_skill_practice(
 
 用户刚说：{user_response}
 
-重要指示：
-1. 继续扮演场景中的角色，保持角色一致性
-2. 用第一人称自然回应，不要跳出角色
-3. 不要进行技能分析或指导
+**继续扮演指示：**
+1. 继续扮演需要帮助的人，保持角色一致性
+2. 根据用户的回应表现出相应的情感反应
+3. 给用户更多练习"{skill['title']}"技能的机会
+4. 不要跳出角色去指导或分析
+5. 适度表达感谢、困惑、需要或其他真实情感
+
+请继续作为需要帮助的角色自然回应：
 4. 根据对话历史和当前情况用自然、友善的方式回应合理回应
 5. 适当推进情景发展
 
 请作为角色继续对话：
 """
 
+        # 详细打印AI提示词信息
+        print(f"\n🤖 【AI提示词构建完成】")
+        print(f"🎭 对话类型: {'首次对话' if is_first_message else '继续对话'}")
+        if not is_first_message and chat_history:
+            print(f"📖 对话历史: {len(chat_history)} 条记录")
+            for i, msg in enumerate(chat_history[-3:], 1):  # 显示最近3条
+                role = "用户" if msg.get('role') == 'user' else "AI角色"
+                content = msg.get('content', '')[:50] + '...' if len(msg.get('content', '')) > 50 else msg.get('content', '')
+                print(f"   {i}. {role}: {content}")
+        
+        print(f"\n📜 【完整AI提示词】")
+        print("-" * 80)
+        print(roleplay_prompt)
+        print("-" * 80)
+
         ai_service = AIService()
+        print(f"🚀 正在调用AI服务...")
         logger.info(f"正在调用AI服务，技能ID: {skill_id}")
         logger.debug(f"AI提示词: {roleplay_prompt[:200]}...")
         
         messages = [{"role": "user", "content": roleplay_prompt}]
         ai_response = await ai_service.get_response(messages, "social-skills")
         
+        print(f"✅ AI服务响应成功")
+        print(f"📝 AI回复内容: {ai_response}")
+        print(f"📏 回复长度: {len(ai_response) if ai_response else 0} 字符")
+        
         logger.info(f"AI服务响应: {ai_response[:100] if ai_response else 'None'}")
         
         # 检查AI响应是否包含错误信息
         if ai_response and any(error_word in ai_response for error_word in ["AI服务", "配置错误", "不可用", "暂时不可用", "技术问题"]):
+            print(f"⚠️ AI服务返回错误响应: {ai_response}")
             logger.warning(f"AI服务返回错误响应: {ai_response}")
             raise Exception(f"AI服务异常: {ai_response}")
         
@@ -245,6 +294,15 @@ async def interactive_skill_practice(
         # 随机决定是否结束练习（对话进行8轮以上且30%概率）
         should_end = len(chat_history) > 8 and random.random() < 0.3
         
+        # 打印最终结果
+        print(f"\n🎉 【练习结果】")
+        print(f"✨ 最终AI回复: {response_content}")
+        print(f"🔄 对话是否继续: {not should_end}")
+        print(f"📊 练习是否完成: {should_end}")
+        print("="*80)
+        print("🎯 【技能练习会话结束】")
+        print("="*80 + "\n")
+        
         return {
             "skill": skill,
             "ai_response": response_content,
@@ -254,6 +312,10 @@ async def interactive_skill_practice(
         }
         
     except Exception as e:
+        print(f"\n❌ 【练习过程发生异常】")
+        print(f"🚨 异常类型: {type(e).__name__}")
+        print(f"📝 异常信息: {str(e)}")
+        
         logger.error(f"角色扮演对话失败: {str(e)}")
         logger.error(f"异常详情: {type(e).__name__}")
         import traceback
@@ -268,6 +330,12 @@ async def interactive_skill_practice(
         }
         
         fallback_content = fallback_responses.get(skill_id, "我明白你的意思，让我们继续聊聊吧。")
+        
+        print(f"🔧 使用备用回复: {fallback_content}")
+        print("="*80)
+        print("🎯 【技能练习会话结束（异常）】")
+        print("="*80 + "\n")
+        
         logger.info(f"使用备用回应: {fallback_content}")
         
         return {
