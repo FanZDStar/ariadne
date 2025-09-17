@@ -225,12 +225,6 @@
       }
     },
     {
-      "path": "pages/interpersonal-wisdom/category-skills",
-      "style": {
-        "navigationBarTitleText": "技能分类"
-      }
-    },
-    {
       "path": "pages/interpersonal-wisdom/interactive-practice",
       "style": {
         "navigationBarTitleText": "AI对话练习"

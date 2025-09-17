@@ -16,11 +16,6 @@
       <view class="skill-card">
         <view class="skill-header">
           <text class="skill-title">{{ skillInfo.title }}</text>
-          <view class="difficulty-badge" :class="skillInfo.difficulty">
-            <text class="difficulty-text">{{
-              getDifficultyText(skillInfo.difficulty)
-            }}</text>
-          </view>
         </view>
         <text class="skill-content">{{ skillInfo.content }}</text>
         <view class="skill-tags">
@@ -31,23 +26,6 @@
       </view>
     </view>
 
-    <!-- 场景展示模式 -->
-    <!-- <view v-if="practiceType === 'scenario' && scenarioData" class="scenario-section">
-            <view class="scenario-card">
-                <text class="scenario-title">🎬 练习场景</text>
-                <view class="scenario-content">
-                    <text class="scenario-text">{{ scenarioData.content }}</text>
-                </view>
-                <view class="scenario-actions">
-                    <view class="action-btn primary" @click="startScenarioPractice">
-                        <text class="btn-text">开始练习</text>
-                    </view>
-                    <view class="action-btn secondary" @click="regenerateScenario">
-                        <text class="btn-text">重新生成</text>
-                    </view>
-                </view>
-            </view>
-        </view> -->
     <view v-if="practiceType === 'scenario' && scenarioData" class="scenario-section">
       <view class="scenario-card">
         <view class="scenario-header">
@@ -217,24 +195,6 @@
       </view>
     </view>
 
-    <!-- 练习统计 -->
-    <view v-if="practiceStats" class="stats-section">
-      <text class="stats-title">📊 练习统计</text>
-      <view class="stats-grid">
-        <view class="stat-item">
-          <text class="stat-number">{{ practiceStats.totalPractices }}</text>
-          <text class="stat-label">总练习次数</text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-number">{{ practiceStats.masteredSkills }}</text>
-          <text class="stat-label">掌握技巧</text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-number">{{ practiceStats.averageScore }}%</text>
-          <text class="stat-label">平均得分</text>
-        </view>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -243,9 +203,11 @@ export default {
   data() {
     return {
       skillId: "",
+      scenarioId: "",
       practiceType: "scenario", // scenario, practice
       skillInfo: null,
       scenarioData: null,
+      currentScenario: null, // 添加当前场景信息
       practiceMode: "", // interactive, guided
       chatMessages: [],
       userInput: "",
@@ -320,6 +282,7 @@ export default {
   onLoad(options) {
     this.skillId = options.skillId || "";
     this.practiceType = options.type || "scenario";
+    this.scenarioId = options.scenarioId || "";
 
     // 接收从URL传递的skill信息
     if (options.skillTitle) {
@@ -336,6 +299,15 @@ export default {
         scenarios: options.skillScenarios
           ? JSON.parse(decodeURIComponent(options.skillScenarios))
           : [],
+      };
+    }
+
+    // 接收场景信息
+    if (options.scenarioTitle && options.scenarioDescription) {
+      this.currentScenario = {
+        id: options.scenarioId,
+        title: decodeURIComponent(options.scenarioTitle),
+        description: decodeURIComponent(options.scenarioDescription)
       };
     }
 
@@ -395,6 +367,18 @@ export default {
     // },
 
     async loadScenario() {
+      // 如果有从detail页面传递的场景信息，优先使用
+      if (this.currentScenario) {
+        this.scenarioData = {
+          title: `${this.skillInfo?.title || '技能'} - ${this.currentScenario.title}`,
+          content: `🎯 开始进行「${this.skillInfo?.title || '技能'}」技能练习\n\n📝 练习场景：${this.currentScenario.description}\n\n请准备开始练习，AI将扮演场景中的对话方，你来运用${this.skillInfo?.title || '相关'}技巧与AI进行互动。`,
+          source: "detail_page",
+          scenario_info: this.currentScenario
+        };
+        return;
+      }
+
+      // 否则尝试从缓存加载
       const cachedScenario = uni.getStorageSync("currentScenario");
       if (cachedScenario && cachedScenario.scenario) {
         this.scenarioData = cachedScenario.scenario;
@@ -1352,9 +1336,11 @@ export default {
     getScenarioSourceIcon() {
       if (!this.scenarioData) return "📝";
 
-      switch (this.scenarioData.type) {
+      switch (this.scenarioData.source) {
         case "ai_generated":
           return "🤖";
+        case "detail_page":
+          return "🎯";
         case "fallback":
           return "📚";
         default:
@@ -1365,9 +1351,11 @@ export default {
     getScenarioSourceText() {
       if (!this.scenarioData) return "标准场景";
 
-      switch (this.scenarioData.type) {
+      switch (this.scenarioData.source) {
         case "ai_generated":
           return "AI智能生成";
+        case "detail_page":
+          return "场景练习";
         case "fallback":
           return "经典场景";
         default:
@@ -1378,9 +1366,11 @@ export default {
     getScenarioSourceClass() {
       if (!this.scenarioData) return "source-default";
 
-      switch (this.scenarioData.type) {
+      switch (this.scenarioData.source) {
         case "ai_generated":
           return "source-ai";
+        case "detail_page":
+          return "source-detail";
         case "fallback":
           return "source-fallback";
         default:
@@ -2013,6 +2003,12 @@ export default {
   background-color: #e8f5e8;
   color: #4caf50;
   border: 1rpx solid #4caf50;
+}
+
+.scenario-source.source-detail {
+  background-color: #e3f2fd;
+  color: #2196f3;
+  border: 1rpx solid #2196f3;
 }
 
 .scenario-source.source-fallback {

@@ -9,10 +9,6 @@
               <text class="meta-icon">⏱️</text>
               <text class="meta-text">{{ skillData.estimatedTime }}分钟</text>
             </view>
-            <view class="meta-item">
-              <text class="meta-icon">👥</text>
-              <text class="meta-text">{{ skillData.learnerCount }}人学习</text>
-            </view>
           </view>
         </view>
       </view>
@@ -214,47 +210,63 @@ export default {
     },
 
 
-  startScenarioPractice() {
-    // 传递完整的技能信息到练习页面
-    const skillParams = {
-      skillId: this.skillData.id,
-      type: "practice",
-      skillTitle: encodeURIComponent(this.skillData.name),
-      skillContent: encodeURIComponent(this.skillData.description),
-      skillTags: encodeURIComponent(JSON.stringify(this.skillData.tags)),
-      skillScenarios: encodeURIComponent(
-        JSON.stringify(this.skillData.scenarios || [])
-      ),
+    startScenarioPractice() {
+      // 传递完整的技能信息到练习页面
+      const skillParams = {
+        skillId: this.skillData.id,
+        type: "practice",
+        skillTitle: encodeURIComponent(this.skillData.name),
+        skillContent: encodeURIComponent(this.skillData.description),
+        skillTags: encodeURIComponent(JSON.stringify(this.skillData.tags)),
+        skillScenarios: encodeURIComponent(
+          JSON.stringify(this.skillData.scenarios || [])
+        ),
+      };
+
+      const queryString = Object.entries(skillParams)
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&");
+
+      uni.navigateTo({
+        url: `/pages/interpersonal-wisdom/skill-practice?${queryString}`,
+      });
+    },
+
+    startLearning() {
+      this.startScenarioPractice();
+    },
+
+    continueLearning() {
+      this.startScenarioPractice();
+    },
+
+    reviewSkill() {
+      this.startScenarioPractice();
+    },
+
+    async generatePracticeScenario() {
+      this.startScenarioPractice();
+    },
+
+    practiceScenario(scenario) {
+      // 传递完整的技能和场景信息到练习页面
+      const practiceParams = {
+        skillId: this.skillData.id,
+        scenarioId: scenario.id,
+        type: "scenario",
+        skillTitle: encodeURIComponent(this.skillData.name),
+        skillContent: encodeURIComponent(this.skillData.description),
+        skillTags: encodeURIComponent(JSON.stringify(this.skillData.tags)),
+        scenarioTitle: encodeURIComponent(scenario.title),
+        scenarioDescription: encodeURIComponent(scenario.description)
     };
 
-    const queryString = Object.entries(skillParams)
+    const queryString = Object.entries(practiceParams)
       .map(([key, value]) => `${key}=${value}`)
       .join("&");
 
     uni.navigateTo({
       url: `/pages/interpersonal-wisdom/skill-practice?${queryString}`,
-    });
-  },
-
-  startLearning() {
-    this.startScenarioPractice();
-  },
-
-  continueLearning() {
-    this.startScenarioPractice();
-  },
-
-  reviewSkill() {
-    this.startScenarioPractice();
-  },
-
-  async generatePracticeScenario() {
-    this.startScenarioPractice();
-  },
-
-  practiceScenario(scenario) {
-    uni.navigateTo({
-      url: `/pages/interpersonal-wisdom/skill-practice?skillId=${this.skillId}&scenarioId=${scenario.id}&type=scenario`,
     });
   },
 
