@@ -8,7 +8,7 @@
                     <text class="category-desc">{{ categoryData.description }}</text>
                 </view>
             </view>
-            <view class="category-stats">
+            <!-- <view class="category-stats">
                 <view class="stat-item">
                     <text class="stat-number">{{ categoryData.totalSkills }}</text>
                     <text class="stat-label">技能总数</text>
@@ -24,7 +24,7 @@
             </view>
             <view class="progress-bar">
                 <view class="progress-fill" :style="{ width: progressPercentage + '%' }"></view>
-            </view>
+            </view> -->
         </view>
 
         <view class="content">
@@ -32,7 +32,7 @@
             <view v-if="recommendedSkills.length > 0" class="section">
                 <view class="section-header">
                     <text class="section-title">🎯 为你推荐</text>
-                    <text class="section-subtitle">基于你的学习进度智能推荐</text>
+                    <!-- <text class="section-subtitle">基于你的学习进度智能推荐</text> -->
                 </view>
                 <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended"
                     @click="viewSkillDetail(skill)">
@@ -68,7 +68,7 @@
             <view class="section">
                 <view class="section-header">
                     <text class="section-title">📚 全部技能</text>
-                    <view class="filter-controls">
+                    <!-- <view class="filter-controls">
                         <view class="filter-btn" :class="{ active: filterType === 'all' }" @click="setFilter('all')">
                             <text class="filter-text">全部</text>
                         </view>
@@ -80,7 +80,7 @@
                             @click="setFilter('learning')">
                             <text class="filter-text">学习中</text>
                         </view>
-                    </view>
+                    </view> -->
                 </view>
 
                 <view class="skills-grid">
@@ -130,18 +130,17 @@
             </view>
         </view>
 
-        <!-- 悬浮操作按钮 -->
-        <view class="floating-actions">
-            <view class="fab-item" @click="showLearningPlan">
-                <text class="fab-icon">📋</text>
-                <text class="fab-text">制定学习计划</text>
-            </view>
-        </view>
+        <BackToTop ref="backToTop" :threshold="50" :bottom="40" :right="40" icon="🔝"
+            @scroll-to-top-success="onScrollToTopSuccess" />
     </view>
 </template>
 
 <script>
+import BackToTop from '@/components/BackToTop.vue'
 export default {
+    components: {
+        BackToTop
+    },
     data() {
         return {
             categoryId: '',
@@ -177,8 +176,22 @@ export default {
         this.categoryName = options.name || '';
         this.loadCategoryData();
     },
-
+    // 监听页面滚动
+    onPageScroll(e) {
+        // 更新返回顶部按钮的显示状态
+        if (this.$refs.backToTop) {
+            this.$refs.backToTop.updateShowState(e.scrollTop);
+        }
+    },
     methods: {
+        // 返回顶部成功回调
+        onScrollToTopSuccess() {
+            uni.showToast({
+                title: '已回到顶部',
+                icon: 'success',
+                duration: 1000
+            });
+        },
         async loadCategoryData() {
             try {
                 uni.showLoading({ title: '加载中...' });
@@ -868,33 +881,6 @@ export default {
     font-size: 24rpx;
 }
 
-.floating-actions {
-    position: fixed;
-    bottom: 40rpx;
-    right: 40rpx;
-    z-index: 100;
-}
-
-.fab-item {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 50rpx;
-    padding: 20rpx 32rpx;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
-    animation: float 3s ease-in-out infinite;
-}
-
-.fab-icon {
-    font-size: 28rpx;
-    margin-right: 8rpx;
-}
-
-.fab-text {
-    font-size: 24rpx;
-    font-weight: bold;
-}
 
 @keyframes float {
 
