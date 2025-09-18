@@ -197,6 +197,8 @@
 </template>
 
 <script>
+import { getSkillById } from '@/data/skillsData.js';
+
 export default {
     data() {
         return {
@@ -333,6 +335,10 @@ export default {
         parseAdviceResult(adviceText) {
             // 这里应该解析AI返回的文本，提取结构化信息
             // 简化示例，实际项目中可能需要更复杂的解析逻辑
+            
+            // 根据用户的关系类型和情况，智能推荐相关技能
+            const recommendedSkills = this.getRecommendedSkillsBasedOnSituation();
+            
             return {
                 core_advice: "基于你的情况，建议你先从建立基本的沟通信心开始。",
                 action_steps: [
@@ -348,15 +354,69 @@ export default {
                     }
                 ],
                 ai_analysis: adviceText,
-                recommended_skills: [
-                    {
-                        id: "listen_actively",
-                        title: "主动倾听",
-                        reason: "帮助你更好地理解对方的感受"
-                    }
-                ],
+                recommended_skills: recommendedSkills,
                 emotional_support: "记住，每个人在人际交往中都会遇到困难，这是成长的一部分。你已经迈出了寻求帮助的第一步，这很棒！"
             };
+        },
+
+        // 根据用户情况智能推荐技能
+        getRecommendedSkillsBasedOnSituation() {
+            const relationType = this.formData.relationType;
+            const urgency = this.formData.urgency;
+            const situation = this.formData.situation.toLowerCase();
+
+            // 基础推荐技能池 - 每种关系只推荐一个最核心的技能
+            let recommendedSkills = [];
+
+            // 根据关系类型推荐最核心的一个技能
+            if (relationType === 'romantic') {
+                recommendedSkills.push(
+                    { id: "romantic_expression", title: "情感智力提升", reason: "帮助你更好地理解和表达恋爱中的情感" }
+                );
+            } else if (relationType === 'friendship') {
+                recommendedSkills.push(
+                    { id: "listen_actively", title: "积极倾听技巧", reason: "友谊的基础是相互理解，倾听是第一步" }
+                );
+            } else if (relationType === 'family') {
+                recommendedSkills.push(
+                    { id: "topic_transition", title: "非暴力沟通", reason: "家庭沟通中避免冲突，和谐表达很重要" }
+                );
+            } else if (relationType === 'colleague') {
+                recommendedSkills.push(
+                    { id: "express_clearly", title: "建设性反馈", reason: "职场中需要给出和接受专业的反馈意见" }
+                );
+            } else if (relationType === 'roommate') {
+                recommendedSkills.push(
+                    { id: "boundary_setting", title: "边界设定技巧", reason: "室友关系需要明确的生活边界" }
+                );
+            }
+
+            // 根据问题描述关键词优先推荐最相关的技能（覆盖基础推荐）
+            if (situation.includes('尴尬') || situation.includes('不知道说什么')) {
+                recommendedSkills = [
+                    { id: "ice_breaking", title: "赞美与认可", reason: "学会开启和维持对话，减少尴尬" }
+                ];
+            } else if (situation.includes('倾听') || situation.includes('理解')) {
+                recommendedSkills = [
+                    { id: "listen_actively", title: "积极倾听技巧", reason: "针对你提到的倾听问题，这个技能最为重要" }
+                ];
+            } else if (situation.includes('冲突') || situation.includes('争吵') || situation.includes('分歧')) {
+                recommendedSkills = [
+                    { id: "conflict_resolution", title: "冲突解决策略", reason: "直接针对你遇到的冲突问题" }
+                ];
+            }
+
+            // 如果没有特定推荐，使用通用推荐
+            if (recommendedSkills.length === 0) {
+                recommendedSkills = [
+                    { id: "listen_actively", title: "积极倾听技巧", reason: "人际交往的基础，适用于所有关系类型" },
+                    { id: "topic_transition", title: "非暴力沟通", reason: "学会和谐表达，减少误解和冲突" },
+                    { id: "emotion_sharing", title: "共情能力培养", reason: "理解他人感受，建立更深层的连接" }
+                ];
+            }
+
+            // 只推荐1个最相关的技能，避免选择困难和系统问题
+            return recommendedSkills.slice(0, 1);
         },
 
         saveToHistory() {
@@ -405,9 +465,188 @@ export default {
         },
 
         practiceSkill(skill) {
+            // 从统一数据源获取完整的技能信息
+            const skillData = this.getSkillDataById(skill.id);
+            
+            if (!skillData) {
+                uni.showToast({
+                    title: '技能数据加载失败',
+                    icon: 'none'
+                });
+                return;
+            }
+
+            // 构建完整的参数，参考 interpersonal-wisdom.vue 的实现
+            const skillParams = {
+                skillId: skill.id,
+                type: "practice",
+                skillTitle: encodeURIComponent(skillData.name || skillData.title),
+                skillContent: encodeURIComponent(skillData.description || skillData.brief),
+                skillTags: encodeURIComponent(JSON.stringify(skillData.tags || [])),
+                skillScenarios: encodeURIComponent(JSON.stringify(skillData.practiceScenarios || skillData.scenarios || []))
+            };
+
+            const queryString = Object.entries(skillParams)
+                .map(([key, value]) => `${key}=${value}`)
+                .join("&");
+
             uni.navigateTo({
-                url: `/pages/interpersonal-wisdom/skill-practice?skillId=${skill.id}&type=practice`
+                url: `/pages/interpersonal-wisdom/skill-practice?${queryString}`
             });
+        },
+
+        // 根据技能ID获取完整技能数据的辅助方法
+        getSkillDataById(skillId) {
+            // 首先尝试从统一数据源获取
+            const skillData = getSkillById(skillId);
+            if (skillData) {
+                return {
+                    id: skillData.id,
+                    name: skillData.name,
+                    title: skillData.name,
+                    description: skillData.description,
+                    brief: skillData.brief,
+                    tags: skillData.tags || [],
+                    scenarios: skillData.scenarios || [],
+                    practiceScenarios: skillData.practiceScenarios || []
+                };
+            }
+
+            // 如果统一数据源没有，使用技能ID映射表作为后备
+            const skillMappings = {
+                "listen_actively": {
+                    id: 1,
+                    name: "积极倾听技巧",
+                    title: "积极倾听技巧", 
+                    description: "学习如何专注、理解并回应他人的话语，建立更深层的连接",
+                    brief: "学会用心倾听对方的话语和情感",
+                    tags: ["沟通", "倾听", "理解"],
+                    scenarios: ["日常对话", "深度交流", "冲突解决"],
+                    practiceScenarios: [
+                        { title: "朋友倾诉烦恼", description: "朋友向你倾诉工作上的困扰" },
+                        { title: "家人分享心情", description: "家人跟你分享今天发生的事情" }
+                    ]
+                },
+                "topic_transition": {
+                    id: 2,
+                    name: "非暴力沟通",
+                    title: "非暴力沟通",
+                    description: "用非批判性的方式表达需求和感受，减少冲突",
+                    brief: "以和谐的方式表达需求和感受",
+                    tags: ["沟通", "和谐", "表达"],
+                    scenarios: ["意见分歧", "需求表达", "冲突解决"],
+                    practiceScenarios: [
+                        { title: "工作意见分歧", description: "与同事在项目方向上有不同看法" },
+                        { title: "家庭沟通", description: "与家人就某个问题进行讨论" }
+                    ]
+                },
+                "emotion_sharing": {
+                    id: 5,
+                    name: "共情能力培养", 
+                    title: "共情能力培养",
+                    description: "理解和感受他人情感，增进人际关系的深度",
+                    brief: "提升理解他人情感的能力",
+                    tags: ["理解", "情感", "连接"],
+                    scenarios: ["情感支持", "关系深化", "人际理解"],
+                    practiceScenarios: [
+                        { title: "安慰伤心朋友", description: "朋友失恋了，需要你的理解和支持" },
+                        { title: "理解他人压力", description: "感受并理解他人面临的压力" }
+                    ]
+                },
+                "express_clearly": {
+                    id: 2,
+                    name: "建设性反馈",
+                    title: "建设性反馈", 
+                    description: "以支持性的方式提供反馈，促进他人成长",
+                    brief: "学会给出有效的建设性意见",
+                    tags: ["反馈", "成长", "支持"],
+                    scenarios: ["工作反馈", "学习指导", "关系改善"],
+                    practiceScenarios: [
+                        { title: "给下属反馈", description: "为团队成员的工作表现提供建设性意见" },
+                        { title: "朋友建议", description: "朋友请你对他的某个决定给出意见" }
+                    ]
+                },
+                "conflict_resolution": {
+                    id: 4,
+                    name: "冲突解决策略",
+                    title: "冲突解决策略",
+                    description: "有效处理分歧和冲突，寻找双赢解决方案", 
+                    brief: "学会妥善处理人际冲突",
+                    tags: ["冲突", "解决", "合作"],
+                    scenarios: ["工作争议", "朋友矛盾", "家庭分歧"],
+                    practiceScenarios: [
+                        { title: "同事间争议", description: "两个同事因为工作分配产生矛盾" },
+                        { title: "朋友误会", description: "朋友对你的某个行为产生了误解" }
+                    ]
+                },
+                "romantic_expression": {
+                    id: 27,
+                    name: "情感智力提升",
+                    title: "情感智力提升",
+                    description: "识别、理解和管理自己及他人的情感",
+                    brief: "提升情感认知和管理能力", 
+                    tags: ["情感", "智力", "管理"],
+                    scenarios: ["情感表达", "情绪管理", "关系维护"],
+                    practiceScenarios: [
+                        { title: "情绪管理", description: "在压力情况下管理自己的情绪反应" },
+                        { title: "情感表达", description: "向重要的人表达你的真实感受" }
+                    ]
+                },
+                "boundary_setting": {
+                    id: 6,
+                    name: "边界设定技巧",
+                    title: "边界设定技巧",
+                    description: "在关系中建立健康的边界，保护自己的情感安全",
+                    brief: "学会在关系中设定合理边界",
+                    tags: ["边界", "保护", "安全"],
+                    scenarios: ["关系边界", "个人空间", "情感保护"],
+                    practiceScenarios: [
+                        { title: "拒绝过分要求", description: "朋友提出了让你感到不舒服的要求" },
+                        { title: "维护个人时间", description: "同事总是在下班时间找你处理工作" }
+                    ]
+                },
+                "sincere_gratitude": {
+                    id: 12,
+                    name: "有效道歉方式",
+                    title: "有效道歉方式",
+                    description: "真诚地承认错误并修复关系裂痕",
+                    brief: "学会真诚有效地道歉",
+                    tags: ["道歉", "修复", "真诚"],
+                    scenarios: ["错误承认", "关系修复", "信任重建"],
+                    practiceScenarios: [
+                        { title: "工作失误道歉", description: "因为你的疏忽导致项目出现问题" },
+                        { title: "朋友关系修复", description: "因为误解伤害了朋友的感情" }
+                    ]
+                },
+                "ice_breaking": {
+                    id: 7,
+                    name: "赞美与认可",
+                    title: "赞美与认可",
+                    description: "恰当地表达欣赏和认可，增强他人的自信",
+                    brief: "学会真诚地赞美和认可他人",
+                    tags: ["赞美", "认可", "鼓励"],
+                    scenarios: ["日常交流", "鼓励他人", "关系建立"],
+                    practiceScenarios: [
+                        { title: "赞美同事", description: "同事完成了一个出色的项目" },
+                        { title: "鼓励朋友", description: "朋友在困难时期需要鼓励和认可" }
+                    ]
+                },
+                "trust_building": {
+                    id: 42,
+                    name: "情感表达艺术",
+                    title: "情感表达艺术",
+                    description: "以恰当的方式表达情感，增进理解",
+                    brief: "学会艺术化地表达情感",
+                    tags: ["表达", "情感", "艺术"],
+                    scenarios: ["情感分享", "深度交流", "关系深化"],
+                    practiceScenarios: [
+                        { title: "表达关心", description: "向朋友表达你对他的关心和在乎" },
+                        { title: "分享喜悦", description: "与重要的人分享你的快乐和成就" }
+                    ]
+                }
+            };
+
+            return skillMappings[skillId] || null;
         },
 
         viewHistory() {
