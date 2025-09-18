@@ -105,7 +105,7 @@
             </view>
         </view>
 
-        <BackToTop ref="backToTop" :threshold="50" :bottom="40" :right="40" icon="🔝"
+        <BackToTop ref="backToTop" :threshold="50" :bottom="40" :right="40"
             @scroll-to-top-success="onScrollToTopSuccess" />
     </view>
 </template>

@@ -165,18 +165,19 @@
     </view>
 
     <!-- 回到顶部按钮 -->
-    <view v-if="showBackToTop" class="back-to-top" @click="backToTop">
-      <text class="back-to-top-icon">↑</text>
-    </view>
+    <BackToTop ref="backToTop" :threshold="100" :bottom="100" :right="30"
+      @start-scroll-listener="onStartScrollListener" @remove-scroll-listener="onRemoveScrollListener"
+      @scroll-to-top-success="onScrollToTopSuccess" />
   </view>
 </template>
 
 <script>
 import { api } from "../../utils/api.js";
+import BackToTop from '@/components/BackToTop.vue'
 
 export default {
   components: {
-    // 移除MoodTracker组件
+    BackToTop
   },
   data() {
     return {
@@ -187,10 +188,6 @@ export default {
 
       // 登录状态
       isLoggedIn: false,
-
-      // 回到顶部相关
-      showBackToTop: false,
-      scrollTop: 0,
     };
   },
 
@@ -204,14 +201,14 @@ export default {
   },
 
   onPageScroll(e) {
-    this.scrollTop = e.scrollTop;
-    // 当滚动距离超过300px时显示回到顶部按钮
-    this.showBackToTop = e.scrollTop > 30;
+    // 将滚动事件传递给BackToTop组件
+    if (this.$refs.backToTop) {
+      this.$refs.backToTop.updateVisibility(e.scrollTop);
+    }
   },
 
   onUnload() {
-    // 页面卸载时清理
-    this.showBackToTop = false;
+    // 页面卸载时的清理工作
   },
 
   methods: {
@@ -463,14 +460,17 @@ export default {
       this.practiceSkill(skill);
     },
 
-    // 组件事件处理方法（已移除）
+    // 组件事件处理方法
+    onStartScrollListener() {
+      // 组件已挂载，准备接收滚动事件
+    },
 
-    // 回到顶部方法
-    backToTop() {
-      uni.pageScrollTo({
-        scrollTop: 0,
-        duration: 300
-      });
+    onRemoveScrollListener() {
+      // 组件将要销毁
+    },
+
+    onScrollToTopSuccess() {
+      console.log('回到顶部成功');
     },
   },
 };
@@ -1104,54 +1104,6 @@ export default {
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 16rpx;
-  }
-}
-
-/* 回到顶部按钮样式 */
-.back-to-top {
-  position: fixed;
-  right: 30rpx;
-  bottom: 100rpx;
-  width: 80rpx;
-  height: 80rpx;
-  background: linear-gradient(135deg, #42a5f5, #1976d2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(66, 165, 245, 0.4);
-  z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10rpx);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-}
-
-.back-to-top:active {
-  transform: scale(0.9);
-  box-shadow: 0 4rpx 16rpx rgba(66, 165, 245, 0.6);
-}
-
-.back-to-top-icon {
-  font-size: 32rpx;
-  color: white;
-  font-weight: bold;
-  line-height: 1;
-}
-
-/* 添加动画效果 */
-.back-to-top {
-  animation: fadeInUp 0.3s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20rpx);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 </style>

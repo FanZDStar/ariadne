@@ -35,7 +35,7 @@
                 <view class="type-grid">
                     <view v-for="type in relationTypes" :key="type.id" class="type-card"
                         :class="{ selected: selectedRelationType === type.id }" 
-                        :style="selectedRelationType === type.id ? `border-color: ${type.color}; background: linear-gradient(135deg, ${type.lightColor} 0%, #ffffff 100%)` : ''"
+                        :style="selectedRelationType === type.id ? `border-color: ${type.color}; background: linear-gradient(135deg, ${type.lightColor} 0%, #ffffff 100%); --selected-color: ${type.color}` : ''"
                         @click="selectRelationType(type.id)">
                         <text class="type-icon">{{ type.icon }}</text>
                         <view class="type-content">
@@ -184,7 +184,7 @@ export default {
                     id: 'family',
                     name: '家庭关系',
                     desc: '评估与家人的沟通、理解和情感连接',
-                    icon: '�‍👩‍👧‍👦',
+                    icon: '👨‍👩‍👧‍👦',
                     color: '#4caf50',
                     lightColor: '#e8f5e8'
                 },
@@ -200,7 +200,7 @@ export default {
                     id: 'romantic',
                     name: '恋爱关系',
                     desc: '评估与恋人的情感亲密和关系健康度',
-                    icon: '�',
+                    icon: '💕',
                     color: '#e91e63',
                     lightColor: '#fce4ec'
                 },
@@ -208,7 +208,7 @@ export default {
                     id: 'mentor',
                     name: '师生关系',
                     desc: '评估与导师或老师的学习互动关系',
-                    icon: '👨‍�',
+                    icon: '👨‍🏫',
                     color: '#ff9800',
                     lightColor: '#fff3e0'
                 }
@@ -610,7 +610,7 @@ export default {
     left: 0;
     right: 0;
     height: 4rpx;
-    background: linear-gradient(90deg, #42a5f5, #1976d2);
+    background: #e0e0e0;
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -622,6 +622,7 @@ export default {
 
 .type-card.selected::before {
     transform: scaleX(1);
+    background: var(--selected-color, #42a5f5);
 }
 
 .type-icon {
