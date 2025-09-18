@@ -1221,6 +1221,8 @@ async def get_personalized_protection_advice(
 5. 必要时的求助资源
 
 建议要实用、可操作，适合大学生的实际情况，既要重视风险也要保持理性。
+
+回复格式要求：请用段落形式回复，每个要点用一个段落表述，段落之间不要有空行，不要使用Markdown格式或编号列表，用自然流畅的文字表达，不要过长，讲明白道理就行。
 """
 
         ai_service = AIService()
