@@ -47,6 +47,7 @@ pnpm-lock.yaml
 *.swp
 *.swo
 *.sw?
+.github/
 
 # Local environment
 .env

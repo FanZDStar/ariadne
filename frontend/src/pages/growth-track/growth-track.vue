@@ -8,8 +8,13 @@
     <view class="period-selector">
       <scroll-view class="period-scroll" scroll-x>
         <view class="period-list">
-          <view class="period-item" v-for="period in periods" :key="period.value"
-            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
+          <view
+            class="period-item"
+            v-for="period in periods"
+            :key="period.value"
+            :class="{ active: currentPeriod === period.value }"
+            @click="selectPeriod(period.value)"
+          >
             <text class="period-text">{{ period.label }}</text>
           </view>
         </view>
@@ -18,7 +23,9 @@
 
     <view class="chart-container">
       <view class="chart-header">
-        <text class="chart-title">{{ getCurrentPeriodLabel() }}心情变化趋势</text>
+        <text class="chart-title"
+          >{{ getCurrentPeriodLabel() }}心情变化趋势</text
+        >
       </view>
 
       <view class="chart-wrapper" v-if="chartData.length > 0">
@@ -31,10 +38,19 @@
             <text class="y-label">1</text>
           </view>
           <view class="chart-content">
-            <canvas class="chart-canvas" canvas-id="moodChart" id="moodChart" disable-scroll="true"></canvas>
+            <canvas
+              class="chart-canvas"
+              canvas-id="moodChart"
+              id="moodChart"
+              disable-scroll="true"
+            ></canvas>
             <view class="x-axis">
-              <text class="x-label" v-for="(point, index) in getVisibleXLabels()" :key="index"
-                :style="{ left: `${getPointX(point.index)}%` }">
+              <text
+                class="x-label"
+                v-for="(point, index) in getVisibleXLabels()"
+                :key="index"
+                :style="{ left: `${getPointX(point.index)}%` }"
+              >
                 {{ point.label }}
               </text>
             </view>
@@ -44,6 +60,25 @@
 
       <view class="empty-chart" v-else>
         <text class="empty-text">暂无数据</text>
+      </view>
+    </view>
+
+    <!-- 心情晴雨表组件 -->
+    <view class="mood-tracker-section">
+      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" />
+    </view>
+
+    <!-- 心理测评栏目 -->
+    <view class="psychological-assessment-section">
+      <view class="assessment-card" @click="goToPsychologicalAssessment">
+        <view class="assessment-header">
+          <text class="assessment-icon">🧠</text>
+          <text class="assessment-title">心理测评</text>
+        </view>
+        <text class="assessment-desc">多维度了解自己的心理状态</text>
+        <view class="assessment-arrow">
+          <text class="arrow-text">→</text>
+        </view>
       </view>
     </view>
 
@@ -70,30 +105,37 @@
 </template>
 
 <script>
-import { api, storage } from '../../utils/api.js';
+import { api, storage } from "../../utils/api.js";
+import MoodTracker from "../../components/MoodTracker.vue";
 
 export default {
+  components: {
+    MoodTracker,
+  },
   data() {
     return {
-      currentPeriod: '3days',
+      currentPeriod: "3days",
       periods: [
-        { value: '3days', label: '近3天' },
-        { value: '7days', label: '近7天' },
-        { value: '30days', label: '近30天' },
-        { value: '60days', label: '近60天' }
+        { value: "3days", label: "近3天" },
+        { value: "7days", label: "近7天" },
+        { value: "30days", label: "近30天" },
+        { value: "60days", label: "近60天" },
       ],
       chartData: [],
-      averageMood: '0.00',
-      maxMood: '0.00',
-      minMood: '0.00'
-    }
+      averageMood: "0.00",
+      maxMood: "0.00",
+      minMood: "0.00",
+      isLoggedIn: false,
+    };
   },
 
   onLoad() {
+    this.checkLoginStatus();
     this.loadMoodData();
   },
 
   onShow() {
+    this.checkLoginStatus();
     this.loadMoodData();
   },
 
@@ -102,7 +144,7 @@ export default {
       if (newVal) {
         this.$nextTick(() => this.drawChart());
       }
-    }
+    },
   },
 
   methods: {
@@ -120,31 +162,32 @@ export default {
         this.chartData = response.data || [];
         this.calculateStats();
       } catch (error) {
-        console.error('获取心情数据失败:', error);
+        console.error("获取心情数据失败:", error);
       }
     },
 
     drawChart() {
       const query = uni.createSelectorQuery().in(this);
-      query.select('#moodChart')
-        .boundingClientRect(data => {
+      query
+        .select("#moodChart")
+        .boundingClientRect((data) => {
           if (!data || !this.chartData) return;
 
-          const ctx = uni.createCanvasContext('moodChart', this);
+          const ctx = uni.createCanvasContext("moodChart", this);
           const width = data.width;
           const height = data.height;
 
           const paddingY = height * 0.1;
-          const drawableHeight = height - (2 * paddingY);
+          const drawableHeight = height - 2 * paddingY;
 
           ctx.clearRect(0, 0, width, height);
 
           // 绘制网格线
           ctx.beginPath();
-          ctx.setStrokeStyle('#eeeeee');
+          ctx.setStrokeStyle("#eeeeee");
           ctx.setLineWidth(1);
           for (let i = 1; i <= 5; i++) {
-            const y = (height - paddingY) - ((i - 1) / 4) * drawableHeight;
+            const y = height - paddingY - ((i - 1) / 4) * drawableHeight;
             ctx.moveTo(0, y);
             ctx.lineTo(width, y);
           }
@@ -158,11 +201,14 @@ export default {
           if (this.chartData.length === 1) {
             const point = {
               x: width / 2,
-              y: (height - paddingY) - ((this.chartData[0].mood_score - 1) / 4) * drawableHeight
+              y:
+                height -
+                paddingY -
+                ((this.chartData[0].mood_score - 1) / 4) * drawableHeight,
             };
             ctx.beginPath();
             ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
-            ctx.setFillStyle('#007aff');
+            ctx.setFillStyle("#007aff");
             ctx.fill();
             ctx.draw();
             return;
@@ -170,7 +216,8 @@ export default {
 
           const points = this.chartData.map((point, index) => ({
             x: (index / (this.chartData.length - 1)) * width,
-            y: (height - paddingY) - ((point.mood_score - 1) / 4) * drawableHeight
+            y:
+              height - paddingY - ((point.mood_score - 1) / 4) * drawableHeight,
           }));
 
           // Catmull-Rom spline for a smooth curve
@@ -191,36 +238,45 @@ export default {
               const c = -2 * t3 + 3 * t2;
               const d = t3 - t2;
 
-              const x = a * p1.x + b * (p2.x - p0.x) * tension + c * p2.x + d * (p3.x - p1.x) * tension;
-              const y = a * p1.y + b * (p2.y - p0.y) * tension + c * p2.y + d * (p3.y - p1.y) * tension;
+              const x =
+                a * p1.x +
+                b * (p2.x - p0.x) * tension +
+                c * p2.x +
+                d * (p3.x - p1.x) * tension;
+              const y =
+                a * p1.y +
+                b * (p2.y - p0.y) * tension +
+                c * p2.y +
+                d * (p3.y - p1.y) * tension;
               ctx.lineTo(x, y);
             }
           }
-          ctx.setStrokeStyle('#007aff');
+          ctx.setStrokeStyle("#007aff");
           ctx.setLineWidth(2);
           ctx.stroke();
 
           // Draw data points
-          points.forEach(point => {
+          points.forEach((point) => {
             ctx.beginPath();
             ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
-            ctx.setFillStyle('#007aff');
+            ctx.setFillStyle("#007aff");
             ctx.fill();
           });
 
           ctx.draw();
-        }).exec();
+        })
+        .exec();
     },
 
     calculateStats() {
       if (this.chartData.length === 0) {
-        this.averageMood = '0.00';
-        this.maxMood = '0.00';
-        this.minMood = '0.00';
+        this.averageMood = "0.00";
+        this.maxMood = "0.00";
+        this.minMood = "0.00";
         return;
       }
 
-      const moodScores = this.chartData.map(item => item.mood_score);
+      const moodScores = this.chartData.map((item) => item.mood_score);
       const sum = moodScores.reduce((a, b) => a + b, 0);
       this.averageMood = (sum / moodScores.length).toFixed(2);
       this.maxMood = Math.max(...moodScores).toFixed(2);
@@ -228,8 +284,8 @@ export default {
     },
 
     getCurrentPeriodLabel() {
-      const period = this.periods.find(p => p.value === this.currentPeriod);
-      return period ? period.label : '';
+      const period = this.periods.find((p) => p.value === this.currentPeriod);
+      return period ? period.label : "";
     },
 
     getPointX(index) {
@@ -250,7 +306,7 @@ export default {
       if (len <= 7) {
         return data.map((item, index) => ({
           index,
-          label: this.formatTimeLabel(item.time)
+          label: this.formatTimeLabel(item.time),
         }));
       }
 
@@ -262,13 +318,13 @@ export default {
         const index = i * step;
         labels.push({
           index,
-          label: this.formatTimeLabel(data[index].time)
+          label: this.formatTimeLabel(data[index].time),
         });
       }
-      if (labels.findIndex(l => l.index === len - 1) === -1) {
+      if (labels.findIndex((l) => l.index === len - 1) === -1) {
         labels.push({
           index: len - 1,
-          label: this.formatTimeLabel(data[len - 1].time)
+          label: this.formatTimeLabel(data[len - 1].time),
         });
       }
 
@@ -277,9 +333,20 @@ export default {
 
     formatTimeLabel(time) {
       return time.substring(5); // "MM-DD"
-    }
-  }
-}
+    },
+
+    checkLoginStatus() {
+      const token = storage.getToken();
+      this.isLoggedIn = !!token;
+    },
+
+    goToPsychologicalAssessment() {
+      uni.navigateTo({
+        url: "/pages/psychological-assessment/assessment-list",
+      });
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -466,5 +533,65 @@ export default {
   font-size: 36rpx;
   font-weight: bold;
   color: #007aff;
+}
+
+/* 心情晴雨表区域样式 */
+.mood-tracker-section {
+  margin-bottom: 40rpx;
+}
+
+/* 心理测评栏目样式 */
+.psychological-assessment-section {
+  margin-bottom: 40rpx;
+}
+
+.assessment-card {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20rpx;
+  padding: 40rpx;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.3);
+}
+
+.assessment-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 8rpx 25rpx rgba(102, 126, 234, 0.4);
+}
+
+.assessment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.assessment-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+
+.assessment-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.assessment-desc {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20rpx;
+}
+
+.assessment-arrow {
+  position: absolute;
+  right: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.arrow-text {
+  font-size: 32rpx;
+  color: white;
+  font-weight: bold;
 }
 </style>

@@ -269,6 +269,14 @@
         "navigationBarTitleText": "深呼吸练习",
         "navigationStyle": "custom"
       }
+    },
+    {
+      "path": "pages/psychological-assessment/assessment-list",
+      "style": {
+        "navigationBarTitleText": "心理测评",
+        "navigationBarBackgroundColor": "#667eea",
+        "navigationBarTextStyle": "white"
+      }
     }
   ],
   "globalStyle": {
