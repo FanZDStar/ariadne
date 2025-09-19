@@ -2,14 +2,14 @@
     <view class="home-container">
         <!-- 顶部装饰背景 -->
         <view class="top-decoration"></view>
-        
+
         <!-- 头部区域 -->
         <view class="header">
             <view class="brand-section">
                 <text class="brand-title">念念有声</text>
                 <text class="brand-subtitle">聚焦人文复兴，关注当代年轻人情感问题</text>
             </view>
-            
+
             <view class="user-welcome" v-if="userInfo">
                 <view class="welcome-card">
                     <text class="welcome-text">你好，{{ userInfo.nickname || userInfo.username }}</text>
@@ -77,16 +77,20 @@
                 <view class="dot dot-4"></view>
             </view>
         </view>
+        <simple-mascot></simple-mascot>
     </view>
 </template>
 
 <script>
 import { api, storage } from '../../utils/api.js';
-
+import SimpleMascot from '@/components/simple-mascot.vue'
 export default {
+    components: {
+        SimpleMascot
+    },
     data() {
         return {
-            userInfo: null
+            userInfo: null,
         }
     },
 
