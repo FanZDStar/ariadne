@@ -201,6 +201,45 @@ export const api = {
         return uploadFile('/image/upload', filePath, token);
     },
 
+    // 上传日记背景图片
+    uploadDiaryBackground: (filePath, token) => {
+        return uploadFile('/diary-backgrounds/upload', filePath, token);
+    },
+
+    // 获取用户的背景图片列表
+    getUserBackgrounds: (token) => {
+        return request('/diary-backgrounds/list', {
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 删除背景图片
+    deleteDiaryBackground: (token, backgroundId) => {
+        return request(`/diary-backgrounds/${backgroundId}`, {
+            method: 'DELETE',
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+    // 获取默认背景选项
+    getDefaultBackgrounds: () => {
+        return request('/diary-backgrounds/default');
+    },
+
+    // 恢复默认背景
+    restoreDefaultBackgrounds: (token) => {
+        return request('/diary-backgrounds/restore-default', {
+            method: 'DELETE',
+            header: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
     // 创建反馈
     createFeedback: (token, feedbackData) => {
         return request('/feedback/', {
