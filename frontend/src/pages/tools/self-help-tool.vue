@@ -165,11 +165,7 @@
 
     <!-- 底部操作按钮 -->
     <view class="bottom-actions">
-      <view class="action-btn secondary" @click="shareTool">
-        <text class="btn-icon">📤</text>
-        <text class="btn-text">分享</text>
-      </view>
-      <view class="action-btn primary" @click="startPractice">
+      <view class="action-btn primary full-width" @click="startPractice">
         <text class="btn-icon">🎯</text>
         <text class="btn-text">开始使用</text>
       </view>
@@ -183,11 +179,23 @@
     >
       <text class="tip-text">{{ isCollected ? "已收藏" : "取消收藏" }}</text>
     </view>
+    
+    <!-- 回到顶部组件 -->
+    <BackToTop 
+      ref="backToTop"
+      :bottom="150"
+      @start-scroll-listener="startScrollListener"
+      @remove-scroll-listener="removeScrollListener"
+    />
   </view>
 </template>
 
 <script>
+import BackToTop from '../../components/BackToTop.vue'
 export default {
+  components: {
+    BackToTop
+  },
   data() {
     return {
       toolId: null,
@@ -599,7 +607,7 @@ export default {
             "可以将测试结果记录下来，跟踪长期的变化趋势",
             "结合其他心理健康工具，如情绪记录，来全面了解自己",
             "根据测试结果制定个性化的压力管理计划",
-            "与信任的朋友或家人分享结果，获得支持和理解",
+            "定期回顾测试结果，调整个人的压力管理策略",
           ],
         },
       },
@@ -610,6 +618,10 @@ export default {
     this.toolId = options.id || "1";
     this.loadToolData();
     this.checkCollectStatus();
+  },
+
+  onUnload() {
+    this.removeScrollListener();
   },
 
   methods: {
@@ -649,34 +661,6 @@ export default {
       }, 2000);
     },
 
-    shareTool() {
-      uni.showActionSheet({
-        itemList: ["分享到微信", "分享到朋友圈", "复制链接"],
-        success: (res) => {
-          switch (res.tapIndex) {
-            case 0:
-            case 1:
-              uni.showToast({
-                title: "分享功能开发中",
-                icon: "none",
-              });
-              break;
-            case 2:
-              uni.setClipboardData({
-                data: `心理自助工具：${this.toolData.name}`,
-                success: () => {
-                  uni.showToast({
-                    title: "链接已复制",
-                    icon: "success",
-                  });
-                },
-              });
-              break;
-          }
-        },
-      });
-    },
-
     startPractice() {
       // 根据不同工具跳转到相应的实践页面
       const practiceRoutes = {
@@ -711,6 +695,35 @@ export default {
         showCancel: false,
         confirmText: "知道了",
       });
+    },
+
+    // 滚动监听相关方法
+    startScrollListener() {
+      // H5环境使用window.addEventListener
+      if (typeof window !== 'undefined') {
+        this.handleScroll = () => {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+          if (this.$refs.backToTop) {
+            this.$refs.backToTop.updateVisibility(scrollTop);
+          }
+        };
+        window.addEventListener('scroll', this.handleScroll);
+      } else {
+        // 小程序环境使用uni.onPageScroll
+        uni.onPageScroll((res) => {
+          if (this.$refs.backToTop) {
+            this.$refs.backToTop.updateVisibility(res.scrollTop);
+          }
+        });
+      }
+    },
+
+    removeScrollListener() {
+      if (typeof window !== 'undefined' && this.handleScroll) {
+        window.removeEventListener('scroll', this.handleScroll);
+      } else if (typeof uni !== 'undefined' && uni.offPageScroll) {
+        uni.offPageScroll();
+      }
     },
   },
 };
@@ -1109,6 +1122,11 @@ export default {
 .action-btn.primary {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
+}
+
+.action-btn.full-width {
+  width: 100%;
+  margin: 0;
 }
 
 .action-btn:active {

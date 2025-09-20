@@ -6,25 +6,7 @@
     </view>
 
     <!-- 紧急状态评估 -->
-    <view class="emergency-assessment">
-      <view class="assessment-card urgent">
-        <view class="assessment-header">
-          <text class="assessment-icon">🆘</text>
-          <text class="assessment-title">紧急情况评估</text>
-        </view>
-        <text class="assessment-desc"
-          >如果你正在经历紧急心理危机，请立即寻求专业帮助</text
-        >
-        <view class="assessment-actions">
-          <view class="action-btn emergency" @click="callEmergencyHotline">
-            <text class="btn-text">🚨 紧急求助</text>
-          </view>
-          <view class="action-btn assessment" @click="startCrisisAssessment">
-            <text class="btn-text">📊 危机评估</text>
-          </view>
-        </view>
-      </view>
-    </view>
+
 
     <!-- 专业热线 -->
     <view class="hotline-section">
@@ -50,36 +32,7 @@
       </view>
     </view>
 
-    <!-- 在线咨询 -->
-    <view class="online-section">
-      <text class="section-title">💻 在线专业咨询</text>
-      <view
-        v-for="service in onlineServices"
-        :key="service.id"
-        class="service-card"
-        @click="accessOnlineService(service)"
-      >
-        <view class="service-header">
-          <text class="service-icon">{{ service.icon }}</text>
-          <view class="service-info">
-            <text class="service-name">{{ service.name }}</text>
-            <text class="service-status" :class="service.status">{{
-              getStatusText(service.status)
-            }}</text>
-          </view>
-        </view>
-        <text class="service-desc">{{ service.description }}</text>
-        <view class="service-features">
-          <text
-            v-for="feature in service.features"
-            :key="feature"
-            class="feature-tag"
-          >
-            {{ feature }}
-          </text>
-        </view>
-      </view>
-    </view>
+    <!-- 在线服务 -->
 
     <!-- 自助工具 -->
     <view class="tools-section">
@@ -99,63 +52,9 @@
     </view>
 
     <!-- 紧急联系人 -->
-    <view class="contacts-section">
-      <view class="contacts-header">
-        <text class="section-title">👥 紧急联系人</text>
-        <text class="add-contact" @click="addEmergencyContact">+ 添加</text>
-      </view>
-      <view v-if="emergencyContacts.length === 0" class="no-contacts">
-        <text class="no-contacts-icon">📱</text>
-        <text class="no-contacts-text">暂无紧急联系人</text>
-        <text class="no-contacts-desc">添加信任的朋友或家人作为紧急联系人</text>
-      </view>
-      <view v-else class="contacts-list">
-        <view
-          v-for="contact in emergencyContacts"
-          :key="contact.id"
-          class="contact-card"
-        >
-          <view class="contact-info">
-            <text class="contact-name">{{ contact.name }}</text>
-            <text class="contact-relation">{{ contact.relation }}</text>
-          </view>
-          <view class="contact-actions">
-            <view class="contact-btn call" @click="callContact(contact)">
-              <text class="btn-icon">📞</text>
-            </view>
-            <view class="contact-btn message" @click="messageContact(contact)">
-              <text class="btn-icon">💬</text>
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
+
 
     <!-- 安全计划 -->
-    <view class="safety-plan">
-      <view class="plan-header">
-        <text class="section-title">📋 个人安全计划</text>
-        <text class="plan-status" :class="{ 'has-plan': hasSafetyPlan }">
-          {{ hasSafetyPlan ? "已制定" : "未制定" }}
-        </text>
-      </view>
-      <view class="plan-card" @click="manageSafetyPlan">
-        <text class="plan-icon">🛡️</text>
-        <view class="plan-content">
-          <text class="plan-title">{{
-            hasSafetyPlan ? "查看/编辑安全计划" : "制定个人安全计划"
-          }}</text>
-          <text class="plan-desc">
-            {{
-              hasSafetyPlan
-                ? "包含个人预警信号、应对策略和求助方式"
-                : "制定个性化的危机应对策略和求助计划"
-            }}
-          </text>
-        </view>
-        <text class="plan-arrow">→</text>
-      </view>
-    </view>
 
     <!-- 资源库 -->
     <view class="resources-section">
@@ -385,39 +284,8 @@ export default {
     },
 
     callHotline(hotline) {
-      uni.showActionSheet({
-        itemList: ["拨打电话", "查看详情", "收藏热线"],
-        success: (res) => {
-          switch (res.tapIndex) {
-            case 0:
-              uni.makePhoneCall({
-                phoneNumber: hotline.number,
-              });
-              break;
-            case 1:
-              this.showHotlineDetails(hotline);
-              break;
-            case 2:
-              this.favoriteHotline(hotline);
-              break;
-          }
-        },
-      });
-    },
-
-    showHotlineDetails(hotline) {
-      uni.showModal({
-        title: hotline.name,
-        content: `电话：${hotline.number}\n服务时间：${hotline.time}\n费用：${hotline.type}\n\n${hotline.description}`,
-        showCancel: false,
-        confirmText: "知道了",
-      });
-    },
-
-    favoriteHotline(hotline) {
-      uni.showToast({
-        title: "已收藏热线",
-        icon: "success",
+      uni.makePhoneCall({
+        phoneNumber: hotline.number,
       });
     },
 
