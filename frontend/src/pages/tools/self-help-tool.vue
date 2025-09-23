@@ -663,16 +663,20 @@ export default {
 
     startPractice() {
       // 根据不同工具跳转到相应的实践页面
-      const practiceRoutes = {
-        1: "/pages/tools/breathing-practice",
-        2: "/pages/tools/emotion-diary",
-        3: "/pages/tools/meditation-practice",
-        4: "/pages/tools/positive-thinking-practice",
-        5: "/pages/tools/sleep-guide",
-        6: "/pages/tools/stress-assessment",
-      };
-
-      const route = practiceRoutes[this.toolId];
+      let route = null;
+      if (this.toolId == 2) {
+        // 情绪记录跳转到碎碎念
+        route = "/pages/diary/diary";
+      } else {
+        const practiceRoutes = {
+          1: "/pages/tools/breathing-practice",
+          3: "/pages/tools/meditation-practice",
+          4: "/pages/tools/positive-thinking-practice",
+          5: "/pages/tools/sleep-guide",
+          6: "/pages/tools/stress-assessment",
+        };
+        route = practiceRoutes[this.toolId];
+      }
       if (route) {
         uni.navigateTo({
           url: `${route}?toolId=${this.toolId}`,

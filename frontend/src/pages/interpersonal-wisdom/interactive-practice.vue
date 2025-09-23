@@ -25,7 +25,7 @@
         </view>
 
         <!-- 练习场景选择 -->
-        <view class="practice-scenarios">
+        <view v-if="!scenarioSelected" class="practice-scenarios">
             <text class="section-title">🎭 选择练习场景</text>
             <view class="scenarios-grid">
                 <view v-for="scenario in practiceScenarios" :key="scenario.id" class="scenario-card"
@@ -38,30 +38,48 @@
         </view>
 
         <!-- 对话区域 -->
-        <view class="chat-section">
-            <ChatMessages :messages="chatHistory" :isAiTyping="isAiTyping" @scroll="handleScroll" />
-
-            <ChatInput :disabled="isAiTyping" @send="handleSend" />
+        <view v-if="scenarioSelected" class="chat-container">
+            <view class="chat-messages-wrapper">
+                <ChatMessages 
+                    ref="chatMessages"
+                    :messages="chatHistory" 
+                    theme="interpersonal"
+                    @ai-typing="handleAiTyping" 
+                />
+            </view>
+            
+            <!-- 练习控制面板 -->
+            <view class="practice-controls">
+                <view class="control-item" :class="{ disabled: isAiTyping }" @click="getPracticeHint">
+                    <text class="control-icon">💡</text>
+                    <text class="control-text">获取提示</text>
+                </view>
+                <view class="control-item" :class="{ disabled: isAiTyping }" @click="analyzePractice">
+                    <text class="control-icon">📊</text>
+                    <text class="control-text">分析表现</text>
+                </view>
+                <view class="control-item" :class="{ disabled: isAiTyping }" @click="switchScenario">
+                    <text class="control-icon">🔄</text>
+                    <text class="control-text">切换场景</text>
+                </view>
+            </view>
+            
+            <!-- 底部输入框 -->
+            <ChatInput 
+                class="chat-input"
+                placeholder="输入您的回复..." 
+                theme="interpersonal"
+                @send="handleSend" 
+                :disabled="isAiTyping"
+            />
         </view>
 
-        <!-- 练习控制面板 -->
-        <view class="practice-controls">
-            <view class="control-item" @click="getPracticeHint">
-                <text class="control-icon">💡</text>
-                <text class="control-text">获取提示</text>
-            </view>
-            <view class="control-item" @click="analyzePractice">
-                <text class="control-icon">📊</text>
-                <text class="control-text">分析表现</text>
-            </view>
-            <view class="control-item" @click="switchScenario">
-                <text class="control-icon">🔄</text>
-                <text class="control-text">切换场景</text>
-            </view>
-        </view>
-
-        <!-- 保存按钮 -->
-        <SaveButton :hasNewMessages="hasNewMessages" @save="saveChatHistory" />
+        <!-- 悬浮保存按钮 -->
+        <SaveButton 
+            v-if="scenarioSelected"
+            :can-save="hasNewMessages && chatHistory.length > 1"
+            @save="saveChatHistory"
+        />
     </view>
 </template>
 
@@ -85,6 +103,7 @@ export default {
             scene: 'interpersonal-practice',
             welcomeMessage: '你好！我是小智，你的人际交往练习助手。我们可以进行各种场景的对话练习，帮你提升沟通技巧。请选择一个练习场景开始吧！',
             selectedScenario: null,
+            scenarioSelected: false,
             practiceScenarios: [
                 {
                     id: 'self_introduction',
@@ -137,6 +156,7 @@ export default {
     methods: {
         selectScenario(scenario) {
             this.selectedScenario = scenario.id;
+            this.scenarioSelected = true;
 
             // 发送场景选择消息给AI
             const scenarioMessage = `我想练习${scenario.name}，${scenario.description}。请为我创建一个练习场景。`;
@@ -144,6 +164,15 @@ export default {
         },
 
         getPracticeHint() {
+            // 防止在AI回复过程中重复发送
+            if (this.isAiTyping) {
+                uni.showToast({
+                    title: 'AI正在回复中，请稍等',
+                    icon: 'none'
+                });
+                return;
+            }
+
             if (!this.selectedScenario) {
                 uni.showToast({
                     title: '请先选择练习场景',
@@ -157,6 +186,15 @@ export default {
         },
 
         analyzePractice() {
+            // 防止在AI回复过程中重复发送
+            if (this.isAiTyping) {
+                uni.showToast({
+                    title: 'AI正在回复中，请稍等',
+                    icon: 'none'
+                });
+                return;
+            }
+
             if (this.chatHistory.length < 3) {
                 uni.showToast({
                     title: '对话内容太少，无法分析',
@@ -170,6 +208,15 @@ export default {
         },
 
         switchScenario() {
+            // 防止在AI回复过程中切换场景
+            if (this.isAiTyping) {
+                uni.showToast({
+                    title: 'AI正在回复中，请稍等',
+                    icon: 'none'
+                });
+                return;
+            }
+
             uni.showActionSheet({
                 itemList: this.practiceScenarios.map(s => s.name),
                 success: (res) => {
@@ -177,10 +224,6 @@ export default {
                     this.selectScenario(selectedScenario);
                 }
             });
-        },
-
-        handleScroll(scrollData) {
-            // 处理滚动事件
         }
     }
 }
@@ -188,9 +231,11 @@ export default {
 
 <style scoped>
 .dialog-container {
-    padding: 0;
+    height: 100vh;
+    overflow: hidden;
     background-color: #f5f5f5;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
@@ -198,6 +243,7 @@ export default {
     padding: 60rpx 40rpx 40rpx;
     color: white;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .title {
@@ -214,6 +260,7 @@ export default {
 
 .assistant-intro {
     padding: 40rpx;
+    flex-shrink: 0;
 }
 
 .intro-card {
@@ -281,6 +328,8 @@ export default {
 
 .practice-scenarios {
     padding: 0 40rpx 40rpx;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .section-title {
@@ -335,46 +384,63 @@ export default {
     line-height: 1.4;
 }
 
-.chat-section {
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     margin: 0 40rpx;
     background-color: white;
     border-radius: 16rpx;
     overflow: hidden;
     box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-    min-height: 600rpx;
+}
+
+.chat-messages-wrapper {
+    flex: 1;
+    overflow: hidden;
+}
+
+.chat-input {
+    flex-shrink: 0;
+    border-top: 1rpx solid #e0e0e0;
 }
 
 .practice-controls {
     display: flex;
     justify-content: space-around;
-    padding: 32rpx 40rpx;
-    background-color: white;
-    margin: 20rpx 40rpx 0;
-    border-radius: 16rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    padding: 16rpx 20rpx;
+    background-color: #f8f8f8;
+    border-top: 1rpx solid #e0e0e0;
+    border-bottom: 1rpx solid #e0e0e0;
+    flex-shrink: 0;
 }
 
 .control-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16rpx;
+    padding: 8rpx 12rpx;
     border-radius: 12rpx;
     transition: all 0.3s ease;
 }
 
-.control-item:active {
+.control-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.control-item:active:not(.disabled) {
     background-color: #f0f4ff;
     transform: scale(0.95);
 }
 
 .control-icon {
-    font-size: 32rpx;
-    margin-bottom: 8rpx;
+    font-size: 28rpx;
+    margin-bottom: 4rpx;
 }
 
 .control-text {
-    font-size: 22rpx;
+    font-size: 20rpx;
     color: #666;
 }
 

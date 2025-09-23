@@ -134,7 +134,7 @@
         </view>
       </view>
 
-      <view v-if="practiceHistory.length > 0" class="practice-history">
+      <!-- <view v-if="practiceHistory.length > 0" class="practice-history">
         <text class="section-title">练习记录</text>
         <view v-for="record in practiceHistory" :key="record.id" class="history-item">
           <view class="history-header">
@@ -143,7 +143,7 @@
           </view>
           <text class="history-result">{{ record.result }}</text>
         </view>
-      </view>
+      </view> -->
     </view>
 
     <!-- 成长档案模块 -->
