@@ -39,7 +39,7 @@
         <!-- 综合模式显示说明文字 -->
         <view class="combined-mode-info" v-if="chartMode === 'combined'">
           <text class="info-text">🧠 综合分析三个维度的心理状态</text>
-        </view>
+      </view>
         <view class="chart-mode-toggle">
           <view
             class="mode-btn"
@@ -165,7 +165,7 @@ export default {
   props: {
     currentPeriod: {
       type: String,
-      default: "7days"
+      default: "7days",
     },
     periods: {
       type: Array,
@@ -174,18 +174,18 @@ export default {
         { value: "7days", label: "近7天" },
         { value: "30days", label: "近30天" },
         { value: "60days", label: "近60天" },
-      ]
+      ],
     },
     isLoggedIn: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  
+
   data() {
     return {
       canvasId: `emotionalTrendChart_${Date.now()}`, // 唯一的canvas id
-      
+
       // 数据源配置
       dataSources: [
         {
@@ -210,7 +210,7 @@ export default {
           enabled: true,
         },
       ],
-      
+
       activeSources: ["mood_tracker"], // 默认激活心情晴雨表
       chartMode: "single", // 'single' 或 'combined'
 
@@ -249,6 +249,14 @@ export default {
         touching: false,
         startX: 0,
       },
+
+      // 数据缓存相关
+      loadingTimeout: null, // 防抖定时器
+      cachedDiaries: null, // 缓存的日记数据
+      diaryLastFetchTime: null, // 日记数据最后获取时间
+      processedDiaries: null, // 缓存的处理后日记数据
+      cachedRiskReports: null, // 缓存的风险评估报告
+      riskLastFetchTime: null, // 风险评估最后获取时间
     };
   },
 
@@ -306,8 +314,8 @@ export default {
           this.loadAllData();
         }
       },
-      immediate: false
-    }
+      immediate: false,
+    },
   },
 
   mounted() {
@@ -365,19 +373,26 @@ export default {
         return;
       }
 
-      try {
-        // 并行加载所有数据源
-        await Promise.all([
-          this.loadMoodTrackerData(token),
-          this.loadDiaryEmotionData(token),
-          this.loadRiskAssessmentData(token),
-        ]);
-
-        this.calculateCombinedStats();
-        console.log("=== 所有数据加载完成 ===");
-      } catch (error) {
-        console.error("获取数据失败:", error);
+      // 防抖处理，避免频繁切换时间段导致重复请求
+      if (this.loadingTimeout) {
+        clearTimeout(this.loadingTimeout);
       }
+
+      this.loadingTimeout = setTimeout(async () => {
+        try {
+          // 只加载心情数据，其他数据进行缓存优化
+          await Promise.all([
+            this.loadMoodTrackerData(token),
+            this.loadDiaryEmotionDataOptimized(token),
+            this.loadRiskAssessmentDataOptimized(token),
+          ]);
+
+          this.calculateCombinedStats();
+          console.log("=== 所有数据加载完成 ===");
+        } catch (error) {
+          console.error("获取数据失败:", error);
+        }
+      }, 300); // 300ms 防抖延迟
     },
 
     async loadMoodTrackerData(token) {
@@ -445,23 +460,39 @@ export default {
       this.chartDataSets.mood_tracker = mockData;
     },
 
-    async loadDiaryEmotionData(token) {
+    async loadDiaryEmotionDataOptimized(token) {
       this.loadingStates.diary_emotion = true;
       try {
-        // 获取用户日记并分析情感倾向
-        const response = await api.getUserDiaries(token);
-        const diaries = Array.isArray(response)
-          ? response
-          : response.data || [];
+        // 检查是否已经有缓存的日记数据
+        if (!this.cachedDiaries || this.shouldRefreshDiaryCache()) {
+          console.log("重新获取日记数据...");
+          // 获取用户日记并分析情感倾向
+          const response = await api.getUserDiaries(token);
+          const diaries = Array.isArray(response)
+            ? response
+            : response.data || [];
 
-        if (diaries.length > 0) {
+          // 缓存原始日记数据
+          this.cachedDiaries = diaries;
+          this.diaryLastFetchTime = Date.now();
+
+          // 预处理日记数据，避免重复处理
+          this.processedDiaries = diaries.map((diary) => ({
+            ...diary,
+            dateOnly: diary.created_at ? diary.created_at.split(" ")[0] : "",
+            emotionScore: this.analyzeDiaryEmotion(diary.content || ""),
+          }));
+        }
+
+        if (this.processedDiaries && this.processedDiaries.length > 0) {
           // 根据时间段筛选日记
-          const filteredDiaries = this.filterDataByPeriod(diaries);
+          const filteredDiaries = this.filterDataByPeriod(
+            this.processedDiaries
+          );
 
-          // 模拟情感分析评分 (实际应该调用AI分析)
           this.chartDataSets.diary_emotion = filteredDiaries.map((diary) => ({
-            date: diary.created_at.split(" ")[0],
-            value: this.analyzeDiaryEmotion(diary.content),
+            date: diary.dateOnly,
+            value: diary.emotionScore,
             source: "diary_emotion",
           }));
         } else {
@@ -485,6 +516,11 @@ export default {
       } finally {
         this.loadingStates.diary_emotion = false;
       }
+    },
+
+    // 保持原方法作为备用
+    async loadDiaryEmotionData(token) {
+      return this.loadDiaryEmotionDataOptimized(token);
     },
 
     // 生成模拟碎碎念情感数据
@@ -517,7 +553,7 @@ export default {
       this.chartDataSets.diary_emotion = mockData;
     },
 
-    async loadRiskAssessmentData(token) {
+    async loadRiskAssessmentDataOptimized(token) {
       this.loadingStates.risk_assessment = true;
       try {
         console.log(
@@ -531,8 +567,18 @@ export default {
           return;
         }
 
-        // 首先尝试从API获取真实数据
-        const reports = await api.getRiskAssessmentReports(token, 50);
+        // 检查是否需要重新获取风险评估数据
+        if (!this.cachedRiskReports || this.shouldRefreshRiskCache()) {
+          console.log("重新获取风险评估数据...");
+          // 首先尝试从API获取真实数据
+          const reports = await api.getRiskAssessmentReports(token, 50);
+
+          // 缓存原始数据
+          this.cachedRiskReports = reports;
+          this.riskLastFetchTime = Date.now();
+        }
+
+        const reports = this.cachedRiskReports;
 
         console.log("API返回的原始数据:", reports);
 
@@ -604,6 +650,11 @@ export default {
       } finally {
         this.loadingStates.risk_assessment = false;
       }
+    },
+
+    // 获取风险评估历史数据（原方法，保持向后兼容）
+    async loadRiskAssessmentData(token) {
+      return this.loadRiskAssessmentDataOptimized(token);
     },
 
     // 生成模拟心理评估数据
@@ -1044,7 +1095,7 @@ export default {
         const activeSource = this.activeSources[0];
         totalLength = this.chartDataSets[activeSource]?.length || 0;
       }
-      
+
       if (totalLength <= 1) return 50;
       return (index / (totalLength - 1)) * 100;
     },
@@ -1112,7 +1163,7 @@ export default {
 
       // 处理完整日期格式 (YYYY-MM-DD)
       if (dateStr.length >= 10) {
-        const parts = dateStr.split('-');
+        const parts = dateStr.split("-");
         if (parts.length >= 3) {
           const month = parseInt(parts[1]);
           const day = parseInt(parts[2]);
@@ -1122,11 +1173,29 @@ export default {
       }
 
       // 处理其他格式
-      if (dateStr.includes('-') && dateStr.length >= 5) {
+      if (dateStr.includes("-") && dateStr.length >= 5) {
         return dateStr; // "MM-DD" 保持原样
       }
 
       return dateStr;
+    },
+
+    // 检查是否需要刷新日记缓存
+    shouldRefreshDiaryCache() {
+      const cacheTimeout = 5 * 60 * 1000; // 5分钟
+      return (
+        !this.diaryLastFetchTime ||
+        Date.now() - this.diaryLastFetchTime > cacheTimeout
+      );
+    },
+
+    // 检查是否需要刷新风险评估缓存
+    shouldRefreshRiskCache() {
+      const cacheTimeout = 5 * 60 * 1000; // 5分钟
+      return (
+        !this.riskLastFetchTime ||
+        Date.now() - this.riskLastFetchTime > cacheTimeout
+      );
     },
   },
 };
