@@ -26,6 +26,13 @@
       }
     },
     {
+      "path": "pages/dress-up/dress-up",
+      "style": {
+        "navigationBarTitleText": "百变小念",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/chat-context/chat-context",
       "style": {
         "navigationBarTitleText": ""
