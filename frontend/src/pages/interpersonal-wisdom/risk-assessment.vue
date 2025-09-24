@@ -85,6 +85,56 @@
             </view>
         </view>
 
+        <!-- AI分析提交中页面 -->
+        <view v-if="currentStep === 'analyzing'" class="analyzing-section">
+            <view class="analyzing-animation">
+                <view class="robot-container">
+                    <text class="robot-icon">🤖</text>
+                    <view class="thinking-dots">
+                        <view class="dot dot1"></view>
+                        <view class="dot dot2"></view>
+                        <view class="dot dot3"></view>
+                    </view>
+                </view>
+            </view>
+            
+            <view class="analyzing-content">
+                <text class="analyzing-title">AI正在分析您的回答</text>
+                <text class="analyzing-subtitle">这可能需要1-2分钟...</text>
+                
+                <view class="analyzing-steps">
+                    <view class="step-item active">
+                        <view class="step-icon">✅</view>
+                        <text class="step-text">答案已提交</text>
+                    </view>
+                    <view class="step-item" :class="{ active: analyzingStep >= 2 }">
+                        <view class="step-icon">{{ analyzingStep >= 2 ? '✅' : '⏳' }}</view>
+                        <text class="step-text">数据分析中</text>
+                    </view>
+                    <view class="step-item" :class="{ active: analyzingStep >= 3 }">
+                        <view class="step-icon">{{ analyzingStep >= 3 ? '✅' : '⏳' }}</view>
+                        <text class="step-text">生成报告中</text>
+                    </view>
+                </view>
+            </view>
+            
+            <view class="notification-card">
+                <view class="notification-header">
+                    <text class="notification-icon">📋</text>
+                    <text class="notification-title">分析完成后的查看方式</text>
+                </view>
+                <text class="notification-text">AI分析完成后，您可以在以下位置查看详细报告：</text>
+                <view class="notification-path">
+                    <text class="path-step">人际智慧</text>
+                    <text class="path-arrow">→</text>
+                    <text class="path-step">成长档案</text>
+                    <text class="path-arrow">→</text>
+                    <text class="path-step highlight">报告解读</text>
+                </view>
+                <text class="auto-redirect-text">正在为您跳转回上一页...</text>
+            </view>
+        </view>
+
         <!-- 评估结果页面 -->
         <view v-if="currentStep === 'result'" class="result-section">
             <view class="result-header">
@@ -172,13 +222,14 @@
 export default {
     data() {
         return {
-            currentStep: 'start', // start, assessment, result
+            currentStep: 'start', // start, assessment, analyzing, result
             selectedRelationType: '',
             assessmentQuestions: [],
             currentQuestionIndex: 0,
             selectedAnswers: {},
             assessmentResult: null,
             isAnalyzing: false,
+            analyzingStep: 1, // 分析步骤：1-提交完成，2-数据分析中，3-生成报告中
             relationTypes: [
                 {
                     id: 'family',
@@ -306,8 +357,25 @@ export default {
 
         async submitAssessment() {
             try {
-                this.isAnalyzing = true;
+                console.log('开始提交评估，切换到分析状态');
+                // 切换到分析状态
+                this.currentStep = 'analyzing';
+                this.analyzingStep = 1;
+                
+                console.log('当前步骤：', this.currentStep);
+                
+                // 启动分析步骤动画
+                setTimeout(() => {
+                    console.log('步骤2激活');
+                    this.analyzingStep = 2;
+                }, 1000);
+                
+                setTimeout(() => {
+                    console.log('步骤3激活');
+                    this.analyzingStep = 3;
+                }, 2000);
 
+                // 提交评估数据（异步，不等待AI分析结果）
                 const response = await uni.request({
                     url: `${process.env.VUE_APP_API_BASE_URL}/emotional-protection/protection/relationship-assessment/submit`,
                     method: 'POST',
@@ -318,33 +386,41 @@ export default {
                     data: {
                         session_token: this.sessionToken,
                         relationship_type: this.selectedRelationType,
-                        answers: this.selectedAnswers
+                        answers: this.selectedAnswers,
+                        async_mode: true // 告诉后端这是异步模式
                     }
                 });
 
+                console.log('API响应:', response);
+
                 if (response.statusCode === 200) {
-                    // 后端返回嵌套结构，需要重新组织数据
-                    const data = response.data;
-                    this.assessmentResult = {
-                        overall_percentage: data.assessment_result.total_score,
-                        overall_level: data.assessment_result.total_level,
-                        dimension_analysis: data.assessment_result.dimension_scores,
-                        ai_analysis: data.ai_analysis,
-                        recommendations: data.recommendations || [],
-                        relationship_name: data.assessment_result.relationship_name,
-                        session_token: data.assessment_result.session_token,
-                        questions_answered: data.assessment_result.questions_answered
-                    };
-                    this.currentStep = 'result';
+                    // 3秒后显示完成提示并跳转回人际智慧主页
+                    setTimeout(() => {
+                        console.log('显示成功提示');
+                        uni.showToast({
+                            title: '评估提交成功！请稍后在成长档案中查看报告解读',
+                            icon: 'success',
+                            duration: 2000
+                        });
+                        
+                        // Toast显示完后跳转回人际智慧主页
+                        setTimeout(() => {
+                            console.log('准备跳转回上一页');
+                            uni.navigateBack();
+                        }, 2000);
+                    }, 3000);
+                } else {
+                    throw new Error('提交失败');
                 }
+
             } catch (error) {
                 console.error('提交评估失败:', error);
                 uni.showToast({
-                    title: '分析失败，请重试',
+                    title: '提交失败，请重试',
                     icon: 'none'
                 });
-            } finally {
-                this.isAnalyzing = false;
+                // 回到评估页面
+                this.currentStep = 'assessment';
             }
         },
 
@@ -356,6 +432,7 @@ export default {
             this.selectedAnswers = {};
             this.assessmentResult = null;
             this.sessionToken = '';
+            this.analyzingStep = 1;
         },
 
         getPersonalizedAdvice() {
@@ -1256,5 +1333,221 @@ export default {
     .result-actions {
         flex-direction: column;
     }
+    
+    .analyzing-steps {
+        max-width: 100%;
+    }
+    
+    .notification-path {
+        flex-direction: column;
+        gap: 8rpx;
+    }
+    
+    .path-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .analyzing-actions {
+        flex-direction: column;
+    }
+}
+
+/* 分析页面样式 */
+.analyzing-section {
+    padding: 60rpx 40rpx;
+    text-align: center;
+    min-height: calc(100vh - 120rpx);
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+}
+
+.analyzing-animation {
+    margin-bottom: 60rpx;
+}
+
+.robot-container {
+    position: relative;
+    display: inline-block;
+}
+
+.robot-icon {
+    font-size: 120rpx;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-20rpx);
+    }
+    60% {
+        transform: translateY(-10rpx);
+    }
+}
+
+.thinking-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 20rpx;
+    gap: 8rpx;
+}
+
+.dot {
+    width: 12rpx;
+    height: 12rpx;
+    background-color: #42a5f5;
+    border-radius: 50%;
+    animation: thinking 1.4s infinite ease-in-out;
+}
+
+.dot1 { animation-delay: -0.32s; }
+.dot2 { animation-delay: -0.16s; }
+.dot3 { animation-delay: 0; }
+
+@keyframes thinking {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+.analyzing-content {
+    margin-bottom: 60rpx;
+}
+
+.analyzing-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #1976d2;
+    margin-bottom: 16rpx;
+    display: block;
+}
+
+.analyzing-subtitle {
+    font-size: 26rpx;
+    color: #666;
+    margin-bottom: 50rpx;
+    display: block;
+}
+
+.analyzing-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    max-width: 400rpx;
+    margin: 0 auto;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    padding: 20rpx;
+    background: white;
+    border-radius: 16rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.step-item.active {
+    background: linear-gradient(135deg, #e8f5e8 0%, #ffffff 100%);
+    border-left: 6rpx solid #4caf50;
+}
+
+.step-icon {
+    font-size: 32rpx;
+    margin-right: 20rpx;
+    width: 40rpx;
+}
+
+.step-text {
+    font-size: 28rpx;
+    color: #333;
+    font-weight: 500;
+}
+
+.notification-card {
+    background: white;
+    border-radius: 20rpx;
+    padding: 40rpx;
+    margin-bottom: 50rpx;
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20rpx;
+}
+
+.notification-icon {
+    font-size: 32rpx;
+    margin-right: 12rpx;
+}
+
+.notification-title {
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #333;
+}
+
+.notification-text {
+    font-size: 26rpx;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 24rpx;
+    display: block;
+}
+
+.notification-path {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12rpx;
+    padding: 24rpx;
+    background: #f8f9fa;
+    border-radius: 16rpx;
+}
+
+.path-step {
+    font-size: 26rpx;
+    padding: 12rpx 20rpx;
+    background: #e9ecef;
+    border-radius: 20rpx;
+    color: #495057;
+    font-weight: 500;
+}
+
+.path-step.highlight {
+    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+    color: white;
+    box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+}
+
+.path-arrow {
+    font-size: 24rpx;
+    color: #6c757d;
+    font-weight: bold;
+}
+
+.auto-redirect-text {
+    font-size: 24rpx;
+    color: #42a5f5;
+    text-align: center;
+    margin-top: 20rpx;
+    display: block;
+    opacity: 0.8;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.analyzing-actions {
+    display: flex;
+    gap: 20rpx;
 }
 </style>

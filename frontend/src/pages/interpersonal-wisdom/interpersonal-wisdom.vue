@@ -162,6 +162,21 @@
           </view>
         </view>
       </view>
+
+      <view class="assessment-reports-section">
+        <view class="assessment-reports-card" @click="goToAssessmentReports">
+          <view class="reports-header">
+            <text class="reports-icon">📋</text>
+            <text class="reports-title">关系健康测试报告解读</text>
+            <text class="reports-icon">📋</text>
+          </view>
+          <text class="reports-desc">查看历史评估报告和AI分析建议</text>
+          <view class="reports-btn">
+            <text class="btn-text">查看报告</text>
+            <text class="arrow">→</text>
+          </view>
+        </view>
+      </view>
     </view>
 
     <!-- 回到顶部按钮 -->
@@ -434,6 +449,13 @@ export default {
       });
     },
 
+    // 跳转到关系健康测试报告页面
+    goToAssessmentReports() {
+      uni.navigateTo({
+        url: '/pages/interpersonal-wisdom/assessment-reports'
+      });
+    },
+
     getCategoryIcon(categoryId) {
       const icons = {
         communication: "💬",
@@ -498,6 +520,14 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 400rpx;
+}
+
+.assessment-reports-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400rpx;
+  margin-top: 40rpx;
 }
 
 .favorites-card {
@@ -1104,6 +1134,96 @@ export default {
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 16rpx;
+  }
+}
+
+/* 关系健康测试报告样式 */
+.assessment-reports-card {
+  background: linear-gradient(135deg,
+      rgba(144, 202, 249, 0.9) 0%,
+      rgba(66, 165, 245, 0.9) 50%,
+      rgba(25, 118, 210, 0.9) 100%);
+  backdrop-filter: blur(10rpx);
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  text-align: center;
+  box-shadow: 0 12rpx 32rpx rgba(66, 165, 245, 0.25);
+  border: 3rpx solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 600rpx;
+  width: 100%;
+}
+
+.assessment-reports-card:active {
+  transform: translateY(4rpx) scale(0.98);
+  box-shadow: 0 8rpx 24rpx rgba(66, 165, 245, 0.35);
+}
+
+.reports-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24rpx;
+  gap: 16rpx;
+}
+
+.reports-icon {
+  font-size: 40rpx;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.reports-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
+}
+
+.reports-desc {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  margin-bottom: 32rpx;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.reports-btn {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10rpx);
+  color: white;
+  padding: 24rpx 40rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.reports-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.reports-btn .btn-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.reports-btn .arrow {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
   }
 }
 </style>

@@ -5,6 +5,7 @@ from .user import User
 from .chat_history import ChatSession, ChatMessage
 from .crisis_warning import CrisisWarning
 from .risk_assessment_report import RiskAssessmentReport
+from .relationship_assessment_report import RelationshipAssessmentReport  # 新增关系评估报告模型
 from .emotional_diary import EmotionalDiary
 from .diary_image import DiaryImage
 from .user_feedback import UserFeedback

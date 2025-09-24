@@ -257,6 +257,22 @@
       }
     },
     {
+      "path": "pages/interpersonal-wisdom/assessment-reports",
+      "style": {
+        "navigationBarTitleText": "评估报告",
+        "navigationBarBackgroundColor": "#42a5f5",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/report-detail",
+      "style": {
+        "navigationBarTitleText": "报告详情",
+        "navigationBarBackgroundColor": "#42a5f5",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/tools/self-help-tool",
       "style": {
         "navigationBarTitleText": "心理自助工具",

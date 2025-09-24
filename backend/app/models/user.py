@@ -29,5 +29,8 @@ class User(Base):
     # 添加风险评估报告关联
     risk_reports = relationship("RiskAssessmentReport", back_populates="user", cascade="all, delete-orphan")
     
+    # 添加关系健康评估报告关联
+    relationship_reports = relationship("RelationshipAssessmentReport", back_populates="user", cascade="all, delete-orphan")
+    
     # 添加心情记录关联
     mood_records = relationship("MoodTracker", back_populates="user", cascade="all, delete-orphan")
