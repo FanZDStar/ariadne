@@ -202,7 +202,7 @@ export default {
     text-align: center;
     backdrop-filter: blur(10rpx);
     border: 2rpx solid #f0ead6;
-    box-shadow: 
+    box-shadow:
         0 8rpx 32rpx rgba(139, 105, 20, 0.08),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
 }
@@ -235,7 +235,7 @@ export default {
     border-radius: 32rpx;
     overflow: hidden;
     position: relative;
-    box-shadow: 
+    box-shadow:
         0 12rpx 40rpx rgba(139, 105, 20, 0.12),
         0 4rpx 16rpx rgba(139, 105, 20, 0.08);
     transition: all 0.3s ease;
@@ -244,7 +244,7 @@ export default {
 
 .feature-card:active {
     transform: translateY(6rpx);
-    box-shadow: 
+    box-shadow:
         0 8rpx 25rpx rgba(139, 105, 20, 0.15),
         0 2rpx 8rpx rgba(139, 105, 20, 0.1);
 }
@@ -269,10 +269,10 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, 
-        rgba(255, 248, 220, 0.4) 0%, 
-        rgba(250, 245, 220, 0.2) 50%, 
-        rgba(245, 241, 232, 0.4) 100%);
+    background: linear-gradient(135deg,
+            rgba(255, 248, 220, 0.4) 0%,
+            rgba(250, 245, 220, 0.2) 50%,
+            rgba(245, 241, 232, 0.4) 100%);
     border-radius: 32rpx;
 }
 
@@ -430,52 +430,52 @@ export default {
     .header {
         padding: 60rpx 30rpx 30rpx;
     }
-    
+
     .brand-title {
         font-size: 48rpx;
         letter-spacing: 2rpx;
     }
-    
+
     .brand-subtitle {
         font-size: 26rpx;
     }
-    
+
     .feature-grid {
         padding: 20rpx 30rpx 50rpx;
         gap: 24rpx;
     }
-    
+
     .card-content {
         padding: 32rpx;
         gap: 24rpx;
     }
-    
+
     .card-icon-wrapper {
         width: 76rpx;
         height: 76rpx;
         border-radius: 20rpx;
     }
-    
+
     .card-emoji {
         font-size: 38rpx;
     }
-    
+
     .card-title {
         font-size: 30rpx;
     }
-    
+
     .card-description {
         font-size: 24rpx;
     }
-    
+
     .welcome-card {
         padding: 28rpx;
     }
-    
+
     .welcome-text {
         font-size: 30rpx;
     }
-    
+
     .welcome-desc {
         font-size: 24rpx;
     }
@@ -487,7 +487,7 @@ export default {
         max-width: 900rpx;
         margin: 0 auto;
     }
-    
+
     .header {
         max-width: 900rpx;
         margin: 0 auto;

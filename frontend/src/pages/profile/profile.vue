@@ -22,6 +22,10 @@
                 <text class="menu-text">对话历史</text>
                 <text class="arrow">></text>
             </view>
+            <view class="menu-item" @click="goToDressUp">
+                <text class="menu-text">百变小念</text>
+                <text class="arrow"> > </text>
+            </view>
             <view class="menu-item" @click="goToFeedback">
                 <text class="menu-text">意见反馈</text>
                 <text class="arrow">></text>
@@ -491,6 +495,12 @@ export default {
         goToHistory() {
             uni.navigateTo({
                 url: '/pages/chat-history/chat-history'
+            });
+        },
+
+        goToDressUp() {
+            uni.navigateTo({
+                url: '/pages/dress-up/dress-up'
             });
         },
 

@@ -35,18 +35,20 @@ export default {
             isDragging: false,
             startTouch: { x: 0, y: 0 },
             currentAction: 'idle',
-            currentImage: '/static/mascot/idle.png',
+            currentImage: '/static/outfits/default-full.png',
             showBubble: false,
             currentSpeech: '',
             showDressUp: false,
             wanderTimer: null,
+            outfitCheckTimer: null,
+            lastOutfitId: null, // 记录上次的服装ID，用于检测变化
 
             // 动作配置
             actions: [
-                { name: 'idle', image: '/static/mascot/idle.png' },
-                { name: 'wave', image: '/static/mascot/wave.png' },
-                { name: 'happy', image: '/static/mascot/happy.png' },
-                { name: 'sleep', image: '/static/mascot/sleep.png' }
+                { name: 'idle', image: '/static/outfits/default-full.png' },
+                { name: 'wave', image: '/static/outfits/default-full.png' },
+                { name: 'happy', image: '/static/outfits/default-full.png' },
+                { name: 'sleep', image: '/static/outfits/default-full.png' }
             ],
 
             // 对话内容
@@ -83,10 +85,61 @@ export default {
     },
 
     mounted() {
+        this.loadSavedOutfit();
         this.startWandering();
+        // 设置定时检查服装变更
+        this.setupOutfitWatcher();
+    },
+
+    onLoad() {
+        // 页面加载时加载服装设置
+        this.loadSavedOutfit();
+    },
+
+    onShow() {
+        // 页面显示时重新加载服装设置
+        this.loadSavedOutfit();
+    },
+
+    onReady() {
+        // 页面渲染完成时检查服装
+        this.loadSavedOutfit();
+    },
+
+    beforeDestroy() {
+        // 清理定时器
+        if (this.outfitCheckTimer) {
+            clearInterval(this.outfitCheckTimer);
+        }
     },
 
     methods: {
+        // 加载保存的服装设置
+        loadSavedOutfit() {
+            const savedOutfit = uni.getStorageSync('selectedOutfit');
+            if (savedOutfit && savedOutfit.mascotImage) {
+                // 检查是否有服装变化
+                const isFirstLoad = this.lastOutfitId === null && this.currentImage === '/static/outfits/default-full.png';
+
+                if (this.lastOutfitId !== savedOutfit.id) {
+                    console.log('检测到服装变化，从', this.lastOutfitId, '到', savedOutfit.id);
+                    this.currentImage = savedOutfit.mascotImage;
+                    this.lastOutfitId = savedOutfit.id;
+
+                    // 只有在非首次加载时才显示换装效果
+                    if (!isFirstLoad) {
+                        this.playOutfitChangeEffect();
+                    }
+                }
+            } else {
+                // 如果没有保存的服装，使用默认图片
+                if (this.currentImage !== '/static/outfits/default-full.png') {
+                    this.currentImage = '/static/outfits/default-full.png';
+                    this.lastOutfitId = null;
+                }
+            }
+        },
+
         // 拖拽处理
         handleTouchStart(e) {
             this.isDragging = true;
@@ -127,12 +180,14 @@ export default {
         playRandomAction() {
             const randomAction = this.actions[Math.floor(Math.random() * this.actions.length)];
             this.currentAction = randomAction.name;
-            this.currentImage = randomAction.image;
+
+            // 保持当前的服装图片，不需要切换到动作图片
+            // 现在每个服装只有一张完整形象图
 
             // 2秒后回到idle状态
             setTimeout(() => {
                 this.currentAction = 'idle';
-                this.currentImage = this.actions[0].image;
+                // 图片保持不变，继续显示当前选择的服装
             }, 2000);
         },
 
@@ -146,13 +201,40 @@ export default {
             }, 3000);
         },
 
+        // 设置服装变化监听器
+        setupOutfitWatcher() {
+            // 每2秒检查一次服装变化
+            this.outfitCheckTimer = setInterval(() => {
+                this.loadSavedOutfit();
+            }, 2000);
+        },
+
+        // 播放换装效果
+        playOutfitChangeEffect() {
+            // 简单的闪烁效果表示换装
+            const mascotElement = this.$el?.querySelector('.mascot-image');
+            if (mascotElement) {
+                mascotElement.style.opacity = '0.3';
+                setTimeout(() => {
+                    mascotElement.style.opacity = '1';
+                }, 300);
+            }
+
+            // 显示换装提示
+            this.currentSpeech = '我换新衣服啦~';
+            this.showBubble = true;
+            setTimeout(() => {
+                this.showBubble = false;
+            }, 2000);
+        },
+
         // 自动闲逛
         startWandering() {
             this.wanderTimer = setInterval(() => {
-                if (!this.isDragging && Math.random() < 0.5) {
+                if (!this.isDragging && Math.random() < 0.2) {
                     this.autoWander();
                 }
-            }, 1000);
+            }, 10000);
         },
 
         autoWander() {
@@ -208,7 +290,10 @@ export default {
 
     // 长按事件（进入换装）
     onLongpress() {
-        this.openDressUp();
+        // this.openDressUp();
+        uni.navigateTo({
+            url: '/pages/dress-up/dress-up'
+        });
     },
 
     beforeDestroy() {
@@ -249,6 +334,7 @@ export default {
 .mascot-image {
     width: 100%;
     height: 100%;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .speech-bubble {
