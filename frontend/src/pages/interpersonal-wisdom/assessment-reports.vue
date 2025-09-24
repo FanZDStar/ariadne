@@ -25,15 +25,34 @@
 
       <!-- 加载状态 -->
       <view v-if="isLoading" class="loading-section">
-        <text class="loading-text">正在加载报告...</text>
+        <!-- 骨架屏 -->
+        <view class="skeleton-container">
+          <view v-for="n in 3" :key="n" class="skeleton-report-item">
+            <view class="skeleton-header">
+              <view class="skeleton-info">
+                <view class="skeleton-title"></view>
+                <view class="skeleton-date"></view>
+              </view>
+              <view class="skeleton-score"></view>
+            </view>
+            <view class="skeleton-level"></view>
+            <view class="skeleton-dimensions">
+              <view v-for="m in 4" :key="m" class="skeleton-dimension">
+                <view class="skeleton-dimension-name"></view>
+                <view class="skeleton-dimension-bar"></view>
+              </view>
+            </view>
+          </view>
+        </view>
       </view>
 
       <!-- 报告列表 -->
       <view v-else-if="reports.length > 0" class="reports-list">
         <view 
-          class="report-item"
-          v-for="report in reports" 
+          class="report-item fade-in"
+          v-for="(report, index) in reports" 
           :key="report.id"
+          :style="{ animationDelay: (index * 0.1) + 's' }"
           @click="viewReport(report)"
         >
           <view class="report-header">
@@ -76,11 +95,13 @@
 
       <!-- 空状态 -->
       <view v-else class="empty-state">
-        <text class="empty-icon">📭</text>
-        <text class="empty-title">暂无评估报告</text>
-        <text class="empty-desc">完成第一次关系健康评估，开始了解你的人际状况</text>
-        <view class="empty-action" @click="startNewAssessment">
-          <text class="empty-btn-text">立即评估</text>
+        <view class="empty-content fade-in">
+          <text class="empty-icon">📭</text>
+          <text class="empty-title">暂无评估报告</text>
+          <text class="empty-desc">完成第一次关系健康评估，开始了解你的人际状况</text>
+          <view class="empty-action" @click="startNewAssessment">
+            <text class="empty-btn-text">立即评估</text>
+          </view>
         </view>
       </view>
     </view>
@@ -135,13 +156,13 @@
     </view>
 
     <!-- 温馨提示 -->
-    <view class="notice-card">
+    <!-- <view class="notice-card">
       <view class="notice-header">
         <text class="notice-icon">💡</text>
         <text class="notice-title">温馨提示</text>
       </view>
       <text class="notice-text">评估结果仅供参考，持续关注和改善人际关系需要时间和实践</text>
-    </view>
+    </view> -->
   </view>
 </template>
 
@@ -358,6 +379,7 @@ export default {
 
 .reports-section {
   padding: 0 40rpx 30rpx;
+  min-height: 600rpx; /* 设置最小高度，避免内容加载时页面跳动 */
 }
 
 .section-header {
@@ -396,19 +418,136 @@ export default {
 }
 
 .loading-section {
-  text-align: center;
-  padding: 80rpx 0;
+  padding: 0;
 }
 
-.loading-text {
-  font-size: 28rpx;
-  color: #666;
+/* 骨架屏样式 */
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.skeleton-report-item {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.skeleton-info {
+  flex: 1;
+}
+
+.skeleton-title {
+  width: 200rpx;
+  height: 30rpx;
+  background: #f0f0f0;
+  border-radius: 4rpx;
+  margin-bottom: 8rpx;
+}
+
+.skeleton-date {
+  width: 100rpx;
+  height: 24rpx;
+  background: #f5f5f5;
+  border-radius: 4rpx;
+}
+
+.skeleton-score {
+  width: 120rpx;
+  height: 56rpx;
+  background: #f0f0f0;
+  border-radius: 20rpx;
+}
+
+.skeleton-level {
+  width: 80rpx;
+  height: 26rpx;
+  background: #f5f5f5;
+  border-radius: 4rpx;
+  margin-bottom: 20rpx;
+}
+
+.skeleton-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.skeleton-dimension {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.skeleton-dimension-name {
+  width: 120rpx;
+  height: 24rpx;
+  background: #f5f5f5;
+  border-radius: 4rpx;
+  flex-shrink: 0;
+}
+
+.skeleton-dimension-bar {
+  flex: 1;
+  height: 12rpx;
+  background: #f0f0f0;
+  border-radius: 6rpx;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out both;
 }
 
 .reports-list {
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .report-item {
@@ -545,8 +684,15 @@ export default {
 }
 
 .empty-state {
+  min-height: 500rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-content {
   text-align: center;
-  padding: 100rpx 40rpx;
+  padding: 40rpx;
 }
 
 .empty-icon {

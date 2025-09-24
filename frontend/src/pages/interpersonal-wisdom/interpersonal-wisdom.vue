@@ -70,37 +70,63 @@
 
     <!-- 防护指南模块 -->
     <view v-if="activeTab === 'protection'" class="content-section">
-      <view class="protection-tools">
-        <view class="tool-card assessment" @click="startRiskAssessment">
-          <view class="tool-header">
-            <text class="tool-icon">📊</text>
-            <text class="tool-title">关系健康评估</text>
+      <view class="section-header">
+        <text class="section-title">智能防护推荐</text>
+        <view class="refresh-btn" @click="refreshProtectionTools">
+          <text class="refresh-icon">🔄</text>
+          <text class="refresh-text">刷新推荐</text>
+        </view>
+      </view>
+
+      <view class="recommended-protection">
+        <view class="skill-card recommended" @click="startRiskAssessment">
+          <view class="skill-header">
+            <text class="skill-title">关系健康评估</text>
           </view>
-          <text class="tool-desc">评估你当前关系的健康状况</text>
-          <view class="tool-btn">
-            <text class="btn-text">开始评估</text>
+          <text class="skill-content">评估你当前关系的健康状况，识别潜在风险</text>
+          <view class="skill-tags">
+            <text class="skill-tag">评估</text>
+            <text class="skill-tag">健康</text>
+            <text class="skill-tag">风险识别</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="startRiskAssessment">
+              <text class="action-text">开始评估</text>
+            </view>
           </view>
         </view>
 
-        <view class="tool-card advice" @click="getPersonalizedAdvice">
-          <view class="tool-header">
-            <text class="tool-icon">💡</text>
-            <text class="tool-title">个性化建议</text>
+        <view class="skill-card recommended" @click="getPersonalizedAdvice">
+          <view class="skill-header">
+            <text class="skill-title">个性化建议</text>
           </view>
-          <text class="tool-desc">获取针对你情况的专属防护建议</text>
-          <view class="tool-btn">
-            <text class="btn-text">获取建议</text>
+          <text class="skill-content">获取针对你情况的专属防护建议，提升安全意识</text>
+          <view class="skill-tags">
+            <text class="skill-tag">建议</text>
+            <text class="skill-tag">个性化</text>
+            <text class="skill-tag">防护</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="getPersonalizedAdvice">
+              <text class="action-text">获取建议</text>
+            </view>
           </view>
         </view>
 
-        <view class="tool-card emergency" @click="viewEmergencyResources">
-          <view class="tool-header">
-            <text class="tool-icon">🆘</text>
-            <text class="tool-title">应急资源</text>
+        <view class="skill-card recommended" @click="viewEmergencyResources">
+          <view class="skill-header">
+            <text class="skill-title">应急资源</text>
           </view>
-          <text class="tool-desc">查看专业求助渠道和应急联系方式</text>
-          <view class="tool-btn">
-            <text class="btn-text">查看资源</text>
+          <text class="skill-content">查看专业求助渠道和应急联系方式，关键时刻获得帮助</text>
+          <view class="skill-tags">
+            <text class="skill-tag">应急</text>
+            <text class="skill-tag">求助</text>
+            <text class="skill-tag">资源</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="viewEmergencyResources">
+              <text class="action-text">查看资源</text>
+            </view>
           </view>
         </view>
       </view>
@@ -148,32 +174,46 @@
 
     <!-- 成长档案模块 -->
     <view v-if="activeTab === 'growth'" class="content-section">
-      <view class="favorites-section">
-        <view class="favorites-card" @click="goToSkillFavorites">
-          <view class="favorites-header">
-            <text class="favorites-icon">💖</text>
-            <text class="favorites-title">技能收藏</text>
-            <text class="favorites-icon">💖</text>
-          </view>
-          <text class="favorites-desc">查看和管理你收藏的所有技能</text>
-          <view class="favorites-btn">
-            <text class="btn-text">进入收藏夹</text>
-            <text class="arrow">→</text>
-          </view>
+      <view class="section-header">
+        <text class="section-title">智能成长推荐</text>
+        <view class="refresh-btn" @click="refreshGrowthTools">
+          <text class="refresh-icon">🔄</text>
+          <text class="refresh-text">刷新推荐</text>
         </view>
       </view>
 
-      <view class="assessment-reports-section">
-        <view class="assessment-reports-card" @click="goToAssessmentReports">
-          <view class="reports-header">
-            <text class="reports-icon">📋</text>
-            <text class="reports-title">关系健康测试报告解读</text>
-            <text class="reports-icon">📋</text>
+      <view class="recommended-growth">
+        <view class="skill-card recommended" @click="goToSkillFavorites">
+          <view class="skill-header">
+            <text class="skill-title">技能收藏</text>
           </view>
-          <text class="reports-desc">查看历史评估报告和AI分析建议</text>
-          <view class="reports-btn">
-            <text class="btn-text">查看报告</text>
-            <text class="arrow">→</text>
+          <text class="skill-content">查看和管理你收藏的所有技能，随时回顾学习进度</text>
+          <view class="skill-tags">
+            <text class="skill-tag">收藏</text>
+            <text class="skill-tag">管理</text>
+            <text class="skill-tag">回顾</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="goToSkillFavorites">
+              <text class="action-text">进入收藏夹</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="skill-card recommended" @click="goToAssessmentReports">
+          <view class="skill-header">
+            <text class="skill-title">测试报告解读</text>
+          </view>
+          <text class="skill-content">查看历史评估报告和AI分析建议，了解关系健康状况</text>
+          <view class="skill-tags">
+            <text class="skill-tag">报告</text>
+            <text class="skill-tag">分析</text>
+            <text class="skill-tag">建议</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="goToAssessmentReports">
+              <text class="action-text">查看报告</text>
+            </view>
           </view>
         </view>
       </view>
@@ -391,6 +431,20 @@ export default {
       });
     },
 
+    refreshProtectionTools() {
+      uni.showToast({
+        title: "防护工具已刷新",
+        icon: "success",
+      });
+    },
+
+    refreshGrowthTools() {
+      uni.showToast({
+        title: "成长工具已刷新",
+        icon: "success",
+      });
+    },
+
     // viewCategorySkills(category) {
     //     uni.navigateTo({
     //         url: `/pages/interpersonal-wisdom/category-skills?categoryId=${category.id}`
@@ -513,113 +567,6 @@ export default {
   position: relative;
   overflow: hidden;
   box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.4);
-}
-
-.favorites-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400rpx;
-}
-
-.assessment-reports-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400rpx;
-  margin-top: 40rpx;
-}
-
-.favorites-card {
-  background: linear-gradient(135deg,
-      rgba(255, 182, 193, 0.9) 0%,
-      rgba(255, 105, 180, 0.9) 50%,
-      rgba(238, 130, 238, 0.9) 100%);
-  backdrop-filter: blur(10rpx);
-  border-radius: 24rpx;
-  padding: 48rpx 40rpx;
-  text-align: center;
-  box-shadow: 0 12rpx 32rpx rgba(255, 105, 180, 0.25);
-  border: 3rpx solid rgba(255, 255, 255, 0.6);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 600rpx;
-  width: 100%;
-}
-
-.favorites-card:active {
-  transform: translateY(4rpx) scale(0.98);
-  box-shadow: 0 8rpx 24rpx rgba(255, 105, 180, 0.35);
-}
-
-.favorites-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 24rpx;
-  gap: 16rpx;
-}
-
-.favorites-icon {
-  font-size: 40rpx;
-  animation: heartbeat 2s ease-in-out infinite;
-}
-
-.favorites-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
-}
-
-.favorites-desc {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.6;
-  margin-bottom: 32rpx;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-}
-
-.favorites-btn {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10rpx);
-  color: white;
-  padding: 24rpx 40rpx;
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-  box-shadow: 0 4rpx 16rpx rgba(255, 255, 255, 0.2);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.favorites-btn:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.favorites-btn .btn-text {
-  font-size: 30rpx;
-  font-weight: 600;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-}
-
-.favorites-btn .arrow {
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-@keyframes heartbeat {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
 }
 
 .header::before {
@@ -832,6 +779,14 @@ export default {
   justify-content: center;
 }
 
+.recommended-protection {
+  margin-bottom: 40rpx;
+}
+
+.recommended-growth {
+  margin-bottom: 40rpx;
+}
+
 .action-btn {
   padding: 20rpx 40rpx;
   border-radius: 12rpx;
@@ -1012,105 +967,6 @@ export default {
   line-height: 1.5;
 }
 
-.favorites-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400rpx;
-}
-
-.favorites-card {
-  background: linear-gradient(135deg,
-      rgba(255, 182, 193, 0.9) 0%,
-      rgba(255, 105, 180, 0.9) 50%,
-      rgba(238, 130, 238, 0.9) 100%);
-  backdrop-filter: blur(10rpx);
-  border-radius: 24rpx;
-  padding: 48rpx 40rpx;
-  text-align: center;
-  box-shadow: 0 12rpx 32rpx rgba(255, 105, 180, 0.25);
-  border: 3rpx solid rgba(255, 255, 255, 0.6);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 600rpx;
-  width: 100%;
-}
-
-.favorites-card:active {
-  transform: translateY(4rpx) scale(0.98);
-  box-shadow: 0 8rpx 24rpx rgba(255, 105, 180, 0.35);
-}
-
-.favorites-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 24rpx;
-  gap: 16rpx;
-}
-
-.favorites-icon {
-  font-size: 40rpx;
-  animation: heartbeat 2s ease-in-out infinite;
-}
-
-.favorites-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
-}
-
-.favorites-desc {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.6;
-  margin-bottom: 32rpx;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-}
-
-.favorites-btn {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10rpx);
-  color: white;
-  padding: 24rpx 40rpx;
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-  box-shadow: 0 4rpx 16rpx rgba(255, 255, 255, 0.2);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.favorites-btn:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.favorites-btn .btn-text {
-  font-size: 30rpx;
-  font-weight: 600;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-}
-
-.favorites-btn .arrow {
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-@keyframes heartbeat {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-}
-
 @media (max-width: 750rpx) {
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1134,96 +990,6 @@ export default {
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 16rpx;
-  }
-}
-
-/* 关系健康测试报告样式 */
-.assessment-reports-card {
-  background: linear-gradient(135deg,
-      rgba(144, 202, 249, 0.9) 0%,
-      rgba(66, 165, 245, 0.9) 50%,
-      rgba(25, 118, 210, 0.9) 100%);
-  backdrop-filter: blur(10rpx);
-  border-radius: 24rpx;
-  padding: 48rpx 40rpx;
-  text-align: center;
-  box-shadow: 0 12rpx 32rpx rgba(66, 165, 245, 0.25);
-  border: 3rpx solid rgba(255, 255, 255, 0.6);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 600rpx;
-  width: 100%;
-}
-
-.assessment-reports-card:active {
-  transform: translateY(4rpx) scale(0.98);
-  box-shadow: 0 8rpx 24rpx rgba(66, 165, 245, 0.35);
-}
-
-.reports-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 24rpx;
-  gap: 16rpx;
-}
-
-.reports-icon {
-  font-size: 40rpx;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.reports-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
-}
-
-.reports-desc {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.6;
-  margin-bottom: 32rpx;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-}
-
-.reports-btn {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10rpx);
-  color: white;
-  padding: 24rpx 40rpx;
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-  box-shadow: 0 4rpx 16rpx rgba(255, 255, 255, 0.2);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.reports-btn:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.reports-btn .btn-text {
-  font-size: 30rpx;
-  font-weight: 600;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-}
-
-.reports-btn .arrow {
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
   }
 }
 </style>
