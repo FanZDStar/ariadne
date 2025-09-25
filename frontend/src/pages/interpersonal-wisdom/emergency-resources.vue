@@ -204,17 +204,19 @@ export default {
         articles: [
           {
             id: 1,
-            title: "如何识别抑郁症的早期信号",
-            description: "了解抑郁症的常见症状和求助方式",
+            title: "小心人际间的\"情绪感染\"",
+            description: "了解情绪感染的机制，学会保护自己的情绪边界",
             type: "科普文章",
             readTime: "5分钟",
+            url: "https://mp.weixin.qq.com/s/FHpwSh5_dIPxl5uLUzAeTw",
           },
           {
             id: 2,
-            title: "应对焦虑的实用方法",
-            description: "学习有效缓解焦虑情绪的技巧",
+            title: "如何对待并应对孩子过度使用手机",
+            description: "专家指导如何帮助孩子合理使用数字设备，建立健康的使用习惯",
             type: "实用指南",
             readTime: "8分钟",
+            url: "https://ncmhc.org.cn/channel/newsinfo/6319",
           },
         ],
         videos: [
@@ -378,9 +380,50 @@ export default {
     },
 
     viewResource(resource) {
-      uni.navigateTo({
-        url: `/pages/resources/resource-detail?id=${resource.id}&type=${this.currentResourceTab}`,
-      });
+      console.log('viewResource called with:', resource);
+      
+      // 如果资源包含外部链接
+      if (resource.url) {
+        console.log('Opening external URL:', resource.url);
+        
+        // H5 环境下用 window.open
+        // #ifdef H5
+        window.open(resource.url, '_blank');
+        // #endif
+        
+        // App 环境下用 plus.runtime.openURL
+        // #ifdef APP-PLUS
+        plus.runtime.openURL(resource.url);
+        // #endif
+        
+        // 小程序环境下提示用户
+        // #ifndef H5 || APP-PLUS
+        uni.showModal({
+          title: '提示',
+          content: '将为您复制链接地址，请在浏览器中粘贴访问',
+          confirmText: '复制链接',
+          success: (res) => {
+            if (res.confirm) {
+              uni.setClipboardData({
+                data: resource.url,
+                success: () => {
+                  uni.showToast({
+                    title: '链接已复制到剪贴板',
+                    icon: 'success'
+                  });
+                }
+              });
+            }
+          }
+        });
+        // #endif
+      } else {
+        console.log('Internal navigation for resource:', resource.id);
+        // 原有的内部导航逻辑
+        uni.navigateTo({
+          url: `/pages/resources/resource-detail?id=${resource.id}&type=${this.currentResourceTab}`,
+        });
+      }
     },
   },
 };

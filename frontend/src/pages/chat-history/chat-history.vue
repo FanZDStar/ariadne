@@ -1,26 +1,42 @@
 <template>
     <view class="history-container">
+        <!-- 渐变头部区域 -->
         <view class="header">
-            <text class="title">💬 对话历史</text>
-            <text class="subtitle">{{ getTabDescription(activeTab) }}</text>
+            <view class="header-content">
+                <text class="title">💬 对话历史</text>
+                <text class="subtitle">{{ getTabDescription(activeTab) }}</text>
+            </view>
+            <view class="header-decoration">
+                <view class="decoration-circle circle-1"></view>
+                <view class="decoration-circle circle-2"></view>
+                <view class="decoration-circle circle-3"></view>
+            </view>
         </view>
 
+        <!-- 优化的选择器 -->
         <view class="selector-container">
             <picker mode="selector" :range="pickerOptions" :value="pickerIndex" @change="onPickerChange"
                 range-key="name">
                 <view class="picker-display">
                     <view class="picker-content">
-                        <text class="picker-icon">{{ getCurrentIcon() }}</text>
-                        <text :class="['picker-text', activeTab ? 'selected' : 'placeholder']">{{ getCurrentText()
-                            }}</text>
+                        <view class="picker-icon-wrapper">
+                            <text class="picker-icon">{{ getCurrentIcon() }}</text>
+                        </view>
+                        <view class="picker-text-wrapper">
+                            <text :class="['picker-text', activeTab ? 'selected' : 'placeholder']">{{ getCurrentText() }}</text>
+                            <text class="picker-hint" v-if="!activeTab">轻触选择对话类型</text>
+                        </view>
                     </view>
-                    <text class="picker-arrow">▼</text>
+                    <view class="picker-arrow-wrapper">
+                        <text class="picker-arrow">▼</text>
+                    </view>
                 </view>
             </picker>
         </view>
 
+        <!-- 内容区域 -->
         <view class="content">
-            <scroll-view class="history-list" scroll-y="true">
+            <scroll-view class="history-list" scroll-y="true" enhanced :show-scrollbar="false">
                 <view v-for="item in historyList" :key="item.id" class="history-item">
                     <view class="item-content" @click="viewHistoryDetail(item)">
                         <view class="item-header">
@@ -35,7 +51,7 @@
                         </view>
                         <text class="item-preview">{{ getPreviewText(item) }}</text>
                         <view class="item-stats">
-                            <text class="stats-item">💬 {{ item.message_count || 0 }}条消息</text>
+                            <text class="stats-item">💬 {{ getMessageCount(item) }}条消息</text>
                             <text class="stats-item" v-if="item.auto_save_enabled">🔄 自动保存</text>
                         </view>
                     </view>
@@ -44,10 +60,21 @@
                     </view>
                 </view>
 
-                <view v-if="historyList.length === 0" class="empty">
-                    <text class="empty-icon">📋</text>
-                    <text class="empty-text">暂无{{ getSceneName(activeTab) }}对话历史</text>
-                    <text class="empty-hint">开始一段新的对话吧</text>
+                <!-- 空状态优化 -->
+                <view v-if="historyList.length === 0" class="empty-state">
+                    <view class="empty-illustration">
+                        <text class="empty-icon">📋</text>
+                        <view class="empty-circles">
+                            <view class="empty-circle"></view>
+                            <view class="empty-circle"></view>
+                            <view class="empty-circle"></view>
+                        </view>
+                    </view>
+                    <text class="empty-title">暂无{{ getSceneName(activeTab) }}对话历史</text>
+                    <text class="empty-subtitle">开始一段新的对话，记录美好时光</text>
+                    <view class="empty-action" v-if="activeTab">
+                        <text class="action-hint">💡 选择其他对话类型或开始新对话</text>
+                    </view>
                 </view>
             </scroll-view>
         </view>
@@ -56,22 +83,14 @@
 
 <script>
 // 使用环境变量的API基础地址
-const BASE_URL = process.env.VUE_APP_API_BASE_URL;
-console.log('当前环境变量 VUE_APP_API_BASE_URL:', process.env.VUE_APP_API_BASE_URL);
-console.log('实际使用的 BASE_URL:', BASE_URL);
-
-// 检查环境变量是否正确配置
-if (!BASE_URL) {
-    console.error('❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!');
-    throw new Error('API基础地址未配置，请检查环境变量 VUE_APP_API_BASE_URL');
-}
+const BASE_URL = process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000';
 
 // const BASE_URL = 'http://127.0.0.1:8000';
 export default {
     data() {
         return {
-            activeTab: '',
-            pickerIndex: 0, // 默认选择第一个选项（默认提示）
+            activeTab: 'self-dialog',
+            pickerIndex: 0, // 默认选择第一个对话类型（自我对话，索引0）
 
             tabs: [
                 // 基础场景
@@ -93,19 +112,18 @@ export default {
     },
     computed: {
         pickerOptions() {
-            return [
-                { name: '请选择你要查看的对话历史类型', type: '', icon: '📋' },
-                ...this.tabs.map(tab => ({
-                    name: `${tab.icon} ${tab.name}`,
-                    type: tab.type,
-                    icon: tab.icon
-                }))
-            ]
+            return this.tabs.map(tab => ({
+                name: `${tab.icon} ${tab.name}`,
+                type: tab.type,
+                icon: tab.icon
+            }))
         }
     },
     mounted() {
-        // 不自动加载历史记录，等待用户选择
-        // this.loadHistory()
+        // 页面加载时自动加载自我对话历史记录
+        this.$nextTick(() => {
+            this.loadHistory();
+        });
     },
 
     methods: {
@@ -113,33 +131,29 @@ export default {
             const index = e.detail.value
             this.pickerIndex = index
 
-            if (index === 0) {
-                // 选择了默认选项，清空历史列表
-                this.activeTab = ''
-                this.historyList = []
-            } else {
-                // 选择了具体的对话类型
-                const selectedOption = this.pickerOptions[index]
+            // 直接选择对话类型（已移除"请选择"选项）
+            const selectedOption = this.pickerOptions[index]
+            if (selectedOption) {
                 this.activeTab = selectedOption.type
                 this.loadHistory()
             }
         },
 
         getCurrentIcon() {
-            if (this.pickerIndex <= 0) {
+            if (this.pickerIndex < 0) {
                 return '📋'
             }
             const selectedOption = this.pickerOptions[this.pickerIndex]
-            return selectedOption.icon || '📋'
+            return selectedOption ? selectedOption.icon : '📋'
         },
 
         getCurrentText() {
-            if (this.pickerIndex === 0 || !this.activeTab) {
-                return '请选择你要查看的对话历史类型'
-            }
             const selectedOption = this.pickerOptions[this.pickerIndex]
-            const tab = this.tabs.find(t => t.type === selectedOption.type)
-            return tab ? tab.name : '请选择对话类型'
+            if (selectedOption) {
+                const tab = this.tabs.find(t => t.type === selectedOption.type)
+                return tab ? tab.name : '对话类型'
+            }
+            return '对话类型'
         },
 
         switchTab(tabType) {
@@ -197,23 +211,30 @@ export default {
             return colorMap[scene] || '#999'
         },
         async loadHistory() {
+            if (!this.activeTab) {
+                return;
+            }
+            
             try {
+                const token = uni.getStorageSync('access_token');
+                if (!token) {
+                    return;
+                }
+                
                 const response = await uni.request({
                     url: `${BASE_URL}/chat/chat-sessions?scene=${this.activeTab}`,
                     method: 'GET',
                     header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
+                        'Authorization': `Bearer ${token}`
                     }
                 })
 
                 if (response.statusCode === 200) {
-                    this.historyList = response.data
+                    this.historyList = Array.isArray(response.data) ? response.data : [];
                 } else {
-                    console.error('加载历史记录失败:', response)
                     this.historyList = []
                 }
             } catch (error) {
-                console.error('加载历史记录失败:', error)
                 uni.showToast({
                     title: '加载失败',
                     icon: 'none'
@@ -232,27 +253,38 @@ export default {
 
         getSessionDuration(session) {
             if (!session.messages || session.messages.length < 2) {
-                return '短对话'
+                return '简短交流'
             }
 
             const messageCount = session.messages.length
-            if (messageCount < 10) {
-                return '短对话'
+            if (messageCount < 6) {
+                return '简短交流'
+            } else if (messageCount < 15) {
+                return '轻松聊天'
             } else if (messageCount < 30) {
-                return '中等对话'
+                return '深入对话'
             } else {
-                return '深度对话'
+                return '深度交流'
             }
         },
         getPreviewText(session) {
             // 获取第一条用户消息作为预览
-            const firstUserMessage = session.messages.find(msg => msg.role === 'user')
+            const firstUserMessage = session.messages && session.messages.find(msg => msg.role === 'user')
             if (firstUserMessage) {
                 return firstUserMessage.content.length > 30 ?
                     firstUserMessage.content.substring(0, 30) + '...' :
                     firstUserMessage.content
             }
             return session.title || '无内容'
+        },
+
+        getMessageCount(session) {
+            // 统计对话中的实际消息数量
+            if (session.messages && Array.isArray(session.messages)) {
+                return session.messages.length
+            }
+            // 如果没有messages数组，使用message_count字段作为后备
+            return session.message_count || 0
         },
 
         formatTime(time) {
@@ -352,54 +384,125 @@ export default {
 
 <style scoped>
 .history-container {
-    padding: 30rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #faf8f3 0%, #ffffff 100%);
+    position: relative;
+    overflow: hidden;
 }
 
+/* 顶部装饰背景 */
+.history-container::before {
+    content: '';
+    position: absolute;
+    top: -150rpx;
+    left: -100rpx;
+    right: -100rpx;
+    height: 500rpx;
+    background: linear-gradient(135deg, #d4c5a0 0%, #e8dcc0 50%, #f5f0e8 100%);
+    border-radius: 0 0 60% 40%;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+/* 头部样式 */
 .header {
-    margin-bottom: 30rpx;
+    position: relative;
+    padding: 80rpx 40rpx 40rpx;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.header-content {
     text-align: center;
+    position: relative;
+    z-index: 2;
 }
 
 .title {
-    font-size: 42rpx;
-    font-weight: bold;
-    color: #fff;
+    font-size: 56rpx;
+    font-weight: 700;
+    color: #8b6914;
+    text-shadow: 0 2rpx 8rpx rgba(139, 105, 20, 0.1);
     display: block;
-    margin-bottom: 8rpx;
+    margin-bottom: 18rpx;
+    letter-spacing: 3rpx;
 }
 
 .subtitle {
-    font-size: 26rpx;
-    color: rgba(255, 255, 255, 0.8);
-    display: block;
+    font-size: 28rpx;
+    color: #a67c52;
+    line-height: 1.6;
+    opacity: 0.9;
+    font-weight: 400;
 }
 
-/* 下拉框选择器样式 */
+.header-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(139, 105, 20, 0.08);
+}
+
+.circle-1 {
+    width: 120rpx;
+    height: 120rpx;
+    top: 20rpx;
+    left: 50rpx;
+    background: rgba(212, 197, 160, 0.1);
+}
+
+.circle-2 {
+    width: 80rpx;
+    height: 80rpx;
+    top: 140rpx;
+    right: 80rpx;
+    background: rgba(166, 124, 82, 0.08);
+}
+
+.circle-3 {
+    width: 60rpx;
+    height: 60rpx;
+    top: 60rpx;
+    right: 180rpx;
+    background: rgba(245, 241, 232, 0.1);
+}
+
+/* 选择器样式 */
 .selector-container {
-    margin-bottom: 30rpx;
+    padding: 0 40rpx 30rpx;
+    position: relative;
+    z-index: 1;
 }
 
 .picker-display {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20rpx;
-    padding: 25rpx 30rpx;
+    background: linear-gradient(135deg, #fff9f0 0%, #fdf6ed 100%);
+    border-radius: 28rpx;
+    padding: 24rpx 32rpx;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     backdrop-filter: blur(10rpx);
-    border: 2rpx solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+    border: 2rpx solid #f0ead6;
+    box-shadow: 
+        0 8rpx 32rpx rgba(139, 105, 20, 0.08),
+        inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
     transition: all 0.3s ease;
 }
 
 .picker-display:active {
     transform: scale(0.98);
-    background: rgba(255, 255, 255, 1);
+    box-shadow: 
+        0 4rpx 16rpx rgba(139, 105, 20, 0.12),
+        inset 0 1rpx 0 rgba(255, 255, 255, 0.6);
 }
 
 .picker-content {
@@ -408,20 +511,61 @@ export default {
     flex: 1;
 }
 
+.picker-icon-wrapper {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 16rpx;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24rpx;
+    box-shadow: 0 4rpx 16rpx rgba(33, 150, 243, 0.2);
+    border: 2rpx solid rgba(255, 255, 255, 0.4);
+}
+
 .picker-icon {
-    font-size: 32rpx;
-    margin-right: 15rpx;
+    font-size: 28rpx;
+    color: #1976d2;
+}
+
+.picker-text-wrapper {
+    flex: 1;
 }
 
 .picker-text {
-    font-size: 30rpx;
-    color: #333;
-    font-weight: 500;
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #8b6914;
+    display: block;
+    margin-bottom: 4rpx;
+    letter-spacing: 1rpx;
+}
+
+.picker-text.selected {
+    color: #8b6914;
+}
+
+.picker-text.placeholder {
+    color: #a67c52;
+    opacity: 0.7;
+}
+
+.picker-hint {
+    font-size: 24rpx;
+    color: #a67c52;
+    opacity: 0.7;
+}
+
+.picker-arrow-wrapper {
+    display: flex;
+    align-items: center;
+    margin-left: 20rpx;
 }
 
 .picker-arrow {
     font-size: 24rpx;
-    color: #666;
+    color: #d4c5a0;
     transform: rotate(0deg);
     transition: transform 0.3s ease;
 }
@@ -430,39 +574,66 @@ export default {
     transform: rotate(180deg);
 }
 
+/* 内容区域 */
 .content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 25rpx;
-    padding: 20rpx;
+    padding: 0 40rpx 40rpx;
+    min-height: 60vh;
+    position: relative;
+    z-index: 1;
 }
 
 .history-list {
-    flex: 1;
+    height: 100%;
 }
 
 .history-item {
-    background: #fff;
-    border-radius: 15rpx;
-    padding: 25rpx;
-    margin-bottom: 20rpx;
-    box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.08);
-    border: 1rpx solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 28rpx;
+    border-radius: 32rpx;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fffef8 0%, #faf7f0 50%, #f5f1e8 100%);
+    backdrop-filter: blur(10rpx);
+    border: 2rpx solid #f0ead6;
+    box-shadow: 
+        0 12rpx 40rpx rgba(139, 105, 20, 0.12),
+        0 4rpx 16rpx rgba(139, 105, 20, 0.08);
     transition: all 0.3s ease;
+    position: relative;
+}
+
+.history-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+            rgba(255, 248, 220, 0.4) 0%,
+            rgba(250, 245, 220, 0.2) 50%,
+            rgba(245, 241, 232, 0.4) 100%);
+    border-radius: 32rpx;
+    z-index: 0;
 }
 
 .history-item:active {
-    transform: scale(0.98);
+    transform: translateY(6rpx);
+    box-shadow: 
+        0 8rpx 25rpx rgba(139, 105, 20, 0.15),
+        0 2rpx 8rpx rgba(139, 105, 20, 0.1);
+}
+
+.item-content {
+    padding: 36rpx;
+    position: relative;
+    z-index: 1;
 }
 
 .item-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 12rpx;
+    margin-bottom: 20rpx;
 }
 
 .title-container {
@@ -473,126 +644,355 @@ export default {
 }
 
 .scene-badge {
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 12rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
     color: white;
-    font-size: 20rpx;
-    padding: 4rpx 8rpx;
-    border-radius: 8rpx;
-    margin-right: 10rpx;
-    font-weight: 500;
-    min-width: 35rpx;
-    text-align: center;
+    font-weight: bold;
+    margin-right: 16rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
 }
 
 .item-title {
-    font-size: 30rpx;
+    font-size: 34rpx;
     font-weight: 600;
-    color: #333;
-    margin-right: 10rpx;
+    color: #8b6914;
     flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.4;
+    margin-right: 16rpx;
+    letter-spacing: 1rpx;
 }
 
 .ai-badge {
-    background: linear-gradient(45deg, #007aff, #5856d6);
-    color: white;
-    font-size: 18rpx;
-    padding: 3rpx 8rpx;
-    border-radius: 10rpx;
-    font-weight: 500;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1976d2;
+    padding: 8rpx 16rpx;
+    border-radius: 20rpx;
+    font-size: 22rpx;
+    font-weight: 600;
+    box-shadow: 0 4rpx 12rpx rgba(33, 150, 243, 0.2);
+    border: 2rpx solid rgba(255, 255, 255, 0.4);
 }
 
 .item-time {
     font-size: 24rpx;
-    color: #999;
+    color: #a67c52;
     white-space: nowrap;
+    opacity: 0.8;
 }
 
 .item-preview {
     font-size: 26rpx;
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 12rpx;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    color: #a67c52;
+    line-height: 1.6;
+    margin-bottom: 16rpx;
     overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    opacity: 0.9;
 }
 
 .item-stats {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15rpx;
+}
+
+.stats-group {
+    display: flex;
+    align-items: center;
+    gap: 32rpx;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    font-size: 24rpx;
+    color: #a67c52;
+    opacity: 0.8;
+}
+
+.stat-icon {
+    font-size: 28rpx;
+    margin-right: 8rpx;
+}
+
+.action-group {
+    display: flex;
+    gap: 16rpx;
+}
+
+.action-btn {
+    padding: 10rpx 24rpx;
+    border-radius: 20rpx;
+    font-size: 24rpx;
+    font-weight: 500;
+    border: 2rpx solid transparent;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10rpx);
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    color: #f57c00;
+    border: 2rpx solid rgba(245, 124, 0, 0.2);
+    box-shadow: 0 4rpx 12rpx rgba(245, 124, 0, 0.15);
+}
+
+.btn-edit:active {
+    background: linear-gradient(135deg, #ffcc02 0%, #ff9800 100%);
+    color: white;
+    border-color: rgba(255, 152, 0, 0.3);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+    color: #e91e63;
+    border: 2rpx solid rgba(233, 30, 99, 0.2);
+    box-shadow: 0 4rpx 12rpx rgba(233, 30, 99, 0.15);
+}
+
+.btn-delete:active {
+    background: linear-gradient(135deg, #f06292 0%, #e91e63 100%);
+    color: white;
+    border-color: rgba(233, 30, 99, 0.3);
 }
 
 .stats-item {
     font-size: 22rpx;
-    color: #999;
+    color: #a67c52;
     margin-right: 15rpx;
+    opacity: 0.8;
 }
 
+/* 操作按钮优化 */
 .item-actions {
-    display: flex;
-    justify-content: flex-end;
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+    z-index: 2;
 }
 
 .delete-btn {
-    background: #ff4757;
-    color: white;
-    border: none;
-    border-radius: 15rpx;
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+    color: #e91e63;
+    border: 2rpx solid rgba(233, 30, 99, 0.2);
+    border-radius: 20rpx;
     padding: 8rpx 20rpx;
-    font-size: 24rpx;
+    font-size: 22rpx;
+    font-weight: 500;
+    box-shadow: 0 4rpx 12rpx rgba(233, 30, 99, 0.15);
     transition: all 0.3s ease;
 }
 
 .delete-btn:active {
-    background: #ff3742;
+    background: linear-gradient(135deg, #f06292 0%, #e91e63 100%);
+    color: white;
+    border-color: rgba(233, 30, 99, 0.3);
     transform: scale(0.95);
 }
 
-.empty {
+/* 空状态 */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400rpx;
     text-align: center;
     margin-top: 100rpx;
-    padding: 40rpx;
+}
+
+.empty-illustration {
+    position: relative;
+    margin-bottom: 40rpx;
+    display: inline-block;
 }
 
 .empty-icon {
-    font-size: 80rpx;
+    font-size: 120rpx;
     display: block;
-    margin-bottom: 20rpx;
-    opacity: 0.5;
+    opacity: 0.3;
+    color: #d4c5a0;
 }
 
-.empty-text {
-    color: #666;
-    font-size: 32rpx;
-    font-weight: 500;
-    display: block;
-    margin-bottom: 10rpx;
+.empty-circles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.empty-hint {
-    color: #999;
+.empty-circle {
+    position: absolute;
+    border: 3rpx solid rgba(212, 197, 160, 0.4);
+    border-radius: 50%;
+    animation: ripple 2s infinite;
+}
+
+.empty-circle:nth-child(1) {
+    width: 80rpx;
+    height: 80rpx;
+    margin: -40rpx;
+    animation-delay: 0s;
+}
+
+.empty-circle:nth-child(2) {
+    width: 120rpx;
+    height: 120rpx;
+    margin: -60rpx;
+    animation-delay: 0.7s;
+}
+
+.empty-circle:nth-child(3) {
+    width: 160rpx;
+    height: 160rpx;
+    margin: -80rpx;
+    animation-delay: 1.4s;
+}
+
+@keyframes ripple {
+    0% { transform: scale(0.3); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+.empty-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #8b6914;
+    margin-bottom: 16rpx;
+    letter-spacing: 1rpx;
+}
+
+.empty-subtitle {
+    font-size: 28rpx;
+    color: #a67c52;
+    line-height: 1.6;
+    margin-bottom: 32rpx;
+    opacity: 0.8;
+}
+
+.empty-action {
+    background: linear-gradient(135deg, rgba(212, 197, 160, 0.1), rgba(245, 241, 232, 0.1));
+    border: 2rpx solid rgba(212, 197, 160, 0.3);
+    border-radius: 16rpx;
+    padding: 20rpx;
+    margin-top: 20rpx;
+}
+
+.action-hint {
     font-size: 26rpx;
-    display: block;
-}
-
-.picker-text {
-    font-size: 30rpx;
+    color: #d4c5a0;
     font-weight: 500;
-    transition: color 0.3s ease;
 }
 
-.picker-text.placeholder {
-    color: #999;
-    font-style: italic;
+/* 加载状态 */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200rpx;
 }
 
-.picker-text.selected {
-    color: #333;
-    font-style: normal;
+.loading-spinner {
+    width: 60rpx;
+    height: 60rpx;
+    border: 6rpx solid rgba(139, 105, 20, 0.2);
+    border-top: 6rpx solid #8b6914;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 底部装饰 */
+.history-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200rpx;
+    background: linear-gradient(135deg, rgba(212, 197, 160, 0.1) 0%, rgba(245, 241, 232, 0.1) 100%);
+    border-radius: 50% 50% 0 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+    .header {
+        padding: 60rpx 30rpx 30rpx;
+    }
+
+    .title {
+        font-size: 48rpx;
+        letter-spacing: 2rpx;
+    }
+
+    .subtitle {
+        font-size: 26rpx;
+    }
+
+    .content {
+        padding: 0 30rpx 30rpx;
+    }
+
+    .selector-container {
+        padding: 0 30rpx 24rpx;
+    }
+
+    .history-item {
+        margin-bottom: 24rpx;
+    }
+
+    .item-content {
+        padding: 32rpx;
+    }
+
+    .item-title {
+        font-size: 30rpx;
+    }
+
+    .item-preview {
+        font-size: 24rpx;
+    }
+
+    .stats-group {
+        gap: 24rpx;
+    }
+}
+
+/* 大屏幕适配 */
+@media (min-width: 1200rpx) {
+    .content {
+        max-width: 900rpx;
+        margin: 0 auto;
+    }
+
+    .header {
+        max-width: 900rpx;
+        margin: 0 auto;
+    }
+
+    .selector-container {
+        max-width: 900rpx;
+        margin: 0 auto;
+        padding: 0 40rpx 30rpx;
+    }
 }
 </style>
