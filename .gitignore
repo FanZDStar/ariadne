@@ -48,6 +48,7 @@ pnpm-lock.yaml
 *.swo
 *.sw?
 .github/
+backend/uploads/
 
 # Local environment
 .env

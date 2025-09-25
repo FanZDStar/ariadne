@@ -34,3 +34,6 @@ class User(Base):
     
     # 添加心情记录关联
     mood_records = relationship("MoodTracker", back_populates="user", cascade="all, delete-orphan")
+    
+    # 添加日记背景图片关联
+    diary_backgrounds = relationship("UserDiaryBackground", back_populates="user", cascade="all, delete-orphan")

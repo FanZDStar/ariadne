@@ -33,6 +33,7 @@ from app.api.routes import (
     mood_tracker,
     skill_favorites,
     diary_backgrounds,
+    user_diary_backgrounds,
 )
 
 api_router = APIRouter()
@@ -68,3 +69,4 @@ api_router.include_router(
     skill_favorites.router, prefix="/skill-favorites", tags=["skill-favorites"]
 )
 api_router.include_router(diary_backgrounds.router)
+api_router.include_router(user_diary_backgrounds.router)

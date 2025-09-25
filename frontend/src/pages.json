@@ -137,6 +137,13 @@
       }
     },
     {
+      "path": "pages/diary/diary-background-settings",
+      "style": {
+        "navigationBarTitleText": "背景设置",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/growth-track/growth-track",
       "style": {
         "navigationBarTitleText": "见心录",

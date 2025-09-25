@@ -364,6 +364,38 @@ export const api = {
       },
     });
   },
+
+  // 用户日记背景管理
+  getUserDiaryBackgrounds: (token) => {
+    return request("/user-diary-backgrounds", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  uploadUserDiaryBackground: (filePath, token) => {
+    return uploadFile("/user-diary-backgrounds/upload", filePath, token);
+  },
+
+  deleteUserDiaryBackground: (token, backgroundId) => {
+    return request(`/user-diary-backgrounds/${backgroundId}`, {
+      method: "DELETE",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  restoreDefaultDiaryBackgrounds: (token) => {
+    return request("/user-diary-backgrounds/restore-default", {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };
 
 // 本地存储工具
