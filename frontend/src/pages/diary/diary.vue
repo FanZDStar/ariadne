@@ -19,13 +19,17 @@
         </text>
 
         <view class="manage-btn" @click="toggleManagementMode">
-          <text class="manage-icon">{{
-            managementMode ? "完成" : "管理"
-          }}</text>
+          <view class="manage-icon-wrapper">
+            <text class="manage-icon">{{
+              managementMode ? "完成" : "管理"
+            }}</text>
+          </view>
         </view>
 
         <view class="background-settings-btn" @click="goToBackgroundSettings">
-          <text class="bg-settings-icon">🎨</text>
+          <view class="settings-icon-wrapper">
+            <text class="bg-settings-icon">🎨</text>
+          </view>
         </view>
       </view>
     </view>
@@ -225,6 +229,10 @@ export default {
       const token = storage.getToken();
       if (!token) {
         this.allBackgrounds = [...this.defaultBackgrounds];
+        this.currentBackgroundIndex = 0; // 重置索引
+        this.$nextTick(() => {
+          this.startAutoPlay(); // 重新启动轮播
+        });
         return;
       }
 
@@ -242,15 +250,26 @@ export default {
         } else {
           this.allBackgrounds = [...this.defaultBackgrounds];
         }
+
+        // 重置背景索引并重新启动轮播
+        this.currentBackgroundIndex = 0;
+        this.$nextTick(() => {
+          this.startAutoPlay();
+        });
       } catch (error) {
         console.error("获取背景图片失败:", error);
         this.allBackgrounds = [...this.defaultBackgrounds];
+        this.currentBackgroundIndex = 0;
+        this.$nextTick(() => {
+          this.startAutoPlay();
+        });
       }
     },
 
     startAutoPlay() {
+      this.stopAutoPlay(); // 先停止之前的轮播
+
       if (this.allBackgrounds.length > 1) {
-        this.stopAutoPlay();
         this.autoPlayTimer = setInterval(() => {
           this.currentBackgroundIndex =
             (this.currentBackgroundIndex + 1) % this.allBackgrounds.length;
@@ -685,24 +704,79 @@ export default {
   display: flex;
   align-items: center;
   height: 100%;
+  padding: 0 8rpx;
+}
+
+.manage-icon-wrapper {
+  padding: 12rpx 24rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.manage-btn:active .manage-icon-wrapper {
+  transform: scale(0.95);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.2)
+  );
 }
 
 .manage-icon {
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: white;
+  font-weight: 500;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
 .background-settings-btn {
   position: absolute;
-  right: 100rpx;
+  right: 150rpx;
   display: flex;
   align-items: center;
   height: 100%;
+  padding: 0 8rpx;
+}
+
+.settings-icon-wrapper {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.background-settings-btn:active .settings-icon-wrapper {
+  transform: scale(0.95);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.2)
+  );
 }
 
 .bg-settings-icon {
-  font-size: 28rpx;
+  font-size: 32rpx;
   color: white;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
 .delete-btn {

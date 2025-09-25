@@ -152,7 +152,7 @@ def delete_background(
         )
 
 
-@router.delete("/restore-default")
+@router.post("/restore-default")
 def restore_default_backgrounds(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
