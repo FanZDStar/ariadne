@@ -69,7 +69,9 @@
       <!-- AI专业分析 -->
       <view class="ai-analysis-section" v-if="report.ai_analysis">
         <text class="section-title">🤖 AI专业分析</text>
-        <text class="analysis-text">{{ report.ai_analysis }}</text>
+        <view class="analysis-container">
+          <MarkdownRenderer :content="report.ai_analysis" />
+        </view>
       </view>
 
       <!-- 检测到的关键词 -->
@@ -134,9 +136,6 @@
 
       <!-- 操作按钮 -->
       <view class="action-buttons">
-        <button class="btn btn-secondary" @click="shareReport">
-          📤 分享报告
-        </button>
         <button class="btn btn-primary" @click="getHelp">💙 获取帮助</button>
       </view>
 
@@ -162,7 +161,7 @@
     </view>
 
     <!-- 回到顶部组件 -->
-    <BackToTop 
+    <BackToTop
       ref="backToTop"
       :bottom="150"
       @start-scroll-listener="startScrollListener"
@@ -175,10 +174,12 @@
 // 引入危机工具类
 import { CrisisUtils } from "../../utils/crisisApi.js";
 import BackToTop from "../../components/BackToTop.vue";
+import MarkdownRenderer from "../../components/MarkdownRenderer.vue";
 
 export default {
   components: {
     BackToTop,
+    MarkdownRenderer,
   },
   data() {
     return {
@@ -273,21 +274,29 @@ export default {
     },
 
     /**
-     * 分享报告
+     * 获取帮助
      */
-    shareReport() {
+    getHelp() {
       uni.showActionSheet({
-        itemList: ["保存到相册", "分享给朋友", "导出PDF"],
+        itemList: [
+          "🛡️ 防护技能训练",
+          "📚 技能学习",
+          "💬 情感对话",
+          "📞 心理援助热线",
+        ],
         success: (res) => {
           switch (res.tapIndex) {
             case 0:
-              this.saveToAlbum();
+              this.goToProtectionSkills();
               break;
             case 1:
-              this.shareToFriend();
+              this.goToSkillLearning();
               break;
             case 2:
-              this.exportPDF();
+              this.goToEmotionalChat();
+              break;
+            case 3:
+              this.showHelpHotline();
               break;
           }
         },
@@ -295,54 +304,67 @@ export default {
     },
 
     /**
-     * 获取帮助
+     * 跳转到防护技能训练
      */
-    getHelp() {
-      CrisisUtils.showHelpOptions();
-    },
-
-    /**
-     * 保存到相册
-     */
-    saveToAlbum() {
-      uni.showToast({
-        title: "功能开发中...",
-        icon: "none",
+    goToProtectionSkills() {
+      uni.navigateTo({
+        url: "/pages/interpersonal-wisdom/protection-drill",
       });
     },
 
     /**
-     * 分享给朋友
+     * 跳转到技能学习
      */
-    shareToFriend() {
-      uni.share({
-        title: "心理状态评估报告",
-        summary: this.report.summary,
-        href: `#/pages/risk-report/report-detail?reportId=${this.reportId}`,
+    goToSkillLearning() {
+      uni.navigateTo({
+        url: "/pages/interpersonal-wisdom/interpersonal-wisdom",
       });
     },
 
     /**
-     * 导出PDF
+     * 跳转到情感对话
      */
-    exportPDF() {
-      uni.showToast({
-        title: "功能开发中...",
-        icon: "none",
+    goToEmotionalChat() {
+      uni.navigateTo({
+        url: "/pages/chat-context/chat-context",
+      });
+    },
+
+    /**
+     * 显示心理援助热线
+     */
+    showHelpHotline() {
+      uni.showModal({
+        title: "心理援助热线",
+        content:
+          "如需紧急帮助，请拨打：\n\n• 全国心理援助热线：400-161-9995\n• 北京危机干预热线：400-161-9995\n• 上海心理援助热线：021-34289888\n• 深圳心理援助热线：0755-25629459",
+        showCancel: true,
+        cancelText: "取消",
+        confirmText: "拨打热线",
+        success: (res) => {
+          if (res.confirm) {
+            uni.makePhoneCall({
+              phoneNumber: "400-161-9995",
+            });
+          }
+        },
       });
     },
 
     // 滚动监听相关方法
     startScrollListener() {
       // H5环境使用window.addEventListener
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         this.handleScroll = () => {
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+          const scrollTop =
+            window.pageYOffset ||
+            document.documentElement.scrollTop ||
+            document.body.scrollTop;
           if (this.$refs.backToTop) {
             this.$refs.backToTop.updateVisibility(scrollTop);
           }
         };
-        window.addEventListener('scroll', this.handleScroll);
+        window.addEventListener("scroll", this.handleScroll);
       } else {
         // 小程序环境使用uni.onPageScroll
         uni.onPageScroll((res) => {
@@ -354,9 +376,9 @@ export default {
     },
 
     removeScrollListener() {
-      if (typeof window !== 'undefined' && this.handleScroll) {
-        window.removeEventListener('scroll', this.handleScroll);
-      } else if (typeof uni !== 'undefined' && uni.offPageScroll) {
+      if (typeof window !== "undefined" && this.handleScroll) {
+        window.removeEventListener("scroll", this.handleScroll);
+      } else if (typeof uni !== "undefined" && uni.offPageScroll) {
         uni.offPageScroll();
       }
     },
@@ -519,7 +541,23 @@ export default {
   margin-bottom: 30rpx;
 }
 
-.summary-text,
+.summary-text {
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #555;
+  background: #f8f9fa;
+  padding: 20rpx;
+  border-radius: 10rpx;
+}
+
+.analysis-container {
+  background: #f8f9fa;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  border: 2rpx solid #e9ecef;
+}
+
 .analysis-text {
   display: block;
   font-size: 26rpx;
@@ -605,17 +643,18 @@ export default {
 
 .action-buttons {
   display: flex;
-  gap: 20rpx;
+  justify-content: center;
   margin-bottom: 30rpx;
 }
 
 .btn {
-  flex: 1;
   padding: 25rpx;
   border-radius: 10rpx;
   font-size: 26rpx;
   text-align: center;
   border: none;
+  width: 100%;
+  max-width: 100%;
 }
 
 .btn-primary {
