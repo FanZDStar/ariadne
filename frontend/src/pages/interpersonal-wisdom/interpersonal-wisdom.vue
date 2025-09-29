@@ -554,72 +554,83 @@ export default {
 
 <style scoped>
 .wisdom-container {
-  padding: 0;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
   min-height: 100vh;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.header {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
-  padding: 60rpx 40rpx 60rpx;
-  color: #1976d2;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.4);
+/* 顶部装饰背景 */
+.wisdom-container::before {
+  content: '';
+  position: absolute;
+  top: -150rpx;
+  left: -100rpx;
+  right: -100rpx;
+  height: 500rpx;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #e8f4fd 100%);
+  border-radius: 0 0 60% 40%;
+  opacity: 0.4;
+  z-index: 0;
 }
 
-.header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(227, 242, 253, 0.1);
-  backdrop-filter: blur(10rpx);
+/* 头部区域 */
+.header {
+  position: relative;
+  padding: 80rpx 40rpx 40rpx;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
 }
 
 .title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #1565c0;
+  text-shadow: 0 2rpx 8rpx rgba(21, 101, 192, 0.1);
   display: block;
-  position: relative;
-  z-index: 2;
+  margin-bottom: 18rpx;
+  letter-spacing: 3rpx;
 }
 
 .subtitle {
   font-size: 28rpx;
+  color: #1976d2;
+  line-height: 1.6;
   opacity: 0.8;
-  position: relative;
-  z-index: 2;
+  font-weight: 400;
 }
 
+/* 导航标签 */
 .nav-tabs {
   display: flex;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10rpx);
-  margin: 0 20rpx;
-  border-radius: 20rpx 20rpx 0 0;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #fff 0%, #f8fbff 100%);
+  backdrop-filter: blur(20rpx);
+  margin: 0 40rpx 20rpx;
+  border-radius: 28rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(21, 101, 192, 0.08),
+    inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
   position: relative;
   z-index: 1;
+  border: 2rpx solid rgba(227, 242, 253, 0.6);
 }
 
 .tab-item {
   flex: 1;
-  padding: 32rpx 20rpx;
+  padding: 28rpx 16rpx;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border-radius: 28rpx;
 }
 
 .tab-item::before {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: 8rpx;
   left: 50%;
   transform: translateX(-50%) scaleX(0);
   width: 60%;
@@ -634,9 +645,8 @@ export default {
 }
 
 .tab-item.active {
-  background: linear-gradient(135deg,
-      rgba(227, 242, 253, 0.8) 0%,
-      rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #f8fbff 100%);
+  box-shadow: 0 4rpx 16rpx rgba(21, 101, 192, 0.15);
 }
 
 .tab-icon {
@@ -658,17 +668,15 @@ export default {
 }
 
 .tab-item.active .tab-text {
-  color: #1976d2;
+  color: #1565c0;
   font-weight: 600;
 }
 
+/* 内容区域 */
 .content-section {
-  padding: 20rpx 40rpx 40rpx;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20rpx);
-  margin: 0 20rpx 40rpx;
-  border-radius: 0 0 32rpx 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
+  padding: 30rpx 40rpx 40rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .section-header {
@@ -680,18 +688,26 @@ export default {
 
 .section-title {
   font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #1565c0;
+  letter-spacing: 1rpx;
 }
 
 .refresh-btn {
   display: flex;
   align-items: center;
   padding: 16rpx 24rpx;
-  background: linear-gradient(135deg, #42a5f5, #1976d2);
-  border-radius: 40rpx;
-  color: white;
-  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 28rpx;
+  color: #1565c0;
+  box-shadow: 0 4rpx 12rpx rgba(21, 101, 192, 0.2);
+  border: 2rpx solid rgba(227, 242, 253, 0.6);
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(21, 101, 192, 0.3);
 }
 
 .refresh-icon {
@@ -701,82 +717,12 @@ export default {
 
 .refresh-text {
   font-size: 24rpx;
+  font-weight: 500;
 }
 
-.skill-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10rpx);
-  border-radius: 20rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.skill-card:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
-}
-
-.skill-card.recommended {
-  border: 2rpx solid rgba(66, 165, 245, 0.3);
-  background: linear-gradient(135deg,
-      rgba(227, 242, 253, 0.9) 0%,
-      rgba(255, 255, 255, 0.9) 100%);
-  position: relative;
-}
-
-.skill-card.recommended::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4rpx;
-  background: linear-gradient(90deg, #42a5f5, #1976d2);
-  border-radius: 20rpx 20rpx 0 0;
-}
-
-.skill-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
-.skill-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.skill-content {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 20rpx;
-}
-
-.skill-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-  margin-bottom: 24rpx;
-}
-
-.skill-tag {
-  background-color: #f0f0f0;
-  color: #666;
-  padding: 8rpx 16rpx;
-  border-radius: 16rpx;
-  font-size: 22rpx;
-}
-
-.skill-actions {
-  display: flex;
-  gap: 16rpx;
-  justify-content: center;
+/* 技能卡片 */
+.recommended-skills {
+  margin-bottom: 40rpx;
 }
 
 .recommended-protection {
@@ -787,24 +733,150 @@ export default {
   margin-bottom: 40rpx;
 }
 
+.skill-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 50%, #f3f8ff 100%);
+  backdrop-filter: blur(10rpx);
+  border-radius: 32rpx;
+  padding: 36rpx;
+  margin-bottom: 28rpx;
+  box-shadow: 
+    0 12rpx 40rpx rgba(21, 101, 192, 0.12),
+    0 4rpx 16rpx rgba(21, 101, 192, 0.08);
+  border: 2rpx solid rgba(227, 242, 253, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+          rgba(248, 251, 255, 0.4) 0%,
+          rgba(227, 242, 253, 0.2) 50%,
+          rgba(243, 248, 255, 0.4) 100%);
+  border-radius: 32rpx;
+  z-index: 0;
+}
+
+.skill-card:active {
+  transform: translateY(6rpx);
+  box-shadow: 
+    0 8rpx 25rpx rgba(21, 101, 192, 0.15),
+    0 2rpx 8rpx rgba(21, 101, 192, 0.1);
+}
+
+.skill-card.recommended {
+  border: 2rpx solid rgba(66, 165, 245, 0.4);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 50%, #e8f4fd 100%);
+}
+
+.skill-card.recommended::before {
+  background: linear-gradient(135deg,
+          rgba(232, 244, 253, 0.5) 0%,
+          rgba(227, 242, 253, 0.3) 50%,
+          rgba(248, 251, 255, 0.5) 100%);
+}
+
+.skill-header,
+.tool-header,
+.practice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.skill-title,
+.tool-title,
+.practice-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1565c0;
+  letter-spacing: 1rpx;
+}
+
+.skill-content,
+.tool-desc,
+.practice-desc {
+  font-size: 26rpx;
+  color: #1976d2;
+  line-height: 1.6;
+  margin-bottom: 20rpx;
+  opacity: 0.8;
+  position: relative;
+  z-index: 1;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.skill-tag {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #1565c0;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  border: 1rpx solid rgba(227, 242, 253, 0.8);
+  box-shadow: 0 2rpx 8rpx rgba(21, 101, 192, 0.1);
+}
+
+.skill-actions {
+  display: flex;
+  gap: 16rpx;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
 .action-btn {
   padding: 20rpx 40rpx;
-  border-radius: 12rpx;
+  border-radius: 28rpx;
   text-align: center;
   min-width: 200rpx;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid transparent;
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #42a5f5, #1976d2);
+  background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
   color: white;
-  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(66, 165, 245, 0.3);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.primary:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(66, 165, 245, 0.4);
 }
 
 .action-btn.secondary {
-  background-color: #f0f0f0;
-  color: #666;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #1565c0;
+  border: 2rpx solid rgba(227, 242, 253, 0.6);
+  box-shadow: 0 4rpx 12rpx rgba(21, 101, 192, 0.15);
 }
 
+.action-text,
+.btn-text {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* 分类区域 */
 .categories-section {
   margin-top: 40rpx;
   position: relative;
@@ -830,151 +902,166 @@ export default {
 }
 
 .category-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
   backdrop-filter: blur(10rpx);
-  border-radius: 20rpx;
-  padding: 28rpx;
+  border-radius: 28rpx;
+  padding: 32rpx;
   text-align: center;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 8rpx 24rpx rgba(21, 101, 192, 0.08),
+    0 4rpx 12rpx rgba(21, 101, 192, 0.05);
+  border: 2rpx solid rgba(227, 242, 253, 0.6);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+          rgba(248, 251, 255, 0.4) 0%,
+          rgba(227, 242, 253, 0.2) 100%);
+  border-radius: 28rpx;
+  z-index: 0;
 }
 
 .category-card:active {
-  transform: translateY(2rpx) scale(0.98);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+  transform: translateY(4rpx) scale(0.98);
+  box-shadow: 
+    0 4rpx 16rpx rgba(21, 101, 192, 0.12),
+    0 2rpx 8rpx rgba(21, 101, 192, 0.08);
 }
 
-.category-icon {
+.category-icon,
+.tool-icon,
+.practice-icon {
   font-size: 40rpx;
   display: block;
   margin-bottom: 12rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .category-name {
   font-size: 26rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #1565c0;
   display: block;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1rpx;
 }
 
-.protection-tools {
-  display: flex;
-  flex-direction: column;
-  gap: 24rpx;
-}
-
-.tool-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10rpx);
-  border-radius: 20rpx;
-  padding: 32rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.tool-card:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
-}
-
-.tool-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
-.tool-icon {
-  font-size: 36rpx;
-  margin-right: 16rpx;
-}
-
-.tool-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.tool-desc {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 24rpx;
-}
-
-.tool-btn {
-  background: linear-gradient(135deg, #42a5f5, #1976d2);
-  color: white;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
-  transition: all 0.3s ease;
-}
-
-.tool-btn:active {
-  transform: translateY(1rpx);
-  box-shadow: 0 2rpx 8rpx rgba(66, 165, 245, 0.4);
-}
-
-.btn-text {
-  font-size: 28rpx;
-  font-weight: 500;
-}
-
+/* 练习选项 */
 .practice-options {
   display: flex;
   flex-direction: column;
   gap: 24rpx;
 }
 
-.practice-card {
-  background: rgba(255, 255, 255, 0.9);
+.practice-card,
+.tool-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 50%, #f3f8ff 100%);
   backdrop-filter: blur(10rpx);
-  border-radius: 20rpx;
-  padding: 32rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  border-radius: 32rpx;
+  padding: 36rpx;
+  box-shadow: 
+    0 12rpx 40rpx rgba(21, 101, 192, 0.12),
+    0 4rpx 16rpx rgba(21, 101, 192, 0.08);
+  border: 2rpx solid rgba(227, 242, 253, 0.6);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.practice-card:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+.practice-card::before,
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+          rgba(248, 251, 255, 0.4) 0%,
+          rgba(227, 242, 253, 0.2) 50%,
+          rgba(243, 248, 255, 0.4) 100%);
+  border-radius: 32rpx;
+  z-index: 0;
 }
 
-.practice-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16rpx;
+.practice-card:active,
+.tool-card:active {
+  transform: translateY(6rpx);
+  box-shadow: 
+    0 8rpx 25rpx rgba(21, 101, 192, 0.15),
+    0 2rpx 8rpx rgba(21, 101, 192, 0.1);
 }
 
-.practice-icon {
-  font-size: 36rpx;
-  margin-right: 16rpx;
+.tool-btn {
+  background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+  color: white;
+  padding: 24rpx;
+  border-radius: 28rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(66, 165, 245, 0.3);
+  transition: all 0.3s ease;
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10rpx);
 }
 
-.practice-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+.tool-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(66, 165, 245, 0.4);
 }
 
-.practice-desc {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.5;
+/* 底部装饰 */
+.wisdom-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200rpx;
+  background: linear-gradient(135deg, rgba(227, 242, 253, 0.1) 0%, rgba(248, 251, 255, 0.1) 100%);
+  border-radius: 50% 50% 0 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
+/* 响应式设计 */
 @media (max-width: 750rpx) {
+  .header {
+    padding: 60rpx 30rpx 30rpx;
+  }
+
+  .title {
+    font-size: 48rpx;
+    letter-spacing: 2rpx;
+  }
+
+  .subtitle {
+    font-size: 26rpx;
+  }
+
+  .content-section {
+    padding: 20rpx 30rpx 30rpx;
+  }
+
+  .nav-tabs {
+    margin: 0 30rpx 20rpx;
+  }
+
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12rpx;
+    gap: 16rpx;
   }
 
   .category-card {
-    padding: 20rpx;
+    padding: 24rpx;
   }
 
   .category-icon {
@@ -984,12 +1071,81 @@ export default {
   .category-name {
     font-size: 24rpx;
   }
+
+  .skill-card,
+  .practice-card,
+  .tool-card {
+    padding: 32rpx;
+    margin-bottom: 24rpx;
+  }
+
+  .skill-title,
+  .tool-title,
+  .practice-title {
+    font-size: 30rpx;
+  }
+
+  .skill-content,
+  .tool-desc,
+  .practice-desc {
+    font-size: 24rpx;
+  }
+
+  .action-btn {
+    padding: 18rpx 32rpx;
+    min-width: 160rpx;
+  }
+
+  .action-text,
+  .btn-text {
+    font-size: 26rpx;
+  }
 }
 
 @media (max-width: 480rpx) {
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 16rpx;
+  }
+
+  .nav-tabs {
+    margin: 0 20rpx 20rpx;
+  }
+
+  .tab-item {
+    padding: 24rpx 12rpx;
+  }
+
+  .tab-icon {
+    font-size: 28rpx;
+  }
+
+  .tab-text {
+    font-size: 22rpx;
+  }
+}
+
+/* 大屏幕适配 */
+@media (min-width: 1200rpx) {
+  .content-section {
+    max-width: 1000rpx;
+    margin: 0 auto;
+    padding: 30rpx 40rpx 40rpx;
+  }
+
+  .header {
+    max-width: 1000rpx;
+    margin: 0 auto;
+  }
+
+  .nav-tabs {
+    max-width: 1000rpx;
+    margin: 0 auto 20rpx;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24rpx;
   }
 }
 </style>
