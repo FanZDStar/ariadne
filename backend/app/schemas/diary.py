@@ -35,7 +35,7 @@ class DiaryBase(BaseModel):
     title: str
     content: str
     mood: MoodEnum
-    is_private: bool = True
+    # is_private: bool = True  # 已移除：不再支持私密日记功能
     tags: Optional[List[str]] = None  # 日记标签
 
 
@@ -47,7 +47,7 @@ class DiaryUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
     mood: Optional[MoodEnum] = None
-    is_private: Optional[bool] = None
+    # is_private: Optional[bool] = None  # 已移除：不再支持私密日记功能
     tags: Optional[List[str]] = None
     images: Optional[List[DiaryImageCreate]] = None
 

@@ -55,8 +55,10 @@
         :enable-back-to-top="true" ref="scrollView" id="scrollView">
         <view class="diary-list">
           <view class="diary-item" v-for="diary in diaryList" :key="diary.diary_id">
-            <!-- 第一行：标题和日期时间 -->
-            <view class="diary-header">
+            <!-- 可点击的主内容区域 -->
+            <view class="diary-main-area" @click="goToDiaryDetail(diary.diary_id)">
+              <!-- 第一行：标题和日期时间 -->
+              <view class="diary-header">
               <view class="diary-title-section">
                 <text class="diary-title">{{ diary.title || '无标题' }}</text>
               </view>
@@ -109,6 +111,7 @@
                   </view>
                 </view>
               </view>
+            </view>
             </view>
 
             <!-- 管理模式下的删除按钮 -->
@@ -203,6 +206,18 @@ export default {
   },
 
   methods: {
+    // 跳转到日记详情页
+    goToDiaryDetail(diaryId) {
+      // 如果在管理模式下，不响应点击事件
+      if (this.managementMode) {
+        return;
+      }
+      
+      uni.navigateTo({
+        url: `/pages/diary/diary-detail?id=${diaryId}`
+      });
+    },
+
     async loadDiaries() {
       const token = storage.getToken();
       if (!token) {
@@ -646,8 +661,19 @@ export default {
 .diary-item {
   background-color: white;
   border-radius: 20rpx;
-  padding: 30rpx;
+  padding: 0;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.diary-main-area {
+  padding: 30rpx;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.diary-main-area:active {
+  background-color: #f5f5f5;
 }
 
 .diary-header {
@@ -808,7 +834,9 @@ export default {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 15rpx;
+  padding: 0 30rpx 20rpx 30rpx;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 10rpx;
 }
 
 .empty-diary {

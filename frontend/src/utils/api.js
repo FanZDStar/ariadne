@@ -160,6 +160,16 @@ export const api = {
     });
   },
 
+  // 获取单个日记详情
+  getDiary: (diaryId, token) => {
+    return request(`/diary/${diaryId}`, {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   // 创建日记
   createDiary: (token, diaryData) => {
     return request("/diary/", {

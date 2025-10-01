@@ -22,18 +22,18 @@ def create_diary(
     current_user: User = Depends(get_current_user),
 ):
     """创建新的碎碎念"""
-    # 使用加密的属性设置器
+    # 创建日记，不再使用加密功能
     db_diary = EmotionalDiary(
         user_id=current_user.user_id,
         mood=diary.mood,
-        is_private=diary.is_private,
+        is_private=False,  # 固定为False，不再支持私密日记
         image_count=len(diary.images),
         tags=diary.tags,  # 添加标签支持
     )
 
-    # 使用解密属性设置器，会自动处理加密
-    db_diary.decrypted_title = diary.title
-    db_diary.decrypted_content = diary.content
+    # 已移除加密功能，直接设置原始属性
+    db_diary.title = diary.title
+    db_diary.content = diary.content
 
     db.add(db_diary)
     db.commit()
@@ -49,12 +49,12 @@ def create_diary(
     db.commit()
     db.refresh(db_diary)
 
-    # 返回解密后的数据
+    # 返回原始数据（已移除加密功能）
     result = DiaryResponse(
         diary_id=db_diary.diary_id,
         user_id=db_diary.user_id,
-        title=db_diary.decrypted_title,
-        content=db_diary.decrypted_content,
+        title=db_diary.title,
+        content=db_diary.content,
         mood=db_diary.mood,
         created_at=db_diary.created_at,
         updated_at=db_diary.updated_at,
@@ -101,8 +101,8 @@ def get_user_diaries(
         diary_response = DiaryResponse(
             diary_id=diary.diary_id,
             user_id=diary.user_id,
-            title=diary.decrypted_title,
-            content=diary.decrypted_content,
+            title=diary.title,
+            content=diary.content,
             mood=diary.mood,
             created_at=diary.created_at,
             updated_at=diary.updated_at,
@@ -147,12 +147,12 @@ def get_diary(
         .all()
     )
 
-    # 返回解密后的数据
+    # 返回原始数据（已移除加密功能）
     return DiaryResponse(
         diary_id=diary.diary_id,
         user_id=diary.user_id,
-        title=diary.decrypted_title,
-        content=diary.decrypted_content,
+        title=diary.title,
+        content=diary.content,
         mood=diary.mood,
         created_at=diary.created_at,
         updated_at=diary.updated_at,

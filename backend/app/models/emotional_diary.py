@@ -15,7 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.database.session import Base
-from app.utils.encryption import encryption
+# from app.utils.encryption import encryption  # 已注释：移除加密功能
 import json
 
 
@@ -31,43 +31,43 @@ class EmotionalDiary(Base):
     )
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-    is_private = Column(Boolean, default=True)
+    is_private = Column(Boolean, default=False)  # 已修改：默认为公开日记，不再使用加密
     image_count = Column(Integer, default=0)
     tags = Column(JSON, nullable=True)  # 日记标签
 
     # 关联图片
     images = relationship("DiaryImage", back_populates="diary")
 
-    # 加密属性处理
-    @hybrid_property
-    def decrypted_title(self):
-        """获取解密后的标题"""
-        if self.is_private:
-            return encryption.decrypt_text(self.title)
-        return self.title
+    # 已注释：加密属性处理 - 移除加密解密功能
+    # @hybrid_property
+    # def decrypted_title(self):
+    #     """获取解密后的标题"""
+    #     if self.is_private:
+    #         return encryption.decrypt_text(self.title)
+    #     return self.title
 
-    @decrypted_title.setter
-    def decrypted_title(self, value):
-        """设置标题（自动加密私密日记）"""
-        if self.is_private:
-            self.title = encryption.encrypt_text(value)
-        else:
-            self.title = value
+    # @decrypted_title.setter
+    # def decrypted_title(self, value):
+    #     """设置标题（自动加密私密日记）"""
+    #     if self.is_private:
+    #         self.title = encryption.encrypt_text(value)
+    #     else:
+    #         self.title = value
 
-    @hybrid_property
-    def decrypted_content(self):
-        """获取解密后的内容"""
-        if self.is_private:
-            return encryption.decrypt_text(self.content)
-        return self.content
+    # @hybrid_property
+    # def decrypted_content(self):
+    #     """获取解密后的内容"""
+    #     if self.is_private:
+    #         return encryption.decrypt_text(self.content)
+    #     return self.content
 
-    @decrypted_content.setter
-    def decrypted_content(self, value):
-        """设置内容（自动加密私密日记）"""
-        if self.is_private:
-            self.content = encryption.encrypt_text(value)
-        else:
-            self.content = value
+    # @decrypted_content.setter
+    # def decrypted_content(self, value):
+    #     """设置内容（自动加密私密日记）"""
+    #     if self.is_private:
+    #         self.content = encryption.encrypt_text(value)
+    #     else:
+    #         self.content = value
 
     # # 定义心情分数的映射（用于类方法）
     # MOOD_SCORES = {

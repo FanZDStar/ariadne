@@ -233,7 +233,7 @@ def create_diary_entries():
                 mood=content_data["mood"],
                 created_at=created_time,
                 updated_at=created_time,
-                is_private=random.choice([True, False]),  # 随机设置是否私密
+                is_private=False,  # 设置为公开（已移除加密功能）
                 image_count=1 if i in entries_with_images else 0,
                 tags=generate_random_tags()  # 生成随机标签
             )

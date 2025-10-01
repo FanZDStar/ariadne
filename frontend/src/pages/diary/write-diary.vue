@@ -97,12 +97,13 @@
         </view>
       </view>
 
-      <view class="privacy-setting">
+      <!-- 已移除：私密设置功能 -->
+      <!-- <view class="privacy-setting">
         <label class="privacy-label">
           <checkbox :checked="isPrivate" @click="togglePrivacy" color="#007aff" />
           <text>设为私密</text>
         </label>
-      </view>
+      </view> -->
     </view>
   </view>
 </template>
@@ -116,7 +117,7 @@ export default {
       diaryTitle: '',
       diaryContent: '',
       selectedMood: 'neutral',
-      isPrivate: true,
+      // isPrivate: true,  // 已移除：不再支持私密日记功能
       uploadedImages: [],
       isPublishing: false,
       selectedTags: [],
@@ -144,9 +145,10 @@ export default {
       this.selectedMood = mood;
     },
 
-    togglePrivacy() {
-      this.isPrivate = !this.isPrivacy;
-    },
+    // 已移除：私密日记功能
+    // togglePrivacy() {
+    //   this.isPrivate = !this.isPrivacy;
+    // },
 
     addTag() {
       const tag = this.currentTag.trim();
@@ -300,12 +302,12 @@ export default {
           image_order: index
         }));
 
-        // 创建日记
+        // 创建日记（已移除私密功能）
         const diaryData = {
           title: this.diaryTitle.trim() || this.diaryContent.substring(0, 20) + (this.diaryContent.length > 20 ? '...' : ''),
           content: this.diaryContent,
           mood: this.selectedMood,
-          is_private: this.isPrivate,
+          // is_private: this.isPrivate,  // 已移除：不再支持私密日记
           tags: this.selectedTags.length > 0 ? this.selectedTags : null,
           images: imageUrls
         };
@@ -599,7 +601,8 @@ export default {
   color: #ccc;
 }
 
-.privacy-setting {
+/* 已移除：私密日记功能相关样式 */
+/* .privacy-setting {
   background-color: white;
   border-radius: 20rpx;
   padding: 30rpx;
@@ -614,5 +617,5 @@ export default {
 
 .privacy-label checkbox {
   margin-right: 20rpx;
-}
+} */
 </style>
