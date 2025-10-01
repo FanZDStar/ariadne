@@ -4,9 +4,6 @@
       <view class="header-left" @click="cancel">
         <text class="cancel-btn">取消</text>
       </view>
-      <view class="header-title">
-        <text class="title">写日记</text>
-      </view>
       <view class="header-right" @click="publish">
         <text class="publish-btn" :class="{ disabled: !canPublish || isPublishing }">
           {{ isPublishing ? '发布中...' : '发布' }}
@@ -15,10 +12,63 @@
     </view>
 
     <view class="content">
+      <!-- 日记标题输入 -->
+      <view class="title-input-section">
+        <input 
+          class="diary-title" 
+          placeholder="给日记起个标题吧..." 
+          v-model="diaryTitle" 
+          maxlength="50"
+        />
+      </view>
+
+      <!-- 日记内容输入 -->
       <textarea class="diary-content" placeholder="记录你的心情..." v-model="diaryContent" maxlength="500" />
 
       <view class="content-info">
         <text class="word-count">{{ diaryContent.length }}/500</text>
+      </view>
+
+      <!-- 标签选择器 -->
+      <view class="tag-selector">
+        <text class="tag-label">标签：</text>
+        <view class="tag-container">
+          <view 
+            class="tag-item" 
+            v-for="tag in selectedTags" 
+            :key="tag"
+            @click="removeTag(tag)"
+          >
+            <text class="tag-text">{{ tag }}</text>
+            <text class="tag-remove">×</text>
+          </view>
+          <input 
+            v-if="showTagInput || selectedTags.length === 0"
+            class="tag-input" 
+            placeholder="添加标签..."
+            v-model="currentTag"
+            @confirm="addTag"
+            @blur="hideTagInput"
+          />
+          <view 
+            v-else
+            class="add-tag-btn" 
+            @click="showTagInput = true"
+          >
+            <text>+ 添加标签</text>
+          </view>
+        </view>
+        <!-- 预设标签 -->
+        <view class="preset-tags">
+          <view 
+            class="preset-tag" 
+            v-for="tag in presetTags" 
+            :key="tag"
+            @click="selectPresetTag(tag)"
+          >
+            <text>{{ tag }}</text>
+          </view>
+        </view>
       </view>
 
       <view class="mood-selector">
@@ -63,11 +113,16 @@ import { api, storage } from '../../utils/api.js';
 export default {
   data() {
     return {
+      diaryTitle: '',
       diaryContent: '',
       selectedMood: 'neutral',
       isPrivate: true,
       uploadedImages: [],
       isPublishing: false,
+      selectedTags: [],
+      currentTag: '',
+      showTagInput: false,
+      presetTags: ['日常', '心情', '学习', '工作', '旅行', '美食', '运动', '思考'],
       moodOptions: [
         { value: 'very_happy', emoji: '😄' },
         { value: 'happy', emoji: '😊' },
@@ -90,7 +145,36 @@ export default {
     },
 
     togglePrivacy() {
-      this.isPrivate = !this.isPrivate;
+      this.isPrivate = !this.isPrivacy;
+    },
+
+    addTag() {
+      const tag = this.currentTag.trim();
+      if (tag && !this.selectedTags.includes(tag) && this.selectedTags.length < 5) {
+        this.selectedTags.push(tag);
+        this.currentTag = '';
+      }
+    },
+
+    removeTag(tag) {
+      const index = this.selectedTags.indexOf(tag);
+      if (index > -1) {
+        this.selectedTags.splice(index, 1);
+      }
+    },
+
+    selectPresetTag(tag) {
+      if (!this.selectedTags.includes(tag) && this.selectedTags.length < 5) {
+        this.selectedTags.push(tag);
+      }
+    },
+
+    hideTagInput() {
+      setTimeout(() => {
+        if (!this.currentTag.trim()) {
+          this.showTagInput = false;
+        }
+      }, 200);
     },
 
     chooseImage() {
@@ -218,10 +302,11 @@ export default {
 
         // 创建日记
         const diaryData = {
-          title: this.diaryContent.substring(0, 20) + (this.diaryContent.length > 20 ? '...' : ''),
+          title: this.diaryTitle.trim() || this.diaryContent.substring(0, 20) + (this.diaryContent.length > 20 ? '...' : ''),
           content: this.diaryContent,
           mood: this.selectedMood,
           is_private: this.isPrivate,
+          tags: this.selectedTags.length > 0 ? this.selectedTags : null,
           images: imageUrls
         };
 
@@ -275,11 +360,6 @@ export default {
   flex: 1;
 }
 
-.header-title {
-  flex: 2;
-  text-align: center;
-}
-
 .cancel-btn,
 .publish-btn {
   font-size: 32rpx;
@@ -290,14 +370,23 @@ export default {
   color: #ccc;
 }
 
-.title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-}
-
 .content {
   padding: 30rpx;
+}
+
+.title-input-section {
+  background-color: white;
+  border-radius: 20rpx;
+  padding: 0 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.diary-title {
+  width: 100%;
+  height: 80rpx;
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
 }
 
 .diary-content {
@@ -309,6 +398,7 @@ export default {
   box-sizing: border-box;
   font-size: 30rpx;
   margin-bottom: 20rpx;
+  line-height: 1.6;
 }
 
 .content-info {
@@ -319,6 +409,78 @@ export default {
 .word-count {
   font-size: 24rpx;
   color: #999;
+}
+
+.tag-selector {
+  background-color: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.tag-label {
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  margin-bottom: 20rpx;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  background-color: #007aff;
+  color: white;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+}
+
+.tag-text {
+  margin-right: 10rpx;
+}
+
+.tag-remove {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.tag-input {
+  flex: 1;
+  min-width: 150rpx;
+  height: 50rpx;
+  padding: 10rpx 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+}
+
+.add-tag-btn {
+  padding: 10rpx 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.preset-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.preset-tag {
+  padding: 10rpx 20rpx;
+  background-color: #f0f0f0;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #666;
 }
 
 .mood-selector {
