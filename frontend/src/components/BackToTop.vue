@@ -49,6 +49,10 @@ export default {
             this.visible = scrollTop > this.threshold
         },
         scrollToTop() {
+            // 尝试触发父组件的滚动到顶部方法
+            this.$emit('scroll-to-top')
+
+            // 备用的页面滚动方法
             uni.pageScrollTo({
                 scrollTop: 0,
                 duration: this.duration,
@@ -66,17 +70,23 @@ export default {
     position: fixed;
     width: 100rpx;
     height: 100rpx;
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #ffafcc, #ffc8dd);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 999;
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4rpx 16rpx rgba(255, 175, 204, 0.4);
+}
+
+.back-to-top:active {
+    transform: scale(0.9);
 }
 
 .back-to-top-icon {
     width: 60rpx;
     height: 60rpx;
+    filter: brightness(0) invert(1);
 }
 </style>

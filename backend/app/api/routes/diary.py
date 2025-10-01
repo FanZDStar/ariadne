@@ -90,6 +90,14 @@ def get_user_diaries(
     # 返回解密后的数据
     result = []
     for diary in diaries:
+        # 获取该日记的所有图片
+        images = (
+            db.query(DiaryImage)
+            .filter(DiaryImage.diary_id == diary.diary_id)
+            .order_by(DiaryImage.image_order)
+            .all()
+        )
+        
         diary_response = DiaryResponse(
             diary_id=diary.diary_id,
             user_id=diary.user_id,
@@ -101,7 +109,13 @@ def get_user_diaries(
             is_private=diary.is_private,
             image_count=diary.image_count,
             tags=diary.tags,
-            images=[],
+            images=[{
+                "image_id": img.image_id,
+                "diary_id": img.diary_id,
+                "image_url": img.image_url,
+                "image_order": img.image_order,
+                "created_at": img.created_at
+            } for img in images],
         )
         result.append(diary_response)
 
@@ -125,6 +139,14 @@ def get_diary(
     if not diary:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="日记不存在")
 
+    # 获取该日记的所有图片
+    images = (
+        db.query(DiaryImage)
+        .filter(DiaryImage.diary_id == diary.diary_id)
+        .order_by(DiaryImage.image_order)
+        .all()
+    )
+
     # 返回解密后的数据
     return DiaryResponse(
         diary_id=diary.diary_id,
@@ -137,7 +159,13 @@ def get_diary(
         is_private=diary.is_private,
         image_count=diary.image_count,
         tags=diary.tags,
-        images=[],
+        images=[{
+            "image_id": img.image_id,
+            "diary_id": img.diary_id,
+            "image_url": img.image_url,
+            "image_order": img.image_order,
+            "created_at": img.created_at
+        } for img in images],
     )
 
 
