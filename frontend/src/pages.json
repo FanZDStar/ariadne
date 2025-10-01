@@ -279,6 +279,22 @@
       }
     },
     {
+      "path": "pages/interpersonal-wisdom/practice-history",
+      "style": {
+        "navigationBarTitleText": "对话练习记录",
+        "navigationBarBackgroundColor": "#1565c0",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/interpersonal-wisdom/practice-detail",
+      "style": {
+        "navigationBarTitleText": "练习详情",
+        "navigationBarBackgroundColor": "#1565c0",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/interpersonal-wisdom/report-detail",
       "style": {
         "navigationBarTitleText": "报告详情",

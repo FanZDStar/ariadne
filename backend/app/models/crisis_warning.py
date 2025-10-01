@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Bool
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database.session import Base
-from app.utils.encryption import encryption
+# from app.utils.encryption import encryption  # 暂时注释掉加密功能
 from sqlalchemy.ext.hybrid import hybrid_property
 import enum
 
@@ -44,21 +44,17 @@ class CrisisWarning(Base):
     # 关联关系
     user = relationship("User", back_populates="crisis_warnings")
     
-    # 加密属性处理
+    # 加密属性处理（暂时禁用）
     @hybrid_property
     def decrypted_source_data(self):
         """获取解密后的源数据"""
-        if self.source_data:
-            return encryption.decrypt_text(self.source_data)
-        return None
+        # 暂时直接返回原数据，禁用加密功能
+        return self.source_data
     
     @decrypted_source_data.setter
     def decrypted_source_data(self, value):
-        """设置源数据（自动加密）"""
-        if value:
-            self.source_data = encryption.encrypt_text(value)
-        else:
-            self.source_data = None
+        """设置源数据（暂时禁用加密）"""
+        self.source_data = value
 
 class MoodTrendAnalysis(Base):
     """心情趋势分析记录"""
@@ -77,18 +73,14 @@ class MoodTrendAnalysis(Base):
     # 关联关系
     user = relationship("User")
     
-    # 加密属性处理
+    # 加密属性处理（暂时禁用）
     @hybrid_property
     def decrypted_recommendations(self):
         """获取解密后的建议"""
-        if self.recommendations:
-            return encryption.decrypt_text(self.recommendations)
-        return None
+        # 暂时直接返回原数据，禁用加密功能
+        return self.recommendations
     
     @decrypted_recommendations.setter
     def decrypted_recommendations(self, value):
-        """设置建议（自动加密）"""
-        if value:
-            self.recommendations = encryption.encrypt_text(value)
-        else:
-            self.recommendations = None
+        """设置建议（暂时禁用加密）"""
+        self.recommendations = value
