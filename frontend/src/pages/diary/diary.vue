@@ -59,59 +59,59 @@
             <view class="diary-main-area" @click="goToDiaryDetail(diary.diary_id)">
               <!-- 第一行：标题和日期时间 -->
               <view class="diary-header">
-              <view class="diary-title-section">
-                <text class="diary-title">{{ diary.title || '无标题' }}</text>
-              </view>
-              <view class="diary-date-section">
-                <text class="diary-date">{{
-                  formatDiaryDate(diary.created_at)
-                }}</text>
-                <text class="diary-time">{{
-                  formatDiaryTime(diary.created_at)
-                }}</text>
-              </view>
-            </view>
-
-            <!-- 第二行：标签（如果有）和心情 -->
-            <view class="diary-meta">
-              <view class="diary-tags">
-                <template v-if="diary.tags && diary.tags.length > 0">
-                  <text class="tag-item" v-for="tag in diary.tags.slice(0, 3)" :key="tag">
-                    #{{ tag }}
-                  </text>
-                  <text class="tag-more" v-if="diary.tags.length > 3">
-                    +{{ diary.tags.length - 3 }}
-                  </text>
-                </template>
-              </view>
-              <view class="diary-mood">
-                <text class="mood-emoji">{{ getMoodEmoji(diary.mood) }}</text>
-              </view>
-            </view>
-
-            <!-- 第三行：正文和图片 -->
-            <view class="diary-content-section">
-              <view class="diary-main-content">
-                <text class="content-text">{{ truncateContent(diary.content, 50) }}</text>
-                <text class="content-more" v-if="diary.content && diary.content.length > 50">...</text>
+                <view class="diary-title-section">
+                  <text class="diary-title">{{ diary.title || '无标题' }}</text>
+                </view>
+                <view class="diary-date-section">
+                  <text class="diary-date">{{
+                    formatDiaryDate(diary.created_at)
+                    }}</text>
+                  <text class="diary-time">{{
+                    formatDiaryTime(diary.created_at)
+                    }}</text>
+                </view>
               </view>
 
-              <view class="diary-images" v-if="diary.images && diary.images.length > 0">
-                <view class="image-grid" :class="{
-                  'single-image': diary.images.length === 1,
-                  'two-images': diary.images.length >= 2,
-                }">
-                  <view class="image-wrapper" v-for="image in diary.images.slice(0, 2)" :key="image.image_id">
-                    <image :src="getImageUrl(image.image_url)" class="diary-image" mode="aspectFill"
-                      @click="previewImage(diary.images, image.image_url)" />
-                  </view>
+              <!-- 第二行：标签（如果有）和心情 -->
+              <view class="diary-meta">
+                <view class="diary-tags">
+                  <template v-if="diary.tags && diary.tags.length > 0">
+                    <text class="tag-item" v-for="tag in diary.tags.slice(0, 3)" :key="tag">
+                      #{{ tag }}
+                    </text>
+                    <text class="tag-more" v-if="diary.tags.length > 3">
+                      +{{ diary.tags.length - 3 }}
+                    </text>
+                  </template>
+                </view>
+                <view class="diary-mood">
+                  <text class="mood-emoji">{{ getMoodEmoji(diary.mood) }}</text>
+                </view>
+              </view>
 
-                  <view class="image-wrapper more-images" v-if="diary.images.length > 2">
-                    <text class="more-count">+{{ diary.images.length - 2 }}</text>
+              <!-- 第三行：正文和图片 -->
+              <view class="diary-content-section">
+                <view class="diary-main-content">
+                  <text class="content-text">{{ truncateContent(diary.content, 50) }}</text>
+                  <text class="content-more" v-if="diary.content && diary.content.length > 50">...</text>
+                </view>
+
+                <view class="diary-images" v-if="diary.images && diary.images.length > 0">
+                  <view class="image-grid" :class="{
+                    'single-image': diary.images.length === 1,
+                    'two-images': diary.images.length >= 2,
+                  }">
+                    <view class="image-wrapper" v-for="image in diary.images.slice(0, 2)" :key="image.image_id">
+                      <image :src="getImageUrl(image.image_url)" class="diary-image" mode="aspectFill"
+                        @click="previewImage(diary.images, image.image_url)" />
+                    </view>
+
+                    <view class="image-wrapper more-images" v-if="diary.images.length > 2">
+                      <text class="more-count">+{{ diary.images.length - 2 }}</text>
+                    </view>
                   </view>
                 </view>
               </view>
-            </view>
             </view>
 
             <!-- 管理模式下的删除按钮 -->
@@ -212,7 +212,7 @@ export default {
       if (this.managementMode) {
         return;
       }
-      
+
       uni.navigateTo({
         url: `/pages/diary/diary-detail?id=${diaryId}`
       });

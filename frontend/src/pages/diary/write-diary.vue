@@ -14,12 +14,7 @@
     <view class="content">
       <!-- 日记标题输入 -->
       <view class="title-input-section">
-        <input 
-          class="diary-title" 
-          placeholder="给日记起个标题吧..." 
-          v-model="diaryTitle" 
-          maxlength="50"
-        />
+        <input class="diary-title" placeholder="给日记起个标题吧..." v-model="diaryTitle" maxlength="50" />
       </view>
 
       <!-- 日记内容输入 -->
@@ -33,39 +28,19 @@
       <view class="tag-selector">
         <text class="tag-label">标签：</text>
         <view class="tag-container">
-          <view 
-            class="tag-item" 
-            v-for="tag in selectedTags" 
-            :key="tag"
-            @click="removeTag(tag)"
-          >
+          <view class="tag-item" v-for="tag in selectedTags" :key="tag" @click="removeTag(tag)">
             <text class="tag-text">{{ tag }}</text>
             <text class="tag-remove">×</text>
           </view>
-          <input 
-            v-if="showTagInput || selectedTags.length === 0"
-            class="tag-input" 
-            placeholder="添加标签..."
-            v-model="currentTag"
-            @confirm="addTag"
-            @blur="hideTagInput"
-          />
-          <view 
-            v-else
-            class="add-tag-btn" 
-            @click="showTagInput = true"
-          >
+          <input v-if="showTagInput || selectedTags.length === 0" class="tag-input" placeholder="添加标签..."
+            v-model="currentTag" @confirm="addTag" @blur="hideTagInput" />
+          <view v-else class="add-tag-btn" @click="showTagInput = true">
             <text>+ 添加标签</text>
           </view>
         </view>
         <!-- 预设标签 -->
         <view class="preset-tags">
-          <view 
-            class="preset-tag" 
-            v-for="tag in presetTags" 
-            :key="tag"
-            @click="selectPresetTag(tag)"
-          >
+          <view class="preset-tag" v-for="tag in presetTags" :key="tag" @click="selectPresetTag(tag)">
             <text>{{ tag }}</text>
           </view>
         </view>
