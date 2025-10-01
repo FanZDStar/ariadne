@@ -72,10 +72,6 @@
     <view v-if="activeTab === 'protection'" class="content-section">
       <view class="section-header">
         <text class="section-title">智能防护推荐</text>
-        <view class="refresh-btn" @click="refreshProtectionTools">
-          <text class="refresh-icon">🔄</text>
-          <text class="refresh-text">刷新推荐</text>
-        </view>
       </view>
 
       <view class="recommended-protection">
@@ -138,18 +134,18 @@
         <view class="practice-card" @click="startInteractivePractice">
           <view class="practice-header">
             <text class="practice-icon">💬</text>
-            <text class="practice-title">AI对话练习</text>
+            <text class="practice-title">AI情景模拟训练</text>
           </view>
           <text class="practice-desc">与AI进行模拟对话，练习交往技巧</text>
         </view>
 
-        <view class="practice-card" @click="startScenarioPractice">
+        <!-- <view class="practice-card" @click="startScenarioPractice">
           <view class="practice-header">
             <text class="practice-icon">🎬</text>
             <text class="practice-title">情景模拟练习</text>
           </view>
           <text class="practice-desc">在模拟情景中练习应对各种社交场合</text>
-        </view>
+        </view> -->
 
         <view class="practice-card" @click="startProtectionDrill">
           <view class="practice-header">
@@ -176,10 +172,6 @@
     <view v-if="activeTab === 'growth'" class="content-section">
       <view class="section-header">
         <text class="section-title">智能成长推荐</text>
-        <view class="refresh-btn" @click="refreshGrowthTools">
-          <text class="refresh-icon">🔄</text>
-          <text class="refresh-text">刷新推荐</text>
-        </view>
       </view>
 
       <view class="recommended-growth">
