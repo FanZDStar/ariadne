@@ -33,8 +33,9 @@
     <view class="background-section" :style="{ height: backgroundHeight + 'px' }">
       <!-- 当前背景显示 -->
       <view class="current-background" :style="getCurrentBackgroundStyle()">
-        <text class="background-label" v-if="allBackgrounds[currentBackgroundIndex]">
-          {{ allBackgrounds[currentBackgroundIndex].name || "自定义背景" }}
+        <text class="background-label"
+          v-if="allBackgrounds[currentBackgroundIndex] && allBackgrounds[currentBackgroundIndex].name">
+          {{ allBackgrounds[currentBackgroundIndex].name }}
         </text>
       </view>
 

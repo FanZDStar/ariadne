@@ -41,6 +41,12 @@ if not os.path.exists("uploads"):
     os.makedirs("uploads")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+# 挂载前端静态文件目录
+frontend_static_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "src", "static")
+if os.path.exists(frontend_static_path):
+    app.mount("/static", StaticFiles(directory=frontend_static_path), name="static")
+    print(f"✅ 静态文件目录已挂载: {frontend_static_path}")
+
 app.include_router(api_router)
 
 @app.on_event("startup")
