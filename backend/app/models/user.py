@@ -37,3 +37,6 @@ class User(Base):
     
     # 添加日记背景图片关联
     diary_backgrounds = relationship("UserDiaryBackground", back_populates="user", cascade="all, delete-orphan")
+    
+    # 添加人际沟通练习会话关联
+    interpersonal_practice_sessions = relationship("InterpersonalPracticeSession", back_populates="user", cascade="all, delete-orphan")

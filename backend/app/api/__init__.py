@@ -34,6 +34,7 @@ from app.api.routes import (
     skill_favorites,
     diary_backgrounds,
     user_diary_backgrounds,
+    interpersonal_practice,
 )
 
 api_router = APIRouter()
@@ -70,3 +71,8 @@ api_router.include_router(
 )
 api_router.include_router(diary_backgrounds.router)
 api_router.include_router(user_diary_backgrounds.router)
+api_router.include_router(
+    interpersonal_practice.router, 
+    prefix="/interpersonal-practice", 
+    tags=["interpersonal-practice"]
+)

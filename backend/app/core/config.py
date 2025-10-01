@@ -32,12 +32,10 @@ class Settings(BaseSettings):
     session_timeout_minutes: int = 30
     enable_audit_log: bool = True
 
-    model_config = {
-        "env_file": ".env",
-        # Pydantic V2 语法 - 字段别名
-        "case_sensitive": False,
-        "env_prefix": "",
-        "extra": "ignore"
-    }
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
+        env_prefix = ""
+        extra = "ignore"
 
 settings = Settings()
