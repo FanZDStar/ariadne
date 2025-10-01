@@ -43,7 +43,6 @@
     <!-- 技能学习模块 -->
     <view v-if="activeTab === 'skills'" class="content-section">
       <view class="section-header">
-        <text class="section-title">智能推荐技巧</text>
         <view class="refresh-btn" @click="getRecommendedSkills">
           <text class="refresh-icon">🔄</text>
           <text class="refresh-text">刷新推荐</text>
@@ -94,10 +93,6 @@
 
     <!-- 防护指南模块 -->
     <view v-if="activeTab === 'protection'" class="content-section">
-      <view class="section-header">
-        <text class="section-title">智能防护推荐</text>
-      </view>
-
       <view class="recommended-protection">
         <view class="skill-card recommended" @click="startRiskAssessment">
           <view class="skill-header">
@@ -206,10 +201,6 @@
 
     <!-- 成长档案模块 -->
     <view v-if="activeTab === 'growth'" class="content-section">
-      <view class="section-header">
-        <text class="section-title">智能成长推荐</text>
-      </view>
-
       <view class="recommended-growth">
         <view class="skill-card recommended" @click="goToSkillFavorites">
           <view class="skill-header">
