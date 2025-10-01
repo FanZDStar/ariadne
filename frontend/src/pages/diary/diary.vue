@@ -54,39 +54,65 @@
         :enable-back-to-top="true" ref="scrollView" id="scrollView">
         <view class="diary-list">
           <view class="diary-item" v-for="diary in diaryList" :key="diary.diary_id">
+            <!-- 第一行：标题和日期时间 -->
             <view class="diary-header">
-              <text class="diary-date">{{
-                formatDiaryDate(diary.created_at)
-              }}</text>
-              <text class="diary-time">{{
-                formatDiaryTime(diary.created_at)
-              }}</text>
-            </view>
-            <view class="diary-main-content">
-              <text class="content-text">{{ diary.content }}</text>
+              <view class="diary-title-section">
+                <text class="diary-title">{{ diary.title || '无标题' }}</text>
+              </view>
+              <view class="diary-date-section">
+                <text class="diary-date">{{
+                  formatDiaryDate(diary.created_at)
+                }}</text>
+                <text class="diary-time">{{
+                  formatDiaryTime(diary.created_at)
+                }}</text>
+              </view>
             </view>
 
-            <view class="diary-images" v-if="diary.images && diary.images.length > 0">
-              <view class="image-grid" :class="{
-                'single-image': diary.images.length === 1,
-                'two-images': diary.images.length >= 2,
-              }">
-                <view class="image-wrapper" v-for="image in diary.images.slice(0, 2)" :key="image.image_id">
-                  <image :src="getImageUrl(image.image_url)" class="diary-image" mode="aspectFill"
-                    @click="previewImage(diary.images, image.image_url)" />
-                </view>
+            <!-- 第二行：标签（如果有）和心情 -->
+            <view class="diary-meta">
+              <view class="diary-tags">
+                <template v-if="diary.tags && diary.tags.length > 0">
+                  <text class="tag-item" v-for="tag in diary.tags.slice(0, 3)" :key="tag">
+                    #{{ tag }}
+                  </text>
+                  <text class="tag-more" v-if="diary.tags.length > 3">
+                    +{{ diary.tags.length - 3 }}
+                  </text>
+                </template>
+              </view>
+              <view class="diary-mood">
+                <text class="mood-emoji">{{ getMoodEmoji(diary.mood) }}</text>
+              </view>
+            </view>
 
-                <view class="image-wrapper more-images" v-if="diary.images.length > 2">
-                  <text class="more-count">+{{ diary.images.length - 2 }}</text>
+            <!-- 第三行：正文和图片 -->
+            <view class="diary-content-section">
+              <view class="diary-main-content">
+                <text class="content-text">{{ truncateContent(diary.content, 50) }}</text>
+                <text class="content-more" v-if="diary.content && diary.content.length > 50">...</text>
+              </view>
+
+              <view class="diary-images" v-if="diary.images && diary.images.length > 0">
+                <view class="image-grid" :class="{
+                  'single-image': diary.images.length === 1,
+                  'two-images': diary.images.length >= 2,
+                }">
+                  <view class="image-wrapper" v-for="image in diary.images.slice(0, 2)" :key="image.image_id">
+                    <image :src="getImageUrl(image.image_url)" class="diary-image" mode="aspectFill"
+                      @click="previewImage(diary.images, image.image_url)" />
+                  </view>
+
+                  <view class="image-wrapper more-images" v-if="diary.images.length > 2">
+                    <text class="more-count">+{{ diary.images.length - 2 }}</text>
+                  </view>
                 </view>
               </view>
             </view>
 
-            <view class="diary-footer">
-              <view class="mood-tag">
-                <text>{{ getMoodEmoji(diary.mood) }}</text>
-              </view>
-              <view v-if="managementMode" class="delete-btn" @click="confirmDelete(diary.diary_id)">
+            <!-- 管理模式下的删除按钮 -->
+            <view class="diary-footer" v-if="managementMode">
+              <view class="delete-btn" @click="confirmDelete(diary.diary_id)">
                 <text class="delete-icon">🗑️</text>
               </view>
             </view>
@@ -447,6 +473,13 @@ export default {
     handleBackToTopSuccess() {
       // 回到顶部成功的回调
     },
+
+    // 截断正文内容
+    truncateContent(content, maxLength = 50) {
+      if (!content) return '';
+      if (content.length <= maxLength) return content;
+      return content.substring(0, maxLength);
+    },
   },
 };
 </script>
@@ -619,26 +652,102 @@ export default {
 .diary-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20rpx;
+  align-items: flex-start;
+  margin-bottom: 15rpx;
+}
+
+.diary-title-section {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.diary-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.3;
+}
+
+.diary-date-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .diary-date {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #666;
 }
 
 .diary-time {
   font-size: 24rpx;
   color: #999;
+  margin-top: 4rpx;
+}
+
+.diary-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+  min-height: 40rpx;
+}
+
+.diary-tags {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.tag-item {
+  font-size: 24rpx;
+  color: #ffafcc;
+  background-color: rgba(255, 175, 204, 0.1);
+  padding: 6rpx 12rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(255, 175, 204, 0.3);
+}
+
+.tag-more {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.diary-mood {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.mood-emoji {
+  font-size: 36rpx;
+}
+
+.diary-content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.diary-main-content {
+  display: flex;
+  align-items: flex-end;
+  gap: 8rpx;
 }
 
 .diary-main-content .content-text {
   font-size: 30rpx;
   color: #333;
   line-height: 1.6;
-  margin-bottom: 20rpx;
   word-wrap: break-word;
+  flex: 1;
+}
+
+.content-more {
+  font-size: 28rpx;
+  color: #999;
+  font-weight: bold;
 }
 
 .diary-images {
@@ -696,12 +805,9 @@ export default {
 
 .diary-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-}
-
-.mood-tag {
-  font-size: 36rpx;
+  margin-top: 15rpx;
 }
 
 .empty-diary {
