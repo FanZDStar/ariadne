@@ -43,6 +43,7 @@
     <!-- 技能学习模块 -->
     <view v-if="activeTab === 'skills'" class="content-section">
       <view class="section-header">
+        <text class="section-title">智能推荐技巧</text>
         <view class="refresh-btn" @click="getRecommendedSkills">
           <text class="refresh-icon">🔄</text>
           <text class="refresh-text">刷新推荐</text>
