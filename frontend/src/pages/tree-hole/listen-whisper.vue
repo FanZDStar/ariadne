@@ -2,13 +2,35 @@
     <view class="listen-container">
         <view class="content-wrapper">
             <view v-if="whisper" class="whisper-note">
+                <!-- 第一行：头像和匿名名称 -->
                 <view class="whisper-header">
-                    <image class="avatar" :src="whisper.user.avatar_url || '/static/avatar.png'" mode="aspectFill" />
-                    <text class="nickname">{{ whisper.user.nickname || '匿名用户' }}</text>
+                    <image class="avatar" :src="getAvatarUrl()" mode="aspectFill" />
+                    <text class="nickname">{{ getDisplayName() }}</text>
                 </view>
 
+                <!-- 第二行：心情和标签 -->
+                <view class="whisper-meta">
+                    <view class="mood-section" v-if="whisper.mood">
+                        <text class="mood-emoji">{{ getMoodEmoji(whisper.mood) }}</text>
+                        <text class="mood-text">{{ getMoodText(whisper.mood) }}</text>
+                    </view>
+                    <view class="tags-section" v-if="whisper.tags && whisper.tags.length > 0">
+                        <view class="tag-item" v-for="tag in whisper.tags.slice(0, 3)" :key="tag">
+                            <text class="tag-text">#{{ tag }}</text>
+                        </view>
+                    </view>
+                </view>
+
+                <!-- 第三行：正文和图片 -->
                 <scroll-view scroll-y="true" class="whisper-scroll-view">
-                    <text class="whisper-content">{{ whisper.content }}</text>
+                    <view class="content-section">
+                        <text class="whisper-content">{{ getDisplayContent() }}</text>
+                        <view class="images-section" v-if="whisper.images && whisper.images.length > 0">
+                            <image v-for="(image, index) in whisper.images.slice(0, 2)" :key="index"
+                                :src="getImageUrl(image.image_url)" class="whisper-image" mode="aspectFill"
+                                @click="previewImage(image.image_url)" />
+                        </view>
+                    </view>
                 </scroll-view>
             </view>
 
@@ -68,6 +90,111 @@ export default {
                     icon: 'none'
                 });
             }
+        },
+
+        // 获取头像URL
+        getAvatarUrl() {
+            if (!this.whisper) return '/static/avatar.png';
+
+            // 如果是匿名且有匿名头像，使用匿名头像
+            if (this.whisper.is_anonymous && this.whisper.anonymous_avatar) {
+                return this.whisper.anonymous_avatar;
+            }
+
+            // 否则使用用户头像
+            return this.whisper.user?.avatar_url || '/static/avatar.png';
+        },
+
+        // 获取显示名称
+        getDisplayName() {
+            if (!this.whisper) return '匿名用户';
+
+            // 如果是匿名且有匿名名称，使用匿名名称
+            if (this.whisper.is_anonymous && this.whisper.anonymous_name) {
+                return this.whisper.anonymous_name;
+            }
+
+            // 如果是匿名但没有匿名名称，显示默认匿名
+            if (this.whisper.is_anonymous) {
+                return '匿名用户';
+            }
+
+            // 否则使用用户昵称
+            return this.whisper.user?.nickname || '匿名用户';
+        },
+
+        // 获取心情emoji
+        getMoodEmoji(mood) {
+            const moodEmojis = {
+                'very_happy': '😄',
+                'happy': '😊',
+                'neutral': '😐',
+                'sad': '😢',
+                'very_sad': '😭'
+            };
+            return moodEmojis[mood] || '😐';
+        },
+
+        // 获取心情文本
+        getMoodText(mood) {
+            const moodTexts = {
+                'very_happy': '超开心',
+                'happy': '开心',
+                'neutral': '平静',
+                'sad': '难过',
+                'very_sad': '很难过'
+            };
+            return moodTexts[mood] || '平静';
+        },
+
+        // 获取显示内容（限制50字）
+        getDisplayContent() {
+            if (!this.whisper || !this.whisper.content) return '';
+            const content = this.whisper.content;
+            if (content.length > 50) {
+                return content.substring(0, 50) + '...';
+            }
+            return content;
+        },
+
+        // 获取图片URL
+        getImageUrl(imageUrl) {
+            if (imageUrl.startsWith('http')) {
+                return imageUrl;
+            }
+
+            // 如果是静态资源路径（不包含 /uploads/），使用静态资源处理
+            if (!imageUrl.includes('/uploads/')) {
+                // 处理静态资源路径
+                if (imageUrl.startsWith('/')) {
+                    return `/static${imageUrl}`;
+                } else {
+                    return `/static/${imageUrl}`;
+                }
+            }
+
+            // 如果是上传的图片，使用API base URL
+            const baseUrl = process.env.VUE_APP_API_BASE_URL;
+            if (!baseUrl) {
+                console.error('❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!');
+                return imageUrl;
+            }
+            if (imageUrl.startsWith('/')) {
+                return baseUrl + imageUrl;
+            } else {
+                return baseUrl + '/' + imageUrl;
+            }
+        },
+
+        // 预览图片
+        previewImage(imageUrl) {
+            const fullImageUrl = this.getImageUrl(imageUrl);
+            const allImages = this.whisper.images.map(img => this.getImageUrl(img.image_url));
+
+            uni.previewImage({
+                current: fullImageUrl,
+                urls: allImages
+            });
         },
         async toggleLike() {
             if (!this.whisper) return;
@@ -158,10 +285,75 @@ export default {
     /* 必须设置高度才能在小程序中滚动 */
 }
 
+/* 心情和标签区域 */
+.whisper-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 15rpx;
+    margin-bottom: 25rpx;
+    flex-shrink: 0;
+}
+
+.mood-section {
+    display: flex;
+    align-items: center;
+    gap: 10rpx;
+}
+
+.mood-emoji {
+    font-size: 36rpx;
+}
+
+.mood-text {
+    font-size: 26rpx;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 5rpx 15rpx;
+    border-radius: 20rpx;
+}
+
+.tags-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10rpx;
+}
+
+.tag-item {
+    background-color: #e3f2fd;
+    padding: 5rpx 12rpx;
+    border-radius: 15rpx;
+}
+
+.tag-text {
+    font-size: 24rpx;
+    color: #1976d2;
+}
+
+/* 内容区域 */
+.content-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+}
+
 .whisper-content {
     font-size: 30rpx;
     color: #333;
     line-height: 1.8;
+}
+
+/* 图片区域 */
+.images-section {
+    display: flex;
+    gap: 15rpx;
+    flex-wrap: wrap;
+}
+
+.whisper-image {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 10rpx;
+    object-fit: cover;
 }
 
 .empty-state {

@@ -19,9 +19,17 @@ def create_whisper(
     current_user: User = Depends(get_current_user)
 ):
     """创建新的悄悄话"""
+    from app.models.tree_hole import TreeHoleWhisperImage
+    
+    # 创建悄悄话对象
     db_whisper = TreeHoleWhisper(
         user_id=current_user.user_id,
-        is_anonymous=whisper.is_anonymous
+        title=whisper.title,
+        mood=whisper.mood,
+        tags=whisper.tags,
+        is_anonymous=whisper.is_anonymous,
+        anonymous_name=whisper.anonymous_name,
+        anonymous_avatar=whisper.anonymous_avatar
     )
     
     # 使用加密属性设置内容，自动处理加密
@@ -30,6 +38,18 @@ def create_whisper(
     db.add(db_whisper)
     db.commit()
     db.refresh(db_whisper)
+    
+    # 创建关联的图片记录
+    if whisper.images:
+        for image_data in whisper.images:
+            db_image = TreeHoleWhisperImage(
+                whisper_id=db_whisper.whisper_id,
+                image_url=image_data.image_url,
+                image_order=image_data.image_order
+            )
+            db.add(db_image)
+        db.commit()
+        db.refresh(db_whisper)
     
     # 确保返回解密后的内容
     db_whisper.content = db_whisper.decrypted_content
@@ -42,7 +62,10 @@ def get_user_whispers(
 ):
     """获取当前用户的所有悄悄话，按时间倒序排列"""
     whispers = db.query(TreeHoleWhisper)\
-                .options(joinedload(TreeHoleWhisper.user))\
+                .options(
+                    joinedload(TreeHoleWhisper.user),
+                    joinedload(TreeHoleWhisper.images)
+                )\
                 .filter(TreeHoleWhisper.user_id == current_user.user_id)\
                 .order_by(TreeHoleWhisper.created_at.desc())\
                 .all()
@@ -69,7 +92,10 @@ def get_random_whisper(
     current_user: User = Depends(get_current_user)
 ):
     """随机获取一个悄悄话"""
-    whisper = db.query(TreeHoleWhisper).options(joinedload(TreeHoleWhisper.user)).filter(
+    whisper = db.query(TreeHoleWhisper).options(
+        joinedload(TreeHoleWhisper.user),
+        joinedload(TreeHoleWhisper.images)
+    ).filter(
         TreeHoleWhisper.user_id != current_user.user_id
     ).order_by(func.rand()).first()
 
@@ -96,7 +122,10 @@ def get_public_whispers(
 ):
     """获取公开的悄悄话（用于做倾听者功能）"""
     whispers = db.query(TreeHoleWhisper)\
-                .options(joinedload(TreeHoleWhisper.user))\
+                .options(
+                    joinedload(TreeHoleWhisper.user),
+                    joinedload(TreeHoleWhisper.images)
+                )\
                 .filter(TreeHoleWhisper.is_anonymous == True)\
                 .order_by(TreeHoleWhisper.created_at.desc())\
                 .offset(skip)\
@@ -123,7 +152,10 @@ def get_whisper(
 ):
     """获取特定的悄悄话"""
     whisper = db.query(TreeHoleWhisper)\
-              .options(joinedload(TreeHoleWhisper.user))\
+              .options(
+                  joinedload(TreeHoleWhisper.user),
+                  joinedload(TreeHoleWhisper.images)
+              )\
               .filter(TreeHoleWhisper.whisper_id == whisper_id)\
               .first()
     
@@ -160,6 +192,7 @@ def update_whisper(
 ):
     """更新悄悄话"""
     db_whisper = db.query(TreeHoleWhisper)\
+                 .options(joinedload(TreeHoleWhisper.images))\
                  .filter(TreeHoleWhisper.whisper_id == whisper_id)\
                  .filter(TreeHoleWhisper.user_id == current_user.user_id)\
                  .first()

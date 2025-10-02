@@ -50,20 +50,33 @@
 #     whisper = relationship("TreeHoleWhisper", back_populates="likes")
 #     user = relationship("User")
 
-from sqlalchemy import Column, Integer, Text, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Text, Boolean, DateTime, ForeignKey, String, JSON, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.sql import func
 from app.database.session import Base
 from app.utils.encryption import encryption
+import enum
+
+class MoodEnum(str, enum.Enum):
+    very_happy = "very_happy"
+    happy = "happy" 
+    neutral = "neutral"
+    sad = "sad"
+    very_sad = "very_sad"
 
 class TreeHoleWhisper(Base):
     __tablename__ = "tree_hole_whispers"
     
     whisper_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    title = Column(String(255), nullable=True)  # 新增：标题字段
     content = Column(Text, nullable=False)
+    mood = Column(Enum(MoodEnum), default=MoodEnum.neutral)  # 新增：心情字段
+    tags = Column(JSON, nullable=True)  # 新增：标签字段
     is_anonymous = Column(Boolean, default=True)
+    anonymous_name = Column(String(100), nullable=True)  # 新增：匿名名称
+    anonymous_avatar = Column(String(500), nullable=True)  # 新增：匿名头像
     like_count = Column(Integer, default=0)
     comment_count = Column(Integer, default=0)
     created_at = Column(DateTime, server_default=func.now())
@@ -74,6 +87,8 @@ class TreeHoleWhisper(Base):
     comments = relationship("TreeHoleComment", back_populates="whisper", cascade="all, delete-orphan")
     # 关联点赞 - 添加 cascade
     likes = relationship("TreeHoleLike", back_populates="whisper", cascade="all, delete-orphan")
+    # 关联图片 - 新增
+    images = relationship("TreeHoleWhisperImage", back_populates="whisper", cascade="all, delete-orphan")
     # 关联用户
     user = relationship("User") # user 关系不需要 cascade
     
@@ -136,3 +151,15 @@ class TreeHoleLike(Base):
     # 反向关系
     whisper = relationship("TreeHoleWhisper", back_populates="likes")
     user = relationship("User")
+
+class TreeHoleWhisperImage(Base):
+    __tablename__ = "tree_hole_whisper_images"
+    
+    image_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    whisper_id = Column(Integer, ForeignKey("tree_hole_whispers.whisper_id"), nullable=False)
+    image_url = Column(String(500), nullable=False)
+    image_order = Column(Integer, default=0)
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # 反向关系
+    whisper = relationship("TreeHoleWhisper", back_populates="images")
