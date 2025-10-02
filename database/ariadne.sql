@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 02/10/2025 20:31:24
+ Date: 02/10/2025 20:46:15
 */
 
 SET NAMES utf8mb4;
@@ -1120,11 +1120,59 @@ CREATE TABLE `tree_hole_whisper_images`  (
   PRIMARY KEY (`image_id`) USING BTREE,
   INDEX `idx_whisper_images_whisper_id`(`whisper_id` ASC) USING BTREE,
   CONSTRAINT `tree_hole_whisper_images_ibfk_1` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 139 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_whisper_images
 -- ----------------------------
+INSERT INTO `tree_hole_whisper_images` VALUES (91, 87, 'outfits/default-full.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (92, 87, 'outfits/shark.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (93, 87, 'mascot/wave.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (94, 89, 'tree-day.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (95, 89, 'outfits/red-dress.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (96, 89, 'mascot/sleep.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (97, 90, 'love-yourself.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (98, 90, 'tree-day.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (99, 90, 'love-experiment.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (100, 92, 'tree-night.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (101, 92, 'outfits/dinosaur.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (102, 93, 'outfits/wangzaixiaoqiao.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (103, 93, 'love-yourself.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (104, 94, 'love-experiment.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (105, 94, 'mascot/wave.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (106, 94, 'outfits/dinosaur.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (107, 96, 'outfits/dinosaur.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (108, 98, 'mascot/idle.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (109, 99, 'outfits/dinosaur.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (110, 99, 'tree-night.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (111, 100, 'love-experiment.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (112, 100, 'outfits/dinosaur.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (113, 101, 'mascot/wave.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (114, 101, 'love-yourself.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (115, 101, 'tree-night.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (116, 103, 'mascot/idle.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (117, 104, 'outfits/shark.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (118, 105, 'outfits/default-full.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (119, 105, 'outfits/wangzaixiaoqiao.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (120, 106, 'outfits/wangzaixiaoqiao.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (121, 106, 'love-yourself.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (122, 106, 'outfits/dinosaur.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (123, 107, 'mascot/wave.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (124, 107, 'mascot/happy.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (125, 107, 'tree-night.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (126, 108, 'tree-night.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (127, 108, 'love-experiment.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (128, 108, 'outfits/default-full.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (129, 109, 'outfits/dinosaur.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (130, 110, 'outfits/dinosaur.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (131, 110, 'outfits/default-full.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (132, 110, 'tree-night.png', 2, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (133, 111, 'love-yourself.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (134, 111, 'tree-night.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (135, 113, 'love-yourself.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (136, 113, 'outfits/shark.png', 1, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (137, 114, 'mascot/happy.png', 0, '2025-10-02 20:44:08');
+INSERT INTO `tree_hole_whisper_images` VALUES (138, 114, 'mascot/sleep.png', 1, '2025-10-02 20:44:08');
 
 -- ----------------------------
 -- Table structure for tree_hole_whispers
@@ -1150,11 +1198,41 @@ CREATE TABLE `tree_hole_whispers`  (
   INDEX `idx_tree_hole_whispers_created`(`created_at` ASC) USING BTREE,
   INDEX `idx_created_likes`(`created_at` ASC, `like_count` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_whispers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 116 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_whispers
 -- ----------------------------
+INSERT INTO `tree_hole_whispers` VALUES (86, 5, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 1, 'ariadne_lq6vt', '/src/static/avatar/头像 (3).png', 12, 2, '2025-09-04 20:44:08', '2025-09-04 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (87, 6, '今天的心情', '今天的天气很好，心情也跟着变得明朗起来。阳光透过窗户洒在桌子上，让我想起了小时候无忧无虑的日子。', 'happy', '[\"心情\", \"阳光\", \"回忆\"]', 1, 'ariadne_37ens', '/src/static/avatar/头像 (2).png', 10, 0, '2025-09-29 20:44:08', '2025-09-29 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (88, 4, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 0, NULL, NULL, 11, 2, '2025-09-11 20:44:08', '2025-09-11 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (89, 1, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 5, 5, '2025-09-20 20:44:08', '2025-09-20 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (90, 6, '家人的温暖', '妈妈今天打电话问我吃饭了没有，虽然只是简单的关心，但让我感受到了家的温暖。', 'very_happy', '[\"家庭\", \"温暖\", \"关心\"]', 1, 'ariadne_zw90h', '/src/static/avatar/头像 (6).png', 19, 1, '2025-09-19 20:44:08', '2025-09-19 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (91, 2, '新的开始', '今天是新学期的第一天，心情既紧张又兴奋。希望这个学期能有新的收获，遇到更好的自己。', 'happy', '[\"新开始\", \"学习\", \"希望\"]', 0, NULL, NULL, 8, 1, '2025-09-06 20:44:08', '2025-09-06 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (92, 3, '小确幸', '今天路过咖啡店，闻到了熟悉的咖啡香味。买了一杯最爱的拿铁，坐在窗边看着来往的行人，这样的小确幸让人感到温暖。', 'neutral', '[\"咖啡\", \"温暖\", \"日常\"]', 0, NULL, NULL, 4, 2, '2025-09-02 20:44:08', '2025-09-02 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (93, 1, '阳光明媚', '今天的阳光特别好，决定出去走走。看到路边开着的小花，心情也跟着明媚起来了。', 'very_happy', '[\"阳光\", \"散步\", \"花朵\"]', 0, NULL, NULL, 13, 4, '2025-09-27 20:44:08', '2025-09-27 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (94, 4, '考试焦虑', '马上就要期末考试了，复习得不够充分，心里很焦虑。希望能够超常发挥，不要辜负自己的努力。', 'sad', '[\"考试\", \"焦虑\", \"努力\"]', 1, 'ariadne_iyikv', '/src/static/avatar/头像 (4).png', 17, 1, '2025-09-18 20:44:08', '2025-09-18 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (95, 1, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 0, NULL, NULL, 12, 2, '2025-09-27 20:44:08', '2025-09-27 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (96, 2, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 1, 'ariadne_h6ucb', '/src/static/avatar/头像 (8).png', 1, 1, '2025-09-25 20:44:08', '2025-09-25 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (97, 1, '压力山大', '最近工作压力好大，每天都有做不完的事情。有时候真想逃到一个没有人认识我的地方，重新开始。', 'very_sad', '[\"压力\", \"工作\", \"逃避\"]', 1, 'ariadne_pwktb', '/src/static/avatar/头像.png', 10, 2, '2025-09-17 20:44:08', '2025-09-17 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (98, 3, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 15, 0, '2025-09-22 20:44:08', '2025-09-22 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (99, 2, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_3nzc3', '/src/static/avatar/头像.png', 7, 3, '2025-09-09 20:44:08', '2025-09-09 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (100, 1, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 0, NULL, NULL, 7, 3, '2025-09-30 20:44:08', '2025-09-30 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (101, 5, '今天的心情', '今天的天气很好，心情也跟着变得明朗起来。阳光透过窗户洒在桌子上，让我想起了小时候无忧无虑的日子。', 'happy', '[\"心情\", \"阳光\", \"回忆\"]', 0, NULL, NULL, 14, 5, '2025-09-05 20:44:08', '2025-09-05 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (102, 5, '考试焦虑', '马上就要期末考试了，复习得不够充分，心里很焦虑。希望能够超常发挥，不要辜负自己的努力。', 'sad', '[\"考试\", \"焦虑\", \"努力\"]', 1, 'ariadne_2tebc', '/src/static/avatar/头像 (7).png', 10, 3, '2025-09-24 20:44:08', '2025-09-24 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (103, 3, '考试焦虑', '马上就要期末考试了，复习得不够充分，心里很焦虑。希望能够超常发挥，不要辜负自己的努力。', 'sad', '[\"考试\", \"焦虑\", \"努力\"]', 1, 'ariadne_k8zkv', '/src/static/avatar/头像 (5).png', 11, 5, '2025-09-05 20:44:08', '2025-09-05 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (104, 1, '新的开始', '今天是新学期的第一天，心情既紧张又兴奋。希望这个学期能有新的收获，遇到更好的自己。', 'happy', '[\"新开始\", \"学习\", \"希望\"]', 0, NULL, NULL, 12, 1, '2025-09-03 20:44:08', '2025-09-03 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (105, 4, '深夜emo', '为什么深夜总是特别容易emo？想起了很多往事，有开心的也有难过的，五味杂陈。', 'sad', '[\"深夜\", \"emo\", \"往事\"]', 1, 'ariadne_871az', '/src/static/avatar/头像 (6).png', 16, 2, '2025-09-11 20:44:08', '2025-09-11 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (106, 3, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_0y9gw', '/src/static/avatar/头像 (3).png', 4, 4, '2025-09-09 20:44:08', '2025-09-09 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (107, 6, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 0, NULL, NULL, 6, 2, '2025-09-03 20:44:08', '2025-09-03 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (108, 1, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_qx4n5', '/src/static/avatar/头像 (2).png', 8, 2, '2025-09-16 20:44:08', '2025-09-16 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (109, 2, '新的开始', '今天是新学期的第一天，心情既紧张又兴奋。希望这个学期能有新的收获，遇到更好的自己。', 'happy', '[\"新开始\", \"学习\", \"希望\"]', 1, 'ariadne_039ci', '/src/static/avatar/头像 (9).png', 1, 3, '2025-09-17 20:44:08', '2025-09-17 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (110, 3, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 18, 5, '2025-10-01 20:44:08', '2025-10-01 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (111, 2, '考试焦虑', '马上就要期末考试了，复习得不够充分，心里很焦虑。希望能够超常发挥，不要辜负自己的努力。', 'sad', '[\"考试\", \"焦虑\", \"努力\"]', 0, NULL, NULL, 20, 3, '2025-09-25 20:44:08', '2025-09-25 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (112, 3, '今天的心情', '今天的天气很好，心情也跟着变得明朗起来。阳光透过窗户洒在桌子上，让我想起了小时候无忧无虑的日子。', 'happy', '[\"心情\", \"阳光\", \"回忆\"]', 1, 'ariadne_bscvd', '/src/static/avatar/头像 (5).png', 0, 4, '2025-09-14 20:44:08', '2025-09-14 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (113, 1, '家人的温暖', '妈妈今天打电话问我吃饭了没有，虽然只是简单的关心，但让我感受到了家的温暖。', 'very_happy', '[\"家庭\", \"温暖\", \"关心\"]', 1, 'ariadne_k41tz', '/src/static/avatar/头像 (7).png', 2, 0, '2025-10-01 20:44:08', '2025-10-01 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (114, 3, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 0, NULL, NULL, 13, 2, '2025-10-02 20:44:08', '2025-10-02 20:44:08', 0);
+INSERT INTO `tree_hole_whispers` VALUES (115, 4, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 0, NULL, NULL, 15, 0, '2025-09-30 20:44:08', '2025-09-30 20:44:08', 0);
 
 -- ----------------------------
 -- Table structure for user_achievements
@@ -1339,7 +1417,7 @@ INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTt
 INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-08-19 00:53:50', '2025-08-19 00:53:50', 1, NULL, 0);
 INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0);
 INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-08-14 21:41:38', NULL, 1, NULL, 0);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-02 20:28:44', '2025-10-02 20:28:44', 1, '2025-10-02 04:32:45', 12);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-02 20:44:29', '2025-10-02 20:44:29', 1, '2025-10-02 04:32:45', 12);
 INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0);
 INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0);
 INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0);
