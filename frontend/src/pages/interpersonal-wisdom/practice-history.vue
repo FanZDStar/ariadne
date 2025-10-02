@@ -24,10 +24,10 @@
     <!-- 筛选器 -->
     <view class="filter-section">
       <view class="filter-tabs">
-        <view 
-          v-for="filter in filters" 
+        <view
+          v-for="filter in filters"
           :key="filter.value"
-          class="filter-tab" 
+          class="filter-tab"
           :class="{ active: activeFilter === filter.value }"
           @click="activeFilter = filter.value"
         >
@@ -55,8 +55,8 @@
 
       <!-- 会话项 -->
       <view v-else>
-        <view 
-          v-for="session in filteredSessions" 
+        <view
+          v-for="session in filteredSessions"
           :key="session.id"
           class="session-item"
           @click="viewSession(session)"
@@ -64,32 +64,49 @@
           <view class="session-header">
             <view class="session-info">
               <text class="session-title">{{ session.session_title }}</text>
-              <text class="session-scenario">{{ session.practice_scenario_name }}</text>
+              <text class="session-scenario">{{
+                session.practice_scenario_name
+              }}</text>
             </view>
             <view class="session-meta">
-              <text class="session-time">{{ formatTime(session.created_at) }}</text>
+              <text class="session-time">{{
+                formatTime(session.created_at)
+              }}</text>
               <view v-if="session.practice_quality_score" class="session-score">
-                <text class="score-text">{{ session.practice_quality_score }}分</text>
+                <text class="score-text"
+                  >{{ session.practice_quality_score }}分</text
+                >
               </view>
             </view>
           </view>
 
           <view class="session-content">
-            <text class="session-description">{{ session.scenario_description || '人际沟通练习' }}</text>
+            <text class="session-description">{{
+              session.scenario_description || "人际沟通练习"
+            }}</text>
             <view class="session-stats">
               <text class="stat-item">{{ session.total_messages }}条消息</text>
               <text class="stat-separator">·</text>
-              <text class="stat-item">{{ formatDuration(session.practice_duration) }}</text>
+              <text class="stat-item">{{
+                formatDuration(session.practice_duration)
+              }}</text>
             </view>
           </view>
 
           <view class="session-footer">
             <view class="session-tags">
-              <text v-for="skill in session.skills_practiced" :key="skill" class="skill-tag">{{ skill }}</text>
+              <text
+                v-for="skill in session.skills_practiced"
+                :key="skill"
+                class="skill-tag"
+                >{{ skill }}</text
+              >
             </view>
             <view class="session-actions">
               <view class="action-icon" @click.stop="toggleFavorite(session)">
-                <text class="icon">{{ session.is_favorite ? '❤️' : '🤍' }}</text>
+                <text class="icon">{{
+                  session.is_favorite ? "❤️" : "🤍"
+                }}</text>
               </view>
               <view class="action-icon" @click.stop="shareSession(session)">
                 <text class="icon">📤</text>
@@ -99,7 +116,10 @@
         </view>
 
         <!-- 空状态 -->
-        <view v-if="!loading && filteredSessions.length === 0" class="empty-state">
+        <view
+          v-if="!loading && filteredSessions.length === 0"
+          class="empty-state"
+        >
           <text class="empty-icon">💭</text>
           <text class="empty-title">暂无练习记录</text>
           <text class="empty-desc">开始你的第一次AI对话练习吧！</text>
@@ -123,25 +143,27 @@ export default {
     return {
       sessions: [],
       loading: true,
-      activeFilter: 'all',
+      activeFilter: "all",
       filters: [
-        { label: '全部', value: 'all' },
-        { label: '自我介绍', value: 'self_introduction' },
-        { label: '日常闲聊', value: 'small_talk' },
-        { label: '冲突解决', value: 'conflict_resolution' },
-        { label: '职场沟通', value: 'workplace_communication' },
-        { label: '情感表达', value: 'dating_conversation' },
-        { label: '公众演讲', value: 'public_speaking' }
-      ]
-    }
+        { label: "全部", value: "all" },
+        { label: "自我介绍", value: "self_introduction" },
+        { label: "日常闲聊", value: "small_talk" },
+        { label: "冲突解决", value: "conflict_resolution" },
+        { label: "职场沟通", value: "workplace_communication" },
+        { label: "情感表达", value: "dating_conversation" },
+        { label: "公众演讲", value: "public_speaking" },
+      ],
+    };
   },
 
   computed: {
     filteredSessions() {
-      if (this.activeFilter === 'all') {
+      if (this.activeFilter === "all") {
         return this.sessions;
       }
-      return this.sessions.filter(session => session.practice_scenario === this.activeFilter);
+      return this.sessions.filter(
+        (session) => session.practice_scenario === this.activeFilter
+      );
     },
 
     totalSessions() {
@@ -149,16 +171,24 @@ export default {
     },
 
     totalTime() {
-      const totalSeconds = this.sessions.reduce((sum, session) => sum + (session.practice_duration || 0), 0);
+      const totalSeconds = this.sessions.reduce(
+        (sum, session) => sum + (session.practice_duration || 0),
+        0
+      );
       return this.formatDuration(totalSeconds);
     },
 
     avgScore() {
-      const validScores = this.sessions.filter(session => session.practice_quality_score);
-      if (validScores.length === 0) return '0.0';
-      const sum = validScores.reduce((sum, session) => sum + session.practice_quality_score, 0);
+      const validScores = this.sessions.filter(
+        (session) => session.practice_quality_score
+      );
+      if (validScores.length === 0) return "0.0";
+      const sum = validScores.reduce(
+        (sum, session) => sum + session.practice_quality_score,
+        0
+      );
       return (sum / validScores.length).toFixed(1);
-    }
+    },
   },
 
   onLoad() {
@@ -175,38 +205,40 @@ export default {
     async loadSessions() {
       try {
         this.loading = true;
-        const token = uni.getStorageSync('access_token');
-        
+        const token = uni.getStorageSync("access_token");
+
         if (!token) {
           uni.showToast({
-            title: '请先登录',
-            icon: 'none'
+            title: "请先登录",
+            icon: "none",
           });
           return;
         }
 
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/interpersonal-practice/sessions`,
-          method: 'GET',
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/interpersonal-practice/sessions`,
+          method: "GET",
           header: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (response.statusCode === 200) {
           this.sessions = response.data.sessions || [];
         } else {
           uni.showToast({
-            title: '加载失败',
-            icon: 'none'
+            title: "加载失败",
+            icon: "none",
           });
         }
       } catch (error) {
-        console.error('加载练习记录失败:', error);
+        console.error("加载练习记录失败:", error);
         uni.showToast({
-          title: '网络错误',
-          icon: 'none'
+          title: "网络错误",
+          icon: "none",
         });
       } finally {
         this.loading = false;
@@ -215,40 +247,42 @@ export default {
 
     viewSession(session) {
       uni.navigateTo({
-        url: `/pages/interpersonal-wisdom/practice-detail?sessionId=${session.id}`
+        url: `/pages/interpersonal-wisdom/practice-detail?sessionId=${session.id}`,
       });
     },
 
     async toggleFavorite(session) {
       try {
-        const token = uni.getStorageSync('access_token');
+        const token = uni.getStorageSync("access_token");
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/interpersonal-practice/sessions/${session.id}/favorite`,
-          method: 'POST',
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/interpersonal-practice/sessions/${session.id}/favorite`,
+          method: "POST",
           header: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
           data: {
-            is_favorite: !session.is_favorite
-          }
+            is_favorite: !session.is_favorite,
+          },
         });
 
         if (response.statusCode === 200) {
           session.is_favorite = !session.is_favorite;
           uni.showToast({
-            title: session.is_favorite ? '已收藏' : '已取消收藏',
-            icon: 'success'
+            title: session.is_favorite ? "已收藏" : "已取消收藏",
+            icon: "success",
           });
         }
       } catch (error) {
-        console.error('切换收藏状态失败:', error);
+        console.error("切换收藏状态失败:", error);
       }
     },
 
     shareSession(session) {
       uni.showActionSheet({
-        itemList: ['分享到微信', '复制链接', '导出记录'],
+        itemList: ["分享到微信", "复制链接", "导出记录"],
         success: (res) => {
           switch (res.tapIndex) {
             case 0:
@@ -261,13 +295,13 @@ export default {
               // 导出记录逻辑
               break;
           }
-        }
+        },
       });
     },
 
     startPractice() {
       uni.navigateTo({
-        url: '/pages/interpersonal-wisdom/interactive-practice'
+        url: "/pages/interpersonal-wisdom/interactive-practice",
       });
     },
 
@@ -278,30 +312,30 @@ export default {
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays === 0) {
-        return '今天';
+        return "今天";
       } else if (diffDays === 1) {
-        return '昨天';
+        return "昨天";
       } else if (diffDays < 7) {
         return `${diffDays}天前`;
       } else {
-        return date.toLocaleDateString('zh-CN');
+        return date.toLocaleDateString("zh-CN");
       }
     },
 
     formatDuration(seconds) {
-      if (!seconds) return '0分钟';
-      
+      if (!seconds) return "0分钟";
+
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
-      
+
       if (hours > 0) {
         return `${hours}小时${minutes}分钟`;
       } else {
         return `${minutes}分钟`;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

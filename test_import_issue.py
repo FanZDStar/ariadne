@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-直接测试API路由
+测试导入问题
 """
 import sys
 import os
@@ -17,28 +17,23 @@ os.environ['AI_API_KEY'] = 'test-key'
 os.environ['AI_MODEL'] = 'test-model'
 
 try:
-    from app.api.protection_drill import router
+    print("尝试导入ProtectionDrillService...")
     from app.services.protection_drill_service import ProtectionDrillService
-    print("✓ 导入成功")
+    print("✓ ProtectionDrillService导入成功")
     
-    # 测试服务
+    print("尝试导入verify_user...")
+    from app.middleware.auth import verify_user
+    print("✓ verify_user导入成功")
+    
+    print("测试服务...")
     service = ProtectionDrillService()
     types = service.get_training_types()
-    print(f"✓ 服务测试成功，获取到 {len(types)} 个训练类型")
+    print(f"✓ 服务工作正常，获取到 {len(types)} 个训练类型")
     
-    # 直接测试路由函数
-    from app.api.protection_drill import get_training_types
-    import asyncio
-    
-    async def test_route():
-        result = await get_training_types()
-        return result
-    
-    result = asyncio.run(test_route())
-    print(f"✓ 路由函数测试成功")
-    print(f"✓ 路由返回: {result}")
-    
+except ImportError as e:
+    print(f"✗ 导入错误: {e}")
+    print("这解释了为什么API路由使用了空的临时实现")
 except Exception as e:
-    print(f"✗ 测试失败: {e}")
+    print(f"✗ 其他错误: {e}")
     import traceback
     traceback.print_exc()

@@ -17,14 +17,20 @@
     <view class="session-header" v-if="sessionData">
       <view class="session-info">
         <text class="session-title">{{ sessionData.session_title }}</text>
-        <text class="session-scenario">{{ sessionData.practice_scenario_name }}</text>
-        <text class="session-time">{{ formatFullTime(sessionData.created_at) }}</text>
+        <text class="session-scenario">{{
+          sessionData.practice_scenario_name
+        }}</text>
+        <text class="session-time">{{
+          formatFullTime(sessionData.created_at)
+        }}</text>
       </view>
-      
+
       <view class="session-stats">
         <view class="stat-item">
           <text class="stat-label">总时长</text>
-          <text class="stat-value">{{ formatDuration(sessionData.practice_duration) }}</text>
+          <text class="stat-value">{{
+            formatDuration(sessionData.practice_duration)
+          }}</text>
         </view>
         <view class="stat-item">
           <text class="stat-label">消息数</text>
@@ -32,15 +38,28 @@
         </view>
         <view class="stat-item" v-if="sessionData.practice_quality_score">
           <text class="stat-label">评分</text>
-          <text class="stat-value">{{ sessionData.practice_quality_score }}分</text>
+          <text class="stat-value"
+            >{{ sessionData.practice_quality_score }}分</text
+          >
         </view>
       </view>
 
       <!-- 练习技能标签 -->
-      <view class="skills-section" v-if="sessionData.skills_practiced && sessionData.skills_practiced.length > 0">
+      <view
+        class="skills-section"
+        v-if="
+          sessionData.skills_practiced &&
+          sessionData.skills_practiced.length > 0
+        "
+      >
         <text class="skills-title">练习技能</text>
         <view class="skills-tags">
-          <text v-for="skill in sessionData.skills_practiced" :key="skill" class="skill-tag">{{ skill }}</text>
+          <text
+            v-for="skill in sessionData.skills_practiced"
+            :key="skill"
+            class="skill-tag"
+            >{{ skill }}</text
+          >
         </view>
       </view>
     </view>
@@ -60,21 +79,28 @@
 
       <!-- 消息列表 -->
       <view v-else class="messages-list">
-        <view 
-          v-for="(message, index) in messages" 
+        <view
+          v-for="(message, index) in messages"
           :key="index"
           class="message-item"
-          :class="{ 'user-message': message.role === 'user', 'ai-message': message.role === 'assistant' }"
+          :class="{
+            'user-message': message.role === 'user',
+            'ai-message': message.role === 'assistant',
+          }"
         >
           <view class="message-avatar">
-            <text class="avatar-text">{{ message.role === 'user' ? '我' : 'AI' }}</text>
+            <text class="avatar-text">{{
+              message.role === "user" ? "我" : "AI"
+            }}</text>
           </view>
-          
+
           <view class="message-content">
             <view class="message-bubble">
               <text class="message-text">{{ message.content }}</text>
             </view>
-            <text class="message-time">{{ formatMessageTime(message.timestamp) }}</text>
+            <text class="message-time">{{
+              formatMessageTime(message.timestamp)
+            }}</text>
           </view>
         </view>
 
@@ -100,9 +126,17 @@
         <text class="action-icon">▶️</text>
         <text class="action-text">继续练习</text>
       </view>
-      <view class="action-button" :class="{ favorite: sessionData.is_favorite }" @click="toggleFavorite">
-        <text class="action-icon">{{ sessionData.is_favorite ? '❤️' : '🤍' }}</text>
-        <text class="action-text">{{ sessionData.is_favorite ? '已收藏' : '收藏' }}</text>
+      <view
+        class="action-button"
+        :class="{ favorite: sessionData.is_favorite }"
+        @click="toggleFavorite"
+      >
+        <text class="action-icon">{{
+          sessionData.is_favorite ? "❤️" : "🤍"
+        }}</text>
+        <text class="action-text">{{
+          sessionData.is_favorite ? "已收藏" : "收藏"
+        }}</text>
       </view>
     </view>
   </view>
@@ -112,11 +146,11 @@
 export default {
   data() {
     return {
-      sessionId: '',
+      sessionId: "",
       sessionData: null,
       messages: [],
-      loading: true
-    }
+      loading: true,
+    };
   },
 
   onLoad(options) {
@@ -128,8 +162,10 @@ export default {
 
   onShareAppMessage() {
     return {
-      title: `AI对话练习记录：${this.sessionData?.session_title || '人际沟通练习'}`,
-      path: `/pages/interpersonal-wisdom/practice-detail?sessionId=${this.sessionId}`
+      title: `AI对话练习记录：${
+        this.sessionData?.session_title || "人际沟通练习"
+      }`,
+      path: `/pages/interpersonal-wisdom/practice-detail?sessionId=${this.sessionId}`,
     };
   },
 
@@ -137,23 +173,25 @@ export default {
     async loadSessionDetail() {
       try {
         this.loading = true;
-        const token = uni.getStorageSync('access_token');
-        
+        const token = uni.getStorageSync("access_token");
+
         if (!token) {
           uni.showToast({
-            title: '请先登录',
-            icon: 'none'
+            title: "请先登录",
+            icon: "none",
           });
           return;
         }
 
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/interpersonal-practice/sessions/${this.sessionId}`,
-          method: 'GET',
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/interpersonal-practice/sessions/${this.sessionId}`,
+          method: "GET",
           header: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (response.statusCode === 200) {
@@ -162,21 +200,21 @@ export default {
           this.messages = response.data.messages || [];
         } else if (response.statusCode === 404) {
           uni.showToast({
-            title: '记录不存在',
-            icon: 'none'
+            title: "记录不存在",
+            icon: "none",
           });
           this.goBack();
         } else {
           uni.showToast({
-            title: '加载失败',
-            icon: 'none'
+            title: "加载失败",
+            icon: "none",
           });
         }
       } catch (error) {
-        console.error('加载练习详情失败:', error);
+        console.error("加载练习详情失败:", error);
         uni.showToast({
-          title: '网络错误',
-          icon: 'none'
+          title: "网络错误",
+          icon: "none",
         });
       } finally {
         this.loading = false;
@@ -185,48 +223,50 @@ export default {
 
     async toggleFavorite() {
       try {
-        const token = uni.getStorageSync('access_token');
+        const token = uni.getStorageSync("access_token");
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/interpersonal-practice/sessions/${this.sessionId}/favorite`,
-          method: 'POST',
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/interpersonal-practice/sessions/${this.sessionId}/favorite`,
+          method: "POST",
           header: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
           data: {
-            is_favorite: !this.sessionData.is_favorite
-          }
+            is_favorite: !this.sessionData.is_favorite,
+          },
         });
 
         if (response.statusCode === 200) {
           this.sessionData.is_favorite = !this.sessionData.is_favorite;
           uni.showToast({
-            title: this.sessionData.is_favorite ? '已收藏' : '已取消收藏',
-            icon: 'success'
+            title: this.sessionData.is_favorite ? "已收藏" : "已取消收藏",
+            icon: "success",
           });
         }
       } catch (error) {
-        console.error('切换收藏状态失败:', error);
+        console.error("切换收藏状态失败:", error);
       }
     },
 
     shareSession() {
       uni.showActionSheet({
-        itemList: ['分享到微信', '分享到朋友圈', '复制链接'],
+        itemList: ["分享到微信", "分享到朋友圈", "复制链接"],
         success: (res) => {
           switch (res.tapIndex) {
             case 0:
               // 分享到微信好友
               uni.showToast({
-                title: '分享功能开发中',
-                icon: 'none'
+                title: "分享功能开发中",
+                icon: "none",
               });
               break;
             case 1:
               // 分享到朋友圈
               uni.showToast({
-                title: '分享功能开发中',
-                icon: 'none'
+                title: "分享功能开发中",
+                icon: "none",
               });
               break;
             case 2:
@@ -235,14 +275,14 @@ export default {
                 data: `https://app.ariadne.com/practice-detail?sessionId=${this.sessionId}`,
                 success: () => {
                   uni.showToast({
-                    title: '链接已复制',
-                    icon: 'success'
+                    title: "链接已复制",
+                    icon: "success",
                   });
-                }
+                },
               });
               break;
           }
-        }
+        },
       });
     },
 
@@ -251,35 +291,41 @@ export default {
       let exportText = `AI对话练习记录\n`;
       exportText += `标题: ${this.sessionData.session_title}\n`;
       exportText += `场景: ${this.sessionData.practice_scenario_name}\n`;
-      exportText += `时间: ${this.formatFullTime(this.sessionData.created_at)}\n`;
-      exportText += `时长: ${this.formatDuration(this.sessionData.practice_duration)}\n\n`;
+      exportText += `时间: ${this.formatFullTime(
+        this.sessionData.created_at
+      )}\n`;
+      exportText += `时长: ${this.formatDuration(
+        this.sessionData.practice_duration
+      )}\n\n`;
       exportText += `对话内容:\n`;
-      
+
       this.messages.forEach((message, index) => {
-        exportText += `${index + 1}. ${message.role === 'user' ? '我' : 'AI'}: ${message.content}\n`;
+        exportText += `${index + 1}. ${
+          message.role === "user" ? "我" : "AI"
+        }: ${message.content}\n`;
       });
 
       uni.setClipboardData({
         data: exportText,
         success: () => {
           uni.showToast({
-            title: '记录已复制到剪贴板',
-            icon: 'success'
+            title: "记录已复制到剪贴板",
+            icon: "success",
           });
-        }
+        },
       });
     },
 
     continueSession() {
       // 继续同类型练习
       uni.navigateTo({
-        url: `/pages/interpersonal-wisdom/interactive-practice?scenario=${this.sessionData.practice_scenario}`
+        url: `/pages/interpersonal-wisdom/interactive-practice?scenario=${this.sessionData.practice_scenario}`,
       });
     },
 
     showActions() {
       uni.showActionSheet({
-        itemList: ['重新练习', '删除记录', '举报内容'],
+        itemList: ["重新练习", "删除记录", "举报内容"],
         success: (res) => {
           switch (res.tapIndex) {
             case 0:
@@ -291,99 +337,101 @@ export default {
             case 2:
               // 举报功能
               uni.showToast({
-                title: '举报功能开发中',
-                icon: 'none'
+                title: "举报功能开发中",
+                icon: "none",
               });
               break;
           }
-        }
+        },
       });
     },
 
     deleteSession() {
       uni.showModal({
-        title: '确认删除',
-        content: '删除后将无法恢复，确定要删除这条练习记录吗？',
-        confirmColor: '#ff6b6b',
+        title: "确认删除",
+        content: "删除后将无法恢复，确定要删除这条练习记录吗？",
+        confirmColor: "#ff6b6b",
         success: async (res) => {
           if (res.confirm) {
             try {
-              const token = uni.getStorageSync('access_token');
+              const token = uni.getStorageSync("access_token");
               const response = await uni.request({
-                url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/interpersonal-practice/sessions/${this.sessionId}`,
-                method: 'DELETE',
+                url: `${
+                  process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+                }/interpersonal-practice/sessions/${this.sessionId}`,
+                method: "DELETE",
                 header: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-                }
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
               });
 
               if (response.statusCode === 200) {
                 uni.showToast({
-                  title: '删除成功',
-                  icon: 'success'
+                  title: "删除成功",
+                  icon: "success",
                 });
                 setTimeout(() => {
                   this.goBack();
                 }, 1000);
               } else {
                 uni.showToast({
-                  title: '删除失败',
-                  icon: 'none'
+                  title: "删除失败",
+                  icon: "none",
                 });
               }
             } catch (error) {
-              console.error('删除记录失败:', error);
+              console.error("删除记录失败:", error);
               uni.showToast({
-                title: '网络错误',
-                icon: 'none'
+                title: "网络错误",
+                icon: "none",
               });
             }
           }
-        }
+        },
       });
     },
 
     goBack() {
       uni.navigateBack({
-        delta: 1
+        delta: 1,
       });
     },
 
     formatFullTime(timeString) {
       const date = new Date(timeString);
-      return date.toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
+      return date.toLocaleString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     },
 
     formatMessageTime(timestamp) {
-      if (!timestamp) return '';
+      if (!timestamp) return "";
       const date = new Date(timestamp);
-      return date.toLocaleTimeString('zh-CN', {
-        hour: '2-digit',
-        minute: '2-digit'
+      return date.toLocaleTimeString("zh-CN", {
+        hour: "2-digit",
+        minute: "2-digit",
       });
     },
 
     formatDuration(seconds) {
-      if (!seconds) return '0分钟';
-      
+      if (!seconds) return "0分钟";
+
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
-      
+
       if (hours > 0) {
         return `${hours}小时${minutes}分钟`;
       } else {
         return `${minutes}分钟`;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -405,7 +453,8 @@ export default {
   z-index: 100;
 }
 
-.nav-left, .nav-right {
+.nav-left,
+.nav-right {
   width: 80rpx;
   display: flex;
   justify-content: center;

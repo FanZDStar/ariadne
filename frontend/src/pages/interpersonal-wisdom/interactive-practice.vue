@@ -282,30 +282,34 @@ export default {
 
         // 准备保存的数据 - 确保数据格式正确
         const sessionData = {
-          session_title: `${scenario.name}练习 - ${new Date().toLocaleDateString()}`,
+          session_title: `${
+            scenario.name
+          }练习 - ${new Date().toLocaleDateString()}`,
           practice_scenario: this.selectedScenario,
           practice_scenario_name: scenario.name,
           scenario_description: scenario.description || "",
           messages: this.chatHistory.map((msg, index) => ({
             role: msg.role,
             content: msg.content,
-            timestamp: msg.timestamp || new Date().toISOString()
+            timestamp: msg.timestamp || new Date().toISOString(),
           })),
           practice_duration: Math.max(practiceSeconds, 0),
-          practice_type: "ai_dialog", 
+          practice_type: "ai_dialog",
           difficulty_level: "beginner",
           completion_status: "completed",
           skills_practiced: [scenario.name],
           strengths: [],
           improvements: [],
           practice_quality_score: null,
-          ai_feedback: null
+          ai_feedback: null,
         };
 
         console.log("准备发送的数据:", sessionData);
 
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/interpersonal-practice/sessions`,
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/interpersonal-practice/sessions`,
           method: "POST",
           header: {
             Authorization: `Bearer ${token}`,
@@ -326,17 +330,21 @@ export default {
           console.error("保存失败详情:", {
             statusCode: response.statusCode,
             data: response.data,
-            header: response.header
+            header: response.header,
           });
-          throw new Error(`保存失败: ${response.statusCode} - ${JSON.stringify(response.data)}`);
+          throw new Error(
+            `保存失败: ${response.statusCode} - ${JSON.stringify(
+              response.data
+            )}`
+          );
         }
       } catch (error) {
         console.error("保存对话失败:", error);
         console.error("发送的数据:", sessionData);
         uni.showToast({
-          title: `保存失败: ${error.message || '请重试'}`,
+          title: `保存失败: ${error.message || "请重试"}`,
           icon: "none",
-          duration: 3000
+          duration: 3000,
         });
       }
     },
