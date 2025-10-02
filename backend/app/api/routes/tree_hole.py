@@ -268,3 +268,91 @@ def like_whisper(
         db_whisper.like_count += 1
 
     db.commit()
+    
+    return {"message": "操作成功", "liked": like is None}
+
+
+@router.get("/my-interactions", response_model=List[WhisperResponse])
+def get_user_interactions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """获取用户参与互动的悄悄话（点赞或评论过的）"""
+    # 获取用户点赞过的悄悄话
+    liked_whispers = db.query(TreeHoleWhisper)\
+        .options(
+            joinedload(TreeHoleWhisper.user),
+            joinedload(TreeHoleWhisper.images)
+        )\
+        .join(TreeHoleLike, TreeHoleWhisper.whisper_id == TreeHoleLike.whisper_id)\
+        .filter(TreeHoleLike.user_id == current_user.user_id)\
+        .filter(TreeHoleWhisper.user_id != current_user.user_id)  # 排除自己的悄悄话
+    
+    # 获取用户参与聊天的悄悄话
+    chatted_whispers = db.query(TreeHoleWhisper)\
+        .options(
+            joinedload(TreeHoleWhisper.user),
+            joinedload(TreeHoleWhisper.images)
+        )\
+        .join(TreeHoleChatParticipant, TreeHoleWhisper.whisper_id == TreeHoleChatParticipant.whisper_id)\
+        .filter(TreeHoleChatParticipant.user_id == current_user.user_id)\
+        .filter(TreeHoleWhisper.user_id != current_user.user_id)  # 排除自己的悄悄话
+    
+    # 合并并去重
+    all_whispers = liked_whispers.union(chatted_whispers)\
+        .order_by(TreeHoleWhisper.created_at.desc())\
+        .all()
+    
+    # 构造响应数据
+    result = []
+    for whisper in all_whispers:
+        # 检查是否点赞
+        like = db.query(TreeHoleLike).filter(
+            TreeHoleLike.whisper_id == whisper.whisper_id,
+            TreeHoleLike.user_id == current_user.user_id
+        ).first()
+        
+        # 检查互动类型
+        has_like = like is not None
+        has_chat = db.query(TreeHoleChatParticipant).filter(
+            TreeHoleChatParticipant.whisper_id == whisper.whisper_id,
+            TreeHoleChatParticipant.user_id == current_user.user_id
+        ).first() is not None
+        
+        # 设置互动类型标识
+        interaction_type = None
+        if has_like and has_chat:
+            interaction_type = "both"
+        elif has_like:
+            interaction_type = "like"
+        else:
+            interaction_type = "chat"
+        
+        # 计算该悄悄话的聊天数
+        chat_count = db.query(TreeHoleChatParticipant).filter(
+            TreeHoleChatParticipant.whisper_id == whisper.whisper_id
+        ).count()
+        
+        # 创建响应对象
+        whisper_dict = {
+            "whisper_id": whisper.whisper_id,
+            "user_id": whisper.user_id,
+            "title": whisper.title,
+            "content": whisper.decrypted_content,
+            "mood": whisper.mood,
+            "tags": whisper.tags,
+            "is_anonymous": whisper.is_anonymous,
+            "anonymous_name": whisper.anonymous_name,
+            "anonymous_avatar": whisper.anonymous_avatar,
+            "like_count": whisper.like_count,
+            "comment_count": chat_count,
+            "created_at": whisper.created_at,
+            "updated_at": whisper.updated_at,
+            "user": whisper.user,
+            "images": whisper.images,
+            "liked": has_like,
+            "interaction_type": interaction_type
+        }
+        result.append(whisper_dict)
+        
+    return result

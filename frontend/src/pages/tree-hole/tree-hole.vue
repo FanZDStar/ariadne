@@ -9,19 +9,14 @@
     </view>
 
     <view class="options-container">
-      <view class="option-card" @click="goToWhisper">
-        <text class="option-icon">💬</text>
-        <text class="option-text">说悄悄话</text>
+      <view class="option-card" @click="goToMyWhispers">
+        <text class="option-icon">❤️</text>
+        <text class="option-text">此情此语</text>
       </view>
 
       <view class="option-card" @click="goToListen">
         <text class="option-icon">👂</text>
         <text class="option-text">做倾听者</text>
-      </view>
-
-      <view class="option-card" @click="goToMyWhispers">
-        <text class="option-icon">📝</text>
-        <text class="option-text">我的悄悄话</text>
       </view>
     </view>
   </view>
@@ -70,11 +65,6 @@ export default {
       uni.setNavigationBarColor({
         frontColor: isDay ? '#000000' : '#ffffff', // 白天用黑色文字，晚上用白色
         backgroundColor: isDay ? '#87CEEB' : '#2c3e50',
-      });
-    },
-    goToWhisper() {
-      uni.navigateTo({
-        url: '/pages/tree-hole/write-whisper',
       });
     },
     goToListen() {
@@ -170,7 +160,7 @@ export default {
   border-radius: 20rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
   transition: background-color 0.5s;
-  width: 180rpx;
+  width: 240rpx;
 }
 
 .night-theme .option-card {

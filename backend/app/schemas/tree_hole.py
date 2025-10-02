@@ -60,6 +60,7 @@ class WhisperResponse(WhisperBase):
     user: UserResponse
     images: List[WhisperImageResponse] = []
     liked: bool = False  # 添加 liked 字段
+    interaction_type: Optional[str] = None  # 添加互动类型字段
 
     class Config:
         from_attributes = True

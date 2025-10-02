@@ -337,6 +337,13 @@ export const api = {
       },
     });
   },
+  getMyInteractedWhispers: (token) => {
+    return request("/tree-hole/my-interactions", {
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
   // 删除悄悄话
   deleteWhisper: (token, whisperId) => {
     return request(`/tree-hole/${whisperId}`, {

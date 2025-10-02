@@ -1,8 +1,8 @@
 <template>
   <view class="my-whispers-container">
     <view class="header">
-      <text class="title">我的悄悄话</text>
-      <text class="subtitle">你向树洞倾诉的所有心声</text>
+      <text class="title">此情此语</text>
+      <text class="subtitle">记录你的情感轨迹与心灵互动</text>
       <view class="manage-btn" @click="toggleManagementMode">
         <text class="manage-icon">{{ managementMode ? '完成' : '管理' }}</text>
       </view>
@@ -11,6 +11,9 @@
     <view class="tabs">
       <view :class="['tab-item', { active: activeTab === 'posted' }]" @click="activeTab = 'posted'">
         我发布的
+      </view>
+      <view :class="['tab-item', { active: activeTab === 'interacted' }]" @click="activeTab = 'interacted'">
+        我互动的
       </view>
       <view :class="['tab-item', { active: activeTab === 'chats' }]" @click="activeTab = 'chats'">
         聊天
@@ -37,6 +40,27 @@
         </view>
       </view>
 
+      <view v-if="activeTab === 'interacted'" class="whisper-list">
+        <view v-if="myInteractedWhispers.length === 0" class="empty-state">
+          <text class="empty-text">你还没有与任何悄悄话互动过...</text>
+        </view>
+        <view class="whisper-item" v-for="whisper in myInteractedWhispers" :key="whisper.whisper_id"
+          @click="!managementMode && goToChat(whisper.whisper_id)">
+          <view class="whisper-timestamp">{{ formatTimestamp(whisper.created_at) }}</view>
+          <view class="whisper-content-wrapper">
+            <view class="whisper-content">{{ whisper.content }}</view>
+            <view v-if="managementMode" class="delete-btn" @click.stop="confirmDelete(whisper, 'interaction')">
+              <text class="delete-icon">🗑️</text>
+            </view>
+          </view>
+          <view class="whisper-stats">
+            <text class="stat-item">❤️ {{ whisper.like_count || 0 }}</text>
+            <text class="stat-item">💬 {{ whisper.comment_count || 0 }}</text>
+            <text class="interaction-badge">{{ whisper.interaction_type === 'like' ? '已点赞' : '已评论' }}</text>
+          </view>
+        </view>
+      </view>
+
       <view v-if="activeTab === 'chats'" class="whisper-list">
         <view v-if="myChats.length === 0" class="empty-state">
           <text class="empty-text">你还没有参与过任何聊天...</text>
@@ -58,6 +82,10 @@
       </view>
     </scroll-view>
 
+    <!-- 回到顶部组件 -->
+    <BackToTop :scrollTop="scrollTop" :showThreshold="300" @scroll-to-top="scrollToTop" />
+
+    <!-- 发布悄悄话浮动按钮 -->
     <view class="fab" @click="goToWriteWhisper">
       <text class="fab-icon">+</text>
     </view>
@@ -66,14 +94,20 @@
 
 <script>
 import { api, storage } from '../../utils/api.js';
+import BackToTop from '../../components/BackToTop.vue';
 
 export default {
+  components: {
+    BackToTop
+  },
   data() {
     return {
       activeTab: 'posted',
       myPostedWhispers: [],
+      myInteractedWhispers: [],
       myChats: [],
-      managementMode: false
+      managementMode: false,
+      scrollTop: 0
     };
   },
   onLoad() {
@@ -86,9 +120,13 @@ export default {
   onPullDownRefresh() {
     this.loadData().then(() => uni.stopPullDownRefresh());
   },
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop;
+  },
   methods: {
     async loadData() {
       await this.fetchMyPostedWhispers();
+      await this.fetchMyInteractedWhispers();
       await this.fetchMyChats();
     },
     async fetchMyPostedWhispers() {
@@ -98,6 +136,17 @@ export default {
         this.myPostedWhispers = await api.getMyPostedWhispers(token);
       } catch (error) {
         console.error('Failed to fetch posted whispers:', error);
+      }
+    },
+    async fetchMyInteractedWhispers() {
+      const token = storage.getToken();
+      if (!token) return;
+      try {
+        this.myInteractedWhispers = await api.getMyInteractedWhispers(token);
+      } catch (error) {
+        console.error('Failed to fetch interacted whispers:', error);
+        // 临时数据，后续需要实现API
+        this.myInteractedWhispers = [];
       }
     },
     async fetchMyChats() {
@@ -118,6 +167,8 @@ export default {
 
       if (type === 'whisper') {
         content = '删除这个悄悄话会一并删除所有相关的聊天，确定吗？';
+      } else if (type === 'interaction') {
+        content = '确定要移除这个互动记录吗？';
       } else {
         content = '确定要离开这个聊天吗？';
       }
@@ -129,6 +180,8 @@ export default {
           if (res.confirm) {
             if (type === 'whisper') {
               this.deleteWhisper(item.whisper_id);
+            } else if (type === 'interaction') {
+              this.removeInteraction(item.whisper_id);
             } else {
               this.leaveChat(item.whisper_id);
             }
@@ -148,6 +201,18 @@ export default {
         uni.showToast({ title: '删除失败', icon: 'none' });
       }
     },
+    async removeInteraction(whisperId) {
+      const token = storage.getToken();
+      try {
+        // 这里需要实现移除互动记录的API
+        // await api.removeWhisperInteraction(token, whisperId);
+        this.myInteractedWhispers = this.myInteractedWhispers.filter(w => w.whisper_id !== whisperId);
+        uni.showToast({ title: '已移除互动记录', icon: 'success' });
+      } catch (error) {
+        console.error('Failed to remove interaction:', error);
+        uni.showToast({ title: '操作失败', icon: 'none' });
+      }
+    },
     async leaveChat(whisperId) {
       const token = storage.getToken();
       try {
@@ -162,6 +227,12 @@ export default {
     goToChat(whisperId) {
       uni.navigateTo({
         url: `/pages/tree-hole/whisper-chat?whisper_id=${whisperId}`
+      });
+    },
+    scrollToTop() {
+      uni.pageScrollTo({
+        scrollTop: 0,
+        duration: 300
       });
     },
     goToWriteWhisper() {
@@ -293,6 +364,7 @@ export default {
   /* For text truncation */
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -323,6 +395,15 @@ export default {
 
 .stat-item {
   margin-left: 30rpx;
+}
+
+.interaction-badge {
+  background-color: #007aff;
+  color: white;
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  margin-left: 20rpx;
 }
 
 .empty-state {
