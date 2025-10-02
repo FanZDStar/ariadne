@@ -169,13 +169,15 @@ export default {
 
   onLoad(options) {
     // 检查是否是继续现有会话
-    if (options.sessionId && options.continue === 'true') {
+    if (options.sessionId && options.continue === "true") {
       this.continueSessionId = options.sessionId;
       this.isContinuingSession = true;
       this.loadExistingSession();
     } else if (options.scenario) {
       // 预选场景
-      const scenario = this.practiceScenarios.find(s => s.id === options.scenario);
+      const scenario = this.practiceScenarios.find(
+        (s) => s.id === options.scenario
+      );
       if (scenario) {
         this.selectScenario(scenario);
       } else {
@@ -222,24 +224,24 @@ export default {
 
         if (response.statusCode === 200) {
           const sessionData = response.data;
-          
+
           // 加载现有对话记录
           this.chatHistory = sessionData.messages || [];
-          
+
           // 设置场景信息
           this.selectedScenario = sessionData.practice_scenario;
           this.scenarioSelected = true;
-          
+
           // 添加继续对话的提示消息
           this.chatHistory.push({
             role: "assistant",
             content: "欢迎回来！我们可以继续之前的对话练习。你想继续聊什么呢？",
             timestamp: new Date().toISOString(),
           });
-          
+
           // 标记有新消息，但不需要立即保存
           this.hasNewMessages = false;
-          
+
           uni.showToast({
             title: "已加载历史对话",
             icon: "success",
@@ -417,7 +419,7 @@ export default {
             },
             data: sessionData,
           });
-          
+
           // 如果是新创建的会话，设置会话ID以便后续更新
           if (response.statusCode === 200 && response.data.id) {
             this.continueSessionId = response.data.id;

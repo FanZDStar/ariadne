@@ -27,12 +27,6 @@
 
       <view class="session-stats">
         <view class="stat-item">
-          <text class="stat-label">总时长</text>
-          <text class="stat-value">{{
-            formatDuration(sessionData.practice_duration)
-          }}</text>
-        </view>
-        <view class="stat-item">
           <text class="stat-label">消息数</text>
           <text class="stat-value">{{ sessionData.total_messages }}</text>
         </view>
@@ -114,10 +108,6 @@
 
     <!-- 底部操作栏 -->
     <view class="bottom-actions" v-if="sessionData">
-      <view class="action-button" @click="shareSession">
-        <text class="action-icon">📤</text>
-        <text class="action-text">分享</text>
-      </view>
       <view class="action-button" @click="exportSession">
         <text class="action-icon">📄</text>
         <text class="action-text">导出</text>
@@ -125,18 +115,6 @@
       <view class="action-button" @click="continueSession">
         <text class="action-icon">▶️</text>
         <text class="action-text">继续练习</text>
-      </view>
-      <view
-        class="action-button"
-        :class="{ favorite: sessionData.is_favorite }"
-        @click="toggleFavorite"
-      >
-        <text class="action-icon">{{
-          sessionData.is_favorite ? "❤️" : "🤍"
-        }}</text>
-        <text class="action-text">{{
-          sessionData.is_favorite ? "已收藏" : "收藏"
-        }}</text>
       </view>
     </view>
   </view>
@@ -221,71 +199,6 @@ export default {
       }
     },
 
-    async toggleFavorite() {
-      try {
-        const token = uni.getStorageSync("access_token");
-        const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/interpersonal-practice/sessions/${this.sessionId}/favorite`,
-          method: "POST",
-          header: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          data: {
-            is_favorite: !this.sessionData.is_favorite,
-          },
-        });
-
-        if (response.statusCode === 200) {
-          this.sessionData.is_favorite = !this.sessionData.is_favorite;
-          uni.showToast({
-            title: this.sessionData.is_favorite ? "已收藏" : "已取消收藏",
-            icon: "success",
-          });
-        }
-      } catch (error) {
-        console.error("切换收藏状态失败:", error);
-      }
-    },
-
-    shareSession() {
-      uni.showActionSheet({
-        itemList: ["分享到微信", "分享到朋友圈", "复制链接"],
-        success: (res) => {
-          switch (res.tapIndex) {
-            case 0:
-              // 分享到微信好友
-              uni.showToast({
-                title: "分享功能开发中",
-                icon: "none",
-              });
-              break;
-            case 1:
-              // 分享到朋友圈
-              uni.showToast({
-                title: "分享功能开发中",
-                icon: "none",
-              });
-              break;
-            case 2:
-              // 复制链接
-              uni.setClipboardData({
-                data: `https://app.ariadne.com/practice-detail?sessionId=${this.sessionId}`,
-                success: () => {
-                  uni.showToast({
-                    title: "链接已复制",
-                    icon: "success",
-                  });
-                },
-              });
-              break;
-          }
-        },
-      });
-    },
-
     exportSession() {
       // 导出对话记录
       let exportText = `AI对话练习记录\n`;
@@ -293,9 +206,6 @@ export default {
       exportText += `场景: ${this.sessionData.practice_scenario_name}\n`;
       exportText += `时间: ${this.formatFullTime(
         this.sessionData.created_at
-      )}\n`;
-      exportText += `时长: ${this.formatDuration(
-        this.sessionData.practice_duration
       )}\n\n`;
       exportText += `对话内容:\n`;
 
@@ -416,19 +326,6 @@ export default {
         hour: "2-digit",
         minute: "2-digit",
       });
-    },
-
-    formatDuration(seconds) {
-      if (!seconds) return "0分钟";
-
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-
-      if (hours > 0) {
-        return `${hours}小时${minutes}分钟`;
-      } else {
-        return `${minutes}分钟`;
-      }
     },
   },
 };
@@ -736,10 +633,6 @@ export default {
   background: #f5f5f5;
 }
 
-.action-button.favorite {
-  background: #ffe6e6;
-}
-
 .action-icon {
   font-size: 32rpx;
 }
@@ -747,10 +640,6 @@ export default {
 .action-text {
   font-size: 20rpx;
   color: #666;
-}
-
-.favorite .action-text {
-  color: #ff6b6b;
 }
 
 /* 动画 */

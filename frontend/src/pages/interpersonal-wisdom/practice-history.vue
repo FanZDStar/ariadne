@@ -11,14 +11,6 @@
         <text class="stat-number">{{ totalSessions }}</text>
         <text class="stat-label">总练习次数</text>
       </view>
-      <view class="stat-card">
-        <text class="stat-number">{{ totalTime }}</text>
-        <text class="stat-label">总练习时长</text>
-      </view>
-      <view class="stat-card">
-        <text class="stat-number">{{ avgScore }}</text>
-        <text class="stat-label">平均得分</text>
-      </view>
     </view>
 
     <!-- 筛选器 -->
@@ -78,7 +70,10 @@
                 >
               </view>
               <!-- 显示会话状态 -->
-              <view v-if="session.completion_status === 'in_progress'" class="session-status">
+              <view
+                v-if="session.completion_status === 'in_progress'"
+                class="session-status"
+              >
                 <text class="status-text">进行中</text>
               </view>
             </view>
@@ -90,10 +85,6 @@
             }}</text>
             <view class="session-stats">
               <text class="stat-item">{{ session.total_messages }}条消息</text>
-              <text class="stat-separator">·</text>
-              <text class="stat-item">{{
-                formatDuration(session.practice_duration)
-              }}</text>
             </view>
           </view>
 
@@ -105,16 +96,6 @@
                 class="skill-tag"
                 >{{ skill }}</text
               >
-            </view>
-            <view class="session-actions">
-              <view class="action-icon" @click.stop="toggleFavorite(session)">
-                <text class="icon">{{
-                  session.is_favorite ? "❤️" : "🤍"
-                }}</text>
-              </view>
-              <view class="action-icon" @click.stop="shareSession(session)">
-                <text class="icon">📤</text>
-              </view>
             </view>
           </view>
         </view>
@@ -172,14 +153,6 @@ export default {
 
     totalSessions() {
       return this.sessions.length;
-    },
-
-    totalTime() {
-      const totalSeconds = this.sessions.reduce(
-        (sum, session) => sum + (session.practice_duration || 0),
-        0
-      );
-      return this.formatDuration(totalSeconds);
     },
 
     avgScore() {
@@ -251,9 +224,9 @@ export default {
 
     viewSession(session) {
       // 如果是进行中的会话，提供选择继续对话还是查看详情
-      if (session.completion_status === 'in_progress') {
+      if (session.completion_status === "in_progress") {
         uni.showActionSheet({
-          itemList: ['继续对话', '查看详情'],
+          itemList: ["继续对话", "查看详情"],
           success: (res) => {
             if (res.tapIndex === 0) {
               // 继续对话
@@ -266,7 +239,7 @@ export default {
                 url: `/pages/interpersonal-wisdom/practice-detail?sessionId=${session.id}`,
               });
             }
-          }
+          },
         });
       } else {
         // 已完成的会话直接查看详情
@@ -344,19 +317,6 @@ export default {
         return `${diffDays}天前`;
       } else {
         return date.toLocaleDateString("zh-CN");
-      }
-    },
-
-    formatDuration(seconds) {
-      if (!seconds) return "0分钟";
-
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-
-      if (hours > 0) {
-        return `${hours}小时${minutes}分钟`;
-      } else {
-        return `${minutes}分钟`;
       }
     },
   },
@@ -557,11 +517,6 @@ export default {
 .stat-item {
   font-size: 24rpx;
   color: #999;
-}
-
-.stat-separator {
-  font-size: 24rpx;
-  color: #ddd;
 }
 
 .session-footer {
