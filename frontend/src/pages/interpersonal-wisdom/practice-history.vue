@@ -70,12 +70,16 @@
             </view>
             <view class="session-meta">
               <text class="session-time">{{
-                formatTime(session.created_at)
+                formatTime(session.updated_at || session.created_at)
               }}</text>
               <view v-if="session.practice_quality_score" class="session-score">
                 <text class="score-text"
                   >{{ session.practice_quality_score }}分</text
                 >
+              </view>
+              <!-- 显示会话状态 -->
+              <view v-if="session.completion_status === 'in_progress'" class="session-status">
+                <text class="status-text">进行中</text>
               </view>
             </view>
           </view>
@@ -246,9 +250,30 @@ export default {
     },
 
     viewSession(session) {
-      uni.navigateTo({
-        url: `/pages/interpersonal-wisdom/practice-detail?sessionId=${session.id}`,
-      });
+      // 如果是进行中的会话，提供选择继续对话还是查看详情
+      if (session.completion_status === 'in_progress') {
+        uni.showActionSheet({
+          itemList: ['继续对话', '查看详情'],
+          success: (res) => {
+            if (res.tapIndex === 0) {
+              // 继续对话
+              uni.navigateTo({
+                url: `/pages/interpersonal-wisdom/interactive-practice?sessionId=${session.id}&scenario=${session.practice_scenario}&continue=true`,
+              });
+            } else {
+              // 查看详情
+              uni.navigateTo({
+                url: `/pages/interpersonal-wisdom/practice-detail?sessionId=${session.id}`,
+              });
+            }
+          }
+        });
+      } else {
+        // 已完成的会话直接查看详情
+        uni.navigateTo({
+          url: `/pages/interpersonal-wisdom/practice-detail?sessionId=${session.id}`,
+        });
+      }
     },
 
     async toggleFavorite(session) {
@@ -490,11 +515,24 @@ export default {
   background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 100%);
   padding: 6rpx 12rpx;
   border-radius: 12rpx;
+  margin-bottom: 8rpx;
 }
 
 .score-text {
   font-size: 22rpx;
   color: #4caf50;
+  font-weight: 600;
+}
+
+.session-status {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+}
+
+.status-text {
+  font-size: 22rpx;
+  color: #ff9800;
   font-weight: 600;
 }
 

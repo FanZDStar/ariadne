@@ -317,9 +317,9 @@ export default {
     },
 
     continueSession() {
-      // 继续同类型练习
+      // 继续当前会话的对话
       uni.navigateTo({
-        url: `/pages/interpersonal-wisdom/interactive-practice?scenario=${this.sessionData.practice_scenario}`,
+        url: `/pages/interpersonal-wisdom/interactive-practice?sessionId=${this.sessionId}&scenario=${this.sessionData.practice_scenario}&continue=true`,
       });
     },
 

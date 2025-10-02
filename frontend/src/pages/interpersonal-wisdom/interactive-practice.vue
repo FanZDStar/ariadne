@@ -124,6 +124,8 @@ export default {
         "你好！我是小智，你的人际交往练习助手。我们可以进行各种场景的对话练习，帮你提升沟通技巧。请选择一个练习场景开始吧！",
       selectedScenario: null,
       scenarioSelected: false,
+      continueSessionId: null, // 用于继续现有会话
+      isContinuingSession: false, // 是否正在继续现有会话
       practiceScenarios: [
         {
           id: "self_introduction",
@@ -165,17 +167,96 @@ export default {
     };
   },
 
-  onLoad() {
-    // 设置欢迎消息
-    this.chatHistory = [
-      {
-        role: "assistant",
-        content: this.welcomeMessage,
-      },
-    ];
+  onLoad(options) {
+    // 检查是否是继续现有会话
+    if (options.sessionId && options.continue === 'true') {
+      this.continueSessionId = options.sessionId;
+      this.isContinuingSession = true;
+      this.loadExistingSession();
+    } else if (options.scenario) {
+      // 预选场景
+      const scenario = this.practiceScenarios.find(s => s.id === options.scenario);
+      if (scenario) {
+        this.selectScenario(scenario);
+      } else {
+        this.initWelcomeMessage();
+      }
+    } else {
+      this.initWelcomeMessage();
+    }
   },
 
   methods: {
+    initWelcomeMessage() {
+      // 设置欢迎消息
+      this.chatHistory = [
+        {
+          role: "assistant",
+          content: this.welcomeMessage,
+          timestamp: new Date().toISOString(),
+        },
+      ];
+    },
+
+    async loadExistingSession() {
+      try {
+        const token = uni.getStorageSync("access_token");
+        if (!token) {
+          uni.showToast({
+            title: "请先登录",
+            icon: "none",
+          });
+          return;
+        }
+
+        const response = await uni.request({
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/interpersonal-practice/sessions/${this.continueSessionId}`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.statusCode === 200) {
+          const sessionData = response.data;
+          
+          // 加载现有对话记录
+          this.chatHistory = sessionData.messages || [];
+          
+          // 设置场景信息
+          this.selectedScenario = sessionData.practice_scenario;
+          this.scenarioSelected = true;
+          
+          // 添加继续对话的提示消息
+          this.chatHistory.push({
+            role: "assistant",
+            content: "欢迎回来！我们可以继续之前的对话练习。你想继续聊什么呢？",
+            timestamp: new Date().toISOString(),
+          });
+          
+          // 标记有新消息，但不需要立即保存
+          this.hasNewMessages = false;
+          
+          uni.showToast({
+            title: "已加载历史对话",
+            icon: "success",
+          });
+        } else {
+          throw new Error("加载会话失败");
+        }
+      } catch (error) {
+        console.error("加载现有会话失败:", error);
+        uni.showToast({
+          title: "加载会话失败",
+          icon: "none",
+        });
+        // 回退到欢迎消息
+        this.initWelcomeMessage();
+      }
+    },
     selectScenario(scenario) {
       this.selectedScenario = scenario.id;
       this.scenarioSelected = true;
@@ -302,25 +383,51 @@ export default {
           improvements: [],
           practice_quality_score: null,
           ai_feedback: null,
+          is_completed: 0, // 设置为进行中状态，允许继续对话
         };
 
         console.log("准备发送的数据:", sessionData);
 
-        const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/interpersonal-practice/sessions`,
-          method: "POST",
-          header: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          data: sessionData,
-        });
+        let response;
+        let isUpdate = false;
+
+        // 如果是继续现有会话，使用PUT更新；否则使用POST创建新会话
+        if (this.isContinuingSession && this.continueSessionId) {
+          response = await uni.request({
+            url: `${
+              process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/interpersonal-practice/sessions/${this.continueSessionId}`,
+            method: "PUT",
+            header: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            data: sessionData,
+          });
+          isUpdate = true;
+        } else {
+          response = await uni.request({
+            url: `${
+              process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/interpersonal-practice/sessions`,
+            method: "POST",
+            header: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            data: sessionData,
+          });
+          
+          // 如果是新创建的会话，设置会话ID以便后续更新
+          if (response.statusCode === 200 && response.data.id) {
+            this.continueSessionId = response.data.id;
+            this.isContinuingSession = true;
+          }
+        }
 
         if (response.statusCode === 200) {
           uni.showToast({
-            title: "对话已保存",
+            title: isUpdate ? "对话已更新" : "对话已保存",
             icon: "success",
           });
 

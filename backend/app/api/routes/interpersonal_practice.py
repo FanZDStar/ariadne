@@ -36,7 +36,7 @@ async def create_practice_session(
             'message_count': len(session_data.get('messages', [])),
             'session_duration': session_data.get('practice_duration', 0),
             'practice_type': 'communication',  # 固定使用communication，这是数据库ENUM的有效值
-            'is_completed': 1
+            'is_completed': session_data.get('is_completed', 1)
         })
         
         db.commit()
@@ -57,16 +57,17 @@ async def get_practice_sessions(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """获取练习会话列表"""
+    """获取练习会话列表 - 每个会话只显示一次，按最后更新时间排序"""
     try:
         from sqlalchemy import text
         
         query_sql = """
         SELECT id, title, scenario_id, scenario_name,
-               message_count, session_duration, created_at, is_completed
+               message_count, session_duration, created_at, 
+               updated_at, is_completed
         FROM interpersonal_practice_sessions 
         WHERE user_id = :user_id
-        ORDER BY created_at DESC
+        ORDER BY COALESCE(updated_at, created_at) DESC
         LIMIT 50
         """
         
@@ -82,7 +83,8 @@ async def get_practice_sessions(
                 'total_messages': row[4],
                 'practice_duration': row[5],
                 'created_at': row[6].isoformat() if row[6] else None,
-                'completion_status': 'completed' if row[7] else 'in_progress'
+                'updated_at': row[7].isoformat() if row[7] else None,
+                'completion_status': 'completed' if row[8] else 'in_progress'
             })
         
         return {
@@ -147,4 +149,66 @@ async def get_practice_session_detail(
     except Exception as e:
         print(f"获取会话详情出错: {str(e)}")
         raise HTTPException(status_code=500, detail=f"获取会话详情失败: {str(e)}")
+
+@router.put("/sessions/{session_id}")
+async def update_practice_session(
+    session_id: int,
+    session_data: Dict[str, Any],
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """更新现有的人际沟通练习会话"""
+    try:
+        from sqlalchemy import text
+        
+        # 首先检查会话是否存在且属于当前用户
+        check_sql = """
+        SELECT id FROM interpersonal_practice_sessions 
+        WHERE id = :session_id AND user_id = :user_id
+        """
+        
+        result = db.execute(text(check_sql), {
+            'session_id': session_id,
+            'user_id': current_user.user_id
+        })
+        
+        if not result.fetchone():
+            raise HTTPException(status_code=404, detail="练习会话不存在")
+        
+        # 更新会话信息
+        update_sql = """
+        UPDATE interpersonal_practice_sessions 
+        SET title = :title, 
+            messages = :messages,
+            message_count = :message_count,
+            session_duration = :session_duration,
+            is_completed = :is_completed,
+            updated_at = NOW()
+        WHERE id = :session_id AND user_id = :user_id
+        """
+        
+        db.execute(text(update_sql), {
+            'session_id': session_id,
+            'title': session_data.get('session_title', '未命名练习'),
+            'messages': json.dumps(session_data.get('messages', [])),
+            'message_count': len(session_data.get('messages', [])),
+            'session_duration': session_data.get('practice_duration', 0),
+            'is_completed': session_data.get('is_completed', 0),
+            'user_id': current_user.user_id
+        })
+        
+        db.commit()
+        
+        return {
+            "id": session_id,
+            "message": "练习会话更新成功",
+            "title": session_data.get('session_title', '未命名练习')
+        }
+        
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        print(f"更新会话出错: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"更新失败: {str(e)}")
 
