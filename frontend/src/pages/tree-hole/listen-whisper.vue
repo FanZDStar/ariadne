@@ -1,7 +1,7 @@
 <template>
     <view class="listen-container">
         <view class="content-wrapper">
-            <view v-if="whisper" class="whisper-note">
+            <view v-if="whisper" class="whisper-note" @click="goToWhisperDetail">
                 <!-- 第一行：头像和匿名名称 -->
                 <view class="whisper-header">
                     <image class="avatar" :src="getAvatarUrl()" mode="aspectFill" />
@@ -213,6 +213,12 @@ export default {
             } catch (error) {
                 console.error('Failed to toggle like:', error);
             }
+        },
+        goToWhisperDetail() {
+            if (!this.whisper) return;
+            uni.navigateTo({
+                url: `/pages/tree-hole/whisper-detail?whisper_id=${this.whisper.whisper_id}`
+            });
         },
         goToChat() {
             if (!this.whisper) return;

@@ -215,6 +215,12 @@
       }
     },
     {
+      "path": "pages/tree-hole/whisper-detail",
+      "style": {
+        "navigationBarTitleText": "详情"
+      }
+    },
+    {
       "path": "pages/interpersonal-wisdom/interpersonal-wisdom",
       "style": {
         "navigationBarTitleText": "人际智慧"

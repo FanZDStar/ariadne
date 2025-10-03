@@ -7,7 +7,7 @@ from app.database.session import get_db
 from app.models.user import User
 from app.models.tree_hole_chat import TreeHoleChatParticipant 
 from app.models.tree_hole import TreeHoleWhisper, TreeHoleComment, TreeHoleLike
-from app.schemas.tree_hole import WhisperCreate, WhisperUpdate, WhisperResponse
+from app.schemas.tree_hole import WhisperCreate, WhisperUpdate, WhisperResponse, CommentResponse, CommentCreate
 from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/tree-hole", tags=["心灵树洞"])
@@ -165,8 +165,25 @@ def get_whisper(
             detail="Whisper not found"
         )
     
-    # 如果不是匿名悄悄话，检查是否是创建者
-    if not whisper.is_anonymous and whisper.user_id != current_user.user_id:
+    # 权限检查：允许以下情况访问
+    # 1. 匿名悄悄话（所有人都可以看）
+    # 2. 是创建者本人
+    # 3. 用户曾经点赞过这个悄悄话
+    # 4. 用户参与过这个悄悄话的聊天
+    can_access = (
+        whisper.is_anonymous or  # 匿名悄悄话
+        whisper.user_id == current_user.user_id or  # 是创建者
+        db.query(TreeHoleLike).filter(  # 曾经点赞过
+            TreeHoleLike.whisper_id == whisper_id,
+            TreeHoleLike.user_id == current_user.user_id
+        ).first() is not None or
+        db.query(TreeHoleChatParticipant).filter(  # 参与过聊天
+            TreeHoleChatParticipant.whisper_id == whisper_id,
+            TreeHoleChatParticipant.user_id == current_user.user_id
+        ).first() is not None
+    )
+    
+    if not can_access:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
@@ -356,3 +373,73 @@ def get_user_interactions(
         result.append(whisper_dict)
         
     return result
+
+
+@router.get("/{whisper_id}/comments", response_model=List[CommentResponse])
+def get_whisper_comments(
+    whisper_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """获取悄悄话的评论列表"""
+    # 先检查悄悄话是否存在
+    whisper = db.query(TreeHoleWhisper).filter(TreeHoleWhisper.whisper_id == whisper_id).first()
+    if not whisper:
+        raise HTTPException(status_code=404, detail="Whisper not found")
+    
+    # 获取评论列表
+    comments = db.query(TreeHoleComment)\
+        .options(joinedload(TreeHoleComment.user))\
+        .filter(TreeHoleComment.whisper_id == whisper_id)\
+        .order_by(TreeHoleComment.created_at.desc())\
+        .all()
+    
+    # 构造评论响应数据
+    comment_list = []
+    for comment in comments:
+        comment_dict = {
+            "comment_id": comment.comment_id,
+            "whisper_id": comment.whisper_id,
+            "user_id": comment.user_id,
+            "content": comment.decrypted_content,
+            "is_anonymous": comment.is_anonymous,
+            "created_at": comment.created_at,
+            "user": comment.user
+        }
+        comment_list.append(comment_dict)
+    
+    return comment_list
+
+
+@router.post("/{whisper_id}/comments")
+def create_whisper_comment(
+    whisper_id: int,
+    comment_data: CommentCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """创建悄悄话评论"""
+    # 检查悄悄话是否存在
+    whisper = db.query(TreeHoleWhisper).filter(TreeHoleWhisper.whisper_id == whisper_id).first()
+    if not whisper:
+        raise HTTPException(status_code=404, detail="Whisper not found")
+    
+    # 创建评论
+    db_comment = TreeHoleComment(
+        whisper_id=whisper_id,
+        user_id=current_user.user_id,
+        is_anonymous=comment_data.is_anonymous
+    )
+    
+    # 设置加密内容
+    db_comment.decrypted_content = comment_data.content
+    
+    db.add(db_comment)
+    
+    # 更新悄悄话的评论数
+    whisper.comment_count += 1
+    
+    db.commit()
+    db.refresh(db_comment)
+    
+    return {"message": "评论创建成功", "comment_id": db_comment.comment_id}

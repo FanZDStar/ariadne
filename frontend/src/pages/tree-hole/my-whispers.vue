@@ -25,11 +25,12 @@
         <view v-if="myPostedWhispers.length === 0" class="empty-state">
           <text class="empty-text">你还没有发布过悄悄话...</text>
         </view>
-        <view class="whisper-item" v-for="whisper in myPostedWhispers" :key="whisper.whisper_id">
+        <view class="whisper-item" v-for="whisper in myPostedWhispers" :key="whisper.whisper_id"
+          @click="!managementMode && goToWhisperDetail(whisper.whisper_id)">
           <view class="whisper-timestamp">{{ formatTimestamp(whisper.created_at) }}</view>
           <view class="whisper-content-wrapper">
             <view class="whisper-content">{{ whisper.content }}</view>
-            <view v-if="managementMode" class="delete-btn" @click="confirmDelete(whisper, 'whisper')">
+            <view v-if="managementMode" class="delete-btn" @click.stop="confirmDelete(whisper, 'whisper')">
               <text class="delete-icon">🗑️</text>
             </view>
           </view>
@@ -45,7 +46,7 @@
           <text class="empty-text">你还没有与任何悄悄话互动过...</text>
         </view>
         <view class="whisper-item" v-for="whisper in myInteractedWhispers" :key="whisper.whisper_id"
-          @click="!managementMode && goToChat(whisper.whisper_id)">
+          @click="!managementMode && goToWhisperDetail(whisper.whisper_id)">
           <view class="whisper-timestamp">{{ formatTimestamp(whisper.created_at) }}</view>
           <view class="whisper-content-wrapper">
             <view class="whisper-content">{{ whisper.content }}</view>
@@ -233,6 +234,11 @@ export default {
       uni.pageScrollTo({
         scrollTop: 0,
         duration: 300
+      });
+    },
+    goToWhisperDetail(whisperId) {
+      uni.navigateTo({
+        url: `/pages/tree-hole/whisper-detail?whisper_id=${whisperId}`
       });
     },
     goToWriteWhisper() {

@@ -344,6 +344,46 @@ export const api = {
       },
     });
   },
+
+  // 获取悄悄话详情
+  getWhisperDetail: (token, whisperId) => {
+    return request(`/tree-hole/${whisperId}`, {
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取悄悄话评论列表
+  getWhisperComments: (token, whisperId) => {
+    return request(`/tree-hole/${whisperId}/comments`, {
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 创建悄悄话评论
+  createWhisperComment: (token, whisperId, commentData) => {
+    return request(`/tree-hole/${whisperId}/comments`, {
+      method: "POST",
+      data: commentData,
+      header: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 点赞/取消点赞悄悄话
+  toggleWhisperLike: (token, whisperId) => {
+    return request(`/tree-hole/${whisperId}/like`, {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
   // 删除悄悄话
   deleteWhisper: (token, whisperId) => {
     return request(`/tree-hole/${whisperId}`, {
