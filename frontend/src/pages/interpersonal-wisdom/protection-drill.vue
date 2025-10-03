@@ -407,6 +407,11 @@ export default {
       trainingQuestions: [],
       currentSessionId: null,
       currentQuestionIndex: 0,
+      // 新增变量支持报告保存
+      correctAnswers: 0,
+      trainingDuration: 0,
+      questionAnalysis: [],
+      trainingStartTime: null,
     };
   },
 
@@ -511,6 +516,11 @@ export default {
 
     async startTraining() {
       try {
+        // 记录训练开始时间
+        this.trainingStartTime = Date.now();
+        this.correctAnswers = 0;
+        this.questionAnalysis = [];
+
         // 创建训练会话
         const sessionResponse = await uni.request({
           url: "http://localhost:8000/api/protection-drill/session/start",
@@ -519,7 +529,7 @@ export default {
             training_type_id: this.selectedMode.id,
           },
           header: {
-            Authorization: "Bearer " + uni.getStorageSync("token"),
+            Authorization: "Bearer " + uni.getStorageSync("access_token"),
           },
         });
 
@@ -602,7 +612,7 @@ export default {
             selected_option_id: option.id,
           },
           header: {
-            Authorization: "Bearer " + uni.getStorageSync("token"),
+            Authorization: "Bearer " + uni.getStorageSync("access_token"),
           },
         });
 
@@ -613,6 +623,27 @@ export default {
         const feedback = response.data.data;
         const scoreGained = feedback.is_correct ? 10 : 3;
         this.currentScore += scoreGained;
+
+        // 记录答题分析
+        if (feedback.is_correct) {
+          this.correctAnswers++;
+        }
+
+        // 记录每题的详细分析
+        this.questionAnalysis.push({
+          question: currentQuestion.question || currentQuestion.title,
+          is_correct: feedback.is_correct,
+          selected_option: option.text,
+          correct_option: feedback.correct_answer,
+          explanation: feedback.explanation,
+          options: currentQuestion.options
+            ? currentQuestion.options.map((opt) => ({
+                text: opt.text,
+                is_selected: opt.id === option.id,
+                is_correct: opt.id === feedback.correct_option_id,
+              }))
+            : [],
+        });
 
         this.feedbackResult = {
           isCorrect: feedback.is_correct,
@@ -678,12 +709,19 @@ export default {
 
     async finishTraining() {
       try {
+        // 计算训练时长
+        if (this.trainingStartTime) {
+          this.trainingDuration = Math.floor(
+            (Date.now() - this.trainingStartTime) / 1000
+          );
+        }
+
         if (this.currentSessionId) {
           const response = await uni.request({
             url: `http://localhost:8000/api/protection-drill/session/${this.currentSessionId}/complete`,
             method: "POST",
             header: {
-              Authorization: "Bearer " + uni.getStorageSync("token"),
+              Authorization: "Bearer " + uni.getStorageSync("access_token"),
             },
           });
 
@@ -720,6 +758,9 @@ export default {
                 },
               ],
             };
+
+            // 保存训练报告
+            await this.saveTrainingReport(result);
           } else {
             throw new Error("获取结果失败");
           }
@@ -733,6 +774,89 @@ export default {
         this.generateFinalResult();
         this.currentStage = "result";
       }
+    },
+
+    async saveTrainingReport(result) {
+      try {
+        const token = uni.getStorageSync("access_token");
+
+        if (!token) {
+          console.log("No token available for saving report");
+          uni.showToast({
+            title: "请先登录以保存训练记录",
+            icon: "none",
+          });
+          return;
+        }
+
+        // 准备报告数据
+        const reportData = {
+          drill_type: this.selectedMode ? this.selectedMode.title : "防护训练",
+          scenario_name: this.selectedMode
+            ? this.selectedMode.description
+            : null,
+          total_questions:
+            result.total_questions || this.trainingQuestions.length,
+          correct_answers: result.correct_answers || this.correctAnswers,
+          score:
+            result.accuracy_rate ||
+            (this.correctAnswers / this.trainingQuestions.length) * 100,
+          completion_time: this.trainingDuration || null,
+          report_content: JSON.stringify({
+            final_result: this.finalResult,
+            question_analysis: this.questionAnalysis || [],
+            skills_mastery: this.finalResult.skillsMastery,
+            improvements: this.finalResult.improvements,
+          }),
+          suggestions: this.generateSuggestions(
+            result.accuracy_rate ||
+              (this.correctAnswers / this.trainingQuestions.length) * 100
+          ),
+        };
+
+        const saveResponse = await uni.request({
+          url: "http://127.0.0.1:8000/protection-drill/reports",
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          data: reportData,
+        });
+
+        if (saveResponse.statusCode === 200) {
+          console.log("训练报告保存成功:", saveResponse.data);
+          // 可以在这里添加保存成功的提示
+        } else {
+          console.error("保存训练报告失败:", saveResponse.data);
+        }
+      } catch (error) {
+        console.error("保存训练报告出错:", error);
+        // 不影响主流程，只记录错误
+      }
+    },
+
+    generateSuggestions(accuracy) {
+      let suggestions = "";
+
+      if (accuracy >= 90) {
+        suggestions =
+          "表现优秀！你已经具备了很强的防护意识和风险识别能力。建议继续保持警觉，并帮助其他人提高防护意识。";
+      } else if (accuracy >= 80) {
+        suggestions =
+          "表现良好！你具备了基本的防护能力。建议加强对细微风险信号的识别，继续提升应对策略的多样性。";
+      } else if (accuracy >= 70) {
+        suggestions =
+          "表现一般。你对明显的风险信号有一定识别能力，但需要加强对隐性风险的敏感度。建议多学习防护知识，练习应对技巧。";
+      } else if (accuracy >= 60) {
+        suggestions =
+          "表现有待提高。你的风险识别能力还需要加强。建议系统学习人际关系中的风险信号，多进行防护训练。";
+      } else {
+        suggestions =
+          "表现需要大幅改进。建议重点学习基础的风险识别知识，寻求专业指导，并在日常生活中加强防护意识。";
+      }
+
+      return suggestions;
     },
 
     initializeTraining() {

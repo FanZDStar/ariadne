@@ -244,6 +244,31 @@
           </view>
         </view>
 
+        <view
+          class="skill-card recommended"
+          @click="goToProtectionDrillReports"
+        >
+          <view class="skill-header">
+            <text class="skill-title">防护技能训练报告</text>
+          </view>
+          <text class="skill-content"
+            >查看防护技能训练记录和评估报告，追踪防护能力提升</text
+          >
+          <view class="skill-tags">
+            <text class="skill-tag">防护</text>
+            <text class="skill-tag">训练</text>
+            <text class="skill-tag">报告</text>
+          </view>
+          <view class="skill-actions">
+            <view
+              class="action-btn primary"
+              @click.stop="goToProtectionDrillReports"
+            >
+              <text class="action-text">查看训练</text>
+            </view>
+          </view>
+        </view>
+
         <view class="skill-card recommended" @click="testClick">
           <view class="skill-header">
             <text class="skill-title">历史对话记录</text>
@@ -562,6 +587,13 @@ export default {
     goToAssessmentReports() {
       uni.navigateTo({
         url: "/pages/interpersonal-wisdom/assessment-reports",
+      });
+    },
+
+    // 跳转到防护技能训练报告页面
+    goToProtectionDrillReports() {
+      uni.navigateTo({
+        url: "/pages/interpersonal-wisdom/protection-drill-reports",
       });
     },
 

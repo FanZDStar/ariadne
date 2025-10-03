@@ -22,6 +22,7 @@ from .user_achievements import UserAchievement
 from .mood_tracker import MoodTracker
 from .user_diary_backgrounds import UserDiaryBackground
 from .interpersonal_practice_session import InterpersonalPracticeSession
+from .protection_drill_report import ProtectionDrillReport
 # 导出所有模型
 __all__ = [
     "User",
@@ -44,5 +45,6 @@ __all__ = [
     "UserAchievement",
     "MoodTracker",
     "UserDiaryBackground",
-    "InterpersonalPracticeSession"
+    "InterpersonalPracticeSession",
+    "ProtectionDrillReport"
 ]

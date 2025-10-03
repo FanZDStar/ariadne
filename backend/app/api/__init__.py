@@ -35,6 +35,7 @@ from app.api.routes import (
     diary_backgrounds,
     user_diary_backgrounds,
     interpersonal_practice,
+    protection_drill_reports,
 )
 from app.api import protection_drill
 
@@ -76,6 +77,11 @@ api_router.include_router(
     interpersonal_practice.router, 
     prefix="/interpersonal-practice", 
     tags=["interpersonal-practice"]
+)
+api_router.include_router(
+    protection_drill_reports.router,
+    prefix="/protection-drill",
+    tags=["protection-drill-reports"]
 )
 api_router.include_router(
     protection_drill.router,
