@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>念念有声小人Lottie动画测试</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+          Helvetica, Arial, sans-serif;
+        background: linear-gradient(135deg, #74b9ff, #00cec9);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #2d3436;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+
+      .mascot-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 40px 0;
+        position: relative;
+      }
+
+      .mascot-wrapper {
+        position: relative;
+        width: 130px;
+        height: 156px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .mascot-wrapper:hover {
+        transform: scale(1.05);
+      }
+
+      .static-mascot {
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        background: linear-gradient(45deg, #ff7675, #fd79a8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .lottie-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      .controls {
+        text-align: center;
+        margin: 30px 0;
+      }
+
+      .btn {
+        background: linear-gradient(45deg, #00b894, #00cec9);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .character-selector {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .character-btn {
+        background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+      }
+
+      .character-btn.active {
+        background: linear-gradient(45deg, #fd79a8, #fdcb6e);
+        transform: scale(1.1);
+      }
+
+      .info {
+        background: rgba(116, 185, 255, 0.1);
+        border-left: 4px solid #74b9ff;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+
+      .speech-bubble {
+        position: absolute;
+        background: white;
+        border-radius: 20px;
+        padding: 10px 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 200px;
+        text-align: center;
+        font-size: 14px;
+        color: #2d3436;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .speech-bubble:after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid white;
+      }
+
+      .speech-bubble.show {
+        opacity: 1;
+      }
+
+      .status {
+        text-align: center;
+        margin: 20px 0;
+        padding: 10px;
+        background: rgba(0, 206, 201, 0.1);
+        border-radius: 10px;
+        font-size: 14px;
+        color: #00b894;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎭 念念有声小人动画测试</h1>
+
+      <div class="character-selector">
+        <h3>选择小人角色：</h3>
+        <button class="character-btn active" onclick="switchCharacter(1)">
+          默认小人
+        </button>
+        <button class="character-btn" onclick="switchCharacter(2)">
+          夏装小人
+        </button>
+        <button class="character-btn" onclick="switchCharacter(3)">
+          冬装小人
+        </button>
+      </div>
+
+      <div class="mascot-container">
+        <div class="mascot-wrapper" onclick="playRandomAction()">
+          <div id="static-mascot" class="static-mascot">
+            默认小人<br />点击播放动画
+          </div>
+          <div
+            id="lottie-container"
+            class="lottie-container"
+            style="display: none"
+          ></div>
+          <div id="speech-bubble" class="speech-bubble"></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="playRandomAction()">
+          🎬 播放随机动作
+        </button>
+        <button class="btn" onclick="playSpecificAction(1)">动作 1</button>
+        <button class="btn" onclick="playSpecificAction(2)">动作 2</button>
+        <button class="btn" onclick="playSpecificAction(3)">动作 3</button>
+      </div>
+
+      <div id="status" class="status">就绪 - 点击按钮测试动画效果</div>
+
+      <div class="info">
+        <h4>📋 测试说明：</h4>
+        <ul>
+          <li>点击小人或按钮可以触发动画</li>
+          <li>
+            动画文件路径：/static/animations/{角色ID}/{动作编号}/data.json
+          </li>
+          <li>支持3种角色，每种角色有不同数量的动作</li>
+          <li>动画播放完成后会自动切回静态显示</li>
+          <li>如果动画文件不存在，会显示错误信息</li>
+        </ul>
+      </div>
+
+      <div class="info">
+        <h4>🎯 当前配置：</h4>
+        <ul>
+          <li><strong>默认小人</strong>：3个动作 (挥手、跳跃、旋转)</li>
+          <li><strong>夏装小人</strong>：2个动作 (游泳、奔跑)</li>
+          <li><strong>冬装小人</strong>：4个动作 (滑雪、堆雪人、溜冰、暖身)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 引入lottie-web库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie.min.js"></script>
+
+    <script>
+      // 当前状态
+      let currentCharacter = 1;
+      let isPlayingAnimation = false;
+      let lottieInstance = null;
+
+      // 角色配置
+      const characters = {
+        1: {
+          name: "默认小人",
+          actionCount: 3,
+          speeches: ["你好呀~", "今天心情不错呢!", "我来跟你打招呼!"],
+          color: "linear-gradient(45deg, #ff7675, #fd79a8)",
+        },
+        2: {
+          name: "夏装小人",
+          actionCount: 2,
+          speeches: ["夏天真舒服~", "一起享受阳光吧!", "海边的风真凉爽!"],
+          color: "linear-gradient(45deg, #fdcb6e, #fd79a8)",
+        },
+        3: {
+          name: "冬装小人",
+          actionCount: 4,
+          speeches: ["冬天也要保持活力!", "雪花好美啊~", "一起堆雪人吧!"],
+          color: "linear-gradient(45deg, #74b9ff, #0984e3)",
+        },
+      };
+
+      // 更新状态显示
+      function updateStatus(message) {
+        document.getElementById("status").textContent = message;
+      }
+
+      // 切换角色
+      function switchCharacter(charId) {
+        if (isPlayingAnimation) {
+          updateStatus("动画播放中，请稍候...");
+          return;
+        }
+
+        currentCharacter = charId;
+        const character = characters[charId];
+
+        // 更新按钮状态
+        document.querySelectorAll(".character-btn").forEach((btn, index) => {
+          btn.classList.toggle("active", index + 1 === charId);
+        });
+
+        // 更新静态显示
+        const staticMascot = document.getElementById("static-mascot");
+        staticMascot.textContent = character.name + "\n点击播放动画";
+        staticMascot.style.background = character.color;
+
+        updateStatus(
+          `已切换到 ${character.name} (${character.actionCount}个动作)`
+        );
+      }
+
+      // 播放随机动作
+      function playRandomAction() {
+        const character = characters[currentCharacter];
+        const actionNumber = Math.ceil(Math.random() * character.actionCount);
+        playSpecificAction(actionNumber);
+      }
+
+      // 播放指定动作
+      function playSpecificAction(actionNumber) {
+        if (isPlayingAnimation) {
+          updateStatus("动画播放中，请稍候...");
+          return;
+        }
+
+        const character = characters[currentCharacter];
+        if (actionNumber > character.actionCount) {
+          updateStatus(`${character.name}只有${character.actionCount}个动作`);
+          return;
+        }
+
+        // 构建动画路径
+        const animationPath = `./static/animations/${currentCharacter}/${actionNumber}/data.json`;
+        updateStatus(`正在播放：${character.name} - 动作${actionNumber}`);
+
+        playLottieAnimation(animationPath);
+        showSpeech();
+      }
+
+      // 播放Lottie动画
+      function playLottieAnimation(path) {
+        if (isPlayingAnimation) return;
+
+        isPlayingAnimation = true;
+
+        // 隐藏静态小人，显示Lottie容器
+        document.getElementById("static-mascot").style.display = "none";
+        document.getElementById("lottie-container").style.display = "block";
+
+        try {
+          // 清理之前的实例
+          if (lottieInstance) {
+            lottieInstance.destroy();
+          }
+
+          // 创建新的Lottie实例
+          lottieInstance = lottie.loadAnimation({
+            container: document.getElementById("lottie-container"),
+            renderer: "svg",
+            loop: false,
+            autoplay: true,
+            path: path,
+          });
+
+          // 监听动画完成
+          lottieInstance.addEventListener("complete", onAnimationComplete);
+
+          // 监听加载错误
+          lottieInstance.addEventListener("data_failed", () => {
+            updateStatus(`❌ 动画文件加载失败: ${path}`);
+            onAnimationComplete();
+          });
+
+          // 监听加载成功
+          lottieInstance.addEventListener("DOMLoaded", () => {
+            updateStatus(`✅ 动画播放中...`);
+          });
+        } catch (error) {
+          updateStatus(`❌ 动画播放错误: ${error.message}`);
+          onAnimationComplete();
+        }
+      }
+
+      // 动画完成回调
+      function onAnimationComplete() {
+        isPlayingAnimation = false;
+
+        // 清理Lottie实例
+        if (lottieInstance) {
+          lottieInstance.destroy();
+          lottieInstance = null;
+        }
+
+        // 显示静态小人，隐藏Lottie容器
+        document.getElementById("static-mascot").style.display = "flex";
+        document.getElementById("lottie-container").style.display = "none";
+
+        updateStatus(`✅ 动画播放完成`);
+      }
+
+      // 显示语音气泡
+      function showSpeech() {
+        const character = characters[currentCharacter];
+        const speech =
+          character.speeches[
+            Math.floor(Math.random() * character.speeches.length)
+          ];
+        const bubble = document.getElementById("speech-bubble");
+
+        bubble.textContent = speech;
+        bubble.classList.add("show");
+
+        setTimeout(() => {
+          bubble.classList.remove("show");
+        }, 3000);
+      }
+
+      // 页面加载完成后初始化
+      window.onload = function () {
+        updateStatus("🎉 测试页面加载完成！");
+
+        // 检查lottie库是否加载
+        if (typeof lottie === "undefined") {
+          updateStatus("❌ Lottie库未加载，请检查网络连接");
+        } else {
+          updateStatus("✅ 就绪 - 点击按钮测试动画效果");
+        }
+      };
+    </script>
+  </body>
+</html>
