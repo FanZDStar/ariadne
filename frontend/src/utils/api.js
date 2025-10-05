@@ -384,6 +384,18 @@ export const api = {
       },
     });
   },
+  // 更新悄悄话
+  updateWhisper: (token, whisperId, whisperData) => {
+    return request(`/tree-hole/${whisperId}`, {
+      method: "PUT",
+      data: whisperData,
+      header: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   // 删除悄悄话
   deleteWhisper: (token, whisperId) => {
     return request(`/tree-hole/${whisperId}`, {

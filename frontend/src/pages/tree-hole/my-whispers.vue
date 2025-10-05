@@ -26,17 +26,60 @@
           <text class="empty-text">你还没有发布过悄悄话...</text>
         </view>
         <view class="whisper-item" v-for="whisper in myPostedWhispers" :key="whisper.whisper_id"
-          @click="!managementMode && goToWhisperDetail(whisper.whisper_id)">
-          <view class="whisper-timestamp">{{ formatTimestamp(whisper.created_at) }}</view>
-          <view class="whisper-content-wrapper">
-            <view class="whisper-content">{{ whisper.content }}</view>
-            <view v-if="managementMode" class="delete-btn" @click.stop="confirmDelete(whisper, 'whisper')">
+          @click="!managementMode && goToWhisperDetail(whisper.whisper_id)"
+          @longpress="enterManagementMode">
+          
+          <!-- 操作按钮区域 - 预留在右上角 -->
+          <view class="action-buttons-container">
+            <view 
+              v-show="managementMode" 
+              class="edit-btn" 
+              @click.stop="editWhisper(whisper)"
+            >
+              <text class="edit-icon">✏️</text>
+            </view>
+            <view 
+              v-show="managementMode" 
+              class="delete-btn" 
+              @click.stop="confirmDelete(whisper, 'whisper')"
+            >
               <text class="delete-icon">🗑️</text>
             </view>
           </view>
-          <view class="whisper-stats">
-            <text class="stat-item">❤️ {{ whisper.like_count || 0 }}</text>
-            <text class="stat-item">💬 {{ whisper.comment_count || 0 }}</text>
+          
+          <!-- 悄悄话标题 -->
+          <view class="whisper-title">{{ whisper.title || '无标题' }}</view>
+          
+          <!-- 标签 -->
+          <view v-if="whisper.tags && whisper.tags.length > 0" class="whisper-tags">
+            <text v-for="tag in whisper.tags" :key="tag" class="tag-item">#{{ tag }}</text>
+          </view>
+          
+          <!-- 内容 -->
+          <view class="whisper-content-wrapper">
+            <view class="whisper-content">{{ truncateContent(whisper.content, 50) }}</view>
+          </view>
+          
+          <!-- 图片展示 -->
+          <view v-if="getWhisperImages(whisper).length > 0" class="whisper-images">
+            <image 
+              v-for="(image, index) in getWhisperImages(whisper).slice(0, 2)" 
+              :key="index" 
+              :src="image" 
+              class="whisper-image"
+              mode="aspectFill"
+              @error="onImageError"
+              @load="onImageLoad"
+            />
+          </view>
+          
+          <!-- 底部信息 -->
+          <view class="whisper-bottom">
+            <view class="whisper-stats">
+              <text class="stat-item">❤️ {{ whisper.like_count || 0 }}</text>
+              <text class="stat-item">💬 {{ whisper.comment_count || 0 }}</text>
+            </view>
+            <view class="whisper-timestamp">{{ getTimeDisplayText(whisper) }}</view>
           </view>
         </view>
       </view>
@@ -46,7 +89,8 @@
           <text class="empty-text">你还没有与任何悄悄话互动过...</text>
         </view>
         <view class="whisper-item" v-for="whisper in myInteractedWhispers" :key="whisper.whisper_id"
-          @click="!managementMode && goToWhisperDetail(whisper.whisper_id)">
+          @click="!managementMode && goToWhisperDetail(whisper.whisper_id)"
+          @longpress="enterManagementMode">
           <view class="whisper-timestamp">{{ formatTimestamp(whisper.created_at) }}</view>
           <view class="whisper-content-wrapper">
             <view class="whisper-content">{{ whisper.content }}</view>
@@ -67,7 +111,8 @@
           <text class="empty-text">你还没有参与过任何聊天...</text>
         </view>
         <view class="whisper-item" v-for="chat in myChats" :key="chat.whisper_id"
-          @click="!managementMode && goToChat(chat.whisper_id)">
+          @click="!managementMode && goToChat(chat.whisper_id)"
+          @longpress="enterManagementMode">
           <view class="whisper-timestamp">{{ formatTimestamp(chat.created_at) }}</view>
           <view class="whisper-content-wrapper">
             <view class="whisper-content">{{ chat.content }}</view>
@@ -84,7 +129,9 @@
     </scroll-view>
 
     <!-- 回到顶部组件 -->
-    <BackToTop :scrollTop="scrollTop" :showThreshold="300" @scroll-to-top="scrollToTop" />
+    <BackToTop ref="backToTop" :threshold="0" :bottom="170" :right="50"
+      @start-scroll-listener="onStartScrollListener" @remove-scroll-listener="onRemoveScrollListener"
+      @scroll-to-top-success="onScrollToTopSuccess" />
 
     <!-- 发布悄悄话浮动按钮 -->
     <view class="fab" @click="goToWriteWhisper">
@@ -123,6 +170,13 @@ export default {
   },
   onPageScroll(e) {
     this.scrollTop = e.scrollTop;
+    // 将滚动事件传递给BackToTop组件
+    if (this.$refs.backToTop) {
+      this.$refs.backToTop.updateVisibility(e.scrollTop);
+    }
+  },
+  onUnload() {
+    // 页面卸载时的清理工作
   },
   methods: {
     async loadData() {
@@ -161,6 +215,17 @@ export default {
     },
     toggleManagementMode() {
       this.managementMode = !this.managementMode;
+    },
+    enterManagementMode() {
+      if (!this.managementMode) {
+        this.managementMode = true;
+      }
+    },
+    editWhisper(whisper) {
+      // 跳转到编辑页面，传递悄悄话ID
+      uni.navigateTo({
+        url: `/pages/tree-hole/edit-whisper?whisper_id=${whisper.whisper_id}`
+      });
     },
     confirmDelete(item, type) {
       const isMyWhisper = item.user_id === storage.getUserInfo().user_id;
@@ -254,7 +319,94 @@ export default {
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${year}.${month}.${day} ${hours}:${minutes}`;
-    }
+    },
+
+    // 获取时间显示文本
+    getTimeDisplayText(whisper) {
+      const createdTime = new Date(whisper.created_at).getTime();
+      const updatedTime = new Date(whisper.updated_at).getTime();
+      
+      // 判断是否被编辑过（时间差超过1秒，避免数据库精度问题）
+      if (updatedTime - createdTime > 1000) {
+        return `于${this.formatTimestamp(whisper.updated_at)}被编辑`;
+      } else {
+        return `发布于${this.formatTimestamp(whisper.created_at)}`;
+      }
+    },
+
+    // 截取内容方法
+    truncateContent(content, maxLength) {
+      if (!content) return '';
+      if (content.length <= maxLength) return content;
+      return content.substring(0, maxLength) + '...';
+    },
+
+    // 获取悄悄话图片
+    getWhisperImages(whisper) {
+      // 检查各种可能的图片字段名
+      const images = whisper.images || whisper.image_urls || whisper.imageUrls || whisper.pictures || [];
+      
+      // 如果是字符串，尝试解析为JSON
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return this.extractImageUrls(parsed);
+        } catch (e) {
+          return [images]; // 如果解析失败，当作单个图片URL
+        }
+      }
+      
+      // 确保返回数组并提取图片URL
+      if (Array.isArray(images)) {
+        return this.extractImageUrls(images);
+      }
+      
+      return [];
+    },
+
+    // 提取图片URL
+    extractImageUrls(imageData) {
+      if (!Array.isArray(imageData)) return [];
+      
+      return imageData.map(item => {
+        // 如果是对象，提取image_url字段
+        if (typeof item === 'object' && item.image_url) {
+          // 如果URL是相对路径，添加基础URL
+          const url = item.image_url;
+          if (url.startsWith('http')) {
+            return url;
+          } else {
+            // 假设需要添加服务器地址，可以根据实际情况调整
+            return `${process.env.VUE_APP_API_BASE_URL}/static/${url}`;
+          }
+        }
+        // 如果是字符串，直接返回
+        return typeof item === 'string' ? item : '';
+      }).filter(url => url); // 过滤掉空的URL
+    },
+
+    // 图片加载成功
+    onImageLoad(e) {
+      console.log('图片加载成功:', e);
+    },
+
+    // 图片加载失败
+    onImageError(e) {
+      console.error('图片加载失败:', e);
+    },
+
+    // 组件事件处理方法
+    onStartScrollListener() {
+      // 组件已挂载，准备接收滚动事件
+    },
+
+    onRemoveScrollListener() {
+      // 组件将要销毁
+    },
+
+    onScrollToTopSuccess() {
+      console.log('回到顶部成功');
+    },
   }
 };
 </script>
@@ -342,65 +494,152 @@ export default {
 
 .whisper-item {
   background: #fff;
-  padding: 30rpx;
+  padding: 20rpx;
   border-radius: 16rpx;
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.delete-btn-container {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 50rpx;
+  height: 50rpx;
+  z-index: 10;
+}
+
+.action-buttons-container {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  display: flex;
+  gap: 12rpx;
+  z-index: 10;
+}
+
+.edit-btn {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  background-color: #007aff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 122, 255, 0.3);
+}
+
+.edit-btn:active {
+  transform: scale(0.9);
+  background-color: #0056b3;
+}
+
+.edit-icon {
+  font-size: 24rpx;
+  color: white;
+}
+
+.delete-btn {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  background-color: #999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2rpx 8rpx rgba(153, 153, 153, 0.3);
+}
+
+.delete-btn:active {
+  transform: scale(0.9);
+  background-color: #777;
+}
+
+.delete-icon {
+  font-size: 24rpx;
+  color: white;
+}
+
+.whisper-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+  line-height: 1.3;
+  padding-right: 130rpx; /* 为两个按钮预留空间 */
+}
+
+.whisper-tags {
+  margin-bottom: 8rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.tag-item {
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
 }
 
 .whisper-timestamp {
-  font-size: 26rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
+  font-size: 22rpx;
+  color: #999;
+  font-style: italic;
 }
 
 .whisper-content-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  margin-bottom: 4rpx;
 }
 
 .whisper-content {
-  font-size: 30rpx;
+  font-size: 36rpx;
   color: #555;
-  line-height: 1.6;
-  margin-bottom: 25rpx;
+  line-height: 1.4;
   flex: 1;
-  /* For text truncation */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-bottom: 0;
 }
 
-.delete-btn {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  background-color: #f0f0f0;
+.whisper-images {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 20rpx;
+  gap: 12rpx;
+  margin-bottom: 4rpx;
+  margin-top: 8rpx;
 }
 
-.delete-icon {
-  font-size: 30rpx;
+.whisper-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  object-fit: cover;
+}
+
+.whisper-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4rpx;
+  padding-top: 8rpx;
+  border-top: 1rpx solid #f5f5f5;
 }
 
 .whisper-stats {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  font-size: 26rpx;
+  font-size: 22rpx;
   color: #999;
 }
 
 .stat-item {
-  margin-left: 30rpx;
+  margin-right: 20rpx;
 }
 
 .interaction-badge {

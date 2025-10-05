@@ -195,6 +195,14 @@
       }
     },
     {
+      "path": "pages/tree-hole/edit-whisper",
+      "style": {
+        "navigationBarTitleText": "编辑悄悄话",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "pages/tree-hole/my-whispers",
       "style": {
         "navigationBarTitleText": "我的悄悄话",
