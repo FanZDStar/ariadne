@@ -359,10 +359,10 @@ export default {
             icon: 'success'
           });
 
-          // 3秒后跳转到树洞页面
+          // 3秒后跳转到我的悄悄话页面
           setTimeout(() => {
             uni.redirectTo({
-              url: '/pages/tree-hole/tree-hole'
+              url: '/pages/tree-hole/my-whispers'
             });
           }, 3000);
         }

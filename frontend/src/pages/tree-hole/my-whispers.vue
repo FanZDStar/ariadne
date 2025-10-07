@@ -68,6 +68,7 @@
               :src="image" 
               class="whisper-image"
               mode="aspectFill"
+              @click.stop="previewImage(getWhisperImages(whisper), image)"
               @error="onImageError"
               @load="onImageLoad"
             />
@@ -369,20 +370,52 @@ export default {
       if (!Array.isArray(imageData)) return [];
       
       return imageData.map(item => {
+        let url = '';
+        
         // 如果是对象，提取image_url字段
         if (typeof item === 'object' && item.image_url) {
-          // 如果URL是相对路径，添加基础URL
-          const url = item.image_url;
-          if (url.startsWith('http')) {
-            return url;
-          } else {
-            // 假设需要添加服务器地址，可以根据实际情况调整
-            return `${process.env.VUE_APP_API_BASE_URL}/static/${url}`;
-          }
+          url = item.image_url;
         }
-        // 如果是字符串，直接返回
-        return typeof item === 'string' ? item : '';
+        // 如果是字符串，直接使用
+        else if (typeof item === 'string') {
+          url = item;
+        }
+        
+        if (!url) return '';
+        
+        // 使用与日记页面相同的URL处理逻辑
+        return this.getImageUrl(url);
       }).filter(url => url); // 过滤掉空的URL
+    },
+
+    // 获取图片URL（参考日记页面的实现）
+    getImageUrl(imageUrl) {
+      if (!imageUrl) return '';
+      
+      if (imageUrl.startsWith("http")) {
+        return imageUrl;
+      }
+      
+      const baseUrl = process.env.VUE_APP_API_BASE_URL;
+      if (!baseUrl) {
+        console.error("❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!");
+        return imageUrl;
+      }
+      
+      if (imageUrl.startsWith("/")) {
+        return baseUrl + imageUrl;
+      } else {
+        return baseUrl + "/" + imageUrl;
+      }
+    },
+
+    // 图片预览功能（参考日记页面的实现）
+    previewImage(images, currentImage) {
+      const urls = images;
+      uni.previewImage({
+        urls: urls,
+        current: currentImage,
+      });
     },
 
     // 图片加载成功

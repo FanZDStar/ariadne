@@ -505,7 +505,7 @@ export default {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
+  background-color: #ffafcc;
   position: relative;
   padding-top: var(--status-bar-height);
 }

@@ -146,8 +146,7 @@
     {
       "path": "pages/diary/diary-detail",
       "style": {
-        "navigationBarTitleText": "碎碎念详情",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "碎碎念详情"
       }
     },
     {

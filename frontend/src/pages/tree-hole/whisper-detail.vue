@@ -177,13 +177,22 @@ export default {
 
         getImageUrl(imageUrl) {
             if (!imageUrl) return '';
-
-            // 如果是相对路径，添加static前缀
-            if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/static/')) {
-                return `/static/${imageUrl}`;
+            
+            if (imageUrl.startsWith("http")) {
+                return imageUrl;
             }
-
-            return imageUrl;
+            
+            const baseUrl = process.env.VUE_APP_API_BASE_URL;
+            if (!baseUrl) {
+                console.error("❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!");
+                return imageUrl;
+            }
+            
+            if (imageUrl.startsWith("/")) {
+                return baseUrl + imageUrl;
+            } else {
+                return baseUrl + "/" + imageUrl;
+            }
         },
 
         getMoodEmoji(mood) {
@@ -282,10 +291,20 @@ export default {
             }
         },
 
+        // 获取悄悄话的所有图片URL数组
+        getWhisperImages(whisper) {
+            if (!whisper || !whisper.images || whisper.images.length === 0) {
+                return [];
+            }
+            return whisper.images.map(image => this.getImageUrl(image.image_url));
+        },
+
         previewImage(imageUrl) {
+            const allImages = this.getWhisperImages(this.whisper);
             const fullUrl = this.getImageUrl(imageUrl);
+            
             uni.previewImage({
-                urls: [fullUrl],
+                urls: allImages,
                 current: fullUrl
             });
         },
