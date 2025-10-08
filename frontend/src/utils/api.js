@@ -375,6 +375,30 @@ export const api = {
     });
   },
 
+  // 创建评论回复
+  createCommentReply: (token, commentId, replyData) => {
+    return request(`/tree-hole/comments/${commentId}/replies`, {
+      method: "POST",
+      data: replyData,
+      header: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取评论回复列表
+  getCommentReplies: (token, commentId, offset = 0, limit = 10) => {
+    return request(
+      `/tree-hole/comments/${commentId}/replies?offset=${offset}&limit=${limit}`,
+      {
+        header: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  },
+
   // 点赞/取消点赞悄悄话
   toggleWhisperLike: (token, whisperId) => {
     return request(`/tree-hole/${whisperId}/like`, {
