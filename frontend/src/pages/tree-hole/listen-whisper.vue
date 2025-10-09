@@ -222,11 +222,14 @@ export default {
 
       // 如果是匿名且有匿名头像，使用匿名头像
       if (this.whisper.is_anonymous && this.whisper.anonymous_avatar) {
-        return this.whisper.anonymous_avatar;
+        return this.getImageUrl(this.whisper.anonymous_avatar);
       }
 
       // 否则使用用户头像
-      return this.whisper.user?.avatar_url || "/static/avatar.png";
+      const avatarUrl = this.whisper.user?.avatar_url;
+      if (!avatarUrl) return "/static/avatar.png";
+      
+      return this.getImageUrl(avatarUrl);
     },
 
     // 获取显示名称
