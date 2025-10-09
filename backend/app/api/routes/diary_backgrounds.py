@@ -28,6 +28,24 @@ ALLOWED_IMAGE_TYPES = {
     "image/webp",
 }
 
+async def delete_image_file(file_path: str):
+    """删除图片文件（图床或本地）"""
+    try:
+        if file_path.startswith('http'):
+            # 图床URL - 暂时跳过删除，因为PICUI API可能不支持删除或需要特殊key格式
+            print(f"[删除] ⚠️  跳过图床图片删除（API不支持）: {file_path}")
+            # TODO: 如果找到正确的删除API，可以重新启用
+        else:
+            # 本地文件
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"[删除] ✅ 本地文件删除成功: {file_path}")
+            else:
+                print(f"[删除] ⚠️  本地文件不存在: {file_path}")
+    except Exception as e:
+        print(f"[删除] ❌ 删除图片失败: {str(e)}")
+        # 不抛出异常，避免阻塞数据库删除
+
 # 最大文件大小 (5MB)
 MAX_FILE_SIZE = 5 * 1024 * 1024
 
@@ -179,10 +197,8 @@ async def delete_background_image(
         raise HTTPException(status_code=404, detail="背景图片不存在")
 
     try:
-        # 删除文件
-        full_file_path = os.path.join(BACKGROUND_UPLOAD_DIR, background.filename)
-        if os.path.exists(full_file_path):
-            os.remove(full_file_path)
+        # 删除图片（图床或本地文件）
+        await delete_image_file(background.file_path)
 
         # 标记为删除（软删除）
         background.is_active = False
@@ -224,14 +240,9 @@ async def restore_default_backgrounds(
             .all()
         )
 
-        # 删除所有文件
+        # 删除所有图片（图床或本地文件）
         for background in backgrounds:
-            full_file_path = os.path.join(BACKGROUND_UPLOAD_DIR, background.filename)
-            if os.path.exists(full_file_path):
-                try:
-                    os.remove(full_file_path)
-                except Exception as e:
-                    print(f"删除文件失败: {full_file_path}, 错误: {e}")
+            await delete_image_file(background.file_path)
 
         # 软删除所有记录
         db.query(DiaryBackground).filter(

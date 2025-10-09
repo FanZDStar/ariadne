@@ -711,7 +711,7 @@ export default {
 
 .images-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200rpx, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 15rpx;
   margin-top: 25rpx;
 }

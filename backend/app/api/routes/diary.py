@@ -13,6 +13,37 @@ from app.services.privacy_service import privacy_service
 
 router = APIRouter(prefix="/diary", tags=["碎碎念"])
 
+async def delete_diary_image(image_url: str):
+    """删除日记图片（图床或本地）"""
+    try:
+        if image_url.startswith('http'):
+            # 图床URL - 暂时跳过删除，因为PICUI API可能不支持删除或需要特殊key格式
+            print(f"[删除] ⚠️  跳过图床图片删除（API不支持）: {image_url}")
+            # TODO: 如果找到正确的删除API，可以重新启用
+            # from app.services.picui_service import picui_service
+            # if '/free/' in image_url:
+            #     key = image_url.split('/free/')[-1].replace('/', '_')
+            #     delete_result = await picui_service.delete_image(key)
+            #     if delete_result["success"]:
+            #         print(f"[删除] ✅ 日记图床图片删除成功: {image_url}")
+            #     else:
+            #         print(f"[删除] ⚠️  日记图床图片删除失败: {delete_result.get('message', '未知错误')}")
+        else:
+            # 本地文件URL，转换为文件路径
+            if image_url.startswith('/uploads/'):
+                import os
+                file_path = image_url[1:]  # 移除开头的 '/'
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    print(f"[删除] ✅ 日记本地文件删除成功: {file_path}")
+                else:
+                    print(f"[删除] ⚠️  日记本地文件不存在: {file_path}")
+            else:
+                print(f"[删除] ⚠️  无法解析日记本地URL格式: {image_url}")
+    except Exception as e:
+        print(f"[删除] ❌ 删除日记图片失败: {str(e)}")
+        # 不抛出异常，避免阻塞数据库删除
+
 
 # ... (保留原有的创建、获取、更新、删除日记的接口) ...
 @router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
@@ -170,7 +201,7 @@ def get_diary(
 
 
 @router.put("/{diary_id}", response_model=DiaryResponse)
-def update_diary(
+async def update_diary(
     diary_id: int,
     diary_update: DiaryUpdate,
     db: Session = Depends(get_db),
@@ -195,7 +226,15 @@ def update_diary(
             setattr(db_diary, key, value)
 
     if diary_update.images is not None:
+        # 删除旧图片（包括图床上的图片）
+        old_images = db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).all()
+        for old_image in old_images:
+            await delete_diary_image(old_image.image_url)
+        
+        # 删除数据库记录
         db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).delete()
+        
+        # 添加新图片
         for i, image_data in enumerate(diary_update.images):
             db_image = DiaryImage(
                 diary_id=diary_id, image_url=image_data.image_url, image_order=i
@@ -209,7 +248,7 @@ def update_diary(
 
 
 @router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_diary(
+async def delete_diary(
     diary_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -227,6 +266,15 @@ def delete_diary(
             status_code=status.HTTP_404_NOT_FOUND, detail="Diary not found"
         )
 
+    # 删除日记相关的图片
+    diary_images = db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).all()
+    for image in diary_images:
+        await delete_diary_image(image.image_url)
+    
+    # 手动删除图片记录，避免级联删除冲突
+    db.query(DiaryImage).filter(DiaryImage.diary_id == diary_id).delete()
+    
+    # 删除日记记录
     db.delete(db_diary)
     db.commit()
     return
