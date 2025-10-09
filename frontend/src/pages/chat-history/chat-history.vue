@@ -23,7 +23,8 @@
                             <text class="picker-icon">{{ getCurrentIcon() }}</text>
                         </view>
                         <view class="picker-text-wrapper">
-                            <text :class="['picker-text', activeTab ? 'selected' : 'placeholder']">{{ getCurrentText() }}</text>
+                            <text :class="['picker-text', activeTab ? 'selected' : 'placeholder']">{{ getCurrentText()
+                                }}</text>
                             <text class="picker-hint" v-if="!activeTab">轻触选择对话类型</text>
                         </view>
                     </view>
@@ -181,7 +182,7 @@ export default {
                 `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` :
                 '0, 122, 255'
         },
-        
+
         getTabDescription(tabType) {
             const tab = this.tabs.find(t => t.type === tabType)
             return tab ? tab.description : ''
@@ -214,13 +215,13 @@ export default {
             if (!this.activeTab) {
                 return;
             }
-            
+
             try {
                 const token = uni.getStorageSync('access_token');
                 if (!token) {
                     return;
                 }
-                
+
                 const response = await uni.request({
                     url: `${BASE_URL}/chat/chat-sessions?scene=${this.activeTab}`,
                     method: 'GET',
@@ -308,14 +309,14 @@ export default {
         viewHistoryDetail(item) {
             // 跳转到对应的对话页面并传入历史记录
             const pageMap = {
-                'self-dialog': '/pages/self-dialog/self-dialog',
-                'emotional-growth': '/pages/emotional-growth/emotional-growth',
-                'academic-stress': '/pages/academic-stress/academic-stress',
-                'social-anxiety': '/pages/social-anxiety/social-anxiety',
-                'future-planning': '/pages/future-planning/future-planning',
-                'life-balance': '/pages/life-balance/life-balance',
-                'love-experiment': '/pages/love-experiment/love-experiment',
-                'self-love': '/pages/love-yourself/love-yourself'
+                'self-dialog': '/pages/AI-emotional-chat/self-dialog/self-dialog',
+                'emotional-growth': '/pages/AI-emotional-chat/emotional-growth/emotional-growth',
+                'academic-stress': '/pages/AI-emotional-chat/academic-stress/academic-stress',
+                'social-anxiety': '/pages/AI-emotional-chat/social-anxiety/social-anxiety',
+                'future-planning': '/pages/AI-emotional-chat/future-planning/future-planning',
+                'life-balance': '/pages/AI-emotional-chat/life-balance/life-balance',
+                'love-experiment': '/pages/AI-emotional-chat/love-experiment/love-experiment',
+                'self-love': '/pages/AI-emotional-chat/love-yourself/love-yourself'
             }
 
             const targetPage = pageMap[item.scene] || pageMap[this.activeTab]
@@ -492,7 +493,7 @@ export default {
     justify-content: space-between;
     backdrop-filter: blur(10rpx);
     border: 2rpx solid #f0ead6;
-    box-shadow: 
+    box-shadow:
         0 8rpx 32rpx rgba(139, 105, 20, 0.08),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
     transition: all 0.3s ease;
@@ -500,7 +501,7 @@ export default {
 
 .picker-display:active {
     transform: scale(0.98);
-    box-shadow: 
+    box-shadow:
         0 4rpx 16rpx rgba(139, 105, 20, 0.12),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.6);
 }
@@ -594,7 +595,7 @@ export default {
     background: linear-gradient(135deg, #fffef8 0%, #faf7f0 50%, #f5f1e8 100%);
     backdrop-filter: blur(10rpx);
     border: 2rpx solid #f0ead6;
-    box-shadow: 
+    box-shadow:
         0 12rpx 40rpx rgba(139, 105, 20, 0.12),
         0 4rpx 16rpx rgba(139, 105, 20, 0.08);
     transition: all 0.3s ease;
@@ -618,7 +619,7 @@ export default {
 
 .history-item:active {
     transform: translateY(6rpx);
-    box-shadow: 
+    box-shadow:
         0 8rpx 25rpx rgba(139, 105, 20, 0.15),
         0 2rpx 8rpx rgba(139, 105, 20, 0.1);
 }
@@ -859,8 +860,15 @@ export default {
 }
 
 @keyframes ripple {
-    0% { transform: scale(0.3); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 0; }
+    0% {
+        transform: scale(0.3);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
 }
 
 .empty-title {
@@ -914,6 +922,7 @@ export default {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
