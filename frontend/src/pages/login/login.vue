@@ -18,7 +18,7 @@
                 <view class="password-input-container">
                     <input class="input" placeholder="请输入密码" :password="!showPassword" v-model="password" />
                     <text class="eye-icon" @click="showPassword = !showPassword">{{ showPassword ? '👁️' : '👁️‍🗨️'
-                        }}</text>
+                    }}</text>
                 </view>
             </view>
             <button class="login-btn" @click="handleLogin">登录</button>
@@ -64,18 +64,17 @@ export default {
                     // 保存token
                     storage.setToken(res.access_token);
 
-                    // 登录成功，跳转到主页
-                    uni.showToast({
-                        title: '登录成功',
-                        icon: 'success'
-                    })
+                    // 保存星星奖励信息到本地存储，供home页面使用
+                    storage.setStarReward({
+                        awarded: res.star_awarded || false,
+                        points: res.star_points || 0,
+                        message: res.star_message || "欢迎回来~ 💫"
+                    });
 
-                    // 延迟跳转
-                    setTimeout(() => {
-                        uni.switchTab({
-                            url: '/pages/home/home'
-                        })
-                    }, 1000)
+                    // 直接跳转到主页，不显示"登录成功"提示
+                    uni.switchTab({
+                        url: '/pages/home/home'
+                    })
                 } else {
                     uni.showToast({
                         title: '登录失败',
