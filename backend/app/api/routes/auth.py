@@ -47,6 +47,17 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+        
+        # 为新用户创建初始积分记录
+        try:
+            from app.services.star_point_service import get_star_point_service
+            service = get_star_point_service(db)
+            service.create_user_points(db_user.user_id, initial_points=10)
+            print(f"为新用户 {db_user.username} 创建了初始积分记录")
+        except Exception as e:
+            print(f"创建用户积分记录失败: {e}")
+            # 积分记录创建失败不影响用户注册
+        
         return db_user
     except IntegrityError:
         db.rollback()
@@ -75,6 +86,24 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     from sqlalchemy import func
     db_user.last_login = func.now()
     db.commit()
+    
+    # 尝试奖励每日登录积分
+    try:
+        from app.api.routes.star_points import award_user_points
+        from app.utils.star_point_types import StarPointAction, SourceType
+        
+        success, message, points = award_user_points(
+            db=db,
+            user_id=db_user.user_id,
+            action=StarPointAction.DAILY_LOGIN,
+            source_type=SourceType.LOGIN
+        )
+        
+        if success:
+            print(f"用户 {db_user.username} 登录获得 {points} 个星星")
+    except Exception as e:
+        # 积分奖励失败不影响登录
+        print(f"每日登录积分奖励失败: {e}")
     
     # 创建访问令牌
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

@@ -36,6 +36,7 @@ from app.api.routes import (
     user_diary_backgrounds,
     interpersonal_practice,
     protection_drill_reports,
+    star_points,
 )
 from app.api import protection_drill
 
@@ -86,4 +87,8 @@ api_router.include_router(
 api_router.include_router(
     protection_drill.router,
     tags=["protection-drill"]
+)
+api_router.include_router(
+    star_points.router,
+    tags=["星星积分"]
 )
