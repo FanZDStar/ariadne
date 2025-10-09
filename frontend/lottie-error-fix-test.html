@@ -310,7 +310,7 @@
           const availableActions = [];
 
           for (let i = 1; i <= character.actionCount; i++) {
-            const animationPath = `/static/animations/${this.currentCharacterId}/${i}/data.json`;
+            const animationPath = `/src/static/animations/${this.currentCharacterId}/${i}/data.json`;
 
             try {
               const response = await fetch(animationPath);
@@ -381,7 +381,7 @@
         }
 
         playLottieAnimation(actionNumber) {
-          const animationPath = `/static/animations/${this.currentCharacterId}/${actionNumber}/data.json`;
+          const animationPath = `/src/static/animations/${this.currentCharacterId}/${actionNumber}/data.json`;
           this.log(`开始播放 Lottie 动画: ${animationPath}`);
 
           this.isPlayingAnimation = true;
