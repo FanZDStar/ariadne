@@ -123,7 +123,7 @@ export default {
 
         goToContext() {
             uni.navigateTo({
-                url: '/pages/chat-context/chat-context'
+                url: '/pages/AI-emotional-chat/chat-context/chat-context'
             })
         },
 

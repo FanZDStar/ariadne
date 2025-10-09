@@ -82,35 +82,35 @@ export default {
             // 通用的场景导航方法
             const sceneConfig = {
                 'self-dialog': {
-                    url: '/pages/self-dialog/self-dialog',
+                    url: '/pages/AI-emotional-chat/self-dialog/self-dialog',
                     scene: 'self-dialog'
                 },
                 'love-experiment': {
-                    url: '/pages/love-experiment/love-experiment',
+                    url: '/pages/AI-emotional-chat/love-experiment/love-experiment',
                     scene: 'love-experiment'
                 },
                 'self-love': {
-                    url: '/pages/love-yourself/love-yourself',
+                    url: '/pages/AI-emotional-chat/love-yourself/love-yourself',
                     scene: 'self-love'
                 },
                 'emotional-growth': {
-                    url: '/pages/emotional-growth/emotional-growth',
+                    url: '/pages/AI-emotional-chat/emotional-growth/emotional-growth',
                     scene: 'emotional-growth'
                 },
                 'academic-stress': {
-                    url: '/pages/academic-stress/academic-stress',
+                    url: '/pages/AI-emotional-chat/academic-stress/academic-stress',
                     scene: 'academic-stress'
                 },
                 'social-anxiety': {
-                    url: '/pages/social-anxiety/social-anxiety',
+                    url: '/pages/AI-emotional-chat/social-anxiety/social-anxiety',
                     scene: 'social-anxiety'
                 },
                 'future-planning': {
-                    url: '/pages/future-planning/future-planning',
+                    url: '/pages/AI-emotional-chat/future-planning/future-planning',
                     scene: 'future-planning'
                 },
                 'life-balance': {
-                    url: '/pages/life-balance/life-balance',
+                    url: '/pages/AI-emotional-chat/life-balance/life-balance',
                     scene: 'life-balance'
                 }
             };
@@ -121,7 +121,7 @@ export default {
                 });
             }
         },
-        
+
         goToSelfDialog() {
             this.navigateToScene('self-dialog');
         },
@@ -191,7 +191,7 @@ export default {
     border-radius: 24rpx;
     padding: 30rpx;
     border: 3rpx solid;
-    box-shadow: 
+    box-shadow:
         0 2rpx 8rpx rgba(0, 0, 0, 0.06),
         0 8rpx 24rpx rgba(0, 0, 0, 0.04),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
@@ -202,7 +202,7 @@ export default {
 .section:nth-child(1) {
     background-color: #f8fbff;
     border-color: #e6f2ff;
-    box-shadow: 
+    box-shadow:
         0 2rpx 8rpx rgba(135, 206, 250, 0.08),
         0 8rpx 24rpx rgba(135, 206, 250, 0.06),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
@@ -216,10 +216,10 @@ export default {
     right: 0;
     bottom: 0;
     border-radius: 24rpx;
-    background: linear-gradient(135deg, 
-        rgba(173, 216, 230, 0.3) 0%, 
-        rgba(176, 224, 230, 0.15) 50%, 
-        rgba(230, 242, 255, 0.3) 100%);
+    background: linear-gradient(135deg,
+            rgba(173, 216, 230, 0.3) 0%,
+            rgba(176, 224, 230, 0.15) 50%,
+            rgba(230, 242, 255, 0.3) 100%);
     pointer-events: none;
 }
 
@@ -231,7 +231,7 @@ export default {
 .section:nth-child(2) {
     background-color: #fffef8;
     border-color: #f5f3e7;
-    box-shadow: 
+    box-shadow:
         0 2rpx 8rpx rgba(218, 165, 32, 0.08),
         0 8rpx 24rpx rgba(218, 165, 32, 0.06),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
@@ -245,10 +245,10 @@ export default {
     right: 0;
     bottom: 0;
     border-radius: 24rpx;
-    background: linear-gradient(135deg, 
-        rgba(255, 248, 220, 0.4) 0%, 
-        rgba(250, 245, 220, 0.2) 50%, 
-        rgba(245, 243, 231, 0.4) 100%);
+    background: linear-gradient(135deg,
+            rgba(255, 248, 220, 0.4) 0%,
+            rgba(250, 245, 220, 0.2) 50%,
+            rgba(245, 243, 231, 0.4) 100%);
     pointer-events: none;
 }
 
@@ -260,7 +260,7 @@ export default {
 .section:nth-child(3) {
     background-color: #f8fff8;
     border-color: #e7f5e7;
-    box-shadow: 
+    box-shadow:
         0 2rpx 8rpx rgba(144, 238, 144, 0.08),
         0 8rpx 24rpx rgba(144, 238, 144, 0.06),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
@@ -274,10 +274,10 @@ export default {
     right: 0;
     bottom: 0;
     border-radius: 24rpx;
-    background: linear-gradient(135deg, 
-        rgba(240, 255, 240, 0.4) 0%, 
-        rgba(220, 245, 220, 0.2) 50%, 
-        rgba(231, 245, 231, 0.4) 100%);
+    background: linear-gradient(135deg,
+            rgba(240, 255, 240, 0.4) 0%,
+            rgba(220, 245, 220, 0.2) 50%,
+            rgba(231, 245, 231, 0.4) 100%);
     pointer-events: none;
 }
 
@@ -311,7 +311,7 @@ export default {
     align-items: center;
     text-align: center;
     border: 2rpx solid #f0f0f0;
-    box-shadow: 
+    box-shadow:
         0 4rpx 12rpx rgba(0, 0, 0, 0.08),
         0 2rpx 6rpx rgba(0, 0, 0, 0.06),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.9);
@@ -328,16 +328,16 @@ export default {
     right: 0;
     bottom: 0;
     border-radius: 20rpx;
-    background: linear-gradient(135deg, 
-        rgba(248, 249, 250, 0.3) 0%, 
-        rgba(245, 246, 247, 0.2) 100%);
+    background: linear-gradient(135deg,
+            rgba(248, 249, 250, 0.3) 0%,
+            rgba(245, 246, 247, 0.2) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .context-card:hover {
     transform: translateY(-4rpx);
-    box-shadow: 
+    box-shadow:
         0 8rpx 24rpx rgba(0, 0, 0, 0.12),
         0 4rpx 12rpx rgba(0, 0, 0, 0.10),
         inset 0 1rpx 0 rgba(255, 255, 255, 0.9);
@@ -350,7 +350,7 @@ export default {
 
 .context-card:active {
     transform: translateY(-2rpx);
-    box-shadow: 
+    box-shadow:
         0 6rpx 18rpx rgba(0, 0, 0, 0.15),
         0 3rpx 9rpx rgba(0, 0, 0, 0.12);
 }
@@ -390,25 +390,25 @@ export default {
         grid-template-columns: 1fr;
         gap: 15rpx;
     }
-    
+
     .section {
         padding: 25rpx;
     }
-    
+
     .context-card {
         padding: 20rpx 15rpx;
         min-height: 120rpx;
     }
-    
+
     .card-icon {
         font-size: 40rpx;
         height: 50rpx;
     }
-    
+
     .card-title {
         font-size: 24rpx;
     }
-    
+
     .card-desc {
         font-size: 18rpx;
     }

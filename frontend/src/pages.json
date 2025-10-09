@@ -33,7 +33,7 @@
       }
     },
     {
-      "path": "pages/chat-context/chat-context",
+      "path": "pages/AI-emotional-chat/chat-context/chat-context",
       "style": {
         "navigationBarTitleText": ""
       }
@@ -61,37 +61,37 @@
       }
     },
     {
-      "path": "pages/self-dialog/self-dialog",
+      "path": "pages/AI-emotional-chat/self-dialog/self-dialog",
       "style": {
         "navigationBarTitleText": "与自己对话"
       }
     },
     {
-      "path": "pages/academic-stress/academic-stress",
+      "path": "pages/AI-emotional-chat/academic-stress/academic-stress",
       "style": {
         "navigationBarTitleText": "学业压力疏导"
       }
     },
     {
-      "path": "pages/social-anxiety/social-anxiety",
+      "path": "pages/AI-emotional-chat/social-anxiety/social-anxiety",
       "style": {
         "navigationBarTitleText": "社交焦虑陪伴"
       }
     },
     {
-      "path": "pages/future-planning/future-planning",
+      "path": "pages/AI-emotional-chat/future-planning/future-planning",
       "style": {
         "navigationBarTitleText": "未来规划指导"
       }
     },
     {
-      "path": "pages/emotional-growth/emotional-growth",
+      "path": "pages/AI-emotional-chat/emotional-growth/emotional-growth",
       "style": {
         "navigationBarTitleText": "情感成长陪伴"
       }
     },
     {
-      "path": "pages/life-balance/life-balance",
+      "path": "pages/AI-emotional-chat/life-balance/life-balance",
       "style": {
         "navigationBarTitleText": "生活平衡教练"
       }
@@ -158,13 +158,13 @@
       }
     },
     {
-      "path": "pages/love-experiment/love-experiment",
+      "path": "pages/AI-emotional-chat/love-experiment/love-experiment",
       "style": {
         "navigationBarTitleText": "心语练习"
       }
     },
     {
-      "path": "pages/love-yourself/love-yourself",
+      "path": "pages/AI-emotional-chat/love-yourself/love-yourself",
       "style": {
         "navigationBarTitleText": "爱他人先爱自己"
       }

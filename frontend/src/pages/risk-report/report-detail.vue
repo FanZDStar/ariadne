@@ -75,34 +75,20 @@
       </view>
 
       <!-- 检测到的关键词 -->
-      <view
-        class="keywords-section"
-        v-if="report.detected_keywords && report.detected_keywords.length > 0"
-      >
+      <view class="keywords-section" v-if="report.detected_keywords && report.detected_keywords.length > 0">
         <text class="section-title">🔍 检测关键词</text>
         <view class="keywords-list">
-          <text
-            class="keyword-tag"
-            v-for="(keyword, index) in report.detected_keywords"
-            :key="index"
-          >
+          <text class="keyword-tag" v-for="(keyword, index) in report.detected_keywords" :key="index">
             {{ keyword }}
           </text>
         </view>
       </view>
 
       <!-- 专业建议 -->
-      <view
-        class="recommendations-section"
-        v-if="report.recommendations && report.recommendations.length > 0"
-      >
+      <view class="recommendations-section" v-if="report.recommendations && report.recommendations.length > 0">
         <text class="section-title">💡 专业建议</text>
         <view class="recommendations-list">
-          <view
-            class="recommendation-item"
-            v-for="(rec, index) in report.recommendations"
-            :key="index"
-          >
+          <view class="recommendation-item" v-for="(rec, index) in report.recommendations" :key="index">
             <text class="rec-bullet">•</text>
             <text class="rec-text">{{ rec }}</text>
           </view>
@@ -161,12 +147,8 @@
     </view>
 
     <!-- 回到顶部组件 -->
-    <BackToTop
-      ref="backToTop"
-      :bottom="150"
-      @start-scroll-listener="startScrollListener"
-      @remove-scroll-listener="removeScrollListener"
-    />
+    <BackToTop ref="backToTop" :bottom="150" @start-scroll-listener="startScrollListener"
+      @remove-scroll-listener="removeScrollListener" />
   </view>
 </template>
 
@@ -204,9 +186,8 @@ export default {
       this.loading = true;
       try {
         const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/risk-assessment/reports/${this.reportId}`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/risk-assessment/reports/${this.reportId}`,
           method: "GET",
           header: {
             Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
@@ -326,7 +307,7 @@ export default {
      */
     goToEmotionalChat() {
       uni.navigateTo({
-        url: "/pages/chat-context/chat-context",
+        url: "/pages/AI-emotional-chat/chat-context/chat-context",
       });
     },
 
