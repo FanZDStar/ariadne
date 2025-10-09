@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import json
 import aiohttp
 import re
@@ -12,14 +12,71 @@ from app.models.chat_history import ChatSession, ChatMessage
 from app.schemas.chat_history import (
     ChatSession as ChatSessionSchema, 
     SaveChatRequest, 
-    ChatHistoryResponse
+    ChatHistoryResponse,
+    ChatSessionWithStarResponse,
+    StarRewardInfo
 )
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.core.config import settings
 from app.services.psychological_assessment_service import psychological_assessment_service
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
 
 router = APIRouter()
+
+def count_rewarded_user_messages_today(user_id: int, db: Session) -> int:
+    """统计用户今天已经奖励过的消息数量，通过daily_star_limits表的emotion_chat_count字段"""
+    star_service = StarPointService(db)
+    daily_limits = star_service.get_daily_limits(user_id)
+    return daily_limits.emotion_chat_count
+
+def get_new_user_messages_count(session_id: Optional[int], request_messages: list, db: Session) -> int:
+    """
+    通过对比数据库中现有消息数量来识别新增的用户消息数量
+    返回: 新增的用户消息数量
+    """
+    if not session_id:
+        # 新会话，所有用户消息都是新的
+        return sum(1 for msg in request_messages if msg.role == "user")
+    
+    # 获取数据库中该会话现有的消息数量
+    current_db_message_count = db.query(ChatMessage).filter(
+        ChatMessage.session_id == session_id
+    ).count()
+    
+    # 前端传来的消息总数
+    total_messages_from_frontend = len(request_messages)
+    
+    # 计算新增消息数量
+    new_messages_count = total_messages_from_frontend - current_db_message_count
+    
+    if new_messages_count <= 0:
+        return 0
+    
+    # 从新增消息中统计用户消息数量
+    new_messages = request_messages[-new_messages_count:]
+    new_user_messages = sum(1 for msg in new_messages if msg.role == "user")
+    
+    print(f"📊 会话 {session_id}: 数据库现有 {current_db_message_count} 条消息，前端传来 {total_messages_from_frontend} 条消息")
+    print(f"📊 新增 {new_messages_count} 条消息，其中 {new_user_messages} 条用户消息")
+    
+    return new_user_messages
+
+def calculate_single_message_reward(message_number: int) -> int:
+    """
+    计算单条消息的奖励
+    返回: 奖励星点数
+    """
+    if message_number <= 3:
+        # 前3条消息，每条奖励2星点
+        return 2
+    elif message_number <= 10:
+        # 第4-10条消息，每条奖励1星点
+        return 1
+    else:
+        # 超过10条消息不再奖励
+        return 0
 
 def detect_risk_keywords(content: str) -> bool:
     """检测消息中是否包含风险关键词"""
@@ -130,7 +187,7 @@ async def generate_title_with_ai(messages: List[dict]) -> str:
         print(f"AI标题生成失败: {e}")
         return None
 
-@router.post("/save-chat", response_model=ChatSessionSchema)
+@router.post("/save-chat", response_model=ChatSessionWithStarResponse)
 async def save_chat_session(
     request: SaveChatRequest,
     background_tasks: BackgroundTasks,
@@ -182,6 +239,12 @@ async def save_chat_session(
         # 更新时间
         existing_session.updated_at = datetime.utcnow()
         
+        # ⚠️ 重要：在删除消息之前先计算新增的用户消息数量
+        new_user_messages = get_new_user_messages_count(request.session_id, request.messages, db)
+        
+        # 统计用户今天已经奖励过的消息数量
+        user_message_count_today = count_rewarded_user_messages_today(current_user.user_id, db)
+        
         # 删除原有消息
         deleted_count = db.query(ChatMessage).filter(ChatMessage.session_id == request.session_id).delete()
         print(f"🗑️ 删除原有消息数量: {deleted_count}")
@@ -196,6 +259,84 @@ async def save_chat_session(
             db.add(chat_message)
             print(f"➕ 添加消息 {i+1}: {msg.role} - {msg.content[:50]}...")
         
+        # 初始化奖励信息
+        star_reward = StarRewardInfo()
+        
+        # 只有当确实有新的用户消息时才进行处理
+        if new_user_messages > 0:
+            try:
+                star_service = StarPointService(db)
+                user_points = star_service.get_or_create_user_points(current_user.user_id)
+                daily_limits = star_service.get_daily_limits(current_user.user_id)
+                
+                # 计算这次新增用户消息应该获得的奖励
+                total_reward_points = 0
+                
+                for i in range(new_user_messages):
+                    # 计算这是用户今天第几条消息（基于已奖励的消息数量）
+                    message_number = user_message_count_today + i + 1
+                    reward_for_this_message = calculate_single_message_reward(message_number)
+                    total_reward_points += reward_for_this_message
+                    
+                    print(f"📝 用户消息 #{message_number}: +{reward_for_this_message}星点")
+                
+                # 前7条用户消息显示toast提示
+                show_toast = (user_message_count_today + new_user_messages) <= 7
+                
+                # 检查今日聊天积分限制（最多10星点）
+                if daily_limits.emotion_chat_points + total_reward_points <= 10 and total_reward_points > 0:
+                    # 更新用户积分
+                    user_points.current_points += total_reward_points
+                    user_points.total_earned += total_reward_points
+                    
+                    # 更新每日限制
+                    daily_limits.emotion_chat_count += new_user_messages
+                    daily_limits.emotion_chat_points += total_reward_points
+                    
+                    # 添加积分日志
+                    star_service.add_point_log(
+                        user_id=current_user.user_id,
+                        action=StarPointAction.EMOTION_CHAT_PREMIUM if user_message_count_today + 1 <= 3 else StarPointAction.EMOTION_CHAT_NORMAL,
+                        points_change=total_reward_points,
+                        source_type=SourceType.CHAT,
+                        source_id=str(existing_session.id)
+                    )
+                    
+                    star_reward = StarRewardInfo(
+                        earned_points=total_reward_points,
+                        is_rewarded=True,
+                        action_type="emotion_chat",
+                        description=f"聊天互动获得{total_reward_points}星点",
+                        show_toast=show_toast
+                    )
+                    print(f"⭐ 聊天奖励成功: {total_reward_points}星点")
+                else:
+                    # 没有获得奖励，但前5条消息仍需要显示提示
+                    if total_reward_points == 0:
+                        # 更新消息计数（即使没有奖励积分）
+                        daily_limits.emotion_chat_count += new_user_messages
+                        
+                        star_reward = StarRewardInfo(
+                            earned_points=0,
+                            is_rewarded=False,
+                            action_type="emotion_chat",
+                            description="聊天互动暂无奖励",
+                            show_toast=show_toast
+                        )
+                        print(f"⭐ 聊天消息超出奖励范围")
+                    else:
+                        # 达到积分上限
+                        star_reward = StarRewardInfo(
+                            earned_points=0,
+                            is_rewarded=False,
+                            action_type="emotion_chat",
+                            description="今日聊天奖励已达上限",
+                            show_toast=show_toast
+                        )
+                        print(f"⭐ 聊天奖励已达到今日上限(10星点)")
+            except Exception as e:
+                print(f"❌ 聊天奖励失败: {str(e)}")
+        
         db.commit()
         db.refresh(existing_session)
         print(f"✅ 会话更新完成: {existing_session.id}")
@@ -205,7 +346,9 @@ async def save_chat_session(
             print(f"🧠 触发心理评估报告生成 - 会话ID: {existing_session.id}")
             background_tasks.add_task(generate_psychological_report_task, existing_session.id)
         
-        return existing_session
+        # 创建包含星点奖励信息的响应
+        result = ChatSessionWithStarResponse(**existing_session.__dict__, star_reward=star_reward)
+        return result
     
     # 如果没有提供session_id，则创建新会话
     # 检查用户在该场景下是否已有6个对话记录，如果是则删除最旧的
@@ -268,6 +411,90 @@ async def save_chat_session(
         )
         db.add(chat_message)
     
+    # 对于新会话，所有用户消息都是新的
+    new_user_messages = sum(1 for msg in request.messages if msg.role == "user")
+    
+    # 统计用户今天已经奖励过的消息数量
+    user_message_count_today = count_rewarded_user_messages_today(current_user.user_id, db)
+    
+    # 初始化奖励信息
+    star_reward = StarRewardInfo()
+    
+    # 只有当确实有新的用户消息时才进行处理
+    if new_user_messages > 0:
+        try:
+            star_service = StarPointService(db)
+            user_points = star_service.get_or_create_user_points(current_user.user_id)
+            daily_limits = star_service.get_daily_limits(current_user.user_id)
+            
+            # 计算这次新增用户消息应该获得的奖励
+            total_reward_points = 0
+            
+            for i in range(new_user_messages):
+                # 计算这是用户今天第几条消息（基于已奖励的消息数量）
+                message_number = user_message_count_today + i + 1
+                reward_for_this_message = calculate_single_message_reward(message_number)
+                total_reward_points += reward_for_this_message
+                
+                print(f"📝 用户消息 #{message_number}: +{reward_for_this_message}星点")
+            
+            # 前7条用户消息显示toast提示
+            show_toast = (user_message_count_today + new_user_messages) <= 7
+            
+            # 检查今日聊天积分限制（最多10星点）
+            if daily_limits.emotion_chat_points + total_reward_points <= 10 and total_reward_points > 0:
+                # 更新用户积分
+                user_points.current_points += total_reward_points
+                user_points.total_earned += total_reward_points
+                
+                # 更新每日限制
+                daily_limits.emotion_chat_count += new_user_messages
+                daily_limits.emotion_chat_points += total_reward_points
+                
+                # 添加积分日志
+                star_service.add_point_log(
+                    user_id=current_user.user_id,
+                    action=StarPointAction.EMOTION_CHAT_PREMIUM if user_message_count_today + 1 <= 3 else StarPointAction.EMOTION_CHAT_NORMAL,
+                    points_change=total_reward_points,
+                    source_type=SourceType.CHAT,
+                    source_id=str(chat_session.id)
+                )
+                
+                star_reward = StarRewardInfo(
+                    earned_points=total_reward_points,
+                    is_rewarded=True,
+                    action_type="emotion_chat",
+                    description=f"聊天互动获得{total_reward_points}星点",
+                    show_toast=show_toast
+                )
+                print(f"⭐ 聊天奖励成功: {total_reward_points}星点")
+            else:
+                # 没有获得奖励，但前5条消息仍需要显示提示
+                if total_reward_points == 0:
+                    # 更新消息计数（即使没有奖励积分）
+                    daily_limits.emotion_chat_count += new_user_messages
+                    
+                    star_reward = StarRewardInfo(
+                        earned_points=0,
+                        is_rewarded=False,
+                        action_type="emotion_chat",
+                        description="聊天互动暂无奖励",
+                        show_toast=show_toast
+                    )
+                    print(f"⭐ 聊天消息超出奖励范围")
+                else:
+                    # 达到积分上限
+                    star_reward = StarRewardInfo(
+                        earned_points=0,
+                        is_rewarded=False,
+                        action_type="emotion_chat",
+                        description="今日聊天奖励已达上限",
+                        show_toast=show_toast
+                    )
+                    print(f"⭐ 聊天奖励已达到今日上限(10星点)")
+        except Exception as e:
+            print(f"❌ 聊天奖励失败: {str(e)}")
+    
     db.commit()
     db.refresh(chat_session)
     
@@ -276,7 +503,9 @@ async def save_chat_session(
         print(f"🧠 触发心理评估报告生成 - 新会话ID: {chat_session.id}")
         background_tasks.add_task(generate_psychological_report_task, chat_session.id)
     
-    return chat_session
+    # 创建包含星点奖励信息的响应
+    result = ChatSessionWithStarResponse(**chat_session.__dict__, star_reward=star_reward)
+    return result
 @router.get("/chat-sessions", response_model=List[ChatSessionSchema])
 async def get_chat_sessions(
     scene: Optional[str] = None,

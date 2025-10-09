@@ -439,7 +439,57 @@ ${report.ai_analysis.substring(0, 100)}...
         },
 
         /**
-         * 处理风险会话的自动保存逻辑
+         * 自动保存对话以获取星点奖励
+         */
+        async autoSaveForStarReward() {
+            // 检查token是否存在
+            const token = uni.getStorageSync('access_token');
+            if (!token) {
+                console.error('❌ 没有access_token，无法保存');
+                return;
+            }
+
+            try {
+                console.log('💾 自动保存对话以获取星点奖励...');
+                await this.saveSession();
+            } catch (error) {
+                console.error('❌ 自动保存失败:', error);
+                // 静默失败，不影响用户对话体验
+            }
+        },
+
+        /**
+         * 处理风险相关逻辑（不包括常规保存）
+         */
+        async handleRiskLogic() {
+            if (this.sessionId && this.riskDetectedInSession) {
+                // 如果是因为检测到风险而触发，检查是否生成了心理评估报告
+                setTimeout(async () => {
+                    try {
+                        const hasReport = await this.checkSessionReport();
+                        if (hasReport) {
+                            console.log('✅ 检测到新的心理评估报告');
+                            // 显示温和的提示，不打断用户的对话流程
+                            uni.showToast({
+                                title: '已生成心理评估报告',
+                                icon: 'none',
+                                duration: 2000
+                            });
+
+                            // 延迟显示报告详情
+                            setTimeout(() => {
+                                this.showPsychologicalReport();
+                            }, 3000);
+                        }
+                    } catch (error) {
+                        console.log('检查心理评估报告失败:', error);
+                    }
+                }, 5000); // 5秒后检查，给AI生成报告足够时间
+            }
+        },
+
+        /**
+         * 处理风险会话的自动保存逻辑（保留原有逻辑用于兼容）
          */
         async handleRiskSessionSave() {
             // 如果检测到风险或者会话已启用自动保存，则进行保存
@@ -577,14 +627,14 @@ ${report.ai_analysis.substring(0, 100)}...
 
                 this.hasNewMessages = true;
 
-                // 如果检测到风险或会话已启用自动保存，自动保存完整对话
-                console.log('🔍 检查是否需要自动保存...');
-                console.log('riskDetectedInSession:', this.riskDetectedInSession);
-                console.log('autoSaveEnabled:', this.autoSaveEnabled);
+                // 每次对话后自动保存以触发星点奖励
+                console.log('� 自动保存对话以获取星点奖励...');
+                await this.autoSaveForStarReward();
 
+                // 如果检测到风险或会话已启用自动保存，处理风险相关逻辑
                 if (this.riskDetectedInSession || this.autoSaveEnabled) {
-                    console.log('🚨 触发自动保存条件，开始保存对话...');
-                    await this.handleRiskSessionSave();
+                    console.log('🚨 触发风险处理逻辑...');
+                    await this.handleRiskLogic();
                 }
 
             } catch (error) {
@@ -645,6 +695,11 @@ ${report.ai_analysis.substring(0, 100)}...
                         console.log('设置新会话ID:', this.sessionId);
                     }
 
+                    // 处理星点奖励
+                    if (response.data.star_reward && response.data.star_reward.is_rewarded) {
+                        this.handleStarReward(response.data.star_reward);
+                    }
+
                     // 重置新消息标志
                     this.hasNewMessages = false;
 
@@ -656,10 +711,20 @@ ${report.ai_analysis.substring(0, 100)}...
                         await this.enableSessionAutoSave();
                     }
 
-                    uni.showToast({
-                        title: '保存成功',
-                        icon: 'success'
-                    });
+                    // 处理星点奖励
+                    if (response.data.star_reward && response.data.star_reward.is_rewarded && response.data.star_reward.show_toast) {
+                        const reward = response.data.star_reward;
+                        uni.showToast({
+                            title: `${reward.description}！`,
+                            icon: 'success',
+                            duration: 2000
+                        });
+                    } else {
+                        uni.showToast({
+                            title: '保存成功',
+                            icon: 'success'
+                        });
+                    }
 
                     // 保存成功后，延迟检查是否生成了心理评估报告
                     setTimeout(async () => {
@@ -744,6 +809,81 @@ ${report.ai_analysis.substring(0, 100)}...
                 }
             } catch (error) {
                 console.error('加载历史会话失败:', error);
+            }
+        },
+
+        /**
+         * 自动保存对话以获取星点奖励
+         */
+        async autoSaveForStarReward() {
+            try {
+                console.log('💫 开始自动保存以获取星点奖励...');
+                const requestData = {
+                    scene: this.scene,
+                    messages: this.chatHistory,
+                    session_id: this.sessionId
+                };
+
+                const response = await uni.request({
+                    url: `${BASE_URL}/chat/save-chat`,
+                    method: 'POST',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: requestData
+                });
+
+                if (response.statusCode === 200) {
+                    if (!this.sessionId) {
+                        this.sessionId = response.data.id;
+                        console.log('设置新会话ID:', this.sessionId);
+                    }
+
+                    // 处理星点奖励
+                    if (response.data.star_reward && response.data.star_reward.is_rewarded) {
+                        this.handleStarReward(response.data.star_reward);
+                    }
+
+                    console.log('✅ 自动保存成功');
+                } else {
+                    console.error('❌ 自动保存失败:', response);
+                }
+            } catch (error) {
+                console.error('❌ 自动保存异常:', error);
+            }
+        },
+
+        /**
+         * 处理星点奖励
+         */
+        handleStarReward(rewardInfo) {
+            console.log('⭐ 收到星点奖励:', rewardInfo);
+
+            // 只在前5条消息时显示toast提示
+            if (rewardInfo.show_toast) {
+                uni.showToast({
+                    title: `+${rewardInfo.earned_points}⭐`,
+                    icon: 'none',
+                    duration: 2000
+                });
+
+                console.log(`⭐ 显示奖励提示: +${rewardInfo.earned_points}星点`);
+            } else {
+                console.log(`⭐ 获得奖励但不显示提示: +${rewardInfo.earned_points}星点`);
+            }
+        },
+
+        /**
+         * 处理风险相关逻辑（从原来的自动保存逻辑中分离）
+         */
+        async handleRiskLogic() {
+            try {
+                // 这里可以添加风险相关的特殊处理逻辑
+                // 比如额外的风险评估、报告生成等
+                console.log('🚨 处理风险相关逻辑...');
+            } catch (error) {
+                console.error('❌ 风险逻辑处理失败:', error);
             }
         },
 

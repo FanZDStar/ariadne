@@ -46,3 +46,15 @@ class SaveChatRequest(BaseModel):
 class ChatHistoryResponse(BaseModel):
     sessions: List[ChatSession]
     total: int
+
+class StarRewardInfo(BaseModel):
+    """星点奖励信息"""
+    earned_points: int = Field(0, description="获得的星点数量")
+    is_rewarded: bool = Field(False, description="是否有奖励")
+    action_type: Optional[str] = Field(None, description="奖励类型")
+    description: Optional[str] = Field(None, description="奖励描述")
+    show_toast: bool = Field(False, description="是否显示奖励提示")
+
+class ChatSessionWithStarResponse(ChatSession):
+    """包含星点奖励信息的聊天会话响应"""
+    star_reward: StarRewardInfo = Field(default_factory=StarRewardInfo, description="星点奖励信息")
