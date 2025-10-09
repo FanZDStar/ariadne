@@ -8,13 +8,8 @@
     <view class="period-selector">
       <scroll-view class="period-scroll" scroll-x>
         <view class="period-list">
-          <view
-            class="period-item"
-            v-for="period in periods"
-            :key="period.value"
-            :class="{ active: currentPeriod === period.value }"
-            @click="selectPeriod(period.value)"
-          >
+          <view class="period-item" v-for="period in periods" :key="period.value"
+            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
             <text class="period-text">{{ period.label }}</text>
           </view>
         </view>
@@ -22,16 +17,11 @@
     </view>
 
     <!-- 情感趋势图表组件 -->
-    <EmotionalTrendChart
-      :currentPeriod="currentPeriod"
-      :periods="periods"
-      :isLoggedIn="isLoggedIn"
-      ref="trendChart"
-    />
+    <EmotionalTrendChart :currentPeriod="currentPeriod" :periods="periods" :isLoggedIn="isLoggedIn" ref="trendChart" />
 
     <!-- 心情晴雨表组件 -->
     <view class="mood-tracker-section">
-      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" />
+      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" @mood-saved="handleMoodSaved" />
     </view>
 
     <!-- 心理测评栏目 -->
@@ -100,6 +90,17 @@ export default {
       uni.navigateTo({
         url: "/pages/psychological-assessment/assessment-list",
       });
+    },
+
+    handleMoodSaved(eventData) {
+// 心情保存成功后的处理
+      console.log('心情保存成功:', eventData);
+      
+      // 如果获得了星星奖励，可以在这里做额外处理
+      if (eventData.star_awarded) {
+        console.log(`获得了 ${eventData.star_points} 个星星!`);
+        // 可以触发一些动画效果或其他奖励展示
+      }
     },
   },
 };
