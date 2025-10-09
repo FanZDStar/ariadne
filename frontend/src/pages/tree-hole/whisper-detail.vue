@@ -250,11 +250,14 @@ export default {
 
       // 如果是匿名且有匿名头像，使用匿名头像
       if (this.whisper.is_anonymous && this.whisper.anonymous_avatar) {
-        return this.whisper.anonymous_avatar;
+        return this.getImageUrl(this.whisper.anonymous_avatar);
       }
 
       // 否则使用用户头像
-      return this.whisper.user?.avatar_url || "/static/avatar.png";
+      const avatarUrl = this.whisper.user?.avatar_url;
+      if (!avatarUrl) return "/static/avatar.png";
+      
+      return this.getImageUrl(avatarUrl);
     },
 
     getDisplayName() {
@@ -319,10 +322,10 @@ export default {
     getCommentAvatarUrl(comment) {
       // 评论头像逻辑，类似悄悄话头像
       if (comment.is_anonymous && comment.anonymous_avatar) {
-        return comment.anonymous_avatar;
+        return this.getImageUrl(comment.anonymous_avatar);
       }
       if (comment.user && comment.user.avatar_url) {
-        return comment.user.avatar_url;
+        return this.getImageUrl(comment.user.avatar_url);
       }
       return "/static/avatar.png";
     },
@@ -594,14 +597,15 @@ export default {
 <style scoped>
 .whisper-detail-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f5f5;
+  padding-top: 60rpx;
   padding-bottom: 140rpx;
   /* 为底部输入框留空间 */
 }
 
 .whisper-card {
   background: #fffbf0;
-  margin: 20rpx;
+  margin: 30rpx 20rpx 20rpx 20rpx;
   border-radius: 24rpx;
   padding: 40rpx;
   box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.15);
@@ -711,7 +715,7 @@ export default {
 
 .images-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200rpx, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 15rpx;
   margin-top: 25rpx;
 }

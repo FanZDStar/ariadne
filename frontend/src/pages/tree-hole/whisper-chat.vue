@@ -57,9 +57,29 @@ export default {
         this.fetchChatHistory();
     },
     methods: {
+        getImageUrl(imageUrl) {
+            if (!imageUrl) return "";
+
+            if (imageUrl.startsWith("http")) {
+                return imageUrl;
+            }
+
+            const baseUrl = process.env.VUE_APP_API_BASE_URL;
+            if (!baseUrl) {
+                console.error("❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!");
+                return imageUrl;
+            }
+
+            if (imageUrl.startsWith("/")) {
+                return baseUrl + imageUrl;
+            } else {
+                return baseUrl + "/" + imageUrl;
+            }
+        },
+        
         getAvatar(userId) {
             if (this.participants[userId]) {
-                return this.participants[userId].anonymous_avatar;
+                return this.getImageUrl(this.participants[userId].anonymous_avatar);
             }
             return '/static/avatar.png'; // Fallback avatar
         },

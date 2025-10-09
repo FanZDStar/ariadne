@@ -460,7 +460,7 @@ export const api = {
 
   // 用户日记背景管理
   getUserDiaryBackgrounds: (token) => {
-    return request("/user-diary-backgrounds", {
+    return request("/user-diary-backgrounds/", {
       method: "GET",
       header: {
         Authorization: `Bearer ${token}`,

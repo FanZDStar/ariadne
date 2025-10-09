@@ -30,5 +30,5 @@ class UserDiaryBackground(Base):
             "file_size": self.file_size,
             "upload_time": self.upload_time.isoformat() if self.upload_time else None,
             "is_active": self.is_active,
-            "url": f"/uploads/diary-backgrounds/{self.filename}"
+            "url": self.file_path if self.file_path.startswith('http') else f"/uploads/diary-backgrounds/{self.filename}"
         }

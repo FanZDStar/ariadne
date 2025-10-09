@@ -23,7 +23,25 @@ MAX_USER_BACKGROUNDS = 4  # 每个用户最多4张背景图片
 # 确保上传目录存在
 UPLOAD_DIR = "uploads/diary-backgrounds"
 if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    os.makedirs(UPLOAD_DIR)
+
+async def delete_image_file(file_path: str):
+    """删除图片文件（图床或本地）"""
+    try:
+        if file_path.startswith('http'):
+            # 图床URL - 暂时跳过删除，因为PICUI API可能不支持删除或需要特殊key格式
+            print(f"[删除] ⚠️  跳过图床图片删除（API不支持）: {file_path}")
+            # TODO: 如果找到正确的删除API，可以重新启用
+        else:
+            # 本地文件
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"[删除] ✅ 本地文件删除成功: {file_path}")
+            else:
+                print(f"[删除] ⚠️  本地文件不存在: {file_path}")
+    except Exception as e:
+        print(f"[删除] ❌ 删除图片失败: {str(e)}")
+        # 不抛出异常，避免阻塞数据库删除
 
 
 @router.get("/", response_model=List[UserDiaryBackgroundResponse])
@@ -77,21 +95,40 @@ async def upload_background(
             detail=f"文件大小超过限制（最大{MAX_FILE_SIZE // 1024 // 1024}MB）"
         )
     
-    # 生成唯一文件名
-    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
-    file_path = os.path.join(UPLOAD_DIR, unique_filename)
-    
     try:
-        # 保存文件
-        with open(file_path, "wb") as buffer:
-            buffer.write(file_content)
+        # 导入图床服务
+        from app.services.picui_service import picui_service
+        
+        # 上传到图床
+        upload_result = await picui_service.upload_image(
+            file_content=file_content,
+            filename=file.filename,
+            permission=0  # 私有图片，仅上传者可见
+        )
+        
+        if upload_result["success"]:
+            # 图床上传成功，使用图床URL
+            print(f"[存储] ✅ 图片已上传到图床，使用图床URL")
+            data = upload_result["data"]
+            file_path = data["url"]  # 使用图床URL作为文件路径
+            unique_filename = data["name"]
+        else:
+            # 图床上传失败，回退到本地存储
+            print(f"[存储] ⚠️  图床上传失败，回退到本地存储: {upload_result.get('message', '未知错误')}")
+            unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+            local_file_path = os.path.join(UPLOAD_DIR, unique_filename)
+            
+            with open(local_file_path, "wb") as buffer:
+                buffer.write(file_content)
+            
+            file_path = local_file_path
         
         # 创建数据库记录
         db_background = UserDiaryBackground(
             user_id=current_user.user_id,
             filename=unique_filename,
             original_filename=file.filename,
-            file_path=file_path,
+            file_path=file_path,  # 这里现在是图床URL或本地路径
             file_size=len(file_content),
             upload_time=datetime.now(),
             is_active=True
@@ -114,7 +151,7 @@ async def upload_background(
 
 
 @router.delete("/{background_id}")
-def delete_background(
+async def delete_background(
     background_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -134,9 +171,8 @@ def delete_background(
         )
     
     try:
-        # 删除物理文件
-        if os.path.exists(background.file_path):
-            os.remove(background.file_path)
+        # 删除图片（图床或本地文件）
+        await delete_image_file(background.file_path)
         
         # 删除数据库记录
         db.delete(background)
@@ -153,7 +189,7 @@ def delete_background(
 
 
 @router.post("/restore-default")
-def restore_default_backgrounds(
+async def restore_default_backgrounds(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -168,12 +204,11 @@ def restore_default_backgrounds(
         return {"message": "没有需要删除的背景图片"}
     
     try:
-        # 删除所有物理文件和数据库记录
+        # 删除所有图片文件和数据库记录
         deleted_count = 0
         for background in backgrounds:
-            # 删除物理文件
-            if os.path.exists(background.file_path):
-                os.remove(background.file_path)
+            # 删除图片（图床或本地文件）
+            await delete_image_file(background.file_path)
             
             # 删除数据库记录
             db.delete(background)

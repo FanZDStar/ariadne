@@ -359,12 +359,12 @@ export default {
             icon: 'success'
           });
 
-          // 3秒后跳转到我的悄悄话页面
+          // 发布成功后跳转到我的悄悄话页面
           setTimeout(() => {
-            uni.redirectTo({
-              url: '/pages/tree-hole/my-whispers'
+            uni.navigateBack({
+              delta: 1
             });
-          }, 3000);
+          }, 1500);
         }
       } catch (error) {
         this.isPublishing = false;

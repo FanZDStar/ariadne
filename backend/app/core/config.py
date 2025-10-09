@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     data_retention_days: int = 365
     session_timeout_minutes: int = 30
     enable_audit_log: bool = True
+    
+    # PICUI 图床配置
+    picui_api_url: str = "https://picui.cn/api/v1"
+    picui_token: Optional[str] = None
+    picui_strategy_id: str = "1"
+    picui_album_id: Optional[str] = None
 
     class Config:
         env_file = ".env"
