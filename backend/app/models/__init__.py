@@ -23,6 +23,7 @@ from .mood_tracker import MoodTracker
 from .user_diary_backgrounds import UserDiaryBackground
 from .interpersonal_practice_session import InterpersonalPracticeSession
 from .protection_drill_report import ProtectionDrillReport
+from .star_points import UserStarPoints, StarPointLog, DailyStarLimits
 # 导出所有模型
 __all__ = [
     "User",
@@ -46,5 +47,8 @@ __all__ = [
     "MoodTracker",
     "UserDiaryBackground",
     "InterpersonalPracticeSession",
-    "ProtectionDrillReport"
+    "ProtectionDrillReport",
+    "UserStarPoints",
+    "StarPointLog", 
+    "DailyStarLimits"
 ]

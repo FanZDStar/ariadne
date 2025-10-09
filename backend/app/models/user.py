@@ -40,3 +40,8 @@ class User(Base):
     
     # 添加人际沟通练习会话关联
     interpersonal_practice_sessions = relationship("InterpersonalPracticeSession", back_populates="user", cascade="all, delete-orphan")
+    
+    # 添加星星积分系统关联
+    star_points = relationship("UserStarPoints", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    star_logs = relationship("StarPointLog", back_populates="user", cascade="all, delete-orphan")
+    daily_star_limits = relationship("DailyStarLimits", back_populates="user", cascade="all, delete-orphan")
