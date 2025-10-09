@@ -24,7 +24,7 @@ class UserStarPoints(Base):
     # 通过user_id关联到日志记录
     logs = relationship("StarPointLog", foreign_keys="StarPointLog.user_id", 
                        primaryjoin="UserStarPoints.user_id == StarPointLog.user_id",
-                       cascade="all, delete-orphan", overlaps="star_logs")
+                       overlaps="star_logs", cascade="all, delete-orphan")
 
 
 class StarPointLog(Base):

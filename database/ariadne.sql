@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 09/10/2025 15:06:26
+ Date: 09/10/2025 17:21:48
 */
 
 SET NAMES utf8mb4;
@@ -262,6 +262,44 @@ CREATE TABLE `crisis_warnings`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for daily_star_limits
+-- ----------------------------
+DROP TABLE IF EXISTS `daily_star_limits`;
+CREATE TABLE `daily_star_limits`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `date` date NOT NULL COMMENT '日期',
+  `daily_login` tinyint(1) NULL DEFAULT 0 COMMENT '每日登录(1星)',
+  `mood_tracking` tinyint(1) NULL DEFAULT 0 COMMENT '晴雨表打卡(1星)',
+  `diary_count` tinyint NULL DEFAULT 0 COMMENT '日记篇数(第1篇3星,第2-3篇各1星)',
+  `background_change` tinyint(1) NULL DEFAULT 0 COMMENT '背景修改(1星)',
+  `emotion_chat_count` tinyint NULL DEFAULT 0 COMMENT '情感对话次数',
+  `emotion_chat_points` tinyint NULL DEFAULT 0 COMMENT '情感对话获得积分',
+  `skill_training` tinyint(1) NULL DEFAULT 0 COMMENT '技能综合训练(1星)',
+  `relationship_assessment` tinyint(1) NULL DEFAULT 0 COMMENT '关系健康评估(2星)',
+  `personalized_advice` tinyint(1) NULL DEFAULT 0 COMMENT '个性化建议(2星)',
+  `ai_scenario_training` tinyint(1) NULL DEFAULT 0 COMMENT 'AI情景模拟训练(2星)',
+  `protection_training` tinyint(1) NULL DEFAULT 0 COMMENT '防护技能训练(2星)',
+  `tree_hole_interaction_count` tinyint NULL DEFAULT 0 COMMENT '树洞互动次数',
+  `tree_hole_whisper` tinyint(1) NULL DEFAULT 0 COMMENT '发表悄悄话(2星)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_user_date`(`user_id` ASC, `date` ASC) USING BTREE,
+  CONSTRAINT `fk_daily_star_limits_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of daily_star_limits
+-- ----------------------------
+INSERT INTO `daily_star_limits` VALUES (1, 6, '2025-10-09', 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:31:37', '2025-10-09 17:19:41');
+INSERT INTO `daily_star_limits` VALUES (2, 16, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:44:57', '2025-10-09 15:44:57');
+INSERT INTO `daily_star_limits` VALUES (3, 5, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:54:45', '2025-10-09 15:54:45');
+INSERT INTO `daily_star_limits` VALUES (4, 3, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:59:39', '2025-10-09 15:59:39');
+INSERT INTO `daily_star_limits` VALUES (5, 17, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 16:14:31', '2025-10-09 16:14:31');
+INSERT INTO `daily_star_limits` VALUES (6, 18, '2025-10-09', 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 16:33:56', '2025-10-09 17:02:41');
+
+-- ----------------------------
 -- Table structure for diary_backgrounds
 -- ----------------------------
 DROP TABLE IF EXISTS `diary_backgrounds`;
@@ -345,7 +383,7 @@ CREATE TABLE `emotional_diaries`  (
   INDEX `idx_emotional_diaries_user_date`(`user_id` ASC, `created_at` ASC) USING BTREE,
   INDEX `idx_user_mood_date`(`user_id` ASC, `mood` ASC, `created_at` ASC) USING BTREE,
   CONSTRAINT `emotional_diaries_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 841 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 845 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of emotional_diaries
@@ -421,6 +459,10 @@ INSERT INTO `emotional_diaries` VALUES (837, 6, '平凡的美好 29', '今天没
 INSERT INTO `emotional_diaries` VALUES (838, 6, '春天的气息 30', '今天路过公园，看到花儿都开了，春天真的来了！那种生机勃勃的感觉让人心情大好，忍不住多走了几圈。春天总是给人希望，让人觉得一切都是新的开始。', 'very_happy', '2025-09-16 16:28:12', '2025-09-16 16:28:12', 1, 1, '[\"\\u97f3\\u4e50\", \"\\u8fd0\\u52a8\"]');
 INSERT INTO `emotional_diaries` VALUES (839, 6, '唉', '心累', 'neutral', '2025-10-01 20:56:00', '2025-10-01 20:56:00', 0, 0, 'null');
 INSERT INTO `emotional_diaries` VALUES (840, 6, '1111', '111', 'neutral', '2025-10-07 17:10:56', '2025-10-07 17:10:56', 0, 1, 'null');
+INSERT INTO `emotional_diaries` VALUES (841, 6, '1', '111', 'neutral', '2025-10-09 17:19:11', '2025-10-09 17:19:11', 0, 0, 'null');
+INSERT INTO `emotional_diaries` VALUES (842, 6, '22', '11', 'neutral', '2025-10-09 17:19:32', '2025-10-09 17:19:32', 0, 0, 'null');
+INSERT INTO `emotional_diaries` VALUES (843, 6, '33', '3', 'neutral', '2025-10-09 17:19:41', '2025-10-09 17:19:41', 0, 0, 'null');
+INSERT INTO `emotional_diaries` VALUES (844, 6, '4', '44', 'neutral', '2025-10-09 17:19:58', '2025-10-09 17:19:58', 0, 0, 'null');
 
 -- ----------------------------
 -- Table structure for experience_summaries
@@ -637,7 +679,7 @@ CREATE TABLE `mood_tracker`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_mood_date`(`mood_date` ASC) USING BTREE,
   CONSTRAINT `mood_tracker_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '心情晴雨表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '心情晴雨表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mood_tracker
@@ -651,7 +693,8 @@ INSERT INTO `mood_tracker` VALUES (6, 2, '2025-09-09', 3, '2025-09-17 09:49:03',
 INSERT INTO `mood_tracker` VALUES (7, 2, '2025-09-08', 4, '2025-09-17 09:49:03', '2025-09-17 09:49:03');
 INSERT INTO `mood_tracker` VALUES (8, 6, '2025-09-17', 2, '2025-09-17 12:11:31', '2025-09-17 12:13:45');
 INSERT INTO `mood_tracker` VALUES (9, 6, '2025-09-19', 4, '2025-09-19 21:04:11', '2025-09-19 21:04:11');
-INSERT INTO `mood_tracker` VALUES (10, 6, '2025-10-09', 4, '2025-10-09 14:32:48', '2025-10-09 14:32:48');
+INSERT INTO `mood_tracker` VALUES (10, 6, '2025-10-09', 3, '2025-10-09 14:32:48', '2025-10-09 17:02:20');
+INSERT INTO `mood_tracker` VALUES (11, 18, '2025-10-09', 5, '2025-10-09 17:02:41', '2025-10-09 17:02:41');
 
 -- ----------------------------
 -- Table structure for mood_trend_analyses
@@ -1042,6 +1085,53 @@ CREATE TABLE `skills`  (
 -- ----------------------------
 INSERT INTO `skills` VALUES (1, '主动倾听', '学会用心倾听对方的话语和情感', '主动倾听是建立良好人际关系的基础技能，通过全神贯注地倾听对方，理解其言语和情感，建立深层次的连接。', 'basic', 15, 0, '[\"学会集中注意力倾听对方说话\", \"理解言语背后的情感和需求\", \"通过肢体语言展现倾听态度\", \"运用复述和确认技巧验证理解\"]', '[{\"icon\": \"👀\", \"title\": \"眼神交流\", \"content\": \"保持适当的眼神交流，表达对对方的关注和尊重\", \"example\": \"看着对方的眼睛，偶尔点头表示理解\"}, {\"icon\": \"🤐\", \"title\": \"避免打断\", \"content\": \"让对方完整表达想法，不要急于插话或给建议\", \"example\": \"等对方说完后再回应：\\\"我理解你的意思是...\\\"\"}]', '[{\"tips\": \"将手机调至静音模式，身体面向对方\", \"title\": \"营造倾听环境\", \"description\": \"选择安静、舒适的环境，放下手机等干扰物\"}]', '[{\"id\": 1, \"title\": \"朋友倾诉工作压力\", \"difficulty\": \"基础\", \"description\": \"朋友向你抱怨工作中的困难和压力，需要你的倾听和理解\"}]', '[\"倾听\", \"沟通基础\", \"理解\"]', 1, 1, 1, '2025-09-11 21:43:04', '2025-09-11 21:43:04');
 INSERT INTO `skills` VALUES (2, '主动倾听', '学会用心倾听对方的话语和情感', '主动倾听是建立良好人际关系的基础技能，通过全神贯注地倾听对方，理解其言语和情感，建立深层次的连接。', 'basic', 15, 0, '[\"学会集中注意力倾听对方说话\", \"理解言语背后的情感和需求\", \"通过肢体语言展现倾听态度\", \"运用复述和确认技巧验证理解\"]', '[{\"icon\": \"👀\", \"title\": \"眼神交流\", \"content\": \"保持适当的眼神交流，表达对对方的关注和尊重\", \"example\": \"看着对方的眼睛，偶尔点头表示理解\"}, {\"icon\": \"🤐\", \"title\": \"避免打断\", \"content\": \"让对方完整表达想法，不要急于插话或给建议\", \"example\": \"等对方说完后再回应：\\\"我理解你的意思是...\\\"\"}]', '[{\"tips\": \"将手机调至静音模式，身体面向对方\", \"title\": \"营造倾听环境\", \"description\": \"选择安静、舒适的环境，放下手机等干扰物\"}]', '[{\"id\": 1, \"title\": \"朋友倾诉工作压力\", \"difficulty\": \"基础\", \"description\": \"朋友向你抱怨工作中的困难和压力，需要你的倾听和理解\"}]', '[\"倾听\", \"沟通基础\", \"理解\"]', 1, 1, 1, '2025-09-12 13:35:10', '2025-09-12 13:35:10');
+
+-- ----------------------------
+-- Table structure for star_point_logs
+-- ----------------------------
+DROP TABLE IF EXISTS `star_point_logs`;
+CREATE TABLE `star_point_logs`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `action_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '行为类型',
+  `points_change` int NOT NULL COMMENT '积分变化(正数为获得，负数为消费)',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '描述信息',
+  `source_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '来源ID(如日记ID、会话ID等)',
+  `source_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '来源类型',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_star_logs_user`(`user_id` ASC) USING BTREE,
+  INDEX `idx_star_logs_action`(`action_type` ASC) USING BTREE,
+  INDEX `idx_star_logs_date`(`created_at` ASC) USING BTREE,
+  CONSTRAINT `fk_star_point_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of star_point_logs
+-- ----------------------------
+INSERT INTO `star_point_logs` VALUES (1, 12, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (2, 13, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (3, 5, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (4, 3, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (5, 7, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (6, 6, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (7, 4, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (8, 1, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (9, 9, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (10, 2, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (11, 15, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:10:23');
+INSERT INTO `star_point_logs` VALUES (16, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 15:31:37');
+INSERT INTO `star_point_logs` VALUES (17, 16, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 15:44:47');
+INSERT INTO `star_point_logs` VALUES (19, 5, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 15:54:45');
+INSERT INTO `star_point_logs` VALUES (20, 3, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 15:59:39');
+INSERT INTO `star_point_logs` VALUES (21, 17, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 16:14:22');
+INSERT INTO `star_point_logs` VALUES (22, 17, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 16:14:31');
+INSERT INTO `star_point_logs` VALUES (23, 18, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 16:33:52');
+INSERT INTO `star_point_logs` VALUES (24, 18, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 16:33:56');
+INSERT INTO `star_point_logs` VALUES (25, 18, 'mood_tracking', 1, '每日首次心情记录', '11', 'mood', '2025-10-09 17:02:41');
+INSERT INTO `star_point_logs` VALUES (26, 6, 'diary_first', 3, '今日第一篇日记', '841', 'diary', '2025-10-09 17:19:11');
+INSERT INTO `star_point_logs` VALUES (27, 6, 'diary_additional', 1, '今日额外日记', '842', 'diary', '2025-10-09 17:19:32');
+INSERT INTO `star_point_logs` VALUES (28, 6, 'diary_additional', 1, '今日额外日记', '843', 'diary', '2025-10-09 17:19:41');
 
 -- ----------------------------
 -- Table structure for system_configs
@@ -1489,6 +1579,41 @@ CREATE TABLE `user_skill_progress`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for user_star_points
+-- ----------------------------
+DROP TABLE IF EXISTS `user_star_points`;
+CREATE TABLE `user_star_points`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `current_points` int NOT NULL DEFAULT 10 COMMENT '当前星星积分',
+  `total_earned` int NOT NULL DEFAULT 10 COMMENT '总获得积分',
+  `total_spent` int NOT NULL DEFAULT 0 COMMENT '总消费积分',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_user_points`(`user_id` ASC) USING BTREE,
+  CONSTRAINT `fk_user_star_points_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户星星积分表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_star_points
+-- ----------------------------
+INSERT INTO `user_star_points` VALUES (1, 12, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (2, 13, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (3, 5, 11, 11, 0, '2025-10-09 15:10:11', '2025-10-09 15:54:45');
+INSERT INTO `user_star_points` VALUES (4, 3, 11, 11, 0, '2025-10-09 15:10:11', '2025-10-09 15:59:39');
+INSERT INTO `user_star_points` VALUES (5, 7, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (6, 6, 16, 16, 0, '2025-10-09 15:10:11', '2025-10-09 17:19:41');
+INSERT INTO `user_star_points` VALUES (7, 4, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (8, 1, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (9, 9, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (10, 2, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (11, 15, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
+INSERT INTO `user_star_points` VALUES (16, 16, 11, 11, 0, '2025-10-09 15:44:47', '2025-10-09 15:44:57');
+INSERT INTO `user_star_points` VALUES (17, 17, 11, 11, 0, '2025-10-09 16:14:22', '2025-10-09 16:14:31');
+INSERT INTO `user_star_points` VALUES (18, 18, 12, 12, 0, '2025-10-09 16:33:52', '2025-10-09 17:02:41');
+
+-- ----------------------------
 -- Table structure for users
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
@@ -1506,28 +1631,30 @@ CREATE TABLE `users`  (
   `is_active` tinyint(1) NULL DEFAULT 1,
   `last_risk_assessment` datetime NULL DEFAULT NULL,
   `total_risk_reports` int NOT NULL DEFAULT 0,
-  `star_points` int NULL DEFAULT 50 COMMENT '用户星星积分',
   PRIMARY KEY (`user_id`) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE,
   UNIQUE INDEX `email`(`email` ASC) USING BTREE,
   INDEX `idx_users_username`(`username` ASC) USING BTREE,
   INDEX `idx_users_email`(`email` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'root', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.PZvO.S', 'admin@example.com', NULL, '管理员', NULL, '2025-08-14 16:26:19', '2025-08-14 16:26:19', NULL, 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTtgmz0Rtw3/mQSkmqZroLyLkOe', 'test@example.com', NULL, '测试用户', '这是一个测试用户', '2025-08-14 17:21:35', '2025-10-01 20:12:13', '2025-10-01 20:12:13', 1, '2025-09-06 05:56:49', 1, 50);
-INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-08-19 00:53:50', '2025-08-19 00:53:50', 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-08-14 21:41:38', NULL, 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-09 14:55:44', '2025-10-09 14:55:44', 1, '2025-10-02 04:32:45', 12, 10000);
-INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0, 50);
-INSERT INTO `users` VALUES (13, 'frontend_test_69f062', '$2b$12$WPP69S4od.ZOBH0nRNboSOxHNRYSItVUOTUV4rpYtmwwfikhyJofe', 'frontend_test_69f062@example.com', NULL, '前端测试', NULL, '2025-09-06 14:18:22', '2025-09-06 14:45:47', '2025-09-06 14:45:47', 1, '2025-09-06 06:19:02', 2, 50);
-INSERT INTO `users` VALUES (15, 'testuser917', '$2b$12$XwWky3GdBPJH8uZIaq8wzup0lE.TwTogSXntMdajazoE7S0T/OkHu', 'test917@example.com', NULL, '测试用户', NULL, '2025-09-17 19:03:23', '2025-09-17 19:37:59', '2025-09-17 19:37:59', 1, NULL, 0, 50);
+INSERT INTO `users` VALUES (1, 'root', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.PZvO.S', 'admin@example.com', NULL, '管理员', NULL, '2025-08-14 16:26:19', '2025-08-14 16:26:19', NULL, 1, NULL, 0);
+INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTtgmz0Rtw3/mQSkmqZroLyLkOe', 'test@example.com', NULL, '测试用户', '这是一个测试用户', '2025-08-14 17:21:35', '2025-10-01 20:12:13', '2025-10-01 20:12:13', 1, '2025-09-06 05:56:49', 1);
+INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-10-09 16:09:15', '2025-10-09 16:09:15', 1, NULL, 0);
+INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0);
+INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-10-09 15:54:45', '2025-10-09 15:54:45', 1, NULL, 0);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-09 17:19:03', '2025-10-09 17:19:03', 1, '2025-10-02 04:32:45', 12);
+INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0);
+INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0);
+INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0);
+INSERT INTO `users` VALUES (13, 'frontend_test_69f062', '$2b$12$WPP69S4od.ZOBH0nRNboSOxHNRYSItVUOTUV4rpYtmwwfikhyJofe', 'frontend_test_69f062@example.com', NULL, '前端测试', NULL, '2025-09-06 14:18:22', '2025-09-06 14:45:47', '2025-09-06 14:45:47', 1, '2025-09-06 06:19:02', 2);
+INSERT INTO `users` VALUES (15, 'testuser917', '$2b$12$XwWky3GdBPJH8uZIaq8wzup0lE.TwTogSXntMdajazoE7S0T/OkHu', 'test917@example.com', NULL, '测试用户', NULL, '2025-09-17 19:03:23', '2025-09-17 19:37:59', '2025-09-17 19:37:59', 1, NULL, 0);
+INSERT INTO `users` VALUES (16, 'zhuzhu123', '$2b$12$H/3f.bW4D70/Ngl7RS8FB.Gk/Rbt5.Ws4Q8HIC2P3oRGDDUyxdccy', NULL, NULL, '情感小白', NULL, '2025-10-09 15:44:47', '2025-10-09 15:54:14', '2025-10-09 15:54:14', 1, NULL, 0);
+INSERT INTO `users` VALUES (17, 'bala123', '$2b$12$EekW9l0Ty35F6rLznw8jA.SQDZrjHfMiB/T2.z1gWGbb.UTHHp73e', NULL, NULL, '情感小白', NULL, '2025-10-09 16:14:22', '2025-10-09 16:14:31', '2025-10-09 16:14:31', 1, NULL, 0);
+INSERT INTO `users` VALUES (18, 'peppa1', '$2b$12$CZbRk6bvgnIMMv.PinMKSe5Vmy3xCSX9w4SFoT6aMJkyf4DdS6o06', NULL, NULL, '情感小白', NULL, '2025-10-09 16:33:52', '2025-10-09 17:02:30', '2025-10-09 17:02:30', 1, NULL, 0);
 
 -- ----------------------------
 -- Triggers structure for table risk_assessment_reports

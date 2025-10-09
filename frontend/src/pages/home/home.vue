@@ -96,11 +96,13 @@ export default {
 
     onLoad() {
         this.loadUserInfo();
+        this.checkStarReward();
     },
 
     onShow() {
         // 每次页面显示时都检查用户信息
         this.loadUserInfo();
+        this.checkStarReward();
     },
 
     methods: {
@@ -135,6 +137,22 @@ export default {
             uni.navigateTo({
                 url: '/pages/tree-hole/tree-hole'
             })
+        },
+
+        checkStarReward() {
+            // 检查是否有星星奖励信息
+            const starReward = storage.getStarReward();
+            if (starReward && starReward.message) {
+                // 显示星星奖励提示
+                uni.showToast({
+                    title: starReward.message,
+                    icon: 'none',
+                    duration: 2500
+                });
+
+                // 清除奖励信息，避免重复显示
+                storage.clearStarReward();
+            }
         }
     }
 }

@@ -11,6 +11,12 @@
             <view class="user-desc-container">
                 <text class="user-desc" @click="editBio">{{ userInfo.bio || '情感探索者' }}</text>
             </view>
+            <!-- 星星积分显示 -->
+            <view class="star-points-container" @click="goToStarPointsDetail">
+                <view class="star-icon">⭐</view>
+                <text class="star-count">{{ starPoints }}</text>
+                <text class="star-label">个星星</text>
+            </view>
         </view>
 
         <view class="content">
@@ -116,6 +122,7 @@ export default {
                 bio: '',
                 avatar_url: null
             },
+            starPoints: 0, // 星星积分数量
             uploadingAvatar: false,
             showSettingsModal: false,
             modalView: 'main', // 'main', 'email', 'password'
@@ -135,6 +142,12 @@ export default {
 
     onLoad() {
         this.loadUserInfo();
+        this.loadStarPoints();
+    },
+
+    onShow() {
+        // 每次页面显示时也刷新积分信息
+        this.loadStarPoints();
     },
 
     methods: {
@@ -510,6 +523,50 @@ export default {
             });
         },
 
+        async loadStarPoints() {
+            // 加载用户星星积分
+            const token = storage.getToken();
+            if (!token) {
+                this.starPoints = 0;
+                return;
+            }
+
+            try {
+                const response = await uni.request({
+                    url: `${process.env.VUE_APP_API_BASE_URL}/star-points/balance`,
+                    method: 'GET',
+                    header: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    this.starPoints = response.data.current_points || 0;
+                } else if (response.statusCode === 401) {
+                    // Token过期，清除本地存储
+                    storage.clearToken();
+                    this.starPoints = 0;
+                }
+            } catch (error) {
+                console.error('获取星星积分失败:', error);
+                this.starPoints = 0;
+            }
+        },
+
+        goToStarPointsDetail() {
+            // 跳转到星星积分详情页面
+            uni.showToast({
+                title: `当前拥有 ${this.starPoints} 个星星`,
+                icon: 'none',
+                duration: 2000
+            });
+
+            // TODO: 后续可以跳转到积分详情页面
+            // uni.navigateTo({
+            //     url: '/pages/star-points/star-points-detail'
+            // });
+        },
+
         logout() {
             uni.showModal({
                 title: '提示',
@@ -604,6 +661,46 @@ export default {
 
 .user-desc:active {
     background-color: #f0f0f0;
+}
+
+/* 星星积分样式 */
+.star-points-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8rpx;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border: 2rpx solid #f0c400;
+    border-radius: 25rpx;
+    padding: 15rpx 25rpx;
+    margin-top: 20rpx;
+    margin: 20rpx auto 0;
+    max-width: 200rpx;
+    box-shadow: 0 4rpx 12rpx rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.star-points-container:active {
+    transform: translateY(1rpx);
+    box-shadow: 0 2rpx 8rpx rgba(255, 215, 0, 0.4);
+}
+
+.star-icon {
+    font-size: 32rpx;
+    line-height: 1;
+}
+
+.star-count {
+    font-size: 30rpx;
+    font-weight: bold;
+    color: #b8860b;
+    line-height: 1;
+}
+
+.star-label {
+    font-size: 24rpx;
+    color: #b8860b;
+    line-height: 1;
 }
 
 .content {

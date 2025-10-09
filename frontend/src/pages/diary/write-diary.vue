@@ -291,10 +291,23 @@ export default {
 
         if (result.diary_id) {
           uni.hideLoading();
+          
+          // 显示发布成功消息
           uni.showToast({
             title: '发布成功',
             icon: 'success'
           });
+
+          // 如果获得了星星奖励，显示奖励消息
+          if (result.star_awarded && result.star_points > 0) {
+            setTimeout(() => {
+              uni.showToast({
+                title: result.star_message || `获得了${result.star_points}颗星星 ⭐`,
+                icon: 'none',
+                duration: 3000
+              });
+            }, 1500);
+          }
 
           // 3秒后跳转到日记页面
           setTimeout(() => {

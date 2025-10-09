@@ -169,9 +169,12 @@ export default {
                 });
 
                 if (response.statusCode === 200) {
+                    // 显示积分奖励信息
+                    const starMessage = response.data.star_message || "心情记录成功 💫";
                     uni.showToast({
-                        title: "心情记录成功",
-                        icon: "success",
+                        title: starMessage,
+                        icon: "none",
+                        duration: 2500
                     });
 
                     // 重新加载7天数据
@@ -180,10 +183,13 @@ export default {
                     // 清除选择
                     this.selectedMood = null;
 
-                    // 通知父组件心情保存成功
+                    // 通知父组件心情保存成功，包含星星奖励信息
                     this.$emit('mood-saved', {
                         level: this.selectedMood,
-                        data: response.data
+                        data: response.data,
+                        star_awarded: response.data.star_awarded,
+                        star_points: response.data.star_points,
+                        star_message: response.data.star_message
                     });
                 } else if (response.statusCode === 401) {
                     uni.showModal({

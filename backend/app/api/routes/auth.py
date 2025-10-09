@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import timedelta
 from app.database.session import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserUpdate, UserUpdateEmail, UserUpdatePassword
+from app.schemas.user import UserCreate, UserLogin, UserResponse, Token, TokenWithStarReward, UserUpdate, UserUpdateEmail, UserUpdatePassword
 from app.utils.password import get_password_hash, verify_password
 from app.core.security import create_access_token
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
@@ -66,7 +66,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="Registration failed"
         )
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=TokenWithStarReward)
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     """用户登录"""
     # 查找用户
@@ -88,6 +88,10 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     db.commit()
     
     # 尝试奖励每日登录积分
+    star_awarded = False
+    star_points = 0
+    star_message = "欢迎回来~ 💫"
+    
     try:
         from app.api.routes.star_points import award_user_points
         from app.utils.star_point_types import StarPointAction, SourceType
@@ -100,7 +104,12 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         )
         
         if success:
+            star_awarded = True
+            star_points = points
+            star_message = "欢迎回来，这颗星星给你啦 ⭐"
             print(f"用户 {db_user.username} 登录获得 {points} 个星星")
+        else:
+            print(f"用户 {db_user.username} 今日已获得登录积分")
     except Exception as e:
         # 积分奖励失败不影响登录
         print(f"每日登录积分奖励失败: {e}")
@@ -112,7 +121,13 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         expires_delta=access_token_expires
     )
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "star_awarded": star_awarded,
+        "star_points": star_points,
+        "star_message": star_message
+    }
 
 @router.get("/users/me", response_model=UserResponse)
 def read_users_me(current_user: User = Depends(get_current_user)):

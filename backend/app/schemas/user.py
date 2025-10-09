@@ -57,6 +57,13 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class TokenWithStarReward(BaseModel):
+    access_token: str
+    token_type: str
+    star_awarded: bool = False
+    star_points: int = 0
+    star_message: str = "欢迎回来~ 💫"
+
 class TokenData(BaseModel):
     username: Optional[str] = None
 

@@ -19,6 +19,18 @@ class MoodTrackerResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class MoodTrackerWithStarResponse(BaseModel):
+    """包含星星奖励的心情记录响应"""
+    id: int
+    user_id: int
+    mood_date: date
+    mood_level: int
+    created_at: datetime
+    updated_at: datetime
+    star_awarded: bool = False
+    star_points: int = 0
+    star_message: str = "心情记录成功 💫"
+
 class WeeklyMoodResponse(BaseModel):
     """7天心情记录响应"""
     dates: List[str] = Field(..., description="7天的日期列表")

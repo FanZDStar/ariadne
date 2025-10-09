@@ -517,4 +517,17 @@ export const storage = {
   clearUserInfo: () => {
     uni.removeStorageSync("user_info");
   },
+
+  setStarReward: (rewardInfo) => {
+    uni.setStorageSync("star_reward", JSON.stringify(rewardInfo));
+  },
+
+  getStarReward: () => {
+    const rewardInfo = uni.getStorageSync("star_reward");
+    return rewardInfo ? JSON.parse(rewardInfo) : null;
+  },
+
+  clearStarReward: () => {
+    uni.removeStorageSync("star_reward");
+  },
 };
