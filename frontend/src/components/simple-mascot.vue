@@ -104,7 +104,7 @@ export default {
           // 恐龙装
           name: "恐龙装",
           staticImage: "/static/outfits/dinosaur.png",
-          actionCount: 1,
+          actionCount: 2,
           speeches: ["恐龙时代来啦~", "ROAR! 我是小恐龙!", "穿越到侏罗纪!"],
         },
         4: {
