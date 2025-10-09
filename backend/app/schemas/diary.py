@@ -62,3 +62,19 @@ class DiaryResponse(DiaryBase):
 
     class Config:
         from_attributes = True
+
+
+class DiaryWithStarResponse(DiaryBase):
+    """包含星星奖励的日记响应"""
+    diary_id: int
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
+    images: List[DiaryImageResponse] = []
+    image_count: int = 0
+    star_awarded: bool = False
+    star_points: int = 0
+    star_message: str = "成功发表一篇碎碎念 💫"
+
+    class Config:
+        from_attributes = True

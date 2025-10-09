@@ -7,7 +7,7 @@ from app.database.session import get_db
 from app.models.user import User
 from app.models.emotional_diary import EmotionalDiary
 from app.models.diary_image import DiaryImage
-from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse
+from app.schemas.diary import DiaryCreate, DiaryUpdate, DiaryResponse, DiaryWithStarResponse
 from app.api.deps import get_current_user
 from app.services.privacy_service import privacy_service
 
@@ -46,13 +46,20 @@ async def delete_diary_image(image_url: str):
 
 
 # ... (保留原有的创建、获取、更新、删除日记的接口) ...
-@router.post("/", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=DiaryWithStarResponse, status_code=status.HTTP_201_CREATED)
 def create_diary(
     diary: DiaryCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """创建新的碎碎念"""
+    # 检查当日已发布的日记数量
+    today = date.today()
+    daily_diary_count = db.query(EmotionalDiary).filter(
+        EmotionalDiary.user_id == current_user.user_id,
+        func.date(EmotionalDiary.created_at) == today
+    ).count()
+    
     # 创建日记，不再使用加密功能
     db_diary = EmotionalDiary(
         user_id=current_user.user_id,
@@ -80,8 +87,32 @@ def create_diary(
     db.commit()
     db.refresh(db_diary)
 
+    # 尝试奖励积分
+    star_awarded = False
+    star_points = 0
+    star_message = "成功发表一篇碎碎念 💫"
+    
+    try:
+        from app.utils.star_point_helpers import award_diary_points
+        
+        # 根据当日日记数量决定是否为第一篇
+        is_first = daily_diary_count == 0
+        success, message, points = award_diary_points(
+            db, current_user.user_id, str(db_diary.diary_id), is_first
+        )
+        
+        if success:
+            star_awarded = True
+            star_points = points
+            star_message = f"成功发表一篇碎碎念，获得{points}颗星星 ⭐"
+            print(f"用户 {current_user.user_id} 发表日记获得 {points} 个星星")
+        else:
+            print(f"用户 {current_user.user_id} 今日日记积分已达上限: {message}")
+    except Exception as e:
+        print(f"日记积分奖励失败: {e}")
+
     # 返回原始数据（已移除加密功能）
-    result = DiaryResponse(
+    result = DiaryWithStarResponse(
         diary_id=db_diary.diary_id,
         user_id=db_diary.user_id,
         title=db_diary.title,
@@ -93,6 +124,9 @@ def create_diary(
         image_count=db_diary.image_count,
         tags=db_diary.tags,  # 添加标签支持
         images=[],
+        star_awarded=star_awarded,
+        star_points=star_points,
+        star_message=star_message
     )
 
     return result
