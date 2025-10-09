@@ -77,21 +77,40 @@ async def upload_background(
             detail=f"文件大小超过限制（最大{MAX_FILE_SIZE // 1024 // 1024}MB）"
         )
     
-    # 生成唯一文件名
-    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
-    file_path = os.path.join(UPLOAD_DIR, unique_filename)
-    
     try:
-        # 保存文件
-        with open(file_path, "wb") as buffer:
-            buffer.write(file_content)
+        # 导入图床服务
+        from app.services.picui_service import picui_service
+        
+        # 上传到图床
+        upload_result = await picui_service.upload_image(
+            file_content=file_content,
+            filename=file.filename,
+            permission=0  # 私有图片，仅上传者可见
+        )
+        
+        if upload_result["success"]:
+            # 图床上传成功，使用图床URL
+            print(f"[存储] ✅ 图片已上传到图床，使用图床URL")
+            data = upload_result["data"]
+            file_path = data["url"]  # 使用图床URL作为文件路径
+            unique_filename = data["name"]
+        else:
+            # 图床上传失败，回退到本地存储
+            print(f"[存储] ⚠️  图床上传失败，回退到本地存储: {upload_result.get('message', '未知错误')}")
+            unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+            local_file_path = os.path.join(UPLOAD_DIR, unique_filename)
+            
+            with open(local_file_path, "wb") as buffer:
+                buffer.write(file_content)
+            
+            file_path = local_file_path
         
         # 创建数据库记录
         db_background = UserDiaryBackground(
             user_id=current_user.user_id,
             filename=unique_filename,
             original_filename=file.filename,
-            file_path=file_path,
+            file_path=file_path,  # 这里现在是图床URL或本地路径
             file_size=len(file_content),
             upload_time=datetime.now(),
             is_active=True
