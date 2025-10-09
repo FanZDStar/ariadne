@@ -10,8 +10,10 @@ from datetime import datetime
 from app.database.session import get_db
 from app.models.user import User
 from app.models.user_diary_backgrounds import UserDiaryBackground
-from app.schemas.user_diary_backgrounds import UserDiaryBackgroundResponse
+from app.schemas.user_diary_backgrounds import UserDiaryBackgroundResponse, UserDiaryBackgroundWithStarResponse
 from app.api.deps import get_current_user
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction
 
 router = APIRouter(prefix="/user-diary-backgrounds", tags=["用户日记背景图片"])
 
@@ -59,7 +61,7 @@ def get_user_backgrounds(
     return [UserDiaryBackgroundResponse(**bg.to_dict()) for bg in backgrounds]
 
 
-@router.post("/upload", response_model=UserDiaryBackgroundResponse)
+@router.post("/upload", response_model=UserDiaryBackgroundWithStarResponse)
 async def upload_background(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -138,7 +140,26 @@ async def upload_background(
         db.commit()
         db.refresh(db_background)
         
-        return UserDiaryBackgroundResponse(**db_background.to_dict())
+        # 尝试奖励星星点数
+        star_service = StarPointService(db)
+        star_result = star_service.award_points(
+            user_id=current_user.user_id,
+            action=StarPointAction.DIARY_BACKGROUND_MODIFY,
+            action_details={
+                "background_id": db_background.id,
+                "filename": db_background.original_filename
+            }
+        )
+        
+        # 准备响应数据
+        response_data = db_background.to_dict()
+        response_data.update({
+            "star_awarded": star_result["awarded"],
+            "star_points": star_result["points_awarded"],
+            "star_message": star_result["message"]
+        })
+        
+        return UserDiaryBackgroundWithStarResponse(**response_data)
         
     except Exception as e:
         # 如果数据库操作失败，删除已上传的文件

@@ -25,3 +25,9 @@ class UserDiaryBackgroundResponse(UserDiaryBackgroundBase):
 class UserDiaryBackgroundUpdate(UserDiaryBackgroundBase):
     """用户日记背景图片更新模型"""
     is_active: Optional[bool] = None
+
+class UserDiaryBackgroundWithStarResponse(UserDiaryBackgroundResponse):
+    """用户日记背景图片响应模型（包含星星奖励信息）"""
+    star_awarded: bool = False
+    star_points: int = 0
+    star_message: str = ""

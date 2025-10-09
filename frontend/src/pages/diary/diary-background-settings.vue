@@ -38,22 +38,12 @@
         <!-- 自定义背景管理 -->
         <view class="section">
           <view class="section-header">
-            <text class="section-title"
-              >自定义背景 ({{ userBackgrounds.length }}/4)</text
-            >
+            <text class="section-title">自定义背景 ({{ userBackgrounds.length }}/4)</text>
             <view class="action-buttons">
-              <view
-                class="add-btn"
-                @click="chooseBackgroundImage"
-                v-if="userBackgrounds.length < 4"
-              >
+              <view class="add-btn" @click="chooseBackgroundImage" v-if="userBackgrounds.length < 4">
                 <text class="btn-text">+ 添加</text>
               </view>
-              <view
-                class="restore-btn"
-                @click="restoreDefaultBackgrounds"
-                v-if="userBackgrounds.length > 0"
-              >
+              <view class="restore-btn" @click="restoreDefaultBackgrounds" v-if="userBackgrounds.length > 0">
                 <text class="btn-text">恢复默认</text>
               </view>
             </view>
@@ -61,12 +51,8 @@
 
           <!-- 自定义背景列表 -->
           <view class="backgrounds-grid" v-if="userBackgrounds.length > 0">
-            <view
-              v-for="(bg, index) in userBackgrounds"
-              :key="bg.id"
-              class="background-item user-bg"
-              :style="{ backgroundImage: `url(${getImageUrl(bg.url)})` }"
-            >
+            <view v-for="(bg, index) in userBackgrounds" :key="bg.id" class="background-item user-bg"
+              :style="{ backgroundImage: `url(${getImageUrl(bg.url)})` }">
               <view class="bg-overlay">
                 <text class="bg-name">{{
                   bg.original_filename || "自定义背景"
@@ -78,12 +64,8 @@
             </view>
 
             <!-- 空位显示（最多4个） -->
-            <view
-              v-for="n in 4 - userBackgrounds.length"
-              :key="'empty-' + n"
-              class="background-item empty-slot"
-              @click="chooseBackgroundImage"
-            >
+            <view v-for="n in 4 - userBackgrounds.length" :key="'empty-' + n" class="background-item empty-slot"
+              @click="chooseBackgroundImage">
               <text class="add-icon">+</text>
               <text class="add-text">添加背景</text>
             </view>
@@ -92,9 +74,7 @@
           <!-- 无自定义背景时的提示 -->
           <view class="empty-section" v-if="userBackgrounds.length === 0">
             <text class="empty-title">暂无自定义背景</text>
-            <text class="empty-desc"
-              >点击"+ 添加"上传你喜欢的背景图片，最多可上传4张</text
-            >
+            <text class="empty-desc">点击"+ 添加"上传你喜欢的背景图片，最多可上传4张</text>
             <view class="upload-btn" @click="chooseBackgroundImage">
               <text class="upload-text">📷 选择图片</text>
             </view>
@@ -108,12 +88,8 @@
           </view>
 
           <view class="backgrounds-grid">
-            <view
-              v-for="bg in defaultBackgrounds"
-              :key="bg.id"
-              class="background-item default-bg"
-              :style="{ backgroundColor: bg.color }"
-            >
+            <view v-for="bg in defaultBackgrounds" :key="bg.id" class="background-item default-bg"
+              :style="{ backgroundColor: bg.color }">
               <text class="bg-name">{{ bg.name }}</text>
             </view>
           </view>
@@ -215,15 +191,30 @@ export default {
       uni.showLoading({ title: "上传中..." });
 
       try {
+        let starMessageShown = false;
         for (const filePath of filePaths) {
-          await api.uploadUserDiaryBackground(filePath, token);
+          const result = await api.uploadUserDiaryBackground(filePath, token);
+
+          // 处理星星奖励
+          if (result && result.star_awarded && !starMessageShown) {
+            // 显示星星奖励提示
+            uni.showToast({
+              title: result.star_message || "获得1颗星星！",
+              icon: "success",
+              duration: 2000
+            });
+            starMessageShown = true;
+          }
         }
 
         uni.hideLoading();
-        uni.showToast({
-          title: "上传成功",
-          icon: "success",
-        });
+
+        if (!starMessageShown) {
+          uni.showToast({
+            title: "上传成功",
+            icon: "success",
+          });
+        }
 
         await this.loadBackgrounds();
       } catch (error) {
