@@ -225,7 +225,7 @@
         <ul>
           <li>点击小人或按钮可以触发动画</li>
           <li>
-            动画文件路径：/static/animations/{角色ID}/{动作编号}/data.json
+            动画文件路径：/src/static/animations/{角色ID}/{动作编号}/data.json
           </li>
           <li>支持3种角色，每种角色有不同数量的动作</li>
           <li>动画播放完成后会自动切回静态显示</li>
@@ -325,7 +325,7 @@
         }
 
         // 构建动画路径
-        const animationPath = `./static/animations/${currentCharacter}/${actionNumber}/data.json`;
+        const animationPath = `./src/static/animations/${currentCharacter}/${actionNumber}/data.json`;
         updateStatus(`正在播放：${character.name} - 动作${actionNumber}`);
 
         playLottieAnimation(animationPath);

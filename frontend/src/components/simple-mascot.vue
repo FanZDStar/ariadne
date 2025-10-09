@@ -80,28 +80,46 @@ export default {
       lastOutfitId: null, // 记录上次的服装ID，用于检测变化
       currentOutfitId: 1, // 当前小人ID
 
-      // 不同小人的动作组配置
+      // 不同小人的动作组配置（与换装系统ID统一）
       outfitActionGroups: {
         1: {
-          // 默认小人
-          name: "默认",
+          // 默认装
+          name: "默认装",
           staticImage: "/static/outfits/default-full.png",
           actionCount: 3, // 动作数量
           speeches: ["你好呀~", "今天心情不错呢!", "我来跟你打招呼!"],
         },
         2: {
-          // 夏装小人
-          name: "夏装",
-          staticImage: "/static/outfits/summer-full.png",
+          // 红色裙装
+          name: "红色裙装",
+          staticImage: "/static/outfits/red-dress.png",
           actionCount: 2,
-          speeches: ["夏天真舒服~", "一起享受阳光吧!", "海边的风真凉爽!"],
+          speeches: [
+            "这条裙子很漂亮吧~",
+            "红色是我的幸运色!",
+            "今天穿得特别美!",
+          ],
         },
         3: {
-          // 可以继续添加更多小人
-          name: "冬装",
-          staticImage: "/static/outfits/winter-full.png",
-          actionCount: 4,
-          speeches: ["冬天也要保持活力!", "雪花好美啊~", "一起堆雪人吧!"],
+          // 恐龙装
+          name: "恐龙装",
+          staticImage: "/static/outfits/dinosaur.png",
+          actionCount: 1,
+          speeches: ["恐龙时代来啦~", "ROAR! 我是小恐龙!", "穿越到侏罗纪!"],
+        },
+        4: {
+          // 鲨鱼装
+          name: "鲨鱼装",
+          staticImage: "/static/outfits/shark.png",
+          actionCount: 1,
+          speeches: ["游向深海~", "我是海洋之王!", "鲨鱼出没注意!"],
+        },
+        5: {
+          // 旺仔小乔
+          name: "旺仔小乔",
+          staticImage: "/static/outfits/wangzaixiaoqiao.png",
+          actionCount: 1,
+          speeches: ["旺仔牛奶真好喝~", "小乔来啦!", "甜甜的味道!"],
         },
       },
 
@@ -128,6 +146,10 @@ export default {
   mounted() {
     this.checkPosition();
     this.checkOutfitStorage();
+
+    // 强制清除所有动画缓存
+    this.animationCache = {};
+    console.log("🗑️ 强制清除所有动画缓存");
 
     // 开始随机动作定时器
     this.startRandomActions();
@@ -176,20 +198,51 @@ export default {
     // 检查服装存储
     checkOutfitStorage() {
       const savedOutfit = uni.getStorageSync("selectedOutfit");
+      console.log("🔍 检查存储的服装:", savedOutfit);
+
       if (savedOutfit && savedOutfit.mascotImage) {
         const outfitId = savedOutfit.id || 1;
 
         // 检查是否有服装变化
         if (this.lastOutfitId !== outfitId) {
-          console.log("检测到服装变化，从", this.lastOutfitId, "到", outfitId);
+          console.log(
+            "👗 检测到服装变化，从",
+            this.lastOutfitId,
+            "到",
+            outfitId
+          );
+          console.log(
+            "🎭 换装系统配置 - ID:",
+            outfitId,
+            "名称:",
+            savedOutfit.name
+          );
+          console.log(
+            "🎬 动画系统配置 - ID:",
+            outfitId,
+            "对应:",
+            this.outfitActionGroups[outfitId]?.name || "未配置"
+          );
+          console.log(
+            "🎯 ID映射现在已统一！",
+            "动画配置:",
+            this.outfitActionGroups[outfitId]
+          );
+
           this.currentOutfitId = outfitId;
           this.currentImage = savedOutfit.mascotImage;
           this.lastOutfitId = outfitId;
+
+          // 清除动画缓存，强制重新检查可用动作
+          const cacheKey = `character_${outfitId}`;
+          delete this.animationCache[cacheKey];
+          console.log("🗑️ 清除动画缓存，重新检查可用动作");
 
           // 更新当前小人的语音
           this.updateCurrentSpeech();
         }
       } else {
+        console.log("🎭 使用默认小人 (ID: 1)");
         // 使用默认小人
         if (this.currentOutfitId !== 1) {
           this.currentOutfitId = 1;
@@ -198,6 +251,11 @@ export default {
           this.updateCurrentSpeech();
         }
       }
+      console.log("✅ 当前激活的角色ID:", this.currentOutfitId);
+      console.log(
+        "📁 将要使用的动画路径:",
+        `/src/static/animations/${this.currentOutfitId}/`
+      );
     },
 
     // 更新当前语音内容
@@ -218,6 +276,8 @@ export default {
       // 5-10秒随机间隔
       const interval = Math.random() * 5000 + 5000;
       this.actionTimer = setTimeout(() => {
+        console.log("⏰ 定时器触发动画播放");
+        console.log("🎭 当前角色ID:", this.currentOutfitId);
         this.playRandomAction();
         this.scheduleNextAction(); // 继续安排下一个动作
       }, interval);
@@ -225,21 +285,39 @@ export default {
 
     // 播放随机动作
     playRandomAction() {
+      console.log("🎲 开始播放随机动作...");
+      console.log("🎭 当前角色ID:", this.currentOutfitId);
+
       const currentOutfit = this.outfitActionGroups[this.currentOutfitId];
+      console.log("⚙️ 当前角色配置:", currentOutfit);
+
       if (!currentOutfit || currentOutfit.actionCount === 0) {
+        console.log("❌ 没有角色配置或动作数量为0");
         return;
       }
 
       // 检查并获取可用的动作
       this.getAvailableActions().then((availableActions) => {
+        console.log("🎬 获取到的可用动作:", availableActions);
+        console.log(
+          "📁 期望的动画路径前缀:",
+          `/src/static/animations/${this.currentOutfitId}/`
+        );
+
         if (availableActions.length === 0) {
-          console.log("当前角色没有可用的动画文件");
+          console.log("❌ 当前角色没有可用的动画文件");
           return;
         }
 
         // 从可用动作中随机选择
         const randomIndex = Math.floor(Math.random() * availableActions.length);
         const actionNumber = availableActions[randomIndex];
+        console.log("🎯 选择的动作编号:", actionNumber);
+        console.log(
+          "📄 将要播放的文件:",
+          `/src/static/animations/${this.currentOutfitId}/${actionNumber}/data.json`
+        );
+
         this.playLottieAction(actionNumber);
       });
     },
@@ -264,7 +342,7 @@ export default {
 
       // 检查每个动作文件是否存在且有效
       for (let i = 1; i <= currentOutfit.actionCount; i++) {
-        const animationPath = `/static/animations/${this.currentOutfitId}/${i}/data.json`;
+        const animationPath = `/src/static/animations/${this.currentOutfitId}/${i}/data.json`;
 
         try {
           // 先检查文件是否存在
@@ -305,29 +383,44 @@ export default {
 
     // 播放Lottie动作
     playLottieAction(actionNumber) {
+      console.log("🎬 playLottieAction 被调用");
+      console.log("🎭 当前角色ID:", this.currentOutfitId);
+      console.log("🎬 播放动作编号:", actionNumber);
+
       if (this.isPlayingAnimation) {
+        console.log("⚠️ 动画正在播放中，跳过");
         return; // 如果正在播放动画，跳过
       }
 
       // 构建动画文件路径: animations/角色ID/动作编号/data.json
-      const animationPath = `/static/animations/${this.currentOutfitId}/${actionNumber}/data.json`;
+      const animationPath = `/src/static/animations/${this.currentOutfitId}/${actionNumber}/data.json`;
 
-      console.log("播放动画:", animationPath);
+      console.log(`✅ 播放角色${this.currentOutfitId}动画:`, animationPath);
       this.loadAndPlayLottie(animationPath);
-    }, // 加载并播放Lottie动画
-    loadAndPlayLottie(animationPath) {
+    },
+    // 加载并播放Lottie动画
+    async loadAndPlayLottie(animationPath) {
+      console.log("🚀 loadAndPlayLottie 被调用");
+      console.log("📁 请求的动画路径:", animationPath);
+      console.log("🎭 当前角色ID:", this.currentOutfitId);
+
       this.isPlayingAnimation = true;
 
       // 获取Lottie容器
       const containerId = this.lottieContainerId;
 
-      this.$nextTick(() => {
+      console.log("🚀 开始加载Lottie动画:", animationPath);
+
+      this.$nextTick(async () => {
         if (lottie && this.isPlayingAnimation) {
           try {
             // 清理之前的实例
             this.clearLottieInstance();
 
-            // 创建新的Lottie实例
+            // 先尝试直接使用path方式
+            console.log("📥 尝试直接加载动画文件...");
+
+            // 方案A: 直接使用path
             this.lottieInstance = lottie.loadAnimation({
               container: document.getElementById(containerId),
               renderer: "svg",
@@ -336,41 +429,106 @@ export default {
               path: animationPath,
             });
 
+            console.log("📦 Lottie实例已创建:", this.lottieInstance);
+
             // 监听动画完成
             this.lottieInstance.addEventListener("complete", () => {
-              console.log("Lottie动画播放完成:", animationPath);
+              console.log("✅ Lottie动画播放完成:", animationPath);
               this.onAnimationComplete();
             });
 
             // 监听加载错误
-            this.lottieInstance.addEventListener("data_failed", () => {
-              console.error("Lottie动画加载失败:", animationPath);
-              this.onAnimationComplete();
-            });
+            this.lottieInstance.addEventListener(
+              "data_failed",
+              async (error) => {
+                console.error(
+                  "❌ Lottie动画加载失败，尝试备用方案:",
+                  animationPath,
+                  error
+                );
+
+                // 方案B: 手动加载并修改数据
+                try {
+                  console.log("🔄 尝试手动加载JSON数据...");
+                  const response = await fetch(animationPath);
+                  if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                  }
+
+                  let animationData = await response.json();
+                  console.log("📋 JSON数据加载成功，修改图片路径...");
+
+                  // 修改assets中的图片路径
+                  if (animationData.assets) {
+                    const basePath = animationPath.replace("/data.json", "/");
+                    animationData.assets.forEach((asset) => {
+                      if (asset.u && asset.p) {
+                        // 将相对路径转换为绝对路径
+                        asset.u = basePath + asset.u;
+                        console.log("🖼️ 修改图片路径:", asset.u + asset.p);
+                      }
+                    });
+                  }
+
+                  // 清理失败的实例
+                  this.clearLottieInstance();
+
+                  // 使用修改后的数据重新创建实例
+                  this.lottieInstance = lottie.loadAnimation({
+                    container: document.getElementById(containerId),
+                    renderer: "svg",
+                    loop: false,
+                    autoplay: true,
+                    animationData: animationData,
+                  });
+
+                  console.log("✨ 使用修改后的数据创建实例成功");
+
+                  // 重新绑定事件
+                  this.lottieInstance.addEventListener("complete", () => {
+                    console.log("✅ 备用方案动画播放完成:", animationPath);
+                    this.onAnimationComplete();
+                  });
+                } catch (backupError) {
+                  console.error("💥 备用方案也失败了:", backupError);
+                  this.onAnimationComplete();
+                }
+              }
+            );
 
             // 监听配置错误
             this.lottieInstance.addEventListener("config_ready", () => {
-              console.log("Lottie动画配置完成:", animationPath);
+              console.log("⚙️ Lottie动画配置完成:", animationPath);
             });
 
             // 监听数据准备错误
             this.lottieInstance.addEventListener("data_ready", () => {
-              console.log("Lottie动画数据准备完成:", animationPath);
+              console.log("📋 Lottie动画数据准备完成:", animationPath);
+            });
+
+            // 监听动画加载错误
+            this.lottieInstance.addEventListener("DOMLoaded", () => {
+              console.log("🎬 Lottie DOM加载完成:", animationPath);
             });
 
             // 添加超时处理，防止无限等待
             setTimeout(() => {
               if (this.isPlayingAnimation && this.lottieInstance) {
-                console.warn("Lottie动画加载超时:", animationPath);
+                console.warn("⏰ Lottie动画加载超时:", animationPath);
                 this.onAnimationComplete();
               }
-            }, 5000);
+            }, 10000); // 延长超时时间到10秒
           } catch (error) {
-            console.error("Lottie播放错误:", error, "文件路径:", animationPath);
+            console.error(
+              "💥 Lottie播放错误:",
+              error,
+              "文件路径:",
+              animationPath
+            );
             this.onAnimationComplete();
           }
         } else {
-          console.warn("Lottie未准备好或动画已停止");
+          console.warn("⚠️ Lottie未准备好或动画已停止");
           this.onAnimationComplete();
         }
       });
@@ -469,9 +627,13 @@ export default {
     handleTap() {
       if (this.isDragging) return;
 
+      console.log("👆 点击事件触发");
+      console.log("🎭 当前角色ID:", this.currentOutfitId);
+
       // 短按触发动作和语音
       setTimeout(() => {
         if (!this.showDressUp) {
+          console.log("🎬 点击触发动画播放");
           this.playRandomAction();
           this.showSpeech();
         }

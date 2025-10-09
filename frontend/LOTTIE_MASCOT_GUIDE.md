@@ -39,9 +39,9 @@ frontend/src/static/animations/
 - **动作数量**: 3 个
 - **语音内容**: ["你好呀~", "今天心情不错呢!", "我来跟你打招呼!"]
 - **动画文件**:
-  - 动作 1: `/static/animations/1/1/data.json`
-  - 动作 2: `/static/animations/1/2/data.json`
-  - 动作 3: `/static/animations/1/3/data.json`
+  - 动作 1: `/src/static/animations/1/1/data.json`
+  - 动作 2: `/src/static/animations/1/2/data.json`
+  - 动作 3: `/src/static/animations/1/3/data.json`
 
 ### 小人 2 (夏装小人)
 
@@ -49,8 +49,8 @@ frontend/src/static/animations/
 - **动作数量**: 2 个
 - **语音内容**: ["夏天真舒服~", "一起享受阳光吧!", "海边的风真凉爽!"]
 - **动画文件**:
-  - 动作 1: `/static/animations/2/1/data.json`
-  - 动作 2: `/static/animations/2/2/data.json`
+  - 动作 1: `/src/static/animations/2/1/data.json`
+  - 动作 2: `/src/static/animations/2/2/data.json`
 
 ### 小人 3 (冬装小人)
 
@@ -58,10 +58,10 @@ frontend/src/static/animations/
 - **动作数量**: 4 个
 - **语音内容**: ["冬天也要保持活力!", "雪花好美啊~", "一起堆雪人吧!"]
 - **动画文件**:
-  - 动作 1: `/static/animations/3/1/data.json`
-  - 动作 2: `/static/animations/3/2/data.json`
-  - 动作 3: `/static/animations/3/3/data.json`
-  - 动作 4: `/static/animations/3/4/data.json`
+  - 动作 1: `/src/static/animations/3/1/data.json`
+  - 动作 2: `/src/static/animations/3/2/data.json`
+  - 动作 3: `/src/static/animations/3/3/data.json`
+  - 动作 4: `/src/static/animations/3/4/data.json`
 
 ## 动画播放机制
 
