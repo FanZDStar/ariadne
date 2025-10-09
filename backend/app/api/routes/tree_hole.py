@@ -7,12 +7,17 @@ from app.database.session import get_db
 from app.models.user import User
 from app.models.tree_hole_chat import TreeHoleChatParticipant 
 from app.models.tree_hole import TreeHoleWhisper, TreeHoleComment, TreeHoleLike
-from app.schemas.tree_hole import WhisperCreate, WhisperUpdate, WhisperResponse, CommentResponse, CommentCreate
+from app.schemas.tree_hole import (
+    WhisperCreate, WhisperUpdate, WhisperResponse, CommentResponse, CommentCreate,
+    LikeWithStarResponse, CommentWithStarResponse, WhisperWithStarResponse, StarRewardInfo
+)
 from app.api.deps import get_current_user
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
 
 router = APIRouter(prefix="/tree-hole", tags=["心灵树洞"])
 
-@router.post("/", response_model=WhisperResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=WhisperWithStarResponse, status_code=status.HTTP_201_CREATED)
 def create_whisper(
     whisper: WhisperCreate,
     db: Session = Depends(get_db),
@@ -53,7 +58,58 @@ def create_whisper(
     
     # 确保返回解密后的内容
     db_whisper.content = db_whisper.decrypted_content
-    return db_whisper
+    
+    # 处理星点奖励 - 每日第一次发表悄悄话获得2星点
+    star_reward = StarRewardInfo()
+    try:
+        star_service = StarPointService(db)
+        award_result, message, points = star_service.award_points(
+            user_id=current_user.user_id,
+            action=StarPointAction.TREE_HOLE_WHISPER,
+            source_type=SourceType.TREE_HOLE,
+            source_id=str(db_whisper.whisper_id)
+        )
+        
+        if award_result:
+            star_reward = StarRewardInfo(
+                earned_points=points,
+                is_rewarded=True,
+                action_type=StarPointAction.TREE_HOLE_WHISPER.value,
+                description=f"发表悄悄话获得{points}星点"
+            )
+            print(f"⭐ 悄悄话奖励成功: {points}星点")
+        else:
+            print(f"⭐ 悄悄话奖励: {message}")
+    except Exception as e:
+        print(f"❌ 悄悄话奖励失败: {str(e)}")
+    
+    # 创建带星点奖励信息的响应
+    whisper_data = {
+        "whisper_id": db_whisper.whisper_id,
+        "content": db_whisper.content,  # 已经是解密后的内容
+        "user_id": db_whisper.user_id,
+        "like_count": db_whisper.like_count,
+        "comment_count": db_whisper.comment_count,
+        "is_anonymous": db_whisper.is_anonymous,
+        "created_at": db_whisper.created_at,
+        "updated_at": db_whisper.updated_at,
+        "user": {
+            "user_id": db_whisper.user.user_id,
+            "username": db_whisper.user.username,
+            "nickname": db_whisper.user.nickname,
+            "avatar_url": db_whisper.user.avatar_url,
+            "email": db_whisper.user.email,
+            "bio": db_whisper.user.bio,
+            "created_at": db_whisper.user.created_at,
+            "is_active": db_whisper.user.is_active
+        } if db_whisper.user else None,
+        "images": [{"image_url": img.image_url} for img in db_whisper.images] if db_whisper.images else [],
+        "liked": False,  # 自己发的悄悄话默认未点赞
+        "star_reward": star_reward
+    }
+    
+    result = WhisperWithStarResponse(**whisper_data)
+    return result
 
 @router.get("/my-whispers", response_model=List[WhisperResponse])
 def get_user_whispers(
@@ -258,7 +314,7 @@ def delete_whisper(
     db.commit()
     return
 
-@router.post("/{whisper_id}/like", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/{whisper_id}/like", response_model=LikeWithStarResponse)
 def like_whisper(
     whisper_id: int,
     db: Session = Depends(get_db),
@@ -274,6 +330,7 @@ def like_whisper(
         TreeHoleLike.user_id == current_user.user_id
     ).first()
 
+    is_liked = False
     if like:
         # 取消点赞
         db.delete(like)
@@ -283,10 +340,40 @@ def like_whisper(
         new_like = TreeHoleLike(whisper_id=whisper_id, user_id=current_user.user_id)
         db.add(new_like)
         db_whisper.like_count += 1
+        is_liked = True
 
     db.commit()
     
-    return {"message": "操作成功", "liked": like is None}
+    # 处理星点奖励 - 每日前三次互动（点赞）获得1星点
+    star_reward = StarRewardInfo()
+    if is_liked:  # 只有点赞（不是取消点赞）时才给奖励
+        try:
+            star_service = StarPointService(db)
+            award_result, message, points = star_service.award_points(
+                user_id=current_user.user_id,
+                action=StarPointAction.TREE_HOLE_INTERACTION,
+                source_type=SourceType.TREE_HOLE,
+                source_id=str(whisper_id)
+            )
+            
+            if award_result:
+                star_reward = StarRewardInfo(
+                    earned_points=points,
+                    is_rewarded=True,
+                    action_type=StarPointAction.TREE_HOLE_INTERACTION.value,
+                    description=f"点赞获得{points}星点"
+                )
+                print(f"⭐ 点赞奖励成功: {points}星点")
+            else:
+                print(f"⭐ 点赞奖励: {message}")
+        except Exception as e:
+            print(f"❌ 点赞奖励失败: {str(e)}")
+    
+    return LikeWithStarResponse(
+        message="操作成功",
+        liked=is_liked,
+        star_reward=star_reward
+    )
 
 
 @router.get("/my-interactions", response_model=List[WhisperResponse])
@@ -411,7 +498,7 @@ def get_whisper_comments(
     return comment_list
 
 
-@router.post("/{whisper_id}/comments")
+@router.post("/{whisper_id}/comments", response_model=CommentWithStarResponse)
 def create_whisper_comment(
     whisper_id: int,
     comment_data: CommentCreate,
@@ -442,4 +529,32 @@ def create_whisper_comment(
     db.commit()
     db.refresh(db_comment)
     
-    return {"message": "评论创建成功", "comment_id": db_comment.comment_id}
+    # 处理星点奖励 - 每日前三次互动（评论）获得1星点
+    star_reward = StarRewardInfo()
+    try:
+        star_service = StarPointService(db)
+        award_result, message, points = star_service.award_points(
+            user_id=current_user.user_id,
+            action=StarPointAction.TREE_HOLE_INTERACTION,
+            source_type=SourceType.TREE_HOLE,
+            source_id=str(whisper_id)
+        )
+        
+        if award_result:
+            star_reward = StarRewardInfo(
+                earned_points=points,
+                is_rewarded=True,
+                action_type=StarPointAction.TREE_HOLE_INTERACTION.value,
+                description=f"评论获得{points}星点"
+            )
+            print(f"⭐ 评论奖励成功: {points}星点")
+        else:
+            print(f"⭐ 评论奖励: {message}")
+    except Exception as e:
+        print(f"❌ 评论奖励失败: {str(e)}")
+    
+    return CommentWithStarResponse(
+        message="评论创建成功", 
+        comment_id=db_comment.comment_id,
+        star_reward=star_reward
+    )

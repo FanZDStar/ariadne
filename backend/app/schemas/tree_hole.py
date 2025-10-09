@@ -101,3 +101,28 @@ class LikeResponse(LikeBase):
     
     class Config:
         from_attributes = True
+
+# 星点奖励信息
+class StarRewardInfo(BaseModel):
+    """星点奖励信息"""
+    earned_points: int = 0
+    is_rewarded: bool = False
+    action_type: Optional[str] = None
+    description: Optional[str] = None
+
+# 带星点奖励的响应
+class LikeWithStarResponse(BaseModel):
+    """点赞操作带星点奖励的响应"""
+    message: str
+    liked: bool
+    star_reward: StarRewardInfo = StarRewardInfo()
+
+class CommentWithStarResponse(BaseModel):
+    """评论操作带星点奖励的响应"""
+    message: str
+    comment_id: int
+    star_reward: StarRewardInfo = StarRewardInfo()
+
+class WhisperWithStarResponse(WhisperResponse):
+    """发表悄悄话带星点奖励的响应"""
+    star_reward: StarRewardInfo = StarRewardInfo()

@@ -92,7 +92,17 @@ class StarPointService:
         self.db.refresh(log)
         return log
     
-    def can_earn_points(self, user_id: int, action: StarPointAction) -> Tuple[bool, str]:
+    def has_rewarded_today_for_source(self, user_id: int, action: StarPointAction, source_id: str) -> bool:
+        """检查今天是否已经为特定来源ID奖励过积分"""
+        today = date.today()
+        return self.db.query(StarPointLog).filter(
+            StarPointLog.user_id == user_id,
+            StarPointLog.action_type == action.value,
+            StarPointLog.source_id == source_id,
+            func.date(StarPointLog.created_at) == today
+        ).first() is not None
+
+    def can_earn_points(self, user_id: int, action: StarPointAction, source_id: str = None) -> Tuple[bool, str]:
         """检查用户是否可以获得积分"""
         reward_config = get_reward_config(action)
         if not reward_config:
@@ -127,8 +137,13 @@ class StarPointService:
                 return False, "今日已经获得AI情景训练积分"
             elif action == StarPointAction.PROTECTION_TRAINING and daily_limits.protection_training:
                 return False, "今日已经获得防护技能训练积分"
-            elif action == StarPointAction.TREE_HOLE_INTERACTION and daily_limits.tree_hole_interaction_count >= 3:
-                return False, "今日树洞互动积分已达上限"
+            elif action == StarPointAction.TREE_HOLE_INTERACTION:
+                # 检查今日互动次数是否已达上限
+                if daily_limits.tree_hole_interaction_count >= 3:
+                    return False, "今日树洞互动积分已达上限"
+                # 检查今天是否已经为这个悄悄话ID奖励过
+                if source_id and self.has_rewarded_today_for_source(user_id, action, source_id):
+                    return False, "今日已为此悄悄话获得过互动积分"
             elif action == StarPointAction.TREE_HOLE_WHISPER and daily_limits.tree_hole_whisper:
                 return False, "今日已经获得悄悄话积分"
         
@@ -143,7 +158,7 @@ class StarPointService:
                      source_id: str = None, source_type: SourceType = None) -> Tuple[bool, str, int]:
         """奖励用户积分"""
         # 检查是否可以获得积分
-        can_earn, message = self.can_earn_points(user_id, action)
+        can_earn, message = self.can_earn_points(user_id, action, source_id)
         if not can_earn:
             return False, message, 0
         

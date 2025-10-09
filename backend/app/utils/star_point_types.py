@@ -47,7 +47,7 @@ class StarPointAction(Enum):
     PROTECTION_TRAINING = "protection_training"         # 防护技能训练 2星
     
     # 心灵树洞
-    TREE_HOLE_INTERACTION = "tree_hole_interaction"     # 互动(点赞评论) 前3次各2星
+    TREE_HOLE_INTERACTION = "tree_hole_interaction"     # 互动(点赞评论) 前3次各1星
     TREE_HOLE_WHISPER = "tree_hole_whisper"            # 发表悄悄话 2星
     
     # 消费相关
@@ -146,7 +146,7 @@ STAR_POINT_REWARDS: Dict[StarPointAction, PointReward] = {
     
     # 心灵树洞
     StarPointAction.TREE_HOLE_INTERACTION: PointReward(
-        points=2, 
+        points=1, 
         description="树洞互动", 
         daily_limit=3
     ),
