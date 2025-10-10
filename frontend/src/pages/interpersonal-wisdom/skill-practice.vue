@@ -1,16 +1,5 @@
 <template>
   <view class="practice-container">
-    <view class="header">
-      <text class="title">{{
-        skillInfo && skillInfo.title ? skillInfo.title + " - 练习" : "技能练习"
-      }}</text>
-      <text class="subtitle">{{
-        skillInfo && skillInfo.content
-          ? "练习" + skillInfo.title + "，" + skillInfo.content
-          : "在安全环境中练习交往技巧"
-      }}</text>
-    </view>
-
     <!-- 技能信息展示 -->
     <view v-if="skillInfo" class="skill-info">
       <view class="skill-card">
@@ -1579,40 +1568,54 @@ export default {
 </script>
 
 <style scoped>
+/* 现代化浅蓝色系设计 */
 .practice-container {
   padding: 0;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #f5f9ff 100%);
   min-height: 100vh;
+  position: relative;
 }
 
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 40rpx 40rpx;
-  color: white;
-  text-align: center;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
+.practice-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(135, 206, 235, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(173, 216, 230, 0.08) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .skill-info {
-  padding: 40rpx;
+  padding: 60rpx 40rpx 40rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .skill-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 24rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #87ceeb 0%, #add8e6 50%, #b0e0e6 100%);
 }
 
 .skill-header {
@@ -1624,36 +1627,42 @@ export default {
 
 .skill-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
+  flex: 1;
 }
 
 .difficulty-badge {
   padding: 8rpx 16rpx;
   border-radius: 20rpx;
   font-size: 20rpx;
+  font-weight: 500;
 }
 
 .difficulty-badge.basic {
-  background-color: #e8f5e8;
-  color: #4caf50;
+  background: linear-gradient(135deg, #e8f6f3 0%, #d5f3ec 100%);
+  color: #27ae60;
+  border: 1px solid rgba(39, 174, 96, 0.2);
 }
 
 .difficulty-badge.intermediate {
-  background-color: #fff3e0;
-  color: #ff9800;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+  color: #4682b4;
+  border: 1px solid rgba(70, 130, 180, 0.2);
 }
 
 .difficulty-badge.advanced {
-  background-color: #ffebee;
-  color: #f44336;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e1f0ff 100%);
+  color: #2e5e8c;
+  border: 1px solid rgba(46, 94, 140, 0.2);
 }
 
 .skill-content {
   font-size: 28rpx;
-  color: #666;
-  line-height: 1.6;
+  color: #5a6c7d;
+  line-height: 1.7;
   margin-bottom: 20rpx;
+  font-weight: 400;
 }
 
 .skill-tags {
@@ -1663,43 +1672,107 @@ export default {
 }
 
 .skill-tag {
-  background-color: #f0f0f0;
-  color: #666;
+  background: linear-gradient(135deg, rgba(173, 216, 230, 0.2) 0%, rgba(176, 224, 230, 0.15) 100%);
+  color: #4682b4;
   padding: 8rpx 16rpx;
   border-radius: 16rpx;
   font-size: 22rpx;
+  font-weight: 500;
+  border: 1px solid rgba(70, 130, 180, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .scenario-section {
   padding: 0 40rpx 40rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .scenario-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 24rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.scenario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
 }
 
 .scenario-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
   margin-bottom: 20rpx;
   display: block;
 }
 
+.scenario-source {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.scenario-source.source-ai {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.15) 0%, rgba(39, 174, 96, 0.1) 100%);
+  color: #27ae60;
+  border: 1px solid rgba(39, 174, 96, 0.2);
+}
+
+.scenario-source.source-detail {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(41, 128, 185, 0.1) 100%);
+  color: #2980b9;
+  border: 1px solid rgba(41, 128, 185, 0.2);
+}
+
+.scenario-source.source-fallback {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.15) 0%, rgba(211, 84, 0, 0.1) 100%);
+  color: #d35400;
+  border: 1px solid rgba(211, 84, 0, 0.2);
+}
+
+.scenario-source.source-default {
+  background: linear-gradient(135deg, rgba(149, 165, 166, 0.15) 0%, rgba(127, 140, 141, 0.1) 100%);
+  color: #7f8c8d;
+  border: 1px solid rgba(127, 140, 141, 0.2);
+}
+
+.source-icon {
+  font-size: 20rpx;
+}
+
+.source-text {
+  font-weight: 600;
+}
+
 .scenario-content {
-  background-color: #f8f9fa;
-  border-radius: 12rpx;
+  background: linear-gradient(135deg, rgba(236, 240, 241, 0.6) 0%, rgba(250, 252, 253, 0.8) 100%);
+  border: 1px solid rgba(189, 195, 199, 0.2);
+  border-radius: 16rpx;
   padding: 24rpx;
   margin-bottom: 24rpx;
+  backdrop-filter: blur(10px);
 }
 
 .scenario-text {
   font-size: 28rpx;
-  color: #555;
-  line-height: 1.7;
+  color: #34495e;
+  line-height: 1.8;
+  font-weight: 400;
 }
 
 .scenario-actions {
@@ -1709,39 +1782,50 @@ export default {
 
 .interactive-section {
   padding: 0 40rpx 40rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .practice-guide {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 24rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
 }
 
 .guide-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
   margin-bottom: 16rpx;
   display: block;
 }
 
 .guide-text {
   font-size: 28rpx;
-  color: #666;
-  line-height: 1.6;
+  color: #5a6c7d;
+  line-height: 1.7;
+  font-weight: 400;
 }
 
 .chat-area {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 24rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
   min-height: 400rpx;
   max-height: 600rpx;
   overflow-y: auto;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
 }
 
 .message-item {
@@ -1762,21 +1846,25 @@ export default {
   align-items: center;
   justify-content: center;
   margin: 0 16rpx;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .user .message-avatar {
-  background-color: #667eea;
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  color: #2c3e50;
+  box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
 }
 
 .ai .message-avatar {
-  background-color: #f0f0f0;
-  color: #666;
+  background: linear-gradient(135deg, rgba(236, 240, 241, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
+  color: #5a6c7d;
+  box-shadow: 0 4rpx 12rpx rgba(149, 165, 166, 0.2);
 }
 
 .avatar-text {
   font-size: 20rpx;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .message-content {
@@ -1785,18 +1873,26 @@ export default {
 }
 
 .message-text {
-  background-color: #f8f9fa;
   padding: 20rpx;
-  border-radius: 16rpx;
+  border-radius: 18rpx;
   font-size: 28rpx;
-  color: #333;
-  line-height: 1.5;
+  line-height: 1.6;
   display: block;
+  font-weight: 400;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ai .message-text {
+  background: linear-gradient(135deg, rgba(236, 240, 241, 0.6) 0%, rgba(255, 255, 255, 0.8) 100%);
+  color: #2c3e50;
+  box-shadow: 0 2rpx 8rpx rgba(149, 165, 166, 0.1);
 }
 
 .user .message-text {
-  background-color: #667eea;
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  color: #2c3e50;
+  box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
 }
 
 .typing-indicator {
@@ -1843,31 +1939,40 @@ export default {
   padding: 0 40rpx 40rpx;
   position: sticky;
   bottom: 0;
-  background-color: #f5f5f5;
+  background: transparent;
 }
 
 .input-container {
   display: flex;
-  background-color: white;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
   border-radius: 50rpx;
   padding: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 4rpx 12rpx rgba(173, 216, 230, 0.1);
   align-items: flex-end;
   gap: 12rpx;
 }
 
 .model-btn {
-  background-color: #f0f0f0;
-  color: #666;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #4682b4;
   padding: 20rpx 24rpx;
   border-radius: 40rpx;
   font-size: 24rpx;
   white-space: nowrap;
-  border: 1rpx solid #e0e0e0;
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .model-btn:active {
-  background-color: #e0e0e0;
+  background: rgba(135, 206, 235, 0.2);
+  border-color: #87ceeb;
+  transform: scale(0.95);
 }
 
 .input-field {
@@ -1882,16 +1987,35 @@ export default {
 }
 
 .send-btn {
-  background-color: #667eea;
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  color: #2c3e50;
   padding: 20rpx 32rpx;
   border-radius: 40rpx;
   font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.3),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.2);
+}
+
+.send-btn:active {
+  transform: scale(0.95);
+  box-shadow: 
+    0 2rpx 8rpx rgba(135, 206, 235, 0.2),
+    0 1rpx 2rpx rgba(173, 216, 230, 0.1);
 }
 
 .send-btn.disabled {
-  background-color: #ccc;
-  color: #999;
+  opacity: 0.6;
+  transform: none;
+  cursor: not-allowed;
+  background: rgba(149, 165, 166, 0.3);
+  color: #7f8c8d;
+  box-shadow: 
+    0 2rpx 8rpx rgba(149, 165, 166, 0.1),
+    0 1rpx 2rpx rgba(127, 140, 141, 0.1);
 }
 
 .action-btn {
@@ -2189,9 +2313,9 @@ export default {
 .profession-item.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: #667eea;
-  color: white;
+  color: #2c3e50;
   transform: scale(1.05);
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6rpx 20rpx rgba(135, 206, 235, 0.4);
 }
 
 .age-grid {
@@ -2201,16 +2325,20 @@ export default {
 }
 
 .age-item {
-  background-color: #f5f7fa;
-  border: 2rpx solid #dcdfe6;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(173, 216, 230, 0.3);
   border-radius: 16rpx;
   padding: 20rpx 28rpx;
   font-size: 28rpx;
-  color: #606266;
+  color: #4682b4;
   text-align: center;
   min-width: 120rpx;
-  transition: all 0.2s ease;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.1);
+  font-weight: 500;
 }
 
 .age-item:active {
@@ -2218,11 +2346,12 @@ export default {
 }
 
 .age-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  border-color: transparent;
+  color: #2c3e50;
   transform: scale(1.05);
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6rpx 20rpx rgba(135, 206, 235, 0.4);
+  font-weight: 600;
 }
 
 .personality-grid {
@@ -2232,16 +2361,20 @@ export default {
 }
 
 .personality-item {
-  background-color: #f5f7fa;
-  border: 2rpx solid #dcdfe6;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(173, 216, 230, 0.3);
   border-radius: 16rpx;
   padding: 20rpx 28rpx;
   font-size: 28rpx;
-  color: #606266;
+  color: #4682b4;
   text-align: center;
   min-width: 120rpx;
-  transition: all 0.2s ease;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.1);
+  font-weight: 500;
 }
 
 .personality-item:active {
@@ -2249,53 +2382,65 @@ export default {
 }
 
 .personality-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  border-color: transparent;
+  color: #2c3e50;
   transform: scale(1.05);
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6rpx 20rpx rgba(135, 206, 235, 0.4);
+  font-weight: 600;
 }
 
 .background-input {
   width: 100%;
   min-height: 140rpx;
-  background-color: #fafbfc;
-  border: 2rpx solid #dcdfe6;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(173, 216, 230, 0.3);
   border-radius: 16rpx;
   padding: 24rpx;
   font-size: 28rpx;
-  color: #303133;
-  line-height: 1.6;
+  color: #2c3e50;
+  line-height: 1.7;
   resize: none;
   box-sizing: border-box;
-  transition: border-color 0.2s ease;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.1),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.05);
+  font-family: inherit;
+  font-weight: 400;
 }
 
 .background-input:focus {
-  border-color: #667eea;
+  border-color: #87ceeb;
   outline: none;
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+  box-shadow: 
+    0 0 0 4rpx rgba(135, 206, 235, 0.2),
+    0 4rpx 12rpx rgba(135, 206, 235, 0.15);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .background-input::placeholder {
-  color: #c0c4cc;
+  color: #a0b4c1;
+  font-size: 26rpx;
 }
 
 .char-count {
   font-size: 24rpx;
-  color: #909399;
+  color: #7f8c8d;
   text-align: right;
   margin-top: 12rpx;
   display: block;
+  font-weight: 500;
 }
 
 .modal-footer {
   display: flex;
   padding: 32rpx;
-  border-top: 1rpx solid #ebeef5;
+  border-top: 1px solid rgba(173, 216, 230, 0.2);
   gap: 24rpx;
-  background-color: #fafbfc;
+  background: rgba(248, 252, 255, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .modal-btn {
@@ -2305,8 +2450,12 @@ export default {
   text-align: center;
   font-size: 32rpx;
   font-weight: 600;
-  transition: all 0.2s ease;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(173, 216, 230, 0.3);
 }
 
 .modal-btn:active {
@@ -2314,26 +2463,105 @@ export default {
 }
 
 .modal-btn.cancel {
-  background-color: white;
-  color: #606266;
-  border: 2rpx solid #dcdfe6;
+  background: rgba(255, 255, 255, 0.8);
+  color: #4682b4;
 }
 
 .modal-btn.cancel:active {
-  background-color: #f5f7fa;
+  background: rgba(236, 240, 241, 0.6);
+  border-color: #a0b4c1;
 }
 
 .modal-btn.confirm {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  color: #2c3e50;
   border: none;
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6rpx 20rpx rgba(135, 206, 235, 0.4);
+}
+
+.modal-btn.confirm:active {
+  box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
 }
 
 .modal-btn.confirm.disabled {
-  background: #c0c4cc;
-  color: white;
-  box-shadow: none;
+  background: rgba(149, 165, 166, 0.3);
+  color: #7f8c8d;
+  box-shadow: 
+    0 2rpx 8rpx rgba(149, 165, 166, 0.1),
+    0 1rpx 2rpx rgba(127, 140, 141, 0.1);
   transform: none;
+  cursor: not-allowed;
+}
+
+/* 响应式设计增强 */
+@media (max-width: 750rpx) {
+  .profession-grid,
+  .age-grid,
+  .personality-grid {
+    gap: 12rpx;
+  }
+  
+  .profession-item,
+  .age-item,
+  .personality-item {
+    padding: 16rpx 20rpx;
+    font-size: 26rpx;
+    min-width: 100rpx;
+  }
+  
+  .background-input {
+    font-size: 26rpx;
+    padding: 20rpx;
+    min-height: 120rpx;
+  }
+  
+  .modal-btn {
+    font-size: 28rpx;
+    padding: 24rpx;
+  }
+}
+
+/* 滚动条样式 */
+.modal-body::-webkit-scrollbar {
+  width: 8rpx;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(236, 240, 241, 0.3);
+  border-radius: 4rpx;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  border-radius: 4rpx;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #6bb6cd 0%, #98d4e0 100%);
+}
+
+/* 动画增强 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.loading .action-btn {
+  animation: pulse 1.5s infinite;
+}
+
+/* 焦点和选择样式 */
+::selection {
+  background: rgba(135, 206, 235, 0.3);
+  color: #2c3e50;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* 平滑滚动 */
+.modal-body {
+  scroll-behavior: smooth;
 }
 </style>

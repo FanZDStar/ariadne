@@ -291,9 +291,9 @@ export default {
 }
 
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
     padding: 60rpx 40rpx 40rpx;
-    color: white;
+    color: #2c3e50;
 }
 
 .page-title {
