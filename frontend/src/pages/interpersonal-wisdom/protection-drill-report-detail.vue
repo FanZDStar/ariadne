@@ -1,5 +1,6 @@
 <template>
   <view class="report-detail-container">
+    <!-- 头部标题 -->
     <view class="header">
       <text class="title">训练报告详情</text>
       <text class="subtitle">{{ report.drill_type }}训练报告</text>
@@ -47,34 +48,36 @@
           <text class="card-title">🎯 训练成绩</text>
         </view>
         <view class="score-display">
-          <view class="score-circle" :class="getScoreLevelClass(report.score)">
-            <text class="score-number">{{ report.score }}%</text>
-            <text class="score-label">总得分</text>
+          <view
+            class="score-circle"
+            :class="getScoreLevelClass(getActualAccuracyRate())"
+          >
+            <text class="score-number">{{ getActualAccuracyRate() }}%</text>
+            <text class="score-label">准确率</text>
           </view>
           <view class="score-details">
             <view class="score-item">
               <text class="score-item-label">总题数</text>
-              <text class="score-item-value">{{ report.total_questions }}</text>
+              <text class="score-item-value"
+                >{{ report.total_questions }}题</text
+              >
             </view>
             <view class="score-item">
-              <text class="score-item-label">正确数</text>
-              <text class="score-item-value">{{ report.correct_answers }}</text>
+              <text class="score-item-label">正确题数</text>
+              <text class="score-item-value"
+                >{{ getActualCorrectCount() }}题</text
+              >
             </view>
             <view class="score-item">
               <text class="score-item-label">错误数</text>
-              <text class="score-item-value">{{
-                report.total_questions - report.correct_answers
-              }}</text>
+              <text class="score-item-value"
+                >{{ getActualWrongCount() }}题</text
+              >
             </view>
             <view class="score-item">
               <text class="score-item-label">正确率</text>
               <text class="score-item-value"
-                >{{
-                  (
-                    (report.correct_answers / report.total_questions) *
-                    100
-                  ).toFixed(1)
-                }}%</text
+                >{{ getActualAccuracyRate() }}%</text
               >
             </view>
           </view>
@@ -90,16 +93,24 @@
           <!-- 总体分析 -->
           <view v-if="reportContent.overall_analysis" class="analysis-section">
             <text class="analysis-subtitle">📊 总体分析</text>
-            <text class="analysis-text">{{ reportContent.overall_analysis }}</text>
+            <text class="analysis-text">{{
+              reportContent.overall_analysis
+            }}</text>
           </view>
 
           <!-- 优势分析 -->
-          <view v-if="reportContent.strength_analysis && reportContent.strength_analysis.length > 0" class="analysis-section">
+          <view
+            v-if="
+              reportContent.strength_analysis &&
+              reportContent.strength_analysis.length > 0
+            "
+            class="analysis-section"
+          >
             <text class="analysis-subtitle">💪 优势分析</text>
             <view class="list-container">
-              <view 
-                v-for="(strength, index) in reportContent.strength_analysis" 
-                :key="index" 
+              <view
+                v-for="(strength, index) in reportContent.strength_analysis"
+                :key="index"
                 class="list-item strength-item"
               >
                 <text class="list-index">{{ index + 1 }}.</text>
@@ -109,12 +120,18 @@
           </view>
 
           <!-- 薄弱环节 -->
-          <view v-if="reportContent.weakness_analysis && reportContent.weakness_analysis.length > 0" class="analysis-section">
+          <view
+            v-if="
+              reportContent.weakness_analysis &&
+              reportContent.weakness_analysis.length > 0
+            "
+            class="analysis-section"
+          >
             <text class="analysis-subtitle">⚠️ 薄弱环节</text>
             <view class="list-container">
-              <view 
-                v-for="(weakness, index) in reportContent.weakness_analysis" 
-                :key="index" 
+              <view
+                v-for="(weakness, index) in reportContent.weakness_analysis"
+                :key="index"
                 class="list-item weakness-item"
               >
                 <text class="list-index">{{ index + 1 }}.</text>
@@ -124,12 +141,20 @@
           </view>
 
           <!-- 改进建议 -->
-          <view v-if="reportContent.improvement_suggestions && reportContent.improvement_suggestions.length > 0" class="analysis-section">
+          <view
+            v-if="
+              reportContent.improvement_suggestions &&
+              reportContent.improvement_suggestions.length > 0
+            "
+            class="analysis-section"
+          >
             <text class="analysis-subtitle">💡 改进建议</text>
             <view class="list-container">
-              <view 
-                v-for="(suggestion, index) in reportContent.improvement_suggestions" 
-                :key="index" 
+              <view
+                v-for="(
+                  suggestion, index
+                ) in reportContent.improvement_suggestions"
+                :key="index"
                 class="list-item suggestion-item"
               >
                 <text class="list-index">{{ index + 1 }}.</text>
@@ -139,12 +164,18 @@
           </view>
 
           <!-- 知识点 -->
-          <view v-if="reportContent.knowledge_points && reportContent.knowledge_points.length > 0" class="analysis-section">
+          <view
+            v-if="
+              reportContent.knowledge_points &&
+              reportContent.knowledge_points.length > 0
+            "
+            class="analysis-section"
+          >
             <text class="analysis-subtitle">📚 相关知识点</text>
             <view class="knowledge-grid">
-              <view 
-                v-for="(point, index) in reportContent.knowledge_points" 
-                :key="index" 
+              <view
+                v-for="(point, index) in reportContent.knowledge_points"
+                :key="index"
                 class="knowledge-tag"
               >
                 <text class="knowledge-text">{{ point }}</text>
@@ -153,30 +184,54 @@
           </view>
 
           <!-- 表现评估 -->
-          <view v-if="reportContent.performance_evaluation" class="analysis-section">
+          <view
+            v-if="reportContent.performance_evaluation"
+            class="analysis-section"
+          >
             <text class="analysis-subtitle">⭐ 表现评估</text>
             <view class="performance-grid">
               <view class="performance-item">
                 <text class="performance-label">等级评定</text>
-                <text class="performance-value">{{ reportContent.performance_evaluation.score_level || 'N/A' }}</text>
+                <text class="performance-value">{{
+                  reportContent.performance_evaluation.score_level || "N/A"
+                }}</text>
               </view>
               <view class="performance-item">
                 <text class="performance-label">整体评分</text>
-                <text class="performance-value">{{ reportContent.performance_evaluation.overall_rating || 'N/A' }}/5星</text>
+                <text class="performance-value"
+                  >{{
+                    reportContent.performance_evaluation.overall_rating ||
+                    "N/A"
+                  }}/5星</text
+                >
               </view>
               <view class="performance-item">
                 <text class="performance-label">准确率评估</text>
-                <text class="performance-value">{{ reportContent.performance_evaluation.accuracy_assessment || 'N/A' }}</text>
+                <text class="performance-value">{{
+                  reportContent.performance_evaluation.accuracy_assessment ||
+                  "N/A"
+                }}</text>
               </view>
-              <view v-if="reportContent.performance_evaluation.speed_assessment" class="performance-item">
+              <view
+                v-if="reportContent.performance_evaluation.speed_assessment"
+                class="performance-item"
+              >
                 <text class="performance-label">速度评估</text>
-                <text class="performance-value">{{ reportContent.performance_evaluation.speed_assessment }}</text>
+                <text class="performance-value">{{
+                  reportContent.performance_evaluation.speed_assessment
+                }}</text>
               </view>
             </view>
           </view>
 
           <!-- 题目分析 -->
-          <view v-if="reportContent.question_analysis && reportContent.question_analysis.length > 0" class="analysis-section">
+          <view
+            v-if="
+              reportContent.question_analysis &&
+              reportContent.question_analysis.length > 0
+            "
+            class="analysis-section"
+          >
             <text class="analysis-subtitle">📝 题目分析</text>
             <view class="question-summary">
               <view class="summary-stats">
@@ -191,21 +246,35 @@
               </view>
             </view>
             <view class="questions-detail">
-              <view 
-                v-for="(question, index) in reportContent.question_analysis" 
-                :key="index" 
+              <view
+                v-for="(question, index) in reportContent.question_analysis"
+                :key="index"
                 class="question-item"
-                :class="{ 'question-correct': question.is_correct, 'question-incorrect': !question.is_correct }"
+                :class="{
+                  'question-correct': question.is_correct,
+                  'question-incorrect': !question.is_correct,
+                }"
               >
                 <view class="question-header">
-                  <text class="question-number">第{{ question.question_number }}题</text>
-                  <view class="question-result" :class="question.is_correct ? 'correct' : 'incorrect'">
-                    <text class="result-text">{{ question.is_correct ? '✓ 正确' : '✗ 错误' }}</text>
+                  <text class="question-number"
+                    >第{{ question.question_number }}题</text
+                  >
+                  <view
+                    class="question-result"
+                    :class="question.is_correct ? 'correct' : 'incorrect'"
+                  >
+                    <text class="result-text">{{
+                      question.is_correct ? "✓ 正确" : "✗ 错误"
+                    }}</text>
                   </view>
                 </view>
                 <view class="question-answers">
-                  <text class="answer-text">您的选择: 选项{{ question.user_answer }}</text>
-                  <text class="answer-text">正确答案: 选项{{ question.correct_answer }}</text>
+                  <text class="answer-text"
+                    >您的选择: 选项{{ question.user_answer }}</text
+                  >
+                  <text class="answer-text"
+                    >正确答案: 选项{{ question.correct_answer }}</text
+                  >
                 </view>
                 <view v-if="question.analysis" class="question-analysis-text">
                   <text class="analysis-label">分析:</text>
@@ -213,7 +282,9 @@
                 </view>
                 <view v-if="question.explanation" class="question-explanation">
                   <text class="explanation-label">解释:</text>
-                  <text class="explanation-desc">{{ question.explanation }}</text>
+                  <text class="explanation-desc">{{
+                    question.explanation
+                  }}</text>
                 </view>
               </view>
             </view>
@@ -281,8 +352,9 @@ export default {
         this.isLoading = true;
         const token = uni.getStorageSync("access_token");
 
-        const response = await uni.request({
-          url: `http://127.0.0.1:8000/protection-drill/reports/${this.reportId}`,
+        // 首先尝试获取详细报告
+        const detailResponse = await uni.request({
+          url: `http://127.0.0.1:8000/protection-drill/reports/${this.reportId}/details`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -290,19 +362,52 @@ export default {
           },
         });
 
-        if (response.statusCode === 200) {
-          this.report = response.data;
+        if (detailResponse.statusCode === 200 && detailResponse.data.report) {
+          // 使用详细API的数据
+          this.report = detailResponse.data.report;
+          this.reportContent = {
+            question_analysis: detailResponse.data.question_details || [],
+            actual_accuracy: detailResponse.data.statistics?.accuracy_rate || 0,
+            total_score: detailResponse.data.statistics?.total_score || 0,
+          };
 
-          // 解析报告内容
+          // 解析原有的报告内容（如果有的话）
           if (this.report.report_content) {
             try {
-              this.reportContent = JSON.parse(this.report.report_content);
+              const originalContent = JSON.parse(this.report.report_content);
+              this.reportContent = {
+                ...originalContent,
+                ...this.reportContent, // 详细数据优先
+              };
             } catch (e) {
-              console.error("解析报告内容失败:", e);
+              console.error("解析原始报告内容失败:", e);
             }
           }
         } else {
-          throw new Error(response.data?.detail || "加载失败");
+          // 回退到基础API
+          const response = await uni.request({
+            url: `http://127.0.0.1:8000/protection-drill/reports/${this.reportId}`,
+            method: "GET",
+            header: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.statusCode === 200) {
+            this.report = response.data;
+
+            // 解析报告内容
+            if (this.report.report_content) {
+              try {
+                this.reportContent = JSON.parse(this.report.report_content);
+              } catch (e) {
+                console.error("解析报告内容失败:", e);
+              }
+            }
+          } else {
+            throw new Error(response.data?.detail || "加载失败");
+          }
         }
       } catch (error) {
         console.error("加载报告详情失败:", error);
@@ -351,13 +456,54 @@ export default {
     },
 
     getCorrectCount() {
-      if (!this.reportContent || !this.reportContent.question_analysis) return 0;
-      return this.reportContent.question_analysis.filter(q => q.is_correct).length;
+      if (!this.reportContent || !this.reportContent.question_analysis)
+        return 0;
+      return this.reportContent.question_analysis.filter((q) => q.is_correct)
+        .length;
     },
 
     getIncorrectCount() {
-      if (!this.reportContent || !this.reportContent.question_analysis) return 0;
-      return this.reportContent.question_analysis.filter(q => !q.is_correct).length;
+      if (!this.reportContent || !this.reportContent.question_analysis)
+        return 0;
+      return this.reportContent.question_analysis.filter((q) => !q.is_correct)
+        .length;
+    },
+
+    getActualCorrectCount() {
+      // 优先从详细分析中获取
+      if (this.reportContent && this.reportContent.question_analysis) {
+        return this.reportContent.question_analysis.filter((q) => q.is_correct)
+          .length;
+      }
+      // 如果没有详细分析，尝试从实际准确率计算
+      if (
+        this.reportContent &&
+        this.reportContent.actual_accuracy &&
+        this.report.total_questions
+      ) {
+        return Math.round(
+          (this.reportContent.actual_accuracy / 100) *
+            this.report.total_questions
+        );
+      }
+      // 最后使用report中的数据，但需要判断是否为正确的题目数
+      if (this.report.correct_answers <= this.report.total_questions) {
+        return this.report.correct_answers;
+      }
+      // 如果correct_answers看起来是百分比，从中计算
+      return Math.round(
+        (this.report.correct_answers / 100) * this.report.total_questions
+      );
+    },
+
+    getActualWrongCount() {
+      return this.report.total_questions - this.getActualCorrectCount();
+    },
+
+    getActualAccuracyRate() {
+      const correctCount = this.getActualCorrectCount();
+      if (this.report.total_questions === 0) return 0;
+      return ((correctCount / this.report.total_questions) * 100).toFixed(1);
     },
 
     goBack() {
