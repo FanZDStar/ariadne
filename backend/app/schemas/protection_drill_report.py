@@ -3,6 +3,21 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from decimal import Decimal
 
+class QuestionAnalysis(BaseModel):
+    """单题分析数据模式"""
+    question_id: Optional[int] = Field(None, description="题目ID")
+    question_title: Optional[str] = Field(None, description="题目标题")
+    question_text: Optional[str] = Field(None, description="题目内容")
+    selected_option_id: Optional[int] = Field(None, description="用户选择的选项ID")
+    selected_option: Optional[str] = Field(None, description="用户选择的选项文本")
+    correct_option_id: Optional[int] = Field(None, description="正确答案选项ID")
+    correct_option: Optional[str] = Field(None, description="正确答案选项文本")
+    is_correct: bool = Field(False, description="是否回答正确")
+    score_gained: int = Field(0, description="本题获得分数")
+    explanation: Optional[str] = Field(None, description="答案解释")
+    risk_explanation: Optional[str] = Field(None, description="风险解释")
+    options: List[Dict[str, Any]] = Field(default_factory=list, description="所有选项数据")
+
 class ProtectionDrillReportBase(BaseModel):
     """防护训练报告基础模式"""
     drill_type: str = Field(..., description="防护训练类型")
@@ -19,6 +34,7 @@ class ProtectionDrillReportCreate(ProtectionDrillReportBase):
     answers: Optional[List[int]] = Field(None, description="用户答题选择列表")
     correct_answers_list: Optional[List[int]] = Field(None, description="正确答案列表")
     questions_data: Optional[List[Dict[str, Any]]] = Field(None, description="题目详细数据")
+    question_analysis: Optional[List[QuestionAnalysis]] = Field(None, description="详细答题分析")
 
 class ProtectionDrillReportUpdate(BaseModel):
     """更新防护训练报告模式"""

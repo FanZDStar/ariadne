@@ -9,6 +9,19 @@ from app.services.protection_drill_service import ProtectionDrillService
 
 logger = logging.getLogger(__name__)
 
+def get_performance_message(accuracy_rate):
+    """根据准确率生成表现评价信息"""
+    if accuracy_rate >= 90:
+        return "表现优秀！你已经具备了很强的防护意识和风险识别能力。"
+    elif accuracy_rate >= 80:
+        return "表现良好！你具备了基本的防护能力，继续保持！"
+    elif accuracy_rate >= 70:
+        return "表现一般，需要加强对风险信号的识别能力。"
+    elif accuracy_rate >= 60:
+        return "表现有待提高，建议多练习提升防护意识。"
+    else:
+        return "需要继续努力提升防护意识和风险识别能力。"
+
 router = APIRouter(prefix="/api/protection-drill", tags=["防护训练"])
 
 @router.get("/training-types", summary="获取训练类型列表")
@@ -112,13 +125,27 @@ async def submit_answer(session_id: str, request: dict):
 async def complete_training_session(session_id: str):
     """完成训练会话并获取结果"""
     try:
-        # 这里可以添加会话完成逻辑
-        # 暂时返回模拟的结果数据
+        # 这里应该从实际的会话数据中获取结果
+        # 暂时返回合理的模拟数据，实际应用中需要从数据库获取
+        
+        # 模拟根据会话ID获取实际答题数据
+        # 实际实现时，这些数据应该从 protection_drill_sessions 表中获取
+        total_questions = 8
+        
+        # 这里应该根据实际的答题记录计算正确答案数
+        # 暂时使用随机值模拟，实际应该查询用户答题记录
+        import random
+        correct_answers = random.randint(5, 8)  # 临时模拟，实际需要从数据库计算
+        
+        accuracy_rate = (correct_answers / total_questions) * 100
+        
         result = {
             "session_id": session_id,
-            "total_questions": 8,
-            "correct_answers": 6,
-            "score": 75,
+            "total_questions": total_questions,
+            "correct_answers": correct_answers,
+            "accuracy_rate": round(accuracy_rate, 1),
+            "score": round(accuracy_rate, 1),
+            "performance_message": get_performance_message(accuracy_rate),
             "completed_at": "2025-01-02T10:30:00Z"
         }
         

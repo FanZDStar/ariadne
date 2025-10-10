@@ -15,6 +15,7 @@ from app.schemas.protection_drill_report import (
     ProtectionDrillStatistics
 )
 from app.services.ai_analysis_service import ai_analysis_service
+from app.services.ai_feedback_service import ai_feedback_service
 
 router = APIRouter()
 
@@ -26,6 +27,11 @@ async def create_protection_drill_report(
 ):
     """创建防护训练报告"""
     try:
+        print(f"接收到的报告数据: {report_data}")
+        print(f"question_analysis字段存在: {hasattr(report_data, 'question_analysis')}")
+        if hasattr(report_data, 'question_analysis'):
+            print(f"question_analysis数据: {report_data.question_analysis}")
+        
         # 自动生成AI分析
         generated_report_content = None
         
@@ -72,10 +78,20 @@ async def create_protection_drill_report(
             'suggestions': report_data.suggestions
         })
         
+        # 获取创建的报告ID
+        report_id = result.lastrowid
+        
+        # 保存详细的答题分析（如果有的话）
+        print(f"检查question_analysis字段: {hasattr(report_data, 'question_analysis')}")
+        if hasattr(report_data, 'question_analysis') and report_data.question_analysis:
+            print(f"question_analysis数据: {report_data.question_analysis}")
+            await save_question_details(db, report_id, report_data.question_analysis)
+        else:
+            print("没有question_analysis数据或数据为空")
+        
         db.commit()
         
         # 获取创建的报告
-        report_id = result.lastrowid
         select_sql = """
         SELECT * FROM protection_drill_reports WHERE id = :id
         """
@@ -98,7 +114,91 @@ async def create_protection_drill_report(
         
     except Exception as e:
         db.rollback()
+        print(f"创建报告失败: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail=f"创建报告失败: {str(e)}")
+
+
+async def save_question_details(db: Session, report_id: int, question_analysis: List[Dict[str, Any]]):
+    """保存答题详情到数据库"""
+    try:
+        print(f"开始保存答题详情，report_id: {report_id}, 题目数量: {len(question_analysis)}")
+        
+        for index, question_detail in enumerate(question_analysis):
+            print(f"处理第{index+1}题: {question_detail}")
+            print(f"question_detail类型: {type(question_detail)}")
+            
+            # 处理Pydantic模型或字典
+            if hasattr(question_detail, 'dict'):
+                # 如果是Pydantic模型，转换为字典
+                detail_dict = question_detail.dict()
+            else:
+                # 如果已经是字典，直接使用
+                detail_dict = question_detail
+            
+            print(f"转换后的字典: {detail_dict}")
+            
+            # 生成AI个性化反馈
+            ai_feedback = ""
+            try:
+                ai_feedback = ai_feedback_service.generate_question_feedback(
+                    question_title=detail_dict.get('question_title', ''),
+                    question_text=detail_dict.get('question_text', ''),
+                    selected_option=detail_dict.get('selected_option', ''),
+                    correct_option=detail_dict.get('correct_option', ''),
+                    is_correct=detail_dict.get('is_correct', False),
+                    explanation=detail_dict.get('explanation', ''),
+                    risk_explanation=detail_dict.get('risk_explanation', ''),
+                    drill_type="防护技能训练"
+                )
+                print(f"生成AI反馈成功: {ai_feedback[:50]}...")
+            except Exception as e:
+                print(f"生成AI反馈失败: {e}")
+                ai_feedback = "继续努力，每道题都是宝贵的学习机会！"
+            
+            insert_detail_sql = """
+            INSERT INTO protection_drill_question_details 
+            (report_id, question_id, question_title, question_text, 
+             selected_option_id, selected_option_text, correct_option_id, correct_option_text,
+             is_correct, score_gained, explanation, risk_explanation, ai_feedback,
+             options_data, question_order)
+            VALUES (:report_id, :question_id, :question_title, :question_text,
+             :selected_option_id, :selected_option_text, :correct_option_id, :correct_option_text,
+             :is_correct, :score_gained, :explanation, :risk_explanation, :ai_feedback,
+             :options_data, :question_order)
+            """
+            
+            insert_params = {
+                'report_id': report_id,
+                'question_id': detail_dict.get('question_id'),
+                'question_title': detail_dict.get('question_title'),
+                'question_text': detail_dict.get('question_text'),
+                'selected_option_id': detail_dict.get('selected_option_id'),
+                'selected_option_text': detail_dict.get('selected_option'),
+                'correct_option_id': detail_dict.get('correct_option_id'),
+                'correct_option_text': detail_dict.get('correct_option'),
+                'is_correct': detail_dict.get('is_correct', False),
+                'score_gained': detail_dict.get('score_gained', 0),
+                'explanation': detail_dict.get('explanation'),
+                'risk_explanation': detail_dict.get('risk_explanation'),
+                'ai_feedback': ai_feedback,
+                'options_data': json.dumps(detail_dict.get('options', []), ensure_ascii=False),
+                'question_order': index + 1
+            }
+            
+            print(f"执行插入，参数: {insert_params}")
+            
+            db.execute(text(insert_detail_sql), insert_params)
+            print(f"第{index+1}题保存成功")
+            
+        print(f"所有答题详情保存完成，共{len(question_analysis)}题")
+            
+    except Exception as e:
+        print(f"保存答题详情失败: {e}")
+        import traceback
+        traceback.print_exc()
+        raise e
 
 @router.get("/reports", response_model=ProtectionDrillReportList)
 async def get_protection_drill_reports(
@@ -163,6 +263,120 @@ async def get_protection_drill_reports(
         
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"获取报告列表失败: {str(e)}")
+
+@router.get("/reports/{report_id}/details")
+async def get_protection_drill_report_details(
+    report_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """获取防护训练报告的详细答题分析"""
+    try:
+        # 获取报告基本信息
+        select_report_sql = """
+        SELECT * FROM protection_drill_reports 
+        WHERE id = :id AND user_id = :user_id
+        """
+        report = db.execute(text(select_report_sql), {
+            'id': report_id,
+            'user_id': current_user.user_id
+        }).fetchone()
+        
+        if not report:
+            raise HTTPException(status_code=404, detail="报告不存在")
+        
+        # 获取详细答题分析
+        select_details_sql = """
+        SELECT * FROM protection_drill_question_details
+        WHERE report_id = :report_id
+        ORDER BY question_order ASC
+        """
+        question_details = db.execute(text(select_details_sql), {
+            'report_id': report_id
+        }).fetchall()
+        
+        # 格式化答题详情
+        formatted_details = []
+        for detail in question_details:
+            options_data = json.loads(detail.options_data) if detail.options_data else []
+            
+            formatted_details.append({
+                'id': detail.id,
+                'question_id': detail.question_id,
+                'question_title': detail.question_title,
+                'question_text': detail.question_text,
+                'selected_option_id': detail.selected_option_id,
+                'selected_option_text': detail.selected_option_text,
+                'correct_option_id': detail.correct_option_id,
+                'correct_option_text': detail.correct_option_text,
+                'is_correct': detail.is_correct,
+                'score_gained': detail.score_gained,
+                'explanation': detail.explanation,
+                'risk_explanation': detail.risk_explanation,
+                'ai_feedback': detail.ai_feedback,
+                'options': options_data,
+                'question_order': detail.question_order
+            })
+        
+        # 生成整体AI分析（如果还没有的话）
+        overall_ai_analysis = None
+        if not report.ai_analysis and formatted_details:
+            try:
+                overall_ai_analysis = ai_feedback_service.generate_overall_analysis(
+                    drill_type=report.drill_type,
+                    scenario_name=report.scenario_name or "防护训练",
+                    total_questions=report.total_questions,
+                    correct_answers=report.correct_answers,
+                    accuracy_rate=(report.correct_answers / report.total_questions * 100) if report.total_questions > 0 else 0,
+                    question_analysis=formatted_details,
+                    completion_time=report.completion_time
+                )
+                
+                # 保存整体分析到数据库
+                update_analysis_sql = """
+                UPDATE protection_drill_reports 
+                SET ai_analysis = :ai_analysis 
+                WHERE id = :id
+                """
+                db.execute(text(update_analysis_sql), {
+                    'ai_analysis': overall_ai_analysis,
+                    'id': report_id
+                })
+                db.commit()
+                
+            except Exception as e:
+                print(f"生成整体AI分析失败: {e}")
+                overall_ai_analysis = "训练完成！继续努力提升防护技能。"
+        else:
+            overall_ai_analysis = report.ai_analysis
+        
+        return {
+            'report': {
+                'id': report.id,
+                'drill_type': report.drill_type,
+                'scenario_name': report.scenario_name,
+                'total_questions': report.total_questions,
+                'correct_answers': report.correct_answers,
+                'score': float(report.score),
+                'completion_time': report.completion_time,
+                'suggestions': report.suggestions,
+                'ai_analysis': overall_ai_analysis,
+                'created_at': report.created_at,
+                'updated_at': report.updated_at
+            },
+            'question_details': formatted_details,
+            'statistics': {
+                'accuracy_rate': (report.correct_answers / report.total_questions * 100) if report.total_questions > 0 else 0,
+                'total_score': sum(detail.get('score_gained', 0) for detail in formatted_details),
+                'correct_count': len([d for d in formatted_details if d.get('is_correct', False)]),
+                'wrong_count': len([d for d in formatted_details if not d.get('is_correct', False)])
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"获取详细报告失败: {str(e)}")
 
 @router.get("/reports/{report_id}", response_model=ProtectionDrillReportResponse)
 async def get_protection_drill_report(

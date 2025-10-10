@@ -424,7 +424,7 @@ export default {
     async loadTrainingTypes() {
       try {
         const response = await uni.request({
-          url: "http://localhost:8000/api/protection-drill/training-types",
+          url: "http://127.0.0.1:8000/api/protection-drill/training-types",
           method: "GET",
         });
 
@@ -523,7 +523,7 @@ export default {
 
         // 创建训练会话
         const sessionResponse = await uni.request({
-          url: "http://localhost:8000/api/protection-drill/session/start",
+          url: "http://127.0.0.1:8000/api/protection-drill/session/start",
           method: "POST",
           data: {
             training_type_id: this.selectedMode.id,
@@ -541,7 +541,7 @@ export default {
 
         // 获取训练题目
         const questionsResponse = await uni.request({
-          url: `http://localhost:8000/api/protection-drill/questions/${this.selectedMode.id}`,
+          url: `http://127.0.0.1:8000/api/protection-drill/questions/${this.selectedMode.id}`,
           method: "GET",
           data: { count: 8 },
         });
@@ -570,11 +570,231 @@ export default {
 
     // 备选开始训练逻辑
     startTrainingFallback() {
+      console.log("使用备选训练逻辑");
       this.currentStage = "training";
       this.currentScenario = 1;
       this.totalScenarios = this.selectedMode.scenarios;
       this.currentScore = 0;
+      this.currentQuestionIndex = 0;
+
+      // 初始化备选题目数据
+      this.trainingQuestions = this.generateFallbackQuestions();
+
       this.initializeTraining();
+    },
+
+    generateFallbackQuestions() {
+      // 生成备选题目数据
+      return [
+        {
+          id: 1,
+          title: "情感操控识别",
+          question_title: "情感操控识别",
+          question_text: "这种行为属于什么类型的风险信号？",
+          options: [
+            {
+              id: 1,
+              text: "情感操控",
+              description: "通过威胁分手来控制对方行为",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "正常要求",
+              description: "恋人之间的合理期望",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "沟通不当",
+              description: "只是表达方式有问题",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 2,
+          title: "边界设定",
+          question_title: "边界设定",
+          question_text: "如何应对情感操控行为？",
+          options: [
+            {
+              id: 1,
+              text: "设定边界",
+              description: "明确表达个人底线",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "妥协退让",
+              description: "为了关系和谐而妥协",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "忽略不理",
+              description: "当作没听见",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 3,
+          title: "风险识别",
+          question_title: "风险识别",
+          question_text: "以下哪个是情感操控的典型特征？",
+          options: [
+            {
+              id: 1,
+              text: "威胁分手",
+              description: "用分手威胁来控制对方",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "温柔体贴",
+              description: "关心对方的表现",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "开放沟通",
+              description: "坦诚交流想法",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 4,
+          title: "应对策略",
+          question_title: "应对策略",
+          question_text: "发现被情感操控时应该怎么做？",
+          options: [
+            {
+              id: 1,
+              text: "寻求支持",
+              description: "向朋友或专业人士求助",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "默默忍受",
+              description: "不想破坏关系",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "报复回击",
+              description: "以牙还牙",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 5,
+          title: "自我保护",
+          question_title: "自我保护",
+          question_text: "哪种做法有助于自我保护？",
+          options: [
+            {
+              id: 1,
+              text: "保持独立",
+              description: "维持自己的生活和朋友圈",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "完全依赖",
+              description: "把对方当作生活的全部",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "避免冲突",
+              description: "任何情况下都不争论",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 6,
+          title: "警示信号",
+          question_title: "警示信号",
+          question_text: "以下哪个是关系中的红旗信号？",
+          options: [
+            {
+              id: 1,
+              text: "孤立朋友",
+              description: "阻止你与朋友接触",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "关心安全",
+              description: "担心你的安全",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "分享感受",
+              description: "愿意表达内心想法",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 7,
+          title: "健康关系",
+          question_title: "健康关系",
+          question_text: "健康关系的特征是什么？",
+          options: [
+            {
+              id: 1,
+              text: "相互尊重",
+              description: "尊重彼此的选择和边界",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "完全控制",
+              description: "一方完全听从另一方",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "避免沟通",
+              description: "不谈论问题",
+              isCorrect: false,
+            },
+          ],
+        },
+        {
+          id: 8,
+          title: "求助资源",
+          question_title: "求助资源",
+          question_text: "遇到情感困扰时应该向谁求助？",
+          options: [
+            {
+              id: 1,
+              text: "专业咨询师",
+              description: "寻求专业心理帮助",
+              isCorrect: true,
+            },
+            {
+              id: 2,
+              text: "网络陌生人",
+              description: "在网上随便找人倾诉",
+              isCorrect: false,
+            },
+            {
+              id: 3,
+              text: "完全自己解决",
+              description: "不告诉任何人",
+              isCorrect: false,
+            },
+          ],
+        },
+      ];
     },
 
     loadCurrentQuestion() {
@@ -594,6 +814,8 @@ export default {
     },
 
     async selectAnswer(option) {
+      console.log("用户选择答案:", option);
+
       try {
         if (!this.currentSessionId) {
           // 如果没有会话ID，使用原有逻辑
@@ -603,9 +825,10 @@ export default {
 
         const currentQuestion =
           this.trainingQuestions[this.currentQuestionIndex];
+        console.log("当前题目:", currentQuestion);
 
         const response = await uni.request({
-          url: `http://localhost:8000/api/protection-drill/session/${this.currentSessionId}/answer`,
+          url: `http://127.0.0.1:8000/api/protection-drill/session/${this.currentSessionId}/answer`,
           method: "POST",
           data: {
             question_id: currentQuestion.id,
@@ -624,26 +847,41 @@ export default {
         const scoreGained = feedback.is_correct ? 10 : 3;
         this.currentScore += scoreGained;
 
-        // 记录答题分析
+        console.log("答案反馈:", feedback);
+        console.log("是否正确:", feedback.is_correct);
+
+        // 记录答题分析 - 修复正确率计算
         if (feedback.is_correct) {
           this.correctAnswers++;
+          console.log("正确答案数增加到:", this.correctAnswers);
         }
 
         // 记录每题的详细分析
         this.questionAnalysis.push({
-          question: currentQuestion.question || currentQuestion.title,
+          question_id: currentQuestion.id,
+          question_title:
+            currentQuestion.title || currentQuestion.question_title,
+          question_text: currentQuestion.question_text,
           is_correct: feedback.is_correct,
           selected_option: option.text,
+          selected_option_id: option.id,
           correct_option: feedback.correct_answer,
-          explanation: feedback.explanation,
+          correct_option_id: feedback.correct_option_id,
+          explanation: feedback.explanation || feedback.analysis,
+          risk_explanation: feedback.risk_explanation,
+          score_gained: scoreGained,
           options: currentQuestion.options
             ? currentQuestion.options.map((opt) => ({
+                id: opt.id,
                 text: opt.text,
+                description: opt.description,
                 is_selected: opt.id === option.id,
                 is_correct: opt.id === feedback.correct_option_id,
               }))
             : [],
         });
+
+        console.log("当前答题分析记录:", this.questionAnalysis);
 
         this.feedbackResult = {
           isCorrect: feedback.is_correct,
@@ -670,10 +908,50 @@ export default {
 
     // 备选答案选择逻辑
     selectAnswerFallback(option) {
+      console.log("使用备选答案逻辑:", option);
+
+      const currentQuestion = this.trainingQuestions[this.currentQuestionIndex];
       const isCorrect = option.isCorrect;
       const scoreGained = isCorrect ? 10 : 3;
 
       this.currentScore += scoreGained;
+
+      // 更新正确答案计数
+      if (isCorrect) {
+        this.correctAnswers++;
+        console.log("备选逻辑 - 正确答案数增加到:", this.correctAnswers);
+      }
+
+      // 收集答题分析数据
+      this.questionAnalysis.push({
+        question_id: currentQuestion?.id || this.currentQuestionIndex + 1,
+        question_title:
+          currentQuestion?.title ||
+          currentQuestion?.question_title ||
+          `题目${this.currentQuestionIndex + 1}`,
+        question_text: currentQuestion?.question_text || "风险识别题目",
+        is_correct: isCorrect,
+        selected_option: option.text,
+        selected_option_id: option.id,
+        correct_option: isCorrect ? option.text : "设定边界", // 备选正确答案
+        correct_option_id: isCorrect ? option.id : 1,
+        explanation: isCorrect
+          ? "你正确识别了这个风险信号！应该明确设定个人边界"
+          : "应该明确设定个人边界，不被情感威胁所绑架",
+        risk_explanation:
+          "这是典型的情感操控行为，通过威胁分手来控制对方的社交关系。",
+        score_gained: scoreGained,
+        options:
+          currentQuestion?.options?.map((opt) => ({
+            id: opt.id,
+            text: opt.text,
+            description: opt.description,
+            is_selected: opt.id === option.id,
+            is_correct: opt.isCorrect || false,
+          })) || [],
+      });
+
+      console.log("备选逻辑 - 答题分析记录:", this.questionAnalysis);
 
       this.feedbackResult = {
         isCorrect,
@@ -708,25 +986,34 @@ export default {
     },
 
     async finishTraining() {
+      console.log("开始完成训练流程");
+
       try {
         // 计算训练时长
         if (this.trainingStartTime) {
           this.trainingDuration = Math.floor(
             (Date.now() - this.trainingStartTime) / 1000
           );
+          console.log("训练时长:", this.trainingDuration, "秒");
         }
 
         if (this.currentSessionId) {
+          console.log("使用会话ID完成训练:", this.currentSessionId);
+
           const response = await uni.request({
-            url: `http://localhost:8000/api/protection-drill/session/${this.currentSessionId}/complete`,
+            url: `http://127.0.0.1:8000/api/protection-drill/session/${this.currentSessionId}/complete`,
             method: "POST",
             header: {
               Authorization: "Bearer " + uni.getStorageSync("access_token"),
             },
           });
 
+          console.log("完成训练API响应:", response);
+
           if (response.data.code === 200) {
             const result = response.data.data;
+            console.log("训练结果数据:", result);
+
             this.finalResult = {
               totalScore: this.currentScore,
               correctAnswers: result.correct_answers,
@@ -759,15 +1046,29 @@ export default {
               ],
             };
 
+            console.log("准备保存训练报告...");
             // 保存训练报告
             await this.saveTrainingReport(result);
+            console.log("训练报告保存完成");
           } else {
             throw new Error("获取结果失败");
           }
         } else {
+          console.log("没有会话ID，使用本地数据");
           this.generateFinalResult();
+          // 即使没有会话ID也要尝试保存报告
+          const mockResult = {
+            accuracy_rate:
+              (this.correctAnswers / this.trainingQuestions.length) * 100,
+            total_questions: this.trainingQuestions.length,
+            correct_answers: this.correctAnswers,
+            performance_message: "基于本地数据的训练完成",
+          };
+          console.log("使用模拟结果保存报告:", mockResult);
+          await this.saveTrainingReport(mockResult);
         }
 
+        console.log("切换到结果页面");
         this.currentStage = "result";
       } catch (error) {
         console.error("完成训练失败:", error);
@@ -777,42 +1078,59 @@ export default {
     },
 
     async saveTrainingReport(result) {
+      console.log("开始保存训练报告，输入参数:", result);
+
       try {
         const token = uni.getStorageSync("access_token");
+        console.log("获取到的token:", token ? "Token存在" : "Token不存在");
 
         if (!token) {
           console.log("No token available for saving report");
           uni.showToast({
             title: "请先登录以保存训练记录",
             icon: "none",
+            duration: 3000,
           });
           return;
         }
 
         // 准备报告数据
+        const actualAccuracy =
+          this.trainingQuestions.length > 0
+            ? (this.correctAnswers / this.trainingQuestions.length) * 100
+            : 0;
+
+        console.log("实际统计 - 正确答案数:", this.correctAnswers);
+        console.log("实际统计 - 总题数:", this.trainingQuestions.length);
+        console.log("实际统计 - 准确率:", actualAccuracy);
+        console.log("答题分析数据:", this.questionAnalysis);
+
         const reportData = {
           drill_type: this.selectedMode ? this.selectedMode.title : "防护训练",
           scenario_name: this.selectedMode
             ? this.selectedMode.description
             : null,
-          total_questions:
-            result.total_questions || this.trainingQuestions.length,
-          correct_answers: result.correct_answers || this.correctAnswers,
-          score:
-            result.accuracy_rate ||
-            (this.correctAnswers / this.trainingQuestions.length) * 100,
+          total_questions: this.trainingQuestions.length,
+          correct_answers: this.correctAnswers,
+          score: actualAccuracy,
           completion_time: this.trainingDuration || null,
           report_content: JSON.stringify({
-            final_result: this.finalResult,
+            final_result: this.finalResult || {},
             question_analysis: this.questionAnalysis || [],
-            skills_mastery: this.finalResult.skillsMastery,
-            improvements: this.finalResult.improvements,
+            skills_mastery: this.finalResult?.skillsMastery || [],
+            improvements: this.finalResult?.improvements || [],
+            actual_accuracy: actualAccuracy,
+            total_score: this.currentScore,
           }),
-          suggestions: this.generateSuggestions(
-            result.accuracy_rate ||
-              (this.correctAnswers / this.trainingQuestions.length) * 100
-          ),
+          suggestions: this.generateSuggestions(actualAccuracy),
+          question_analysis: this.questionAnalysis || [], // 添加详细的答题分析
         };
+
+        console.log("准备保存训练报告:", reportData);
+        console.log(
+          "API请求URL:",
+          "http://127.0.0.1:8000/protection-drill/reports"
+        );
 
         const saveResponse = await uni.request({
           url: "http://127.0.0.1:8000/protection-drill/reports",
@@ -824,15 +1142,33 @@ export default {
           data: reportData,
         });
 
+        console.log("API响应状态码:", saveResponse.statusCode);
+        console.log("API响应数据:", saveResponse.data);
+
         if (saveResponse.statusCode === 200) {
           console.log("训练报告保存成功:", saveResponse.data);
-          // 可以在这里添加保存成功的提示
+          uni.showToast({
+            title: "训练记录已保存",
+            icon: "success",
+            duration: 2000,
+          });
         } else {
-          console.error("保存训练报告失败:", saveResponse.data);
+          console.error("保存训练报告失败，状态码:", saveResponse.statusCode);
+          console.error("失败响应数据:", saveResponse.data);
+          uni.showToast({
+            title: "记录保存失败: " + (saveResponse.data?.detail || "未知错误"),
+            icon: "error",
+            duration: 3000,
+          });
         }
       } catch (error) {
         console.error("保存训练报告出错:", error);
-        // 不影响主流程，只记录错误
+        console.error("错误详情:", error.message, error.stack);
+        uni.showToast({
+          title: "记录保存出错: " + error.message,
+          icon: "none",
+          duration: 3000,
+        });
       }
     },
 
@@ -861,7 +1197,13 @@ export default {
 
     initializeTraining() {
       // 初始化训练数据
-      this.currentTrainingStep = this.generateTrainingStep();
+      if (this.trainingQuestions && this.trainingQuestions.length > 0) {
+        // 如果有API题目数据，加载第一题
+        this.loadCurrentQuestion();
+      } else {
+        // 否则使用硬编码数据
+        this.currentTrainingStep = this.generateTrainingStep();
+      }
     },
 
     generateTrainingStep() {
