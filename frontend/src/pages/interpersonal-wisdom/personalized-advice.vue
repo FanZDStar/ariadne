@@ -1,14 +1,9 @@
 <template>
     <view class="advice-container">
-        <view class="header">
-            <text class="title">个性化建议</text>
-            <text class="subtitle">基于你的情况，为你量身定制专业建议</text>
-        </view>
-
         <!-- 用户情况收集 -->
         <view v-if="currentStep === 'input'" class="input-section">
             <view class="form-card">
-                <text class="form-title">🤔 请描述你的情况</text>
+                <text class="form-title">请描述你的情况</text>
                 <text class="form-subtitle">为了给出更精准的建议，请简单描述一下你目前遇到的问题</text>
 
                 <view class="form-item">
@@ -33,12 +28,12 @@
                     <text class="form-label">情感状态</text>
                     <view class="emotion-slider">
                         <view class="emotion-labels">
-                            <text class="emotion-label">😰 焦虑</text>
-                            <text class="emotion-label">😐 平静</text>
-                            <text class="emotion-label">😊 开心</text>
+                            <text class="emotion-label">焦虑</text>
+                            <text class="emotion-label">平静</text>
+                            <text class="emotion-label">开心</text>
                         </view>
                         <slider v-model="formData.emotionLevel" min="1" max="5" step="1" show-value
-                            activeColor="#667eea" backgroundColor="#f0f0f0" @change="handleEmotionChange" />
+                            activeColor="#87ceeb" backgroundColor="#f0f8ff" @change="handleEmotionChange" />
                     </view>
                 </view>
 
@@ -72,7 +67,7 @@
         <!-- 建议展示 -->
         <view v-if="currentStep === 'advice'" class="advice-section">
             <view class="advice-header">
-                <text class="advice-title">💡 为你定制的建议</text>
+                <text class="advice-title">为你定制的建议</text>
                 <text class="advice-subtitle">基于你的情况，我们为你准备了以下建议</text>
             </view>
 
@@ -80,7 +75,7 @@
             <view v-if="adviceResult.core_advice" class="core-advice">
                 <view class="advice-card primary">
                     <view class="card-header">
-                        <text class="card-icon">🎯</text>
+                        <text class="card-icon"></text>
                         <text class="card-title">核心建议</text>
                     </view>
                     <text class="card-content">{{ adviceResult.core_advice }}</text>
@@ -89,7 +84,7 @@
 
             <!-- 具体行动建议 -->
             <view v-if="adviceResult.action_steps" class="action-steps">
-                <text class="section-title">📋 具体行动步骤</text>
+                <text class="section-title">具体行动步骤</text>
                 <view v-for="(step, index) in adviceResult.action_steps" :key="index" class="step-item">
                     <view class="step-number">{{ index + 1 }}</view>
                     <view class="step-content">
@@ -106,7 +101,7 @@
             <view v-if="adviceResult.ai_analysis" class="ai-analysis">
                 <view class="analysis-card">
                     <view class="analysis-header">
-                        <text class="analysis-icon">🤖</text>
+                        <text class="analysis-icon"></text>
                         <text class="analysis-title">AI深度分析</text>
                     </view>
                     <text class="analysis-content">{{ adviceResult.ai_analysis }}</text>
@@ -115,7 +110,7 @@
 
             <!-- 推荐技巧 -->
             <view v-if="adviceResult.recommended_skills" class="recommended-skills">
-                <text class="section-title">🚀 推荐学习技巧</text>
+                <text class="section-title">推荐学习技巧</text>
                 <view v-for="skill in adviceResult.recommended_skills" :key="skill.id" class="skill-recommendation"
                     @click="practiceSkill(skill)">
                     <view class="skill-info">
@@ -133,7 +128,7 @@
             <view v-if="adviceResult.emotional_support" class="emotional-support">
                 <view class="support-card">
                     <view class="support-header">
-                        <text class="support-icon">💝</text>
+                        <text class="support-icon"></text>
                         <text class="support-title">情感支持</text>
                     </view>
                     <text class="support-content">{{ adviceResult.emotional_support }}</text>
@@ -153,7 +148,7 @@
 
         <!-- 历史建议 -->
         <view v-if="currentStep === 'history'" class="history-section">
-            <text class="history-title">📚 历史建议记录</text>
+            <text class="history-title">历史建议记录</text>
             <view v-for="record in adviceHistory" :key="record.id" class="history-item"
                 @click="viewHistoryAdvice(record)">
                 <view class="history-header">
@@ -170,7 +165,7 @@
         <!-- 加载状态 -->
         <view v-if="isGenerating" class="loading-overlay">
             <view class="loading-content">
-                <text class="loading-icon">🤖</text>
+                <text class="loading-icon"></text>
                 <text class="loading-text">AI正在为你生成个性化建议...</text>
                 <text class="loading-subtext">分析你的情况并匹配最适合的解决方案</text>
                 <view class="loading-progress">
@@ -185,11 +180,11 @@
         <!-- 底部导航 -->
         <view class="bottom-nav">
             <view class="nav-item" :class="{ active: currentStep === 'input' }" @click="currentStep = 'input'">
-                <text class="nav-icon">📝</text>
+                <text class="nav-icon"></text>
                 <text class="nav-text">咨询建议</text>
             </view>
             <view class="nav-item" :class="{ active: currentStep === 'history' }" @click="viewHistory">
-                <text class="nav-icon">📚</text>
+                <text class="nav-icon"></text>
                 <text class="nav-text">历史记录</text>
             </view>
         </view>
@@ -215,30 +210,30 @@ export default {
             adviceResult: null,
             adviceHistory: [],
             relationTypes: [
-                { id: 'romantic', name: '恋爱关系', icon: '💕' },
-                { id: 'friendship', name: '友谊关系', icon: '👫' },
-                { id: 'family', name: '家庭关系', icon: '👨‍👩‍👧‍👦' },
-                { id: 'colleague', name: '同事关系', icon: '👔' },
-                { id: 'roommate', name: '室友关系', icon: '🏠' }
+                { id: 'romantic', name: '恋爱关系', icon: '' },
+                { id: 'friendship', name: '友谊关系', icon: '' },
+                { id: 'family', name: '家庭关系', icon: '' },
+                { id: 'colleague', name: '同事关系', icon: '' },
+                { id: 'roommate', name: '室友关系', icon: '' }
             ],
             urgencyLevels: [
                 {
                     id: 'low',
                     name: '一般咨询',
                     desc: '想了解一些建议',
-                    icon: '🤔'
+                    icon: ''
                 },
                 {
                     id: 'normal',
                     name: '需要帮助',
                     desc: '遇到了一些困难',
-                    icon: '😕'
+                    icon: ''
                 },
                 {
                     id: 'urgent',
                     name: '比较紧急',
                     desc: '情况让我很困扰',
-                    icon: '😰'
+                    icon: ''
                 }
             ]
         }
@@ -730,7 +725,7 @@ export default {
 <style scoped>
 .advice-container {
     padding: 0;
-    background: linear-gradient(180deg, #f5f7ff 0%, #ffffff 100%);
+    background: linear-gradient(180deg, #f0f8ff 0%, #ffffff 100%);
     min-height: 100vh;
     padding-bottom: 160rpx;
     position: relative;
@@ -743,62 +738,9 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(135, 206, 235, 0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
-}
-
-.header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 80rpx 40rpx 60rpx;
-    color: white;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><path d="M0,0 C200,80 400,20 600,60 C800,100 900,40 1000,60 L1000,0 Z" fill="rgba(255,255,255,0.1)"/></svg>') repeat-x;
-    background-size: 200px 100px;
-    animation: wave 8s ease-in-out infinite;
-}
-
-@keyframes wave {
-
-    0%,
-    100% {
-        transform: translateX(0px);
-    }
-
-    50% {
-        transform: translateX(-100px);
-    }
-}
-
-.title {
-    font-size: 52rpx;
-    font-weight: 700;
-    margin-bottom: 20rpx;
-    display: block;
-    position: relative;
-    z-index: 10;
-    text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.2);
-    letter-spacing: 1rpx;
-}
-
-.subtitle {
-    font-size: 30rpx;
-    opacity: 0.95;
-    position: relative;
-    z-index: 10;
-    font-weight: 400;
-    line-height: 1.4;
 }
 
 .input-section {
@@ -806,11 +748,11 @@ export default {
 }
 
 .form-card {
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 24rpx;
     padding: 40rpx;
     margin-bottom: 40rpx;
-    box-shadow: 0 8rpx 32rpx rgba(102, 126, 234, 0.15);
+    box-shadow: 0 8rpx 32rpx rgba(135, 206, 235, 0.15);
     border: 1rpx solid rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     position: relative;
@@ -824,20 +766,20 @@ export default {
     left: 0;
     right: 0;
     height: 4rpx;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .form-title {
     font-size: 36rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 12rpx;
     display: block;
 }
 
 .form-subtitle {
     font-size: 26rpx;
-    color: #666;
+    color: #5a6c7d;
     margin-bottom: 32rpx;
 }
 
@@ -848,7 +790,7 @@ export default {
 .form-label {
     font-size: 28rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 16rpx;
     display: block;
 }
@@ -857,11 +799,11 @@ export default {
     width: 100%;
     min-height: 140rpx;
     padding: 24rpx;
-    border: 2rpx solid #e8eef7;
+    border: 2rpx solid #e6f3ff;
     border-radius: 16rpx;
     font-size: 28rpx;
-    color: #333;
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    color: #2c3e50;
+    background: rgba(255, 255, 255, 0.9);
     box-sizing: border-box;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     line-height: 1.6;
@@ -869,8 +811,8 @@ export default {
 }
 
 .form-textarea:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 6rpx rgba(102, 126, 234, 0.12);
+    border-color: #87ceeb;
+    box-shadow: 0 0 0 6rpx rgba(135, 206, 235, 0.12);
     outline: none;
     background: #ffffff;
     transform: translateY(-2rpx);
@@ -887,7 +829,7 @@ export default {
 
 .char-count {
     font-size: 22rpx;
-    color: #999;
+    color: #7f8c8d;
     text-align: right;
     margin-top: 8rpx;
     display: block;
@@ -903,8 +845,8 @@ export default {
     display: flex;
     align-items: center;
     padding: 20rpx 28rpx;
-    background: linear-gradient(145deg, #f8faff 0%, #ffffff 100%);
-    border: 2rpx solid #e8eef7;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2rpx solid #e6f3ff;
     border-radius: 50rpx;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -919,7 +861,7 @@ export default {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(135, 206, 235, 0.1), transparent);
     transition: left 0.5s ease;
 }
 
@@ -928,11 +870,11 @@ export default {
 }
 
 .type-chip.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
-    color: white;
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    border-color: #87ceeb;
+    color: #2c3e50;
     transform: translateY(-4rpx);
-    box-shadow: 0 8rpx 20rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8rpx 20rpx rgba(135, 206, 235, 0.3);
 }
 
 .type-chip:active {
@@ -960,7 +902,7 @@ export default {
 
 .emotion-label {
     font-size: 24rpx;
-    color: #666;
+    color: #5a6c7d;
 }
 
 .urgency-options {
@@ -973,8 +915,8 @@ export default {
     display: flex;
     align-items: center;
     padding: 28rpx;
-    background: linear-gradient(145deg, #f8faff 0%, #ffffff 100%);
-    border: 2rpx solid #e8eef7;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2rpx solid #e6f3ff;
     border-radius: 16rpx;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -989,7 +931,7 @@ export default {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.08), transparent);
+    background: linear-gradient(90deg, transparent, rgba(135, 206, 235, 0.08), transparent);
     transition: left 0.5s ease;
 }
 
@@ -999,14 +941,14 @@ export default {
 
 .urgency-item:hover {
     transform: translateY(-2rpx);
-    box-shadow: 0 6rpx 20rpx rgba(102, 126, 234, 0.12);
+    box-shadow: 0 6rpx 20rpx rgba(135, 206, 235, 0.12);
 }
 
 .urgency-item.selected {
-    background: linear-gradient(145deg, #f0f4ff 0%, #ffffff 100%);
-    border-color: #667eea;
+    background: rgba(240, 248, 255, 0.9);
+    border-color: #87ceeb;
     transform: translateY(-4rpx);
-    box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.2);
+    box-shadow: 0 8rpx 24rpx rgba(135, 206, 235, 0.2);
 }
 
 .urgency-item.selected::after {
@@ -1016,7 +958,7 @@ export default {
     top: 0;
     bottom: 0;
     width: 6rpx;
-    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(180deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .urgency-icon {
@@ -1027,13 +969,13 @@ export default {
 .urgency-name {
     font-size: 28rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-right: 16rpx;
 }
 
 .urgency-desc {
     font-size: 24rpx;
-    color: #666;
+    color: #5a6c7d;
     flex: 1;
 }
 
@@ -1042,14 +984,14 @@ export default {
 }
 
 .submit-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
     padding: 36rpx 100rpx;
     border-radius: 60rpx;
     font-size: 32rpx;
     font-weight: 600;
     display: inline-block;
-    box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8rpx 24rpx rgba(135, 206, 235, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
@@ -1072,7 +1014,7 @@ export default {
 
 .submit-btn:active {
     transform: translateY(2rpx) scale(0.98);
-    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.4);
 }
 
 .submit-btn.disabled {
@@ -1094,22 +1036,22 @@ export default {
 .advice-title {
     font-size: 36rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 12rpx;
     display: block;
 }
 
 .advice-subtitle {
     font-size: 26rpx;
-    color: #666;
+    color: #5a6c7d;
 }
 
 .advice-card {
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 24rpx;
     padding: 40rpx;
     margin-bottom: 32rpx;
-    box-shadow: 0 8rpx 32rpx rgba(102, 126, 234, 0.12);
+    box-shadow: 0 8rpx 32rpx rgba(135, 206, 235, 0.12);
     border: 1rpx solid rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     position: relative;
@@ -1119,13 +1061,13 @@ export default {
 
 .advice-card:hover {
     transform: translateY(-4rpx);
-    box-shadow: 0 12rpx 40rpx rgba(102, 126, 234, 0.18);
+    box-shadow: 0 12rpx 40rpx rgba(135, 206, 235, 0.18);
 }
 
 .advice-card.primary {
-    background: linear-gradient(145deg, #f0f4ff 0%, #ffffff 100%);
-    border: 2rpx solid #667eea;
-    box-shadow: 0 12rpx 40rpx rgba(102, 126, 234, 0.2);
+    background: rgba(240, 248, 255, 0.9);
+    border: 2rpx solid #87ceeb;
+    box-shadow: 0 12rpx 40rpx rgba(135, 206, 235, 0.2);
 }
 
 .advice-card.primary::before {
@@ -1135,7 +1077,7 @@ export default {
     left: 0;
     right: 0;
     height: 6rpx;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .card-header {
@@ -1152,30 +1094,30 @@ export default {
 .card-title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
 }
 
 .card-content {
     font-size: 28rpx;
-    color: #555;
+    color: #5a6c7d;
     line-height: 1.7;
 }
 
 .section-title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 24rpx;
     display: block;
 }
 
 .step-item {
     display: flex;
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 20rpx;
     padding: 36rpx;
     margin-bottom: 24rpx;
-    box-shadow: 0 6rpx 24rpx rgba(102, 126, 234, 0.1);
+    box-shadow: 0 6rpx 24rpx rgba(135, 206, 235, 0.1);
     border: 1rpx solid rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1185,7 +1127,7 @@ export default {
 
 .step-item:hover {
     transform: translateY(-2rpx);
-    box-shadow: 0 10rpx 32rpx rgba(102, 126, 234, 0.15);
+    box-shadow: 0 10rpx 32rpx rgba(135, 206, 235, 0.15);
 }
 
 .step-item::before {
@@ -1195,14 +1137,14 @@ export default {
     top: 0;
     bottom: 0;
     width: 6rpx;
-    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(180deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .step-number {
     width: 64rpx;
     height: 64rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1211,7 +1153,7 @@ export default {
     font-weight: 700;
     margin-right: 28rpx;
     flex-shrink: 0;
-    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
     position: relative;
 }
 
@@ -1222,7 +1164,7 @@ export default {
     left: -2rpx;
     right: -2rpx;
     bottom: -2rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
     border-radius: 50%;
     z-index: -1;
     opacity: 0.3;
@@ -1235,14 +1177,14 @@ export default {
 .step-title {
     font-size: 30rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 12rpx;
     display: block;
 }
 
 .step-desc {
     font-size: 26rpx;
-    color: #666;
+    color: #5a6c7d;
     line-height: 1.6;
     margin-bottom: 16rpx;
 }
@@ -1255,16 +1197,16 @@ export default {
 
 .tip-item {
     font-size: 24rpx;
-    color: #888;
+    color: #7f8c8d;
     padding-left: 16rpx;
 }
 
 .analysis-card {
-    background-color: white;
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 16rpx;
     padding: 32rpx;
     margin-bottom: 32rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.1);
 }
 
 .analysis-header {
@@ -1281,23 +1223,23 @@ export default {
 .analysis-title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
 }
 
 .analysis-content {
     font-size: 28rpx;
-    color: #555;
+    color: #5a6c7d;
     line-height: 1.7;
 }
 
 .skill-recommendation {
     display: flex;
     align-items: center;
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 20rpx;
     padding: 36rpx;
     margin-bottom: 20rpx;
-    box-shadow: 0 6rpx 24rpx rgba(102, 126, 234, 0.1);
+    box-shadow: 0 6rpx 24rpx rgba(135, 206, 235, 0.1);
     border: 1rpx solid rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1313,7 +1255,7 @@ export default {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+    background: linear-gradient(90deg, transparent, rgba(135, 206, 235, 0.05), transparent);
     transition: left 0.5s ease;
 }
 
@@ -1323,8 +1265,8 @@ export default {
 
 .skill-recommendation:hover {
     transform: translateY(-4rpx) translateX(8rpx);
-    box-shadow: 0 12rpx 40rpx rgba(102, 126, 234, 0.18);
-    border-color: rgba(102, 126, 234, 0.3);
+    box-shadow: 0 12rpx 40rpx rgba(135, 206, 235, 0.18);
+    border-color: rgba(135, 206, 235, 0.3);
 }
 
 .skill-recommendation:active {
@@ -1338,20 +1280,20 @@ export default {
 .skill-name {
     font-size: 30rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 8rpx;
     display: block;
 }
 
 .skill-reason {
     font-size: 26rpx;
-    color: #666;
+    color: #5a6c7d;
 }
 
 .skill-action {
     display: flex;
     align-items: center;
-    color: #667eea;
+    color: #4682b4;
 }
 
 .action-text {
@@ -1364,8 +1306,8 @@ export default {
 }
 
 .support-card {
-    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
-    border: 2rpx solid #ff9999;
+    background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
+    border: 2rpx solid #add8e6;
     border-radius: 16rpx;
     padding: 32rpx;
     margin-bottom: 32rpx;
@@ -1385,12 +1327,12 @@ export default {
 .support-title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
 }
 
 .support-content {
     font-size: 28rpx;
-    color: #555;
+    color: #5a6c7d;
     line-height: 1.7;
 }
 
@@ -1429,27 +1371,27 @@ export default {
 }
 
 .action-btn.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
+    box-shadow: 0 8rpx 24rpx rgba(135, 206, 235, 0.3);
 }
 
 .action-btn.primary:hover {
     transform: translateY(-2rpx);
-    box-shadow: 0 12rpx 32rpx rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12rpx 32rpx rgba(135, 206, 235, 0.4);
 }
 
 .action-btn.secondary {
-    background: linear-gradient(145deg, #f8faff 0%, #ffffff 100%);
-    color: #667eea;
-    border: 2rpx solid #e8eef7;
-    box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.1);
+    background: rgba(255, 255, 255, 0.85);
+    color: #4682b4;
+    border: 2rpx solid #e6f3ff;
+    box-shadow: 0 4rpx 16rpx rgba(135, 206, 235, 0.1);
 }
 
 .action-btn.secondary:hover {
     transform: translateY(-2rpx);
-    border-color: #667eea;
-    box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.2);
+    border-color: #87ceeb;
+    box-shadow: 0 8rpx 24rpx rgba(135, 206, 235, 0.2);
 }
 
 .action-btn:active {
@@ -1463,17 +1405,17 @@ export default {
 .history-title {
     font-size: 36rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 32rpx;
     display: block;
 }
 
 .history-item {
-    background-color: white;
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 16rpx;
     padding: 32rpx;
     margin-bottom: 20rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.1);
     transition: transform 0.2s ease;
 }
 
@@ -1490,7 +1432,7 @@ export default {
 
 .history-date {
     font-size: 24rpx;
-    color: #999;
+    color: #7f8c8d;
 }
 
 .history-status {
@@ -1500,18 +1442,18 @@ export default {
 }
 
 .history-status.new {
-    background-color: #e6f7ff;
-    color: #1890ff;
+    background-color: #e6f3ff;
+    color: #4682b4;
 }
 
 .history-status.saved {
-    background-color: #f6ffed;
-    color: #52c41a;
+    background-color: #f0f8ff;
+    color: #87ceeb;
 }
 
 .history-status.applied {
-    background-color: #fff2e8;
-    color: #fa8c16;
+    background-color: #e1f0ff;
+    color: #5a9fd4;
 }
 
 .status-text {
@@ -1520,7 +1462,7 @@ export default {
 
 .history-situation {
     font-size: 28rpx;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 12rpx;
     display: block;
     line-height: 1.5;
@@ -1528,9 +1470,9 @@ export default {
 
 .history-type {
     font-size: 24rpx;
-    color: #667eea;
+    color: #4682b4;
     padding: 6rpx 12rpx;
-    background-color: #f0f4ff;
+    background-color: #f0f8ff;
     border-radius: 12rpx;
     display: inline-block;
 }
@@ -1549,13 +1491,13 @@ export default {
 }
 
 .loading-content {
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 32rpx;
     padding: 80rpx 50rpx;
     text-align: center;
     max-width: 650rpx;
     margin: 0 40rpx;
-    box-shadow: 0 20rpx 60rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 20rpx 60rpx rgba(135, 206, 235, 0.3);
     border: 1rpx solid rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     position: relative;
@@ -1569,7 +1511,7 @@ export default {
     left: 0;
     right: 0;
     height: 6rpx;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .loading-icon {
@@ -1594,14 +1536,14 @@ export default {
 .loading-text {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 12rpx;
     display: block;
 }
 
 .loading-subtext {
     font-size: 26rpx;
-    color: #666;
+    color: #5a6c7d;
     margin-bottom: 40rpx;
     display: block;
 }
@@ -1612,7 +1554,7 @@ export default {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #87ceeb 0%, #add8e6 100%);
     border-radius: 6rpx;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -1652,7 +1594,7 @@ export default {
 
 .progress-text {
     font-size: 24rpx;
-    color: #667eea;
+    color: #4682b4;
     font-weight: bold;
 }
 
@@ -1661,13 +1603,13 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 255, 0.95) 100%);
-    border-top: 1rpx solid rgba(102, 126, 234, 0.2);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.95) 100%);
+    border-top: 1rpx solid rgba(135, 206, 235, 0.2);
     padding: 24rpx 0;
     display: flex;
     z-index: 100;
     backdrop-filter: blur(20px);
-    box-shadow: 0 -8rpx 32rpx rgba(102, 126, 234, 0.1);
+    box-shadow: 0 -8rpx 32rpx rgba(135, 206, 235, 0.1);
 }
 
 .nav-item {
@@ -1690,7 +1632,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(135, 206, 235, 0.1) 0%, rgba(173, 216, 230, 0.1) 100%);
     border-radius: 16rpx;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -1701,7 +1643,7 @@ export default {
 }
 
 .nav-item.active {
-    color: #667eea;
+    color: #4682b4;
     transform: translateY(-4rpx);
 }
 
@@ -1719,14 +1661,14 @@ export default {
 
 .nav-text {
     font-size: 24rpx;
-    color: #666;
+    color: #5a6c7d;
     position: relative;
     z-index: 10;
     font-weight: 500;
 }
 
 .nav-item.active .nav-text {
-    color: #667eea;
+    color: #4682b4;
     font-weight: 600;
 }
 

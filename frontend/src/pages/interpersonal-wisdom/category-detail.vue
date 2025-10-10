@@ -459,28 +459,54 @@ export default {
 </script>
 
 <style scoped>
-/* 现代化设计系统 */
+/* 浅蓝色现代化设计系统 */
 .category-detail-container {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #f5f9ff 100%);
     min-height: 100vh;
     position: relative;
 }
 
-/* 玻璃拟态效果 */
+.category-detail-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(135, 206, 235, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(173, 216, 230, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* 玻璃拟态效果 - 浅蓝色主题 */
 .glass-card {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 20rpx;
-    box-shadow: 0 8rpx 32rpx rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(173, 216, 230, 0.3);
+    border-radius: 24rpx;
+    box-shadow: 
+        0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+        0 2rpx 8rpx rgba(173, 216, 230, 0.1);
     position: relative;
     overflow: hidden;
 }
 
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3rpx;
+    background: linear-gradient(90deg, #87ceeb 0%, #add8e6 50%, #b0e0e6 100%);
+    opacity: 0.8;
+}
+
 /* 内容区域 */
 .content {
-    padding: 40rpx 32rpx 120rpx;
+    padding: 60rpx 32rpx 120rpx;
     position: relative;
     z-index: 1;
 }
@@ -504,8 +530,8 @@ export default {
 .section-title {
     font-size: 36rpx;
     font-weight: 700;
-    color: #2d3748;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #2c3e50;
+    background: linear-gradient(135deg, #4682b4 0%, #87ceeb 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -517,22 +543,22 @@ export default {
     left: 0;
     width: 60rpx;
     height: 4rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
     border-radius: 2rpx;
 }
 
-/* 现代化徽章 */
+/* 现代化徽章 - 浅蓝色主题 */
 .modern-badge {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(135, 206, 235, 0.15);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    border: 1px solid rgba(173, 216, 230, 0.3);
     border-radius: 20rpx;
     padding: 8rpx 16rpx;
 }
 
 .skills-count.modern-badge .count-text {
     font-size: 24rpx;
-    color: #667eea;
+    color: #4682b4;
     font-weight: 600;
     background: none;
     padding: 0;
@@ -550,12 +576,15 @@ export default {
     margin-bottom: 24rpx;
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .skill-card:hover {
     transform: translateY(-4rpx);
+    box-shadow: 
+        0 12rpx 40rpx rgba(135, 206, 235, 0.2),
+        0 4rpx 12rpx rgba(173, 216, 230, 0.15);
 }
 
 .skill-card:active {
@@ -564,36 +593,38 @@ export default {
 
 /* 推荐技能特殊样式 */
 .skill-card.recommended {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
-    border: 2rpx solid rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, rgba(135, 206, 235, 0.15) 0%, rgba(255, 255, 255, 0.85) 100%);
+    border: 2px solid rgba(173, 216, 230, 0.4);
 }
 
 .recommended-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
     padding: 4rpx 12rpx;
     border-radius: 12rpx;
     font-size: 20rpx;
     font-weight: 600;
+    box-shadow: 0 2rpx 8rpx rgba(135, 206, 235, 0.3);
 }
 
 .badge-text {
     font-size: 20rpx;
+    font-weight: 600;
 }
 
-/* 技能状态 */
+/* 技能状态 - 浅蓝色主题 */
 .skill-card {
-    border-left: 6rpx solid #667eea;
+    border-left: 6rpx solid #87ceeb;
 }
 
 .skill-card.mastered {
-    border-left: 6rpx solid #10b981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
+    border-left: 6rpx solid #4682b4;
+    background: linear-gradient(135deg, rgba(70, 130, 180, 0.1) 0%, rgba(255, 255, 255, 0.85) 100%);
 }
 
 .skill-card.learning {
-    border-left: 6rpx solid #f59e0b;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
+    border-left: 6rpx solid #87ceeb;
+    background: linear-gradient(135deg, rgba(135, 206, 235, 0.1) 0%, rgba(255, 255, 255, 0.85) 100%);
 }
 
 /* 技能内容 */
@@ -613,7 +644,7 @@ export default {
 .skill-name {
     font-size: 32rpx;
     font-weight: 700;
-    color: #1a202c;
+    color: #2c3e50;
     line-height: 1.4;
     flex: 1;
     margin-right: 16rpx;
@@ -622,7 +653,7 @@ export default {
 .skill-description,
 .skill-brief {
     font-size: 26rpx;
-    color: #4a5568;
+    color: #5a6c7d;
     line-height: 1.6;
     margin-bottom: 20rpx;
     font-weight: 400;
@@ -644,25 +675,26 @@ export default {
 .meta-icon-bg {
     width: 32rpx;
     height: 32rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2rpx 8rpx rgba(135, 206, 235, 0.3);
 }
 
 .meta-icon {
     font-size: 16rpx;
-    color: white;
+    color: #2c3e50;
 }
 
 .meta-text {
     font-size: 22rpx;
-    color: #718096;
+    color: #7f8c8d;
     font-weight: 500;
 }
 
-/* 现代化标签 */
+/* 现代化标签 - 浅蓝色主题 */
 .skill-tags {
     display: flex;
     flex-wrap: wrap;
@@ -671,9 +703,9 @@ export default {
 }
 
 .modern-tag {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    color: #667eea;
+    background: linear-gradient(135deg, rgba(173, 216, 230, 0.2) 0%, rgba(176, 224, 230, 0.15) 100%);
+    border: 1px solid rgba(70, 130, 180, 0.2);
+    color: #4682b4;
     padding: 6rpx 12rpx;
     border-radius: 16rpx;
     font-size: 20rpx;
@@ -730,13 +762,13 @@ export default {
 }
 
 .action-btn.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 8rpx 16rpx rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
+    box-shadow: 0 8rpx 16rpx rgba(135, 206, 235, 0.3);
 }
 
 .action-btn.primary:hover {
-    box-shadow: 0 12rpx 24rpx rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12rpx 24rpx rgba(135, 206, 235, 0.4);
     transform: translateY(-2rpx);
 }
 
@@ -766,7 +798,7 @@ export default {
     gap: 24rpx;
 }
 
-/* 现代化分页器 */
+/* 现代化分页器 - 浅蓝色主题 */
 .pagination {
     margin-top: 40rpx;
     padding: 32rpx;
@@ -779,7 +811,7 @@ export default {
 
 .pagination-text {
     font-size: 26rpx;
-    color: #4a5568;
+    color: #5a6c7d;
     font-weight: 500;
 }
 
@@ -792,23 +824,26 @@ export default {
 
 .pagination-btn {
     padding: 12rpx 24rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
     border-radius: 12rpx;
     font-size: 24rpx;
+    font-weight: 600;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
 }
 
 .pagination-btn.disabled {
-    background: rgba(156, 163, 175, 0.3);
-    color: #9ca3af;
+    background: rgba(149, 165, 166, 0.3);
+    color: #7f8c8d;
     cursor: not-allowed;
+    box-shadow: 0 2rpx 8rpx rgba(149, 165, 166, 0.1);
 }
 
 .pagination-btn:not(.disabled):hover {
     transform: translateY(-2rpx);
-    box-shadow: 0 8rpx 16rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8rpx 16rpx rgba(135, 206, 235, 0.4);
 }
 
 .pagination-numbers {
@@ -831,26 +866,26 @@ export default {
 }
 
 .page-number:not(.ellipsis) {
-    background: rgba(255, 255, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #4a5568;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(173, 216, 230, 0.3);
+    color: #4682b4;
 }
 
 .page-number.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    color: #2c3e50;
     font-weight: 700;
-    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
 }
 
 .page-number.ellipsis {
     background: transparent;
-    color: #9ca3af;
+    color: #7f8c8d;
     cursor: default;
 }
 
 .page-number:not(.active):not(.ellipsis):hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(135, 206, 235, 0.1);
     transform: translateY(-2rpx);
 }
 
@@ -860,7 +895,7 @@ export default {
     z-index: 2;
 }
 
-/* 学习建议卡片 */
+/* 学习建议卡片 - 浅蓝色主题 */
 .suggestion-card {
     padding: 32rpx;
     position: relative;
@@ -877,18 +912,19 @@ export default {
 .suggestion-title {
     font-size: 30rpx;
     font-weight: 700;
-    color: #1a202c;
+    color: #2c3e50;
     flex: 1;
 }
 
 .suggestion-icon {
     font-size: 32rpx;
     opacity: 0.7;
+    color: #87ceeb;
 }
 
 .suggestion-content {
     font-size: 26rpx;
-    color: #4a5568;
+    color: #5a6c7d;
     line-height: 1.7;
     margin-bottom: 20rpx;
     font-weight: 400;
@@ -900,28 +936,28 @@ export default {
     right: 0;
     width: 120rpx;
     height: 120rpx;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    background: linear-gradient(135deg, rgba(135, 206, 235, 0.1) 0%, transparent 70%);
     border-radius: 50%;
     transform: translate(50%, 50%);
 }
 
-/* 刷新按钮 */
+/* 刷新按钮 - 浅蓝色主题 */
 .refresh-btn {
     width: 56rpx;
     height: 56rpx;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4rpx 12rpx rgba(135, 206, 235, 0.3);
 }
 
 .refresh-btn:hover {
     transform: translateY(-2rpx);
-    box-shadow: 0 8rpx 16rpx rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8rpx 16rpx rgba(135, 206, 235, 0.4);
 }
 
 .refresh-btn:active {
@@ -930,9 +966,10 @@ export default {
 
 .refresh-icon {
     font-size: 24rpx;
-    color: white;
+    color: #2c3e50;
     position: relative;
     z-index: 2;
+    font-weight: 600;
 }
 
 /* 响应式设计 */
@@ -956,22 +993,67 @@ export default {
     }
 }
 
-/* 暗黑模式适配 */
-@media (prefers-color-scheme: dark) {
-    .category-detail-container {
-        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8rpx;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(236, 240, 241, 0.3);
+    border-radius: 4rpx;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+    border-radius: 4rpx;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #6bb6cd 0%, #98d4e0 100%);
+}
+
+/* 文字选择样式 */
+::selection {
+    background: rgba(135, 206, 235, 0.3);
+    color: #2c3e50;
+}
+
+/* 焦点样式 */
+*:focus {
+    outline: none;
+}
+
+/* 加载状态 */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* 动画增强 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20rpx);
     }
-    
-    .section-title {
-        color: #e2e8f0;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    
-    .skill-name, .skill-title {
-        color: #f7fafc;
-    }
-    
-    .skill-brief, .skill-description {
-        color: #cbd5e0;
-    }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(10rpx);
 }
 </style>

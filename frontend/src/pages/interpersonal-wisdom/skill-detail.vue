@@ -1,39 +1,38 @@
 <template>
   <view class="skill-detail-container">
-    <view class="header">
-      <view class="skill-header">
-        <view class="skill-basic-info">
-          <text class="skill-title">{{ skillData.name }}</text>
-          <view class="skill-meta">
-            <view class="meta-item">
-              <text class="meta-icon">⏱️</text>
-              <text class="meta-text">{{ skillData.estimatedTime }}分钟</text>
+    <view class="content">
+      <!-- 技能信息卡片 -->
+      <view class="skill-info-card">
+        <view class="skill-header">
+          <view class="skill-basic-info">
+            <text class="skill-title">{{ skillData.name }}</text>
+            <view class="skill-meta">
+              <view class="meta-item">
+                <text class="meta-text">{{ skillData.estimatedTime }}分钟</text>
+              </view>
             </view>
           </view>
+          <view class="favorite-btn" @click="toggleFavorite">
+            <text class="favorite-icon">{{ isFavorited ? '♥' : '♡' }}</text>
+          </view>
         </view>
-        <view class="favorite-btn" @click="toggleFavorite">
-          <text class="favorite-icon">{{ isFavorited ? '❤️' : '🤍' }}</text>
+
+        <text class="skill-description">{{ skillData.description }}</text>
+
+        <view class="skill-tags">
+          <text v-for="tag in skillData.tags" :key="tag" class="skill-tag">{{
+            tag
+          }}</text>
         </view>
       </view>
-
-      <text class="skill-description">{{ skillData.description }}</text>
-
-      <view class="skill-tags">
-        <text v-for="tag in skillData.tags" :key="tag" class="skill-tag">{{
-          tag
-        }}</text>
-      </view>
-    </view>
-
-    <view class="content">
       <!-- 学习目标 -->
       <view class="section">
         <view class="section-header">
-          <text class="section-title">🎯 学习目标</text>
+          <text class="section-title">学习目标</text>
         </view>
         <view class="objectives-list">
           <view v-for="objective in skillData.objectives" :key="objective" class="objective-item">
-            <text class="objective-icon">•</text>
+            <text class="objective-icon">·</text>
             <text class="objective-text">{{ objective }}</text>
           </view>
         </view>
@@ -42,12 +41,11 @@
       <!-- 核心要点 -->
       <view class="section">
         <view class="section-header">
-          <text class="section-title">💡 核心要点</text>
+          <text class="section-title">核心要点</text>
         </view>
         <view class="key-points">
           <view v-for="point in skillData.keyPoints" :key="point.title" class="point-card">
             <view class="point-header">
-              <text class="point-icon">{{ point.icon }}</text>
               <text class="point-title">{{ point.title }}</text>
             </view>
             <text class="point-content">{{ point.content }}</text>
@@ -62,7 +60,7 @@
       <!-- 实践步骤 -->
       <view class="section" v-if="skillData.practiceSteps && skillData.practiceSteps.length > 0">
         <view class="section-header">
-          <text class="section-title">📋 实践步骤</text>
+          <text class="section-title">实践步骤</text>
         </view>
         <view class="practice-steps">
           <view v-for="(step, index) in skillData.practiceSteps" :key="index" class="step-item">
@@ -73,7 +71,7 @@
               <text class="step-title">{{ step.title }}</text>
               <text class="step-description">{{ step.description }}</text>
               <view v-if="step.tips" class="step-tips">
-                <text class="tips-label">💡 小贴士：</text>
+                <text class="tips-label">小贴士：</text>
                 <text class="tips-text">{{ step.tips }}</text>
               </view>
             </view>
@@ -84,7 +82,7 @@
       <!-- 场景应用 -->
       <view class="section" v-if="skillData.scenarios && skillData.scenarios.length > 0">
         <view class="section-header">
-          <text class="section-title">🎭 场景应用</text>
+          <text class="section-title">场景应用</text>
         </view>
         <view class="scenarios">
           <view v-for="scenario in skillData.scenarios" :key="scenario.id" class="scenario-card"
@@ -105,7 +103,7 @@
       <view class="section"
         v-if="skillData.practiceScenarios && skillData.practiceScenarios.length > 0 && (!skillData.scenarios || skillData.scenarios.length === 0)">
         <view class="section-header">
-          <text class="section-title">🎭 实践场景</text>
+          <text class="section-title">实践场景</text>
         </view>
         <view class="scenarios">
           <view v-for="(scenario, index) in skillData.practiceScenarios" :key="index" class="scenario-card"
@@ -125,7 +123,7 @@
       <!-- 相关技能 -->
       <view class="section" v-if="relatedSkills.length > 0">
         <view class="section-header">
-          <text class="section-title">🔗 相关技能</text>
+          <text class="section-title">相关技能</text>
         </view>
         <view class="related-skills">
           <view v-for="skill in relatedSkills" :key="skill.id" class="related-skill-card"
@@ -135,12 +133,12 @@
           </view>
         </view>
       </view>
-    </view>
 
-    <!-- 底部操作区域 -->
-    <view class="bottom-actions">
-      <view class="action-btn primary" @click="startScenarioPractice">
-        <text class="btn-text">情景演练</text>
+      <!-- 操作按钮区域 -->
+      <view class="action-section">
+        <view class="action-btn primary" @click="startScenarioPractice">
+          <text class="btn-text">情景演练</text>
+        </view>
       </view>
     </view>
   </view>
@@ -422,16 +420,55 @@ export default {
 </script>
 
 <style scoped>
+/* 现代化浅蓝色系设计 */
 .skill-detail-container {
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #f5f9ff 100%);
   min-height: 100vh;
-  padding-bottom: 120rpx;
+  position: relative;
 }
 
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40rpx;
-  color: white;
+.skill-detail-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(135, 206, 235, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(173, 216, 230, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.content {
+  padding: 60rpx 40rpx 40rpx;
+  position: relative;
+  z-index: 1;
+}
+
+/* 技能信息卡片 */
+.skill-info-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #87ceeb 0%, #add8e6 50%, #b0e0e6 100%);
 }
 
 .skill-header {
@@ -449,29 +486,36 @@ export default {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10rpx);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(173, 216, 230, 0.3);
   transition: all 0.3s ease;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.1);
 }
 
 .favorite-btn:active {
   transform: scale(0.95);
-  background-color: rgba(255, 255, 255, 0.3);
+  background: rgba(135, 206, 235, 0.2);
+  border-color: #87ceeb;
 }
 
 .favorite-icon {
   font-size: 36rpx;
+  color: #4682b4;
+  font-weight: 600;
 }
 
 .skill-title {
   font-size: 42rpx;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 16rpx;
   display: block;
+  color: #2c3e50;
 }
 
 .skill-meta {
@@ -485,22 +529,24 @@ export default {
   display: flex;
   align-items: center;
   gap: 6rpx;
-}
-
-.meta-icon {
-  font-size: 18rpx;
+  background: linear-gradient(135deg, rgba(173, 216, 230, 0.2) 0%, rgba(176, 224, 230, 0.15) 100%);
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  border: 1px solid rgba(70, 130, 180, 0.2);
 }
 
 .meta-text {
   font-size: 22rpx;
-  opacity: 0.9;
+  color: #4682b4;
+  font-weight: 500;
 }
 
 .skill-description {
-  font-size: 26rpx;
-  line-height: 1.6;
-  opacity: 0.95;
+  font-size: 28rpx;
+  color: #5a6c7d;
+  line-height: 1.7;
   margin-bottom: 20rpx;
+  font-weight: 400;
 }
 
 .skill-tags {
@@ -510,38 +556,55 @@ export default {
 }
 
 .skill-tag {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: linear-gradient(135deg, rgba(173, 216, 230, 0.2) 0%, rgba(176, 224, 230, 0.15) 100%);
+  color: #4682b4;
   padding: 8rpx 16rpx;
   border-radius: 16rpx;
   font-size: 22rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+  border: 1px solid rgba(70, 130, 180, 0.2);
+  backdrop-filter: blur(10px);
 }
 
-.content {
-  padding: 0 40rpx;
-}
-
+/* 内容区块 */
 .section {
-  margin-bottom: 48rpx;
+  margin-bottom: 32rpx;
 }
 
 .section-header {
   margin-bottom: 24rpx;
-  padding-top: 24rpx;
 }
 
 .section-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
+  position: relative;
+  padding-left: 20rpx;
 }
 
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6rpx;
+  height: 32rpx;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  border-radius: 3rpx;
+}
+
+/* 学习目标 */
 .objectives-list {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
 }
 
 .objective-item {
@@ -555,19 +618,22 @@ export default {
 }
 
 .objective-icon {
-  color: #667eea;
+  color: #87ceeb;
   margin-right: 12rpx;
   font-size: 24rpx;
   line-height: 1.5;
+  font-weight: 600;
 }
 
 .objective-text {
   flex: 1;
   font-size: 26rpx;
-  color: #333;
-  line-height: 1.5;
+  color: #2c3e50;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
+/* 核心要点 */
 .key-points {
   display: flex;
   flex-direction: column;
@@ -575,10 +641,26 @@ export default {
 }
 
 .point-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.point-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rpx;
+  background: linear-gradient(90deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .point-header {
@@ -587,44 +669,43 @@ export default {
   margin-bottom: 16rpx;
 }
 
-.point-icon {
-  font-size: 32rpx;
-  margin-right: 16rpx;
-}
-
 .point-title {
   font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .point-content {
   font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
+  color: #5a6c7d;
+  line-height: 1.7;
   margin-bottom: 16rpx;
+  font-weight: 400;
 }
 
 .point-example {
-  background-color: #f8f9ff;
-  padding: 16rpx;
-  border-radius: 12rpx;
-  border-left: 4rpx solid #667eea;
+  background: linear-gradient(135deg, rgba(240, 248, 255, 0.8) 0%, rgba(230, 243, 255, 0.6) 100%);
+  padding: 20rpx;
+  border-radius: 16rpx;
+  border-left: 4px solid #87ceeb;
+  backdrop-filter: blur(10px);
 }
 
 .example-label {
   font-size: 22rpx;
-  color: #667eea;
-  font-weight: bold;
+  color: #4682b4;
+  font-weight: 600;
   margin-right: 8rpx;
 }
 
 .example-text {
   font-size: 24rpx;
-  color: #666;
-  line-height: 1.5;
+  color: #5a6c7d;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
+/* 实践步骤 */
 .practice-steps {
   display: flex;
   flex-direction: column;
@@ -633,28 +714,47 @@ export default {
 
 .step-item {
   display: flex;
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.step-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rpx;
+  background: linear-gradient(90deg, #87ceeb 0%, #add8e6 100%);
 }
 
 .step-number {
   width: 60rpx;
   height: 60rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 24rpx;
   flex-shrink: 0;
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.3),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.2);
 }
 
 .step-text {
-  color: white;
+  color: #2c3e50;
   font-size: 24rpx;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .step-content {
@@ -663,39 +763,43 @@ export default {
 
 .step-title {
   font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
   margin-bottom: 12rpx;
   display: block;
 }
 
 .step-description {
   font-size: 26rpx;
-  color: #666;
-  line-height: 1.5;
+  color: #5a6c7d;
+  line-height: 1.6;
   margin-bottom: 16rpx;
+  font-weight: 400;
 }
 
 .step-tips {
-  background-color: #f0f4ff;
-  padding: 16rpx;
-  border-radius: 12rpx;
-  border-left: 4rpx solid #667eea;
+  background: linear-gradient(135deg, rgba(240, 248, 255, 0.8) 0%, rgba(230, 243, 255, 0.6) 100%);
+  padding: 20rpx;
+  border-radius: 16rpx;
+  border-left: 4px solid #87ceeb;
+  backdrop-filter: blur(10px);
 }
 
 .tips-label {
   font-size: 22rpx;
-  color: #667eea;
-  font-weight: bold;
+  color: #4682b4;
+  font-weight: 600;
   margin-right: 8rpx;
 }
 
 .tips-text {
   font-size: 24rpx;
-  color: #666;
-  line-height: 1.5;
+  color: #5a6c7d;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
+/* 场景应用 */
 .scenarios {
   display: flex;
   flex-direction: column;
@@ -703,15 +807,41 @@ export default {
 }
 
 .scenario-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.scenario-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(135, 206, 235, 0.05) 0%, rgba(173, 216, 230, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.scenario-card:active::before {
+  opacity: 1;
 }
 
 .scenario-card:active {
   transform: translateY(2rpx);
+  border-color: #87ceeb;
+  box-shadow: 
+    0 6rpx 24rpx rgba(135, 206, 235, 0.2),
+    0 4rpx 8rpx rgba(173, 216, 230, 0.15);
 }
 
 .scenario-header {
@@ -723,15 +853,20 @@ export default {
 
 .scenario-title {
   font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
+  position: relative;
+  z-index: 1;
 }
 
 .scenario-description {
   font-size: 26rpx;
-  color: #666;
-  line-height: 1.5;
+  color: #5a6c7d;
+  line-height: 1.6;
   margin-bottom: 20rpx;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
 }
 
 .scenario-action {
@@ -739,17 +874,22 @@ export default {
   align-items: center;
   justify-content: flex-end;
   gap: 8rpx;
-  color: #667eea;
+  color: #4682b4;
+  position: relative;
+  z-index: 1;
 }
 
 .action-text {
   font-size: 26rpx;
+  font-weight: 500;
 }
 
 .action-arrow {
   font-size: 24rpx;
+  font-weight: 600;
 }
 
+/* 相关技能 */
 .related-skills {
   display: flex;
   flex-direction: column;
@@ -757,41 +897,68 @@ export default {
 }
 
 .related-skill-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  border-radius: 20rpx;
   padding: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8rpx 32rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 8rpx rgba(173, 216, 230, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.related-skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(135, 206, 235, 0.05) 0%, rgba(173, 216, 230, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.related-skill-card:active::before {
+  opacity: 1;
 }
 
 .related-skill-card:active {
   transform: translateY(2rpx);
+  border-color: #87ceeb;
+  box-shadow: 
+    0 6rpx 24rpx rgba(135, 206, 235, 0.2),
+    0 4rpx 8rpx rgba(173, 216, 230, 0.15);
 }
 
 .related-skill-name {
   font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2c3e50;
   margin-bottom: 8rpx;
   display: block;
+  position: relative;
+  z-index: 1;
 }
 
 .related-skill-desc {
   font-size: 24rpx;
-  color: #666;
+  color: #5a6c7d;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
 }
 
-.bottom-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  padding: 24rpx 40rpx;
-  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
+/* 操作按钮区域 */
+.action-section {
+  margin-top: 40rpx;
+  margin-bottom: 40rpx;
   display: flex;
   justify-content: center;
 }
@@ -799,35 +966,104 @@ export default {
 .action-btn {
   width: 60%;
   padding: 28rpx 40rpx;
-  border-radius: 16rpx;
+  border-radius: 20rpx;
   text-align: center;
   font-size: 32rpx;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 
+    0 6rpx 20rpx rgba(135, 206, 235, 0.3),
+    0 4rpx 8rpx rgba(173, 216, 230, 0.2);
 }
 
 .action-btn:active {
   transform: translateY(2rpx);
+  box-shadow: 
+    0 4rpx 16rpx rgba(135, 206, 235, 0.25),
+    0 2rpx 6rpx rgba(173, 216, 230, 0.15);
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  color: #2c3e50;
 }
 
 .action-btn.secondary {
-  background-color: #4caf50;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.9) 0%, rgba(39, 174, 96, 0.8) 100%);
   color: white;
 }
 
 .action-btn.tertiary {
-  background-color: #f0f0f0;
-  color: #666;
-  border: 2rpx solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.8);
+  color: #4682b4;
+  border: 2px solid rgba(173, 216, 230, 0.3);
+  box-shadow: 
+    0 4rpx 12rpx rgba(135, 206, 235, 0.15),
+    0 2rpx 4rpx rgba(173, 216, 230, 0.1);
 }
 
 .btn-text {
   font-size: 28rpx;
+  font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .content {
+    padding: 50rpx 30rpx 30rpx;
+  }
+  
+  .skill-info-card,
+  .point-card,
+  .step-item,
+  .scenario-card,
+  .related-skill-card {
+    padding: 24rpx;
+  }
+  
+  .skill-title {
+    font-size: 36rpx;
+  }
+  
+  .section-title {
+    font-size: 28rpx;
+  }
+  
+  .action-btn {
+    width: 70%;
+    padding: 24rpx 32rpx;
+    font-size: 28rpx;
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8rpx;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(236, 240, 241, 0.3);
+  border-radius: 4rpx;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
+  border-radius: 4rpx;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #6bb6cd 0%, #98d4e0 100%);
+}
+
+/* 文字选择样式 */
+::selection {
+  background: rgba(135, 206, 235, 0.3);
+  color: #2c3e50;
+}
+
+/* 焦点样式 */
+*:focus {
+  outline: none;
 }
 </style>
