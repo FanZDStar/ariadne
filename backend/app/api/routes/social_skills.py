@@ -11,6 +11,8 @@ from app.core.prompts import PROMPTS
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.core.skills_data import skills_manager, get_legacy_database
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
 
 router = APIRouter()
 
@@ -294,11 +296,70 @@ async def interactive_skill_practice(
         # 随机决定是否结束练习（对话进行8轮以上且30%概率）
         should_end = len(chat_history) > 8 and random.random() < 0.3
         
+        # 积分奖励逻辑：检查用户在当前会话中的消息数量
+        star_reward_info = {"earned_points": 0, "is_rewarded": False, "message": "", "show_toast": False}
+        
+        try:
+            # 统计用户在本次会话中发送的消息数量（包括历史消息+当前消息）
+            user_messages_in_session = len([msg for msg in chat_history if msg.get('role') == 'user']) + 1
+            print(f"⭐ 用户在本会话中发送消息数量: {user_messages_in_session}")
+            
+            # 根据需求：每日在同一个会话中以user身份累计发送3条消息可以获得3个星星
+            # 只有在恰好发送第3条消息时才检查和奖励积分
+            if user_messages_in_session == 3:
+                star_service = StarPointService(db)
+                daily_limits = star_service.get_daily_limits(current_user.user_id)
+                
+                # 检查今天是否已经获得过技能训练积分
+                if not daily_limits.skill_training:
+                    # 奖励3个星星
+                    user_points = star_service.get_or_create_user_points(current_user.user_id)
+                    user_points.current_points += 3
+                    user_points.total_earned += 3
+                    
+                    # 更新每日限制记录
+                    daily_limits.skill_training = True
+                    
+                    # 添加积分日志
+                    star_service.add_point_log(
+                        user_id=current_user.user_id,
+                        action=StarPointAction.SKILL_TRAINING,
+                        points_change=3,
+                        source_type=SourceType.SKILL,
+                        source_id=str(skill_id),
+                        description=f"技能综合训练({skill.get('title', '未知技能')})"
+                    )
+                    
+                    db.commit()
+                    
+                    star_reward_info = {
+                        "earned_points": 3,
+                        "is_rewarded": True,
+                        "message": f"完成技能综合训练，获得3个星星！",
+                        "show_toast": True
+                    }
+                    print(f"⭐ 技能综合训练积分奖励成功: +3星星")
+                else:
+                    # 已经获得过积分，但仍然是第3条消息，不显示任何提示
+                    print(f"⭐ 今日技能训练积分已获得，不重复提示")
+            
+            # 不再显示进度提示，避免重复提醒
+                
+        except Exception as e:
+            print(f"❌ 积分奖励处理失败: {str(e)}")
+            star_reward_info = {
+                "earned_points": 0,
+                "is_rewarded": False,
+                "message": "积分奖励处理异常",
+                "show_toast": False
+            }
+        
         # 打印最终结果
         print(f"\n🎉 【练习结果】")
         print(f"✨ 最终AI回复: {response_content}")
         print(f"🔄 对话是否继续: {not should_end}")
         print(f"📊 练习是否完成: {should_end}")
+        print(f"⭐ 积分奖励: {star_reward_info}")
         print("="*80)
         print("🎯 【技能练习会话结束】")
         print("="*80 + "\n")
@@ -308,7 +369,8 @@ async def interactive_skill_practice(
             "ai_response": response_content,
             "response_type": "roleplay",  # 标识这是角色扮演回应
             "practice_completed": should_end,
-            "continue_conversation": not should_end
+            "continue_conversation": not should_end,
+            "star_reward": star_reward_info  # 添加积分奖励信息
         }
         
     except Exception as e:

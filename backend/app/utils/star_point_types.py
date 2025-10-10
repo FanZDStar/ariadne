@@ -106,8 +106,8 @@ STAR_POINT_REWARDS: Dict[StarPointAction, PointReward] = {
     
     # 技能学习
     StarPointAction.SKILL_TRAINING: PointReward(
-        points=1, 
-        description="技能综合训练", 
+        points=3, 
+        description="技能综合训练(累计3条消息)", 
         daily_limit=1
     ),
     StarPointAction.SKILL_FAVORITE: PointReward(

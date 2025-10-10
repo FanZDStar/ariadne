@@ -603,6 +603,23 @@ export default {
         if (response.statusCode === 200) {
           const result = response.data;
 
+          // 处理积分奖励信息
+          if (result.star_reward) {
+            const starReward = result.star_reward;
+            console.log("🌟 积分奖励信息:", starReward);
+
+            // 只有在show_toast为true时才显示Toast提示
+            if (starReward.show_toast && starReward.is_rewarded && starReward.earned_points > 0) {
+              // 显示积分奖励Toast
+              uni.showToast({
+                title: `🌟 ${starReward.message}`,
+                icon: 'none',
+                duration: 3000
+              });
+            }
+            // 不再显示进度提示，避免重复提醒
+          }
+
           // 根据响应类型处理
           if (result.response_type === "roleplay") {
             // 角色扮演模式：AI作为角色回应

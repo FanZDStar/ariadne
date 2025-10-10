@@ -141,7 +141,7 @@ CREATE TABLE `daily_star_limits`  (
   `background_change` tinyint(1) NULL DEFAULT 0 COMMENT '背景修改(1星)',
   `emotion_chat_count` tinyint NULL DEFAULT 0 COMMENT '情感对话次数',
   `emotion_chat_points` tinyint NULL DEFAULT 0 COMMENT '情感对话获得积分',
-  `skill_training` tinyint(1) NULL DEFAULT 0 COMMENT '技能综合训练(1星)',
+  `skill_training` tinyint(1) NULL DEFAULT 0 COMMENT '技能综合训练(3星)',
   `relationship_assessment` tinyint(1) NULL DEFAULT 0 COMMENT '关系健康评估(2星)',
   `personalized_advice` tinyint(1) NULL DEFAULT 0 COMMENT '个性化建议(2星)',
   `ai_scenario_training` tinyint(1) NULL DEFAULT 0 COMMENT 'AI情景模拟训练(2星)',
