@@ -1,11 +1,17 @@
 """
 防护训练API路由
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Dict, Any
 import logging
+from sqlalchemy.orm import Session
 
 from app.services.protection_drill_service import ProtectionDrillService
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
+from app.api.deps import get_current_user
+from app.models.user import User
+from app.database.session import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +156,11 @@ async def submit_answer(session_id: str, request: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/session/{session_id}/complete", summary="完成训练")
-async def complete_training_session(session_id: str):
+async def complete_training_session(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """完成训练会话并获取结果"""
     try:
         # 这里应该从实际的会话数据中获取结果
@@ -166,6 +176,8 @@ async def complete_training_session(session_id: str):
         correct_answers = random.randint(5, 8)  # 临时模拟，实际需要从数据库计算
         
         accuracy_rate = (correct_answers / total_questions) * 100
+        
+        # 积分奖励逻辑已移至报告保存时处理
         
         result = {
             "session_id": session_id,

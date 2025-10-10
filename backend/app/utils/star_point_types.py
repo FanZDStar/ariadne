@@ -140,7 +140,7 @@ STAR_POINT_REWARDS: Dict[StarPointAction, PointReward] = {
         daily_limit=1
     ),
     StarPointAction.PROTECTION_TRAINING: PointReward(
-        points=2, 
+        points=1, 
         description="防护技能训练", 
         daily_limit=1
     ),

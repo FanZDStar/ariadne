@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text, func
 from typing import List, Optional, Dict, Any
 import json
-from datetime import datetime
+from datetime import datetime, date
 from decimal import Decimal
 
 from app.api.deps import get_current_user, get_db
@@ -16,6 +16,8 @@ from app.schemas.protection_drill_report import (
 )
 from app.services.ai_analysis_service import ai_analysis_service
 from app.services.ai_feedback_service import ai_feedback_service
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
 
 router = APIRouter()
 
@@ -27,6 +29,8 @@ async def create_protection_drill_report(
 ):
     """创建防护训练报告"""
     try:
+        print(f"=== 开始创建防护技能训练报告 ===")
+        print(f"当前用户ID: {current_user.user_id}")
         print(f"接收到的报告数据: {report_data}")
         print(f"question_analysis字段存在: {hasattr(report_data, 'question_analysis')}")
         if hasattr(report_data, 'question_analysis'):
@@ -97,7 +101,60 @@ async def create_protection_drill_report(
         """
         report = db.execute(text(select_sql), {'id': report_id}).fetchone()
         
-        return ProtectionDrillReportResponse(
+        # 处理积分奖励逻辑
+        star_reward_info = {"earned_points": 0, "is_rewarded": False, "message": "", "show_toast": False}
+        
+        try:
+            print(f"=== 开始处理积分奖励逻辑 ===")
+            star_service = StarPointService(db)
+            daily_limits = star_service.get_daily_limits(current_user.user_id)
+            
+            print(f"当前用户今日防护训练状态: {daily_limits.protection_training}")
+            
+            # 检查今天是否已经获得过防护技能训练积分
+            if not daily_limits.protection_training:
+                # 奖励1个星星
+                user_points = star_service.get_or_create_user_points(current_user.user_id)
+                user_points.current_points += 1
+                user_points.total_earned += 1
+                
+                # 更新每日限制记录
+                daily_limits.protection_training = True
+                
+                # 添加积分日志
+                star_service.add_point_log(
+                    user_id=current_user.user_id,
+                    action=StarPointAction.PROTECTION_TRAINING,
+                    points_change=1,
+                    source_type=SourceType.SKILL,
+                    source_id=str(report_id),
+                    description="防护技能训练完成"
+                )
+                
+                db.commit()
+                
+                star_reward_info = {
+                    "earned_points": 1,
+                    "is_rewarded": True,
+                    "message": "完成防护技能训练，获得1个星星！",
+                    "show_toast": True
+                }
+                print(f"⭐ 防护技能训练积分奖励成功: +1星星 (用户ID: {current_user.user_id}, 报告ID: {report_id})")
+                print(f"⭐ 今日第一次完成防护技能训练")
+            else:
+                print(f"⭐ 不是今日第一次生成报告 (用户ID: {current_user.user_id})")
+                
+        except Exception as e:
+            print(f"❌ 防护技能训练积分奖励处理失败: {str(e)}")
+            star_reward_info = {
+                "earned_points": 0,
+                "is_rewarded": False,
+                "message": "积分奖励处理异常",
+                "show_toast": False
+            }
+        
+        # 创建响应，包含积分奖励信息
+        response = ProtectionDrillReportResponse(
             id=report.id,
             user_id=report.user_id,
             drill_type=report.drill_type,
@@ -109,8 +166,11 @@ async def create_protection_drill_report(
             report_content=report.report_content,
             suggestions=report.suggestions,
             created_at=report.created_at,
-            updated_at=report.updated_at
+            updated_at=report.updated_at,
+            star_reward=star_reward_info  # 直接在构造函数中传入积分奖励信息
         )
+        
+        return response
         
     except Exception as e:
         db.rollback()

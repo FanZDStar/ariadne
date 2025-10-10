@@ -955,6 +955,23 @@ export default {
             const result = response.data.data;
             console.log("训练结果数据:", result);
 
+            // 处理积分奖励信息
+            if (result.star_reward) {
+              const starReward = result.star_reward;
+              console.log("🌟 积分奖励信息:", starReward);
+
+              // 只有在show_toast为true时才显示Toast提示
+              if (starReward.show_toast && starReward.is_rewarded && starReward.earned_points > 0) {
+                // 显示积分奖励Toast
+                uni.showToast({
+                  title: `🌟 ${starReward.message}`,
+                  icon: 'none',
+                  duration: 3000
+                });
+              }
+              // 不再显示进度提示，避免重复提醒
+            }
+
             this.finalResult = {
               totalScore: this.currentScore,
               correctAnswers: result.correct_answers,
@@ -1088,11 +1105,36 @@ export default {
 
         if (saveResponse.statusCode === 200) {
           console.log("训练报告保存成功:", saveResponse.data);
-          uni.showToast({
-            title: "训练记录已保存",
-            icon: "success",
-            duration: 2000,
-          });
+
+          // 处理积分奖励信息
+          if (saveResponse.data.star_reward) {
+            const starReward = saveResponse.data.star_reward;
+            console.log("🌟 积分奖励信息:", starReward);
+
+            // 只有在show_toast为true时才显示Toast提示
+            if (starReward.show_toast && starReward.is_rewarded && starReward.earned_points > 0) {
+              // 显示积分奖励Toast
+              uni.showToast({
+                title: `🌟 ${starReward.message}`,
+                icon: 'none',
+                duration: 3000
+              });
+            } else {
+              // 没有积分奖励，显示普通保存成功提示
+              uni.showToast({
+                title: "训练记录已保存",
+                icon: "success",
+                duration: 2000,
+              });
+            }
+          } else {
+            // 没有积分奖励信息，显示普通保存成功提示
+            uni.showToast({
+              title: "训练记录已保存",
+              icon: "success",
+              duration: 2000,
+            });
+          }
         } else {
           console.error("保存训练报告失败，状态码:", saveResponse.statusCode);
           console.error("失败响应数据:", saveResponse.data);

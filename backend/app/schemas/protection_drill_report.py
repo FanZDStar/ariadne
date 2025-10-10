@@ -54,6 +54,7 @@ class ProtectionDrillReportResponse(ProtectionDrillReportBase):
     report_content: Optional[str] = Field(None, description="详细报告内容(JSON格式)")
     created_at: datetime = Field(..., description="创建时间")
     updated_at: datetime = Field(..., description="更新时间")
+    star_reward: Optional[Dict[str, Any]] = Field(None, description="积分奖励信息")
 
     class Config:
         from_attributes = True
