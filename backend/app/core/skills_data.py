@@ -41,17 +41,18 @@ class SkillsDataManager:
         if not self.skills_data:
             return None
         
-        # 直接查找
+        # 直接查找字符串ID
         skill = self.skills_data["skills"].get(str(skill_id))
         if skill:
             return skill
         
-        # 如果是数字ID，尝试映射
+        # 如果是数字ID，遍历查找对应的numeric_id
         if isinstance(skill_id, (int, str)) and str(skill_id).isdigit():
             numeric_id = int(skill_id)
-            backend_id = self.skills_data["id_mapping"].get(numeric_id)
-            if backend_id:
-                return self.skills_data["skills"].get(backend_id)
+            # 遍历所有技能，查找匹配的numeric_id
+            for skill_key, skill_data in self.skills_data["skills"].items():
+                if skill_data.get("numeric_id") == numeric_id:
+                    return skill_data
         
         return None
     
