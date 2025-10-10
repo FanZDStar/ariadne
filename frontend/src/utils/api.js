@@ -489,6 +489,58 @@ export const api = {
       },
     });
   },
+
+  // 看板娘服装相关API
+  // 获取所有可用服装
+  getAllMascotOutfits: () => {
+    return request("/mascot-outfits/", {
+      method: "GET",
+    });
+  },
+
+  // 获取用户拥有的服装
+  getUserMascotOutfits: (token) => {
+    return request("/mascot-outfits/user-outfits", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取用户当前服装
+  getCurrentMascotOutfit: (token) => {
+    return request("/mascot-outfits/current", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 设置用户当前服装
+  setCurrentMascotOutfit: (token, outfitId) => {
+    return request("/mascot-outfits/set-current", {
+      method: "POST",
+      data: {
+        outfit_id: outfitId,
+      },
+      header: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+  },
+
+  // 购买服装
+  purchaseMascotOutfit: (token, outfitId) => {
+    return request(`/mascot-outfits/purchase/${outfitId}`, {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };
 
 // 本地存储工具

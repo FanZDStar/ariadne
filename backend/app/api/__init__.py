@@ -37,6 +37,7 @@ from app.api.routes import (
     interpersonal_practice,
     protection_drill_reports,
     star_points,
+    mascot_outfits,
 )
 from app.api import protection_drill
 
@@ -91,4 +92,8 @@ api_router.include_router(
 api_router.include_router(
     star_points.router,
     tags=["星星积分"]
+)
+api_router.include_router(
+    mascot_outfits.router,
+    tags=["看板娘服装"]
 )
