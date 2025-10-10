@@ -9,8 +9,13 @@
     </view>
 
     <view class="tabs">
-      <view :class="['tab-item', { active: activeTab === 'posted' }]" @click="activeTab = 'posted'">
-        我发布的
+      <view class="tab-with-icon">
+        <view :class="['tab-item', { active: activeTab === 'posted' }]" @click="activeTab = 'posted'">
+          我发布的
+        </view>
+        <view v-if="activeTab === 'posted'" class="calendar-icon" @click="showCalendar">
+          📅
+        </view>
       </view>
       <view :class="['tab-item', { active: activeTab === 'interacted' }]" @click="activeTab = 'interacted'">
         我互动的
@@ -138,16 +143,26 @@
     <view class="fab" @click="goToWriteWhisper">
       <text class="fab-icon">+</text>
     </view>
+
+    <!-- 日历组件 -->
+    <WhisperCalendar
+      :visible="calendarVisible"
+      :whisperDates="whisperDates"
+      @close="calendarVisible = false"
+      @date-selected="onDateSelected"
+    />
   </view>
 </template>
 
 <script>
 import { api, storage } from '../../utils/api.js';
 import BackToTop from '../../components/BackToTop.vue';
+import WhisperCalendar from '../../components/WhisperCalendar.vue';
 
 export default {
   components: {
-    BackToTop
+    BackToTop,
+    WhisperCalendar
   },
   data() {
     return {
@@ -156,8 +171,27 @@ export default {
       myInteractedWhispers: [],
       myChats: [],
       managementMode: false,
-      scrollTop: 0
+      scrollTop: 0,
+      calendarVisible: false,
+      selectedDate: null,
+      allPostedWhispers: [] // 存储所有悄悄话，用于筛选
     };
+  },
+  computed: {
+    // 获取所有有悄悄话的日期
+    whisperDates() {
+      return this.allPostedWhispers.map(whisper => whisper.created_at);
+    },
+    // 根据选择的日期筛选悄悄话
+    filteredPostedWhispers() {
+      if (!this.selectedDate) {
+        return this.allPostedWhispers;
+      }
+      return this.allPostedWhispers.filter(whisper => {
+        const whisperDate = whisper.created_at.split('T')[0].split(' ')[0];
+        return whisperDate === this.selectedDate;
+      });
+    }
   },
   onLoad() {
     this.loadData();
@@ -189,7 +223,9 @@ export default {
       const token = storage.getToken();
       if (!token) return;
       try {
-        this.myPostedWhispers = await api.getMyPostedWhispers(token);
+        const whispers = await api.getMyPostedWhispers(token);
+        this.allPostedWhispers = whispers;
+        this.myPostedWhispers = whispers;
       } catch (error) {
         console.error('Failed to fetch posted whispers:', error);
       }
@@ -212,6 +248,32 @@ export default {
         this.myChats = await api.getMyChats(token);
       } catch (error) {
         console.error('Failed to fetch chats:', error);
+      }
+    },
+    showCalendar() {
+      this.calendarVisible = true;
+    },
+    onDateSelected(date) {
+      this.selectedDate = date;
+      if (date) {
+        // 根据日期筛选悄悄话
+        this.myPostedWhispers = this.allPostedWhispers.filter(whisper => {
+          const whisperDate = whisper.created_at.split('T')[0].split(' ')[0];
+          return whisperDate === date;
+        });
+        uni.showToast({
+          title: `已筛选 ${date.split('-')[1]}月${date.split('-')[2]}日`,
+          icon: 'none',
+          duration: 1500
+        });
+      } else {
+        // 显示全部
+        this.myPostedWhispers = this.allPostedWhispers;
+        uni.showToast({
+          title: '已显示全部',
+          icon: 'none',
+          duration: 1500
+        });
       }
     },
     toggleManagementMode() {
@@ -486,6 +548,29 @@ export default {
   display: flex;
   background-color: white;
   border-bottom: 1rpx solid #eee;
+}
+
+.tab-with-icon {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 10rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 36rpx;
+  padding: 10rpx;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.calendar-icon:active {
+  transform: translateY(-50%) scale(0.9);
 }
 
 .tab-item {
