@@ -2,6 +2,10 @@
 """
 初始化防护训练相关数据库表
 """
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import mysql.connector
 from app.core.database import get_db_connection
 import logging

@@ -2,6 +2,10 @@
 """
 创建防护训练答题详情表和AI分析功能
 """
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from app.core.database import get_db_connection
 import logging
 
@@ -40,12 +44,12 @@ def create_question_details_table():
     # 添加AI分析字段
     add_ai_analysis_sql = """
     ALTER TABLE `protection_drill_reports` 
-    ADD COLUMN IF NOT EXISTS `ai_analysis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI深度分析和建议' AFTER `suggestions`;
+    ADD COLUMN `ai_analysis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI深度分析和建议' AFTER `suggestions`;
     """
     
     # 添加索引
     add_index_sql = """
-    CREATE INDEX IF NOT EXISTS `idx_user_created` ON `protection_drill_reports`(`user_id`, `created_at` DESC) USING BTREE;
+    CREATE INDEX `idx_user_created` ON `protection_drill_reports`(`user_id`, `created_at` DESC) USING BTREE;
     """
 
     try:
@@ -63,7 +67,7 @@ def create_question_details_table():
                 cursor.execute(add_ai_analysis_sql)
                 logger.info("AI分析字段添加成功")
             except Exception as e:
-                if "Duplicate column name" in str(e):
+                if "Duplicate column name" in str(e) or "already exists" in str(e).lower():
                     logger.info("AI分析字段已存在，跳过")
                 else:
                     raise e
@@ -74,7 +78,7 @@ def create_question_details_table():
                 cursor.execute(add_index_sql)
                 logger.info("索引添加成功")
             except Exception as e:
-                if "Duplicate key name" in str(e):
+                if "Duplicate key name" in str(e) or "already exists" in str(e).lower():
                     logger.info("索引已存在，跳过")
                 else:
                     raise e

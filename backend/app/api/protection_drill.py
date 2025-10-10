@@ -102,12 +102,40 @@ async def submit_answer(session_id: str, request: dict):
         if not question_id or not selected_option_id:
             raise HTTPException(status_code=400, detail="缺少必要参数")
         
-        # 这里可以添加答案验证逻辑
-        # 暂时返回模拟的反馈数据
+        # 从数据库获取题目信息并验证答案
+        from app.services.protection_drill_service import ProtectionDrillService
+        
+        # 获取题目详细信息
+        question_info = ProtectionDrillService.get_question_by_id(question_id)
+        if not question_info:
+            raise HTTPException(status_code=404, detail="题目不存在")
+        
+        # 验证答案
+        is_correct = False
+        correct_option = None
+        user_option = None
+        
+        for option in question_info.get('options', []):
+            if option.get('id') == selected_option_id:
+                user_option = option
+            if option.get('isCorrect', False):
+                correct_option = option
+        
+        if user_option and correct_option:
+            is_correct = user_option.get('id') == correct_option.get('id')
+        
+        # 构建反馈数据
         feedback = {
-            "is_correct": True,  # 可以根据实际答案验证
-            "analysis": "答案分析",
-            "explanation": "详细解释"
+            "is_correct": is_correct,
+            "analysis": question_info.get('correct_analysis', '答案分析') if is_correct else '这个答案需要再考虑一下。让我们来看看正确的分析。',
+            "explanation": correct_option.get('description', '') if correct_option else '',
+            "risk_explanation": question_info.get('risk_explanation', ''),
+            "protection_advice": question_info.get('protection_advice', []),
+            "correct_answer": correct_option.get('text', '') if correct_option else '',
+            "correct_option_id": correct_option.get('id') if correct_option else None,
+            "better_choice": question_info.get('better_choice', ''),
+            "user_answer": user_option.get('text', '') if user_option else '',
+            "user_option_id": selected_option_id
         }
         
         return {

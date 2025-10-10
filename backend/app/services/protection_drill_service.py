@@ -46,6 +46,42 @@ class ProtectionDrillService:
             return []  # 返回空列表而不是抛出异常
     
     @staticmethod
+    def get_question_by_id(question_id: int) -> Dict[str, Any]:
+        """根据ID获取单个题目详情"""
+        try:
+            with get_db_connection() as conn:
+                query = """
+                SELECT id, title, description, dialogue, question_title, question_text, 
+                       options, correct_analysis, risk_explanation, protection_advice, 
+                       better_choice, difficulty
+                FROM protection_drill_questions 
+                WHERE id = %s
+                """
+                cursor = conn.cursor()
+                cursor.execute(query, (question_id,))
+                
+                row = cursor.fetchone()
+                if row:
+                    return {
+                        'id': row[0],
+                        'title': row[1],
+                        'description': row[2],
+                        'dialogue': json.loads(row[3]) if row[3] else [],
+                        'question_title': row[4],
+                        'question_text': row[5],
+                        'options': json.loads(row[6]) if row[6] else [],
+                        'correct_analysis': row[7],
+                        'risk_explanation': row[8],
+                        'protection_advice': json.loads(row[9]) if row[9] else [],
+                        'better_choice': row[10],
+                        'difficulty': row[11]
+                    }
+                return None
+        except Exception as e:
+            logger.error(f"获取题目详情失败: {e}")
+            return None
+
+    @staticmethod
     def get_training_questions(training_type_id: int, count: int = 8) -> List[Dict[str, Any]]:
         """获取指定类型的随机题目"""
         try:
