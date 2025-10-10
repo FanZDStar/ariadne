@@ -233,21 +233,11 @@ export default {
           return this.loadWhisperDetail(retryCount + 1);
         }
         
-        // 重试失败后显示错误，并提供手动重试选项
-        uni.showModal({
+                // 重试失败后显示简单的错误提示
+        uni.showToast({
           title: '加载失败',
-          content: '无法加载帖子详情，是否重试？',
-          confirmText: '重试',
-          cancelText: '返回',
-          success: (res) => {
-            if (res.confirm) {
-              // 用户选择重试
-              this.loadWhisperDetail(0);
-            } else {
-              // 用户选择返回
-              uni.navigateBack();
-            }
-          }
+          icon: 'none',
+          duration: 2000
         });
       }
     },
