@@ -72,13 +72,20 @@
             </view>
           </scroll-view>
 
-          <!-- 卡片底部统计信息 -->
+          <!-- 卡片底部统计信息 - 可交互 -->
           <view class="whisper-stats">
-            <view class="stat-item">
-              <text class="stat-icon">❤️</text>
-              <text class="stat-count">{{ whisper.like_count || 0 }}</text>
+            <view 
+              class="stat-item stat-clickable" 
+              :class="{ 'stat-liked': liked }"
+              @click.stop="toggleLike"
+            >
+              <text class="stat-icon">{{ liked ? "❤️" : "🤍" }}</text>
+              <text class="stat-count">{{ likeCount }}</text>
             </view>
-            <view class="stat-item">
+            <view 
+              class="stat-item stat-clickable" 
+              @click.stop="goToWhisperDetail"
+            >
               <text class="stat-icon">💬</text>
               <text class="stat-count">{{ whisper.comment_count || 0 }}</text>
             </view>
@@ -103,23 +110,8 @@
       </view>
     </view>
 
-    <!-- 底部操作区 -->
+    <!-- 底部操作区 - 只保留换一个按钮 -->
     <view class="footer-actions">
-      <view
-        class="action-bubble like-bubble"
-        :class="{ liked: liked }"
-        @click.stop="toggleLike"
-      >
-        <text class="action-icon">{{ liked ? "❤️" : "🤍" }}</text>
-        <text class="action-text">{{ likeCount }}</text>
-      </view>
-      <view
-        class="action-bubble comment-bubble"
-        @click.stop="goToWhisperDetail"
-      >
-        <text class="action-icon">💬</text>
-        <text class="action-text">详情</text>
-      </view>
       <button
         class="next-button"
         :disabled="loading"
@@ -326,7 +318,7 @@ export default {
       });
     },
 
-    // 点赞功能
+        // 点赞功能
     async toggleLike() {
       if (!this.whisper) return;
 
@@ -347,13 +339,13 @@ export default {
         this.liked = !this.liked;
         this.likeCount += this.liked ? 1 : -1;
 
-        // 添加点赞动画效果
-        const likeElement = document.querySelector(".like-bubble");
-        if (likeElement) {
-          likeElement.classList.add("like-animation");
-          setTimeout(() => {
-            likeElement.classList.remove("like-animation");
-          }, 300);
+        // 显示点赞反馈
+        if (this.liked) {
+          uni.showToast({
+            title: "点赞成功",
+            icon: "success",
+            duration: 1000,
+          });
         }
 
         await api.likeWhisper(token, this.whisper.whisper_id);
@@ -644,6 +636,27 @@ export default {
   display: flex;
   align-items: center;
   gap: 8rpx;
+  transition: transform 0.2s ease;
+}
+
+/* 可点击的统计项 */
+.stat-clickable {
+  cursor: pointer;
+  padding: 8rpx 20rpx;
+  border-radius: 30rpx;
+  background-color: #f8f4e6;
+  border: 1rpx solid #e8dcc6;
+}
+
+.stat-clickable:active {
+  transform: scale(0.95);
+  background-color: #f0e6d2;
+}
+
+/* 已点赞状态 */
+.stat-liked {
+  background: linear-gradient(135deg, #ffe5e5, #ffd1d1);
+  border-color: #ffb3b3;
 }
 
 .stat-icon {
@@ -680,7 +693,7 @@ export default {
   left: 0;
   right: 0;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   padding: 30rpx;
   padding-bottom: calc(30rpx + constant(safe-area-inset-bottom));
@@ -691,79 +704,28 @@ export default {
   box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
 }
 
-.action-bubble {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16rpx 32rpx;
-  border-radius: 50rpx;
-  background-color: #fff;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  min-width: 120rpx;
-}
-
-.action-bubble:active {
-  transform: scale(0.95);
-}
-
-/* 点赞状态 */
-.action-bubble.liked {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-  color: white;
-}
-
-.action-bubble.liked .action-text {
-  color: white;
-}
-
-/* 点赞动画 */
-.like-bubble.like-animation {
-  animation: likeHeartbeat 0.3s ease;
-}
-
-@keyframes likeHeartbeat {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.action-icon {
-  font-size: 36rpx;
-  margin-right: 12rpx;
-}
-
-.action-text {
-  font-size: 26rpx;
-  color: #333;
-  font-weight: 500;
-}
-
 .next-button {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border-radius: 50rpx;
-  font-size: 28rpx;
-  padding: 0 40rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  font-size: 32rpx;
+  font-weight: 600;
+  padding: 0 80rpx;
+  height: 90rpx;
+  line-height: 90rpx;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.4);
   transition: all 0.3s ease;
-  min-width: 140rpx;
+  min-width: 280rpx;
 }
 
 .next-button:active {
   transform: scale(0.95);
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
 }
 
 .next-button[disabled] {
   background: #a0a0a0;
   box-shadow: none;
+  opacity: 0.6;
 }
 </style>
