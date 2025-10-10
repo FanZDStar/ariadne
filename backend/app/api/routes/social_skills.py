@@ -71,11 +71,16 @@ async def generate_skill_scenario(
 ):
     """为特定技能生成AI练习场景"""
     try:
-        # 查找技能 - 使用新的数据管理器
+        print(f"\n🎬 【场景生成请求】技能ID: {skill_id}")
+        
+        # 查找技能 - 使用新的数据管理器，支持数字ID映射
         skill = skills_manager.get_skill_by_id(skill_id)
         
         if not skill:
+            print(f"❌ 未找到技能: {skill_id}")
             raise HTTPException(status_code=404, detail="技能不存在")
+        
+        print(f"✅ 找到技能: {skill.get('title', 'Unknown')} (ID: {skill.get('id', skill_id)})")
         
         # 构建AI请求
         ai_service = AIService()
@@ -86,7 +91,7 @@ async def generate_skill_scenario(
 
 技能名称：{skill['title']}
 技能内容：{skill['content']}
-适用场景：{', '.join(skill['scenarios'])}
+适用场景：{', '.join(skill.get('scenarios', []))}
 
 请为用户创建一个具体、真实、可操作的练习场景，包括：
 1. 场景描述（背景、人物、情况）
@@ -107,6 +112,8 @@ async def generate_skill_scenario(
             # 如果不是字符串，尝试提取内容或使用默认值
             scenario_content = str(ai_response) if ai_response else "AI生成场景时出现问题，请重试"
         
+        print(f"✅ 场景生成成功，长度: {len(scenario_content)} 字符")
+        
         return {
             "skill": skill,
             "scenario": {
@@ -119,17 +126,28 @@ async def generate_skill_scenario(
         
     except Exception as e:
         logger.error(f"生成场景失败: {str(e)}")
-        # 返回备用场景
+        print(f"❌ 场景生成失败: {str(e)}")
+        
+        # 查找技能信息用于备用场景
+        skill = skills_manager.get_skill_by_id(skill_id)
+        
+        # 返回备用场景 - 根据技能ID或标题提供相关场景
         fallback_scenarios = {
-            "conflict_resolution": "你和室友因为生活习惯产生了分歧。TA经常在深夜听音乐，影响你休息，而TA认为这是自己的自由。现在你们需要心平气和地解决这个问题...",
+            "1": "你的好朋友最近工作压力很大，今天TA主动找你聊天，看起来很疲惫，说：'我觉得我快撑不下去了...'",
             "listen_actively": "你的好朋友最近工作压力很大，今天TA主动找你聊天，看起来很疲惫，说：'我觉得我快撑不下去了...'",
-            "express_clearly": "你的恋人经常晚回信息，这让你感到被忽视。你们终于有机会面对面交流，你想表达你的感受..."
+            "2": "你的恋人经常晚回信息，这让你感到被忽视。你们终于有机会面对面交流，你想表达你的感受...",
+            "express_clearly": "你的恋人经常晚回信息，这让你感到被忽视。你们终于有机会面对面交流，你想表达你的感受...",
+            "conflict_resolution": "你和室友因为生活习惯产生了分歧。TA经常在深夜听音乐，影响你休息，而TA认为这是自己的自由。现在你们需要心平气和地解决这个问题..."
         }
         
-        fallback_content = fallback_scenarios.get(skill_id, "这是一个练习场景，请根据所学技能进行练习。")
+        fallback_content = fallback_scenarios.get(str(skill_id), 
+                           fallback_scenarios.get(skill.get('id', '') if skill else '',
+                           "这是一个练习场景，请根据所学技能进行练习。"))
+        
+        print(f"📝 使用备用场景，长度: {len(fallback_content)} 字符")
         
         return {
-            "skill": skill if 'skill' in locals() else {"id": skill_id, "title": "交往技巧", "content": "练习人际交往技能"},
+            "skill": skill if skill else {"id": skill_id, "title": "交往技巧", "content": "练习人际交往技能"},
             "scenario": {
                 "content": fallback_content,
                 "type": "fallback",
@@ -168,7 +186,7 @@ async def interactive_skill_practice(
             logger.error(f"缺少必要参数 - skill_id: {skill_id}, user_response: {user_response}")
             raise HTTPException(status_code=400, detail="缺少必要参数")
         
-        # 查找技能 - 使用新的数据管理器
+        # 查找技能 - 使用新的数据管理器，支持数字ID到字符串ID的映射
         skill = skills_manager.get_skill_by_id(skill_id)
         
         # 如果找不到技能，记录日志但继续处理
@@ -189,8 +207,9 @@ async def interactive_skill_practice(
         print(f"   📖 技能名称: {skill.get('title', 'Unknown')}")
         print(f"   📝 技能描述: {skill.get('content', 'N/A')}")
         print(f"   🏷️ 技能标签: {', '.join(skill.get('tags', []))}")
+        print(f"   🔢 技能ID映射: 前端传入={skill_id}, 后端查找={skill.get('id', 'Unknown')}")
         
-        logger.info(f"找到技能: {skill.get('title', 'Unknown')}")
+        logger.info(f"找到技能: {skill.get('title', 'Unknown')} (ID: {skill.get('id', 'Unknown')})")
         
         # 构建角色扮演对话提示词 - 修正角色设定
         if is_first_message:

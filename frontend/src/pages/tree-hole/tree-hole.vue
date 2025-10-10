@@ -144,6 +144,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 20rpx;
   margin-top: 40rpx;
+  margin-bottom: 80rpx;
   transition: background-color 0.5s;
 }
 

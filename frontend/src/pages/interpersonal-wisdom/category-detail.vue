@@ -1,106 +1,130 @@
 <template>
     <view class="category-detail-container">
-        <view class="header">
-            <view class="category-info">
-                <text class="category-icon">{{ categoryData.icon }}</text>
-                <view class="category-text">
-                    <text class="category-name">{{ categoryData.name }}</text>
-                    <text class="category-desc">{{ categoryData.description }}</text>
-                </view>
-            </view>
-        </view>
-
         <view class="content">
+            <!-- 推荐技能卡片 -->
             <view v-if="recommendedSkills.length > 0" class="section">
                 <view class="section-header">
-                    <text class="section-title">🎯 为你推荐</text>
+                    <view class="section-title-wrapper">
+                        <text class="section-title">🎯 为你推荐</text>
+                        <view class="title-underline"></view>
+                    </view>
                 </view>
-                <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended"
-                    :class="`skill-color-${skill.id % 12 + 1}`">
-                    <view class="skill-header">
-                        <text class="skill-title">{{ skill.name }}</text>
-                    </view>
-                    <text class="skill-description">{{ skill.description }}</text>
-                    <view class="skill-meta">
-                        <view class="meta-item">
-                            <text class="meta-icon">⏱️</text>
-                            <text class="meta-text">{{ skill.estimatedTime }}分钟</text>
+                <view class="recommended-grid">
+                    <view v-for="skill in recommendedSkills" :key="skill.id" 
+                          class="skill-card recommended glass-card">
+                        <view class="card-shimmer"></view>
+                        <view class="skill-header">
+                            <text class="skill-title">{{ skill.name }}</text>
+                            <view class="recommended-badge">
+                                <text class="badge-text">推荐</text>
+                            </view>
                         </view>
-                    </view>
-                    <view class="skill-actions">
-                        <view class="action-btn primary" @click.stop="viewSkillDetail(skill)">
-                            <text class="btn-text">去看看</text>
-                            <text class="btn-arrow">→</text>
+                        <text class="skill-description">{{ skill.description }}</text>
+                        <view class="skill-meta">
+                            <view class="meta-item">
+                                <view class="meta-icon-bg">
+                                    <text class="meta-icon">⏱️</text>
+                                </view>
+                                <text class="meta-text">{{ skill.estimatedTime }}分钟</text>
+                            </view>
+                        </view>
+                        <view class="skill-actions">
+                            <view class="action-btn primary modern-btn" @click.stop="viewSkillDetail(skill)">
+                                <text class="btn-text">去看看</text>
+                                <text class="btn-arrow">→</text>
+                                <view class="btn-ripple"></view>
+                            </view>
                         </view>
                     </view>
                 </view>
             </view>
 
-            <!-- 技能列表 -->
+            <!-- 技能列表部分 -->
             <view class="section">
                 <view class="section-header">
-                    <text class="section-title">📚 全部技能</text>
-                    <view class="skills-count">
+                    <view class="section-title-wrapper">
+                        <text class="section-title">📚 全部技能</text>
+                        <view class="title-underline"></view>
+                    </view>
+                    <view class="skills-count modern-badge">
                         <text class="count-text">{{ paginationInfo.start }}-{{ paginationInfo.end }} / {{
                             paginationInfo.total }}</text>
                     </view>
                 </view>
 
                 <view class="skills-grid">
-                    <view v-for="skill in filteredSkills" :key="skill.id" class="skill-card" :class="[
-                        { mastered: skill.status === 'mastered', learning: skill.status === 'learning' },
-                        `skill-color-${skill.id % 12 + 1}`
-                    ]" @click="viewSkillDetail(skill)">
+                    <view v-for="skill in filteredSkills" :key="skill.id" 
+                          class="skill-card glass-card" 
+                          :class="[
+                            { mastered: skill.status === 'mastered', learning: skill.status === 'learning' }
+                          ]" 
+                          @click="viewSkillDetail(skill)">
+                        
+                        <view class="skill-content">
+                            <text class="skill-name">{{ skill.name }}</text>
+                            <text class="skill-brief">{{ skill.brief }}</text>
 
-                        <text class="skill-name">{{ skill.name }}</text>
-                        <text class="skill-brief">{{ skill.brief }}</text>
-
-                        <view class="skill-tags">
-                            <text v-for="tag in skill.tags" :key="tag" class="skill-tag">{{ tag }}</text>
+                            <view class="skill-tags">
+                                <text v-for="tag in skill.tags" :key="tag" class="skill-tag modern-tag">{{ tag }}</text>
+                            </view>
                         </view>
                     </view>
                 </view>
 
-                <!-- 分页器 -->
-                <view v-if="totalPages > 1" class="pagination">
+                <!-- 现代化分页器 -->
+                <view v-if="totalPages > 1" class="pagination glass-card">
                     <view class="pagination-info">
                         <text class="pagination-text">第 {{ currentPage }} 页，共 {{ totalPages }} 页</text>
                     </view>
                     <view class="pagination-controls">
-                        <view class="pagination-btn" :class="{ disabled: currentPage <= 1 }"
-                            @click="goToPage(currentPage - 1)">
+                        <view class="pagination-btn modern-btn" 
+                              :class="{ disabled: currentPage <= 1 }"
+                              @click="goToPage(currentPage - 1)">
                             <text class="btn-text">上一页</text>
+                            <view class="btn-ripple"></view>
                         </view>
 
                         <view class="pagination-numbers">
-                            <view v-for="page in getVisiblePages()" :key="page" class="page-number"
-                                :class="{ active: page === currentPage, ellipsis: page === '...' }"
-                                @click="page !== '...' ? goToPage(page) : null">
+                            <view v-for="page in getVisiblePages()" :key="page" 
+                                  class="page-number modern-btn"
+                                  :class="{ active: page === currentPage, ellipsis: page === '...' }"
+                                  @click="page !== '...' ? goToPage(page) : null">
                                 <text class="page-text">{{ page }}</text>
+                                <view class="btn-ripple" v-if="page !== '...'"></view>
                             </view>
                         </view>
 
-                        <view class="pagination-btn" :class="{ disabled: currentPage >= totalPages }"
-                            @click="goToPage(currentPage + 1)">
+                        <view class="pagination-btn modern-btn" 
+                              :class="{ disabled: currentPage >= totalPages }"
+                              @click="goToPage(currentPage + 1)">
                             <text class="btn-text">下一页</text>
+                            <view class="btn-ripple"></view>
                         </view>
                     </view>
                 </view>
             </view>
 
-            <!-- 学习建议 -->
+            <!-- 学习建议部分 -->
             <view class="section">
                 <view class="section-header">
-                    <text class="section-title">💡 学习建议</text>
+                    <view class="section-title-wrapper">
+                        <text class="section-title">💡 学习建议</text>
+                        <view class="title-underline"></view>
+                    </view>
                     <view class="tip-controls">
-                        <view class="refresh-btn" @click="refreshTip">
+                        <view class="refresh-btn modern-btn" @click="refreshTip">
                             <text class="refresh-icon">🔄</text>
+                            <view class="btn-ripple"></view>
                         </view>
                     </view>
                 </view>
-                <view class="suggestion-card">
-                    <text class="suggestion-title">{{ learningTip.title }}</text>
+                <view class="suggestion-card glass-card">
+                    <view class="suggestion-header">
+                        <text class="suggestion-title">{{ learningTip.title }}</text>
+                        <view class="suggestion-icon">💡</view>
+                    </view>
                     <text class="suggestion-content">{{ learningTip.content }}</text>
+                    <view class="suggestion-decoration"></view>
                 </view>
             </view>
         </view>
@@ -435,48 +459,30 @@ export default {
 </script>
 
 <style scoped>
+/* 现代化设计系统 */
 .category-detail-container {
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
+    position: relative;
 }
 
-.header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 40rpx;
-    color: white;
+/* 玻璃拟态效果 */
+.glass-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 20rpx;
+    box-shadow: 0 8rpx 32rpx rgba(31, 38, 135, 0.37);
+    position: relative;
+    overflow: hidden;
 }
 
-.category-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 32rpx;
-}
-
-.category-icon {
-    font-size: 64rpx;
-    margin-right: 24rpx;
-}
-
-.category-text {
-    flex: 1;
-}
-
-.category-name {
-    font-size: 42rpx;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 8rpx;
-}
-
-.category-desc {
-    font-size: 26rpx;
-    opacity: 0.9;
-    line-height: 1.4;
-}
-
-
+/* 内容区域 */
 .content {
-    padding: 0 40rpx 120rpx;
+    padding: 40rpx 32rpx 120rpx;
+    position: relative;
+    z-index: 1;
 }
 
 .section {
@@ -487,270 +493,142 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24rpx;
+    margin-bottom: 32rpx;
     padding-top: 24rpx;
 }
 
-.section-title {
-    font-size: 32rpx;
-    font-weight: bold;
-    color: #333;
-}
-
-.skills-count {
-    display: flex;
-    align-items: center;
-}
-
-.count-text {
-    font-size: 24rpx;
-    color: #666;
-    background-color: #f0f0f0;
-    padding: 6rpx 12rpx;
-    border-radius: 12rpx;
-}
-
-.tip-controls {
-    display: flex;
-    align-items: center;
-    gap: 16rpx;
-}
-
-.tip-counter {
-    font-size: 22rpx;
-    color: #999;
-    background-color: #f0f0f0;
-    padding: 6rpx 12rpx;
-    border-radius: 12rpx;
-}
-
-.refresh-btn {
-    padding: 8rpx;
-    background-color: #667eea;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease;
-}
-
-.refresh-btn:active {
-    transform: scale(0.95);
-}
-
-.refresh-icon {
-    font-size: 20rpx;
-    color: white;
-}
-
-.section-subtitle {
-    font-size: 24rpx;
-    color: #666;
-    margin-top: 4rpx;
-}
-
-.filter-controls {
-    display: flex;
-    gap: 12rpx;
-}
-
-.filter-btn {
-    padding: 12rpx 20rpx;
-    background-color: #f0f0f0;
-    border-radius: 20rpx;
-    font-size: 24rpx;
-    color: #666;
-    transition: all 0.3s ease;
-}
-
-.filter-btn.active {
-    background-color: #667eea;
-    color: white;
-}
-
-.skill-card {
-    background-color: white;
-    border-radius: 16rpx;
-    padding: 32rpx;
-    margin-bottom: 20rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+.section-title-wrapper {
     position: relative;
+}
+
+.section-title {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #2d3748;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.title-underline {
+    position: absolute;
+    bottom: -8rpx;
+    left: 0;
+    width: 60rpx;
+    height: 4rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2rpx;
+}
+
+/* 现代化徽章 */
+.modern-badge {
+    background: rgba(102, 126, 234, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 20rpx;
+    padding: 8rpx 16rpx;
+}
+
+.skills-count.modern-badge .count-text {
+    font-size: 24rpx;
+    color: #667eea;
+    font-weight: 600;
+    background: none;
+    padding: 0;
+}
+
+/* 推荐技能网格 */
+.recommended-grid {
+    display: grid;
+    gap: 24rpx;
+}
+
+/* 现代化技能卡片 */
+.skill-card {
+    padding: 32rpx;
+    margin-bottom: 24rpx;
+    position: relative;
+    overflow: hidden;
     transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.skill-card:hover {
+    transform: translateY(-4rpx);
 }
 
 .skill-card:active {
-    transform: translateY(2rpx);
+    transform: translateY(-2rpx);
 }
 
+/* 推荐技能特殊样式 */
 .skill-card.recommended {
-    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-    border-top: 2rpx solid #667eea;
-    border-right: 2rpx solid #667eea;
-    border-bottom: 2rpx solid #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
+    border: 2rpx solid rgba(102, 126, 234, 0.3);
+}
+
+.recommended-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4rpx 12rpx;
+    border-radius: 12rpx;
+    font-size: 20rpx;
+    font-weight: 600;
+}
+
+.badge-text {
+    font-size: 20rpx;
+}
+
+/* 技能状态 */
+.skill-card {
+    border-left: 6rpx solid #667eea;
 }
 
 .skill-card.mastered {
-    border-left: 6rpx solid #4caf50;
+    border-left: 6rpx solid #10b981;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
 }
 
 .skill-card.learning {
-    border-left: 6rpx solid #ff9800;
+    border-left: 6rpx solid #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
 }
 
-/* 技能卡片彩色边框样式 */
-.skill-card.skill-color-1 {
-    border-left: 6rpx solid #FF6B6B;
-    /* 珊瑚红 */
-}
-
-.skill-card.skill-color-2 {
-    border-left: 6rpx solid #4ECDC4;
-    /* 青绿色 */
-}
-
-.skill-card.skill-color-3 {
-    border-left: 6rpx solid #45B7D1;
-    /* 天空蓝 */
-}
-
-.skill-card.skill-color-4 {
-    border-left: 6rpx solid #96CEB4;
-    /* 薄荷绿 */
-}
-
-.skill-card.skill-color-5 {
-    border-left: 6rpx solid #FECA57;
-    /* 阳光黄 */
-}
-
-.skill-card.skill-color-6 {
-    border-left: 6rpx solid #FF9FF3;
-    /* 粉紫色 */
-}
-
-.skill-card.skill-color-7 {
-    border-left: 6rpx solid #54A0FF;
-    /* 蓝紫色 */
-}
-
-.skill-card.skill-color-8 {
-    border-left: 6rpx solid #5F27CD;
-    /* 深紫色 */
-}
-
-.skill-card.skill-color-9 {
-    border-left: 6rpx solid #00D2D3;
-    /* 青蓝色 */
-}
-
-.skill-card.skill-color-10 {
-    border-left: 6rpx solid #FF9F43;
-    /* 橙色 */
-}
-
-.skill-card.skill-color-11 {
-    border-left: 6rpx solid #10AC84;
-    /* 翠绿色 */
-}
-
-.skill-card.skill-color-12 {
-    border-left: 6rpx solid #EE5A6F;
-    /* 玫瑰红 */
-}
-
-/* 已掌握技能的边框样式覆盖（保持原色但增加亮度） */
-.skill-card.mastered.skill-color-1 {
-    border-left: 6rpx solid #FF8A8A;
-}
-
-.skill-card.mastered.skill-color-2 {
-    border-left: 6rpx solid #6EDED4;
-}
-
-.skill-card.mastered.skill-color-3 {
-    border-left: 6rpx solid #65C7E1;
-}
-
-.skill-card.mastered.skill-color-4 {
-    border-left: 6rpx solid #A6DEC4;
-}
-
-.skill-card.mastered.skill-color-5 {
-    border-left: 6rpx solid #FEDA77;
-}
-
-.skill-card.mastered.skill-color-6 {
-    border-left: 6rpx solid #FFAFF3;
-}
-
-.skill-card.mastered.skill-color-7 {
-    border-left: 6rpx solid #74B0FF;
-}
-
-.skill-card.mastered.skill-color-8 {
-    border-left: 6rpx solid #7F47DD;
-}
-
-.skill-card.mastered.skill-color-9 {
-    border-left: 6rpx solid #20E2E3;
-}
-
-.skill-card.mastered.skill-color-10 {
-    border-left: 6rpx solid #FFAF63;
-}
-
-.skill-card.mastered.skill-color-11 {
-    border-left: 6rpx solid #30BCA4;
-}
-
-.skill-card.mastered.skill-color-12 {
-    border-left: 6rpx solid #FE7A8F;
-}
-
-/* 学习中技能的边框样式（添加渐变效果） */
-.skill-card.learning::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 6rpx;
-    height: 100%;
-    background: linear-gradient(180deg, var(--skill-color) 0%, var(--skill-color) 60%, #FFD700 100%);
-    border-radius: 0 0 0 16rpx;
-}
-
-.skill-status-indicator {
-    position: absolute;
-    top: 16rpx;
-    right: 16rpx;
-}
-
-.status-icon {
-    font-size: 24rpx;
+/* 技能内容 */
+.skill-content {
+    position: relative;
+    z-index: 2;
 }
 
 .skill-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 16rpx;
 }
 
 .skill-title,
 .skill-name {
-    font-size: 30rpx;
-    font-weight: bold;
-    color: #333;
+    font-size: 32rpx;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.4;
+    flex: 1;
+    margin-right: 16rpx;
 }
 
 .skill-description,
 .skill-brief {
     font-size: 26rpx;
-    color: #666;
-    line-height: 1.5;
+    color: #4a5568;
+    line-height: 1.6;
     margin-bottom: 20rpx;
+    font-weight: 400;
 }
 
+/* 技能元信息 */
 .skill-meta {
     display: flex;
     gap: 24rpx;
@@ -763,15 +641,28 @@ export default {
     gap: 8rpx;
 }
 
+.meta-icon-bg {
+    width: 32rpx;
+    height: 32rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .meta-icon {
-    font-size: 20rpx;
+    font-size: 16rpx;
+    color: white;
 }
 
 .meta-text {
     font-size: 22rpx;
-    color: #999;
+    color: #718096;
+    font-weight: 500;
 }
 
+/* 现代化标签 */
 .skill-tags {
     display: flex;
     flex-wrap: wrap;
@@ -779,14 +670,44 @@ export default {
     margin-bottom: 24rpx;
 }
 
-.skill-tag {
-    background-color: #f0f0f0;
-    color: #666;
+.modern-tag {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    color: #667eea;
     padding: 6rpx 12rpx;
-    border-radius: 12rpx;
+    border-radius: 16rpx;
     font-size: 20rpx;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
 }
 
+/* 现代化按钮 */
+.modern-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.modern-btn:active .btn-ripple {
+    width: 200rpx;
+    height: 200rpx;
+}
+
+/* 技能操作按钮 */
 .skill-actions {
     display: flex;
     justify-content: center;
@@ -795,108 +716,71 @@ export default {
 }
 
 .action-btn {
-    width: 33.33%;
-    max-width: 200rpx;
-    padding: 20rpx 16rpx;
-    border-radius: 12rpx;
+    padding: 16rpx 32rpx;
+    border-radius: 16rpx;
     text-align: center;
     font-size: 24rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6rpx;
-    transition: all 0.3s ease;
+    gap: 8rpx;
     position: relative;
     overflow: hidden;
-    flex-shrink: 0;
-}
-
-.action-btn:active {
-    transform: translateY(2rpx);
-    box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 .action-btn.primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8rpx 16rpx rgba(102, 126, 234, 0.3);
 }
 
-.action-btn.primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-}
-
-.action-btn.primary:active::before {
-    left: 100%;
-}
-
-.action-btn.secondary {
-    background-color: #f0f0f0;
-    color: #666;
-    border: 2rpx solid #e0e0e0;
-}
-
-.btn-icon {
-    font-size: 24rpx;
+.action-btn.primary:hover {
+    box-shadow: 0 12rpx 24rpx rgba(102, 126, 234, 0.4);
+    transform: translateY(-2rpx);
 }
 
 .btn-text {
     font-size: 26rpx;
-    font-weight: 500;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
 }
 
 .btn-arrow {
     font-size: 20rpx;
     opacity: 0.8;
     transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .action-btn:active .btn-arrow {
     transform: translateX(4rpx);
 }
 
-.skill-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.learning-progress {
-    font-size: 22rpx;
-    color: #667eea;
-    font-weight: bold;
-}
-
+/* 技能网格 */
 .skills-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20rpx;
+    gap: 24rpx;
 }
 
-/* 分页器样式 */
+/* 现代化分页器 */
 .pagination {
     margin-top: 40rpx;
-    padding: 24rpx;
-    background-color: white;
-    border-radius: 16rpx;
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+    padding: 32rpx;
+    text-align: center;
 }
 
 .pagination-info {
-    text-align: center;
-    margin-bottom: 20rpx;
+    margin-bottom: 24rpx;
 }
 
 .pagination-text {
-    font-size: 24rpx;
-    color: #666;
+    font-size: 26rpx;
+    color: #4a5568;
+    font-weight: 500;
 }
 
 .pagination-controls {
@@ -907,23 +791,24 @@ export default {
 }
 
 .pagination-btn {
-    padding: 12rpx 20rpx;
-    background-color: #667eea;
+    padding: 12rpx 24rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-radius: 8rpx;
+    border-radius: 12rpx;
     font-size: 24rpx;
-    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .pagination-btn.disabled {
-    background-color: #f0f0f0;
-    color: #ccc;
+    background: rgba(156, 163, 175, 0.3);
+    color: #9ca3af;
     cursor: not-allowed;
 }
 
-.pagination-btn:not(.disabled):active {
-    transform: scale(0.95);
-    background-color: #5a6fd8;
+.pagination-btn:not(.disabled):hover {
+    transform: translateY(-2rpx);
+    box-shadow: 0 8rpx 16rpx rgba(102, 126, 234, 0.3);
 }
 
 .pagination-numbers {
@@ -938,105 +823,155 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8rpx;
+    border-radius: 12rpx;
     font-size: 24rpx;
-    transition: all 0.3s ease;
-    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .page-number:not(.ellipsis) {
-    background-color: #f8f9fa;
-    color: #666;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #4a5568;
 }
 
 .page-number.active {
-    background-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    font-weight: bold;
+    font-weight: 700;
+    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
 }
 
 .page-number.ellipsis {
-    background-color: transparent;
-    color: #999;
+    background: transparent;
+    color: #9ca3af;
     cursor: default;
 }
 
-.page-number:not(.active):not(.ellipsis):active {
-    transform: scale(0.95);
-    background-color: #e9ecef;
+.page-number:not(.active):not(.ellipsis):hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2rpx);
 }
 
 .page-text {
     font-size: 24rpx;
+    position: relative;
+    z-index: 2;
 }
 
+/* 学习建议卡片 */
 .suggestion-card {
-    background-color: white;
-    border-radius: 16rpx;
     padding: 32rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20rpx;
 }
 
 .suggestion-title {
-    font-size: 28rpx;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 16rpx;
-    display: block;
+    font-size: 30rpx;
+    font-weight: 700;
+    color: #1a202c;
+    flex: 1;
+}
+
+.suggestion-icon {
+    font-size: 32rpx;
+    opacity: 0.7;
 }
 
 .suggestion-content {
     font-size: 26rpx;
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 24rpx;
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 20rpx;
+    font-weight: 400;
 }
 
-.suggestion-footer {
+.suggestion-decoration {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 120rpx;
+    height: 120rpx;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(50%, 50%);
+}
+
+/* 刷新按钮 */
+.refresh-btn {
+    width: 56rpx;
+    height: 56rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 20rpx;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
 }
 
-.auto-refresh-hint {
-    font-size: 20rpx;
-    color: #999;
+.refresh-btn:hover {
+    transform: translateY(-2rpx);
+    box-shadow: 0 8rpx 16rpx rgba(102, 126, 234, 0.4);
 }
 
-.suggestion-action {
-    display: flex;
-    align-items: center;
-    gap: 8rpx;
-    color: #667eea;
-    cursor: pointer;
+.refresh-btn:active {
+    transform: scale(0.95);
 }
 
-.action-text {
-    font-size: 26rpx;
-}
-
-.action-arrow {
+.refresh-icon {
     font-size: 24rpx;
-}
-
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-8rpx);
-    }
+    color: white;
+    position: relative;
+    z-index: 2;
 }
 
 /* 响应式设计 */
 @media (min-width: 750rpx) {
     .skills-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .recommended-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200rpx) {
+    .skills-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .recommended-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+    .category-detail-container {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+    
+    .section-title {
+        color: #e2e8f0;
+    }
+    
+    .skill-name, .skill-title {
+        color: #f7fafc;
+    }
+    
+    .skill-brief, .skill-description {
+        color: #cbd5e0;
     }
 }
 </style>
