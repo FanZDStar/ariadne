@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 09/10/2025 15:12:51
+ Date: 10/10/2025 17:47:27
 */
 
 SET NAMES utf8mb4;
@@ -64,7 +64,7 @@ CREATE TABLE `chat_messages`  (
   INDEX `idx_chat_messages_session`(`session_id` ASC) USING BTREE,
   INDEX `idx_session_created`(`session_id` ASC, `created_at` ASC) USING BTREE,
   CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 209 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 606 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for chat_sessions
@@ -82,7 +82,7 @@ CREATE TABLE `chat_sessions`  (
   INDEX `idx_chat_sessions_user_scene`(`user_id` ASC, `scene` ASC) USING BTREE,
   INDEX `idx_chat_sessions_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `chat_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for crisis_keywords
@@ -125,7 +125,7 @@ CREATE TABLE `crisis_warnings`  (
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_is_resolved`(`is_resolved` ASC) USING BTREE,
   CONSTRAINT `crisis_warnings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for daily_star_limits
@@ -148,12 +148,13 @@ CREATE TABLE `daily_star_limits`  (
   `protection_training` tinyint(1) NULL DEFAULT 0 COMMENT '防护技能训练(2星)',
   `tree_hole_interaction_count` tinyint NULL DEFAULT 0 COMMENT '树洞互动次数',
   `tree_hole_whisper` tinyint(1) NULL DEFAULT 0 COMMENT '发表悄悄话(2星)',
+  `skill_favorite` tinyint(1) NULL DEFAULT 0 COMMENT '技能收藏(1星)',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_user_date`(`user_id` ASC, `date` ASC) USING BTREE,
   CONSTRAINT `fk_daily_star_limits_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for diary_backgrounds
@@ -174,7 +175,7 @@ CREATE TABLE `diary_backgrounds`  (
   INDEX `user_id`(`user_id` ASC) USING BTREE,
   INDEX `ix_diary_backgrounds_id`(`id` ASC) USING BTREE,
   CONSTRAINT `diary_backgrounds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for diary_images
@@ -210,7 +211,7 @@ CREATE TABLE `emotional_diaries`  (
   INDEX `idx_emotional_diaries_user_date`(`user_id` ASC, `created_at` ASC) USING BTREE,
   INDEX `idx_user_mood_date`(`user_id` ASC, `mood` ASC, `created_at` ASC) USING BTREE,
   CONSTRAINT `emotional_diaries_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 841 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 845 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for experience_summaries
@@ -228,7 +229,7 @@ CREATE TABLE `experience_summaries`  (
   PRIMARY KEY (`summary_id`) USING BTREE,
   INDEX `idx_experience_summaries_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `experience_summaries_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for feedback_images
@@ -261,7 +262,7 @@ CREATE TABLE `growth_tracks`  (
   INDEX `idx_growth_tracks_user_date`(`user_id` ASC, `date` ASC) USING BTREE,
   CONSTRAINT `growth_tracks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `growth_tracks_chk_1` CHECK ((`emotional_index` >= 1) and (`emotional_index` <= 10))
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for interpersonal_practice_sessions
@@ -323,7 +324,7 @@ CREATE TABLE `journey_favorites`  (
   PRIMARY KEY (`favorite_id`) USING BTREE,
   UNIQUE INDEX `unique_user_favorite`(`user_id` ASC, `favorite_type` ASC, `favorite_id_ref` ASC) USING BTREE,
   CONSTRAINT `journey_favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for learning_paths
@@ -382,7 +383,7 @@ CREATE TABLE `mood_tracker`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_mood_date`(`mood_date` ASC) USING BTREE,
   CONSTRAINT `mood_tracker_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '心情晴雨表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '心情晴雨表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mood_trend_analyses
@@ -402,7 +403,7 @@ CREATE TABLE `mood_trend_analyses`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `mood_trend_analyses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for protection_drill_answers
@@ -421,6 +422,33 @@ CREATE TABLE `protection_drill_answers`  (
   INDEX `idx_protection_answers_session`(`session_id` ASC) USING BTREE,
   CONSTRAINT `protection_drill_answers_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `protection_drill_questions` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for protection_drill_question_details
+-- ----------------------------
+DROP TABLE IF EXISTS `protection_drill_question_details`;
+CREATE TABLE `protection_drill_question_details`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `report_id` int NOT NULL COMMENT '关联的训练报告ID',
+  `question_id` int NULL DEFAULT NULL COMMENT '题目ID',
+  `question_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '题目标题',
+  `question_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '题目内容',
+  `selected_option_id` int NULL DEFAULT NULL COMMENT '用户选择的选项ID',
+  `selected_option_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户选择的选项文本',
+  `correct_option_id` int NULL DEFAULT NULL COMMENT '正确答案选项ID',
+  `correct_option_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '正确答案选项文本',
+  `is_correct` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否回答正确',
+  `score_gained` int NOT NULL DEFAULT 0 COMMENT '本题获得分数',
+  `explanation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '答案解释',
+  `risk_explanation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '风险解释',
+  `ai_feedback` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI个性化反馈建议',
+  `options_data` json NULL COMMENT '所有选项数据(JSON格式)',
+  `question_order` int NOT NULL DEFAULT 0 COMMENT '题目顺序',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_report_id`(`report_id` ASC) USING BTREE,
+  INDEX `idx_question_id`(`question_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '防护训练答题详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for protection_drill_questions
@@ -463,12 +491,14 @@ CREATE TABLE `protection_drill_reports`  (
   `completion_time` int NULL DEFAULT NULL COMMENT '完成时间(秒)',
   `report_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '详细报告内容(JSON格式)',
   `suggestions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '改进建议',
+  `ai_analysis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI深度分析和建议',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `ix_protection_drill_reports_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `ix_protection_drill_reports_id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+  INDEX `ix_protection_drill_reports_id`(`id` ASC) USING BTREE,
+  INDEX `idx_user_created`(`user_id` ASC, `created_at` DESC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for protection_drill_sessions
@@ -546,7 +576,7 @@ CREATE TABLE `relationship_health_reports`  (
   INDEX `idx_status`(`status` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `relationship_health_reports_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for risk_assessment_reports
@@ -618,7 +648,7 @@ CREATE TABLE `skill_favorites`  (
   INDEX `idx_skill_id`(`skill_id` ASC) USING BTREE,
   INDEX `idx_category`(`category` ASC) USING BTREE,
   CONSTRAINT `skill_favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '技能收藏表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '技能收藏表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for skills
@@ -666,7 +696,7 @@ CREATE TABLE `star_point_logs`  (
   INDEX `idx_star_logs_action`(`action_type` ASC) USING BTREE,
   INDEX `idx_star_logs_date`(`created_at` ASC) USING BTREE,
   CONSTRAINT `fk_star_point_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 152 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for system_configs
@@ -696,7 +726,7 @@ CREATE TABLE `system_logs`  (
   INDEX `idx_system_logs_user`(`user_id` ASC) USING BTREE,
   INDEX `idx_system_logs_action`(`action` ASC) USING BTREE,
   CONSTRAINT `system_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for tree_hole_chat_participants
@@ -744,7 +774,7 @@ CREATE TABLE `tree_hole_comments`  (
   INDEX `idx_tree_hole_comments_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_comments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_comments_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for tree_hole_likes
@@ -761,7 +791,7 @@ CREATE TABLE `tree_hole_likes`  (
   INDEX `idx_tree_hole_likes_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_likes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_likes_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for tree_hole_whisper_images
@@ -776,7 +806,7 @@ CREATE TABLE `tree_hole_whisper_images`  (
   PRIMARY KEY (`image_id`) USING BTREE,
   INDEX `idx_whisper_images_whisper_id`(`whisper_id` ASC) USING BTREE,
   CONSTRAINT `tree_hole_whisper_images_ibfk_1` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 292 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 293 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for tree_hole_whispers
@@ -802,7 +832,7 @@ CREATE TABLE `tree_hole_whispers`  (
   INDEX `idx_tree_hole_whispers_created`(`created_at` ASC) USING BTREE,
   INDEX `idx_created_likes`(`created_at` ASC, `like_count` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_whispers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 210 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 219 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_achievements
@@ -823,7 +853,7 @@ CREATE TABLE `user_achievements`  (
   INDEX `ix_user_achievements_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_achievements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_achievements_ibfk_2` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_diary_backgrounds
@@ -842,7 +872,7 @@ CREATE TABLE `user_diary_backgrounds`  (
   INDEX `ix_user_diary_backgrounds_id`(`id` ASC) USING BTREE,
   INDEX `ix_user_diary_backgrounds_user_id`(`user_id` ASC) USING BTREE,
   CONSTRAINT `user_diary_backgrounds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_feedbacks
@@ -886,7 +916,7 @@ CREATE TABLE `user_learning_path_progress`  (
   INDEX `ix_user_learning_path_progress_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_learning_path_progress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_learning_path_progress_ibfk_2` FOREIGN KEY (`learning_path_id`) REFERENCES `learning_paths` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_mascot_outfits
@@ -944,7 +974,7 @@ CREATE TABLE `user_skill_progress`  (
   INDEX `ix_user_skill_progress_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_skill_progress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_skill_progress_ibfk_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_star_points
@@ -961,7 +991,7 @@ CREATE TABLE `user_star_points`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_user_points`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_user_star_points_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户星星积分表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户星星积分表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for users
@@ -986,7 +1016,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `email`(`email` ASC) USING BTREE,
   INDEX `idx_users_username`(`username` ASC) USING BTREE,
   INDEX `idx_users_email`(`email` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Triggers structure for table risk_assessment_reports

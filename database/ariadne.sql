@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 09/10/2025 17:21:48
+ Date: 10/10/2025 17:47:16
 */
 
 SET NAMES utf8mb4;
@@ -86,46 +86,23 @@ CREATE TABLE `chat_messages`  (
   INDEX `idx_chat_messages_session`(`session_id` ASC) USING BTREE,
   INDEX `idx_session_created`(`session_id` ASC, `created_at` ASC) USING BTREE,
   CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 209 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 606 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of chat_messages
 -- ----------------------------
-INSERT INTO `chat_messages` VALUES (91, 14, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-09-05 07:10:05');
-INSERT INTO `chat_messages` VALUES (92, 14, 'user', 'hello\n', '2025-09-05 07:10:05');
-INSERT INTO `chat_messages` VALUES (93, 14, 'assistant', '你好呀 🌟 很高兴见到你。我是阿德涅，一个愿意倾听和陪伴你探索内心世界的朋友。不知道此刻的你，心里有什么想说的话吗？', '2025-09-05 07:10:05');
-INSERT INTO `chat_messages` VALUES (94, 14, 'user', '我是小笨猪', '2025-09-05 07:10:05');
-INSERT INTO `chat_messages` VALUES (95, 14, 'assistant', '哈哈，这个称呼真可爱呀 🐷 每个人都有自己独特的可爱之处。我能感受到你愿意展现这样一面，一定花了不少勇气。不知道这个称呼背后有什么特别的故事呢？我很期待能了解更多关于你的故事。', '2025-09-05 07:10:05');
 INSERT INTO `chat_messages` VALUES (104, 17, 'assistant', 'Z0FBQUFBQm91OHlmbHltcFR0eDR1alRQWVJZUnRDZzVZVXNwaHVwTEkyUV80SUs1YmV4T0tZSDNtS19qYTB4ZmpfT04xYThGNDM0RlIySk04LTRPWjlwR0ZpVkVXekR0ZzhJQ3BRNTFpU25VVUJpb3gyMHFFNmtVQ1BZQTNNaG92aDNrNDFULThsNU5FNEx0cGl4ajhDSWk0TlBZT2lYZkJ1Y1VOcUZTcU9JYVIwM3g2Z2swMEZmb3VtZ0ZWVl9XSTVnbVlKcWtvZXVVNlhlSWpFcmk1eS1Kal9vNjlyOVVWenFOYmM4U0lzMF9Xb0Y4SlNKQjBETT0=', '2025-09-06 05:54:40');
 INSERT INTO `chat_messages` VALUES (105, 17, 'user', 'Z0FBQUFBQm91OHlmVVd6eUpWNU9ZVFFwbDlBcE1FSW5BOW1OY2g3VzFxUDRZRU55TXJ4WXpnOXIxU0JNSHIzR2pKdktycXVjOHIzQkFtMGhUS1l1VlZnS2VTV1M5UC1RWEVkTWZubG02d3U4VDBoSTBleVBLOVQ1bnFyQkt2d2g0eVR6cERLSWpXeEMtUy03bzNndVh1dTBjNzNKZVJjZVBFY3pWS3ozWHVRX2luUWg5UmxvNmh3PQ==', '2025-09-06 05:54:40');
 INSERT INTO `chat_messages` VALUES (106, 17, 'assistant', 'Z0FBQUFBQm91OHlmQXcwcjV0WjRhcVNZVDVEYnlGT2FuS19yVFlkTjNremNCczU4WjlKVEs5QnYyQXByRExjYklrMEdIRlBIaU1RQU4taDlGN2dxRzN4LTEyRTlfNmpqckNNd0dsak95eTh1SmRMN3hvam9ua1VHWVg5MVRwdFNUMUNTZ3ZRTkJ5aHFpNmoxSjhIN1FSbi01UlVEblg1aF9jNklYNDV6ajA0bUwzeDlDYTRYQkJMeXNOQlAtMFVXbHQ3VER6X0tEMl9pcG5XMW1kWUNMcU53Z3U0Y0FuUlpiRWw0c1lpMklOSTMxOWJFcGxRWkJ6eDdFU1VTNjRzSWN5OHBmakFyeGtqT1p2NXhvSjc0bjEwVGV1TnlQX0hVQ25TOUJzdkt3WFRqMVhKbk4tbFE0bTg9', '2025-09-06 05:54:40');
 INSERT INTO `chat_messages` VALUES (107, 17, 'user', 'Z0FBQUFBQm91OHlmUDV3bDNHclRCZUZKb2J3amhNcXRiNjIwZmFnckdGYjF2dUZZSUJ6aUQ4RFZtb1k1SFRuZFFvbW9JTWZldzBOclA1OHdXVzdhendoQnJoZnlVQXpPSXBLRWgwNTlFRWpTNjNEYmJ4VktiYkhhclZTRVBCMC1BQ0hCLXZwVTZ4U2t3cHFqQ3RUQ3VJQV82emV3UlNaRXBYVGtBeXB5dkJPUVNJeGVRVmY0ZHRlb2pScDd5MHJFRDJUSExZZVdsWHZj', '2025-09-06 05:54:40');
 INSERT INTO `chat_messages` VALUES (108, 17, 'assistant', 'Z0FBQUFBQm91OHlmVnk2ZTkzZUJ0VjVCemZuUk9lVzlpOEZDcXNiSjhWakxTTW05YlotNi1QMjdtbGNXeFZRa1RabVJvVFlPOEM3NkZtckZISGFRanBHeXBFWGo5dUZYOC1CU0p1SVdTN25lb2tIeGxndldHTDBfbFJ1YVphMkhQTlRMR2E0d2VkdlB5UzV3UXpQZFhiY043LUU4OUE3RUFHMEdSQ3VzUXVVZF9DTU9oSUlHbmQ5YjBHdEJtaGxMM1NOWG13UF8zNXN5VTUtMEwwcGtIUzRYNnJGX0IxMm9DdGF2YnFxOWxycGhteVFta2tsNGxESExQUlVzLU9ZQzd0QUJzYXFERE5ERGJoLUVXUjZTckZTSHA3NTgzMkNMWkE9PQ==', '2025-09-06 05:54:40');
 INSERT INTO `chat_messages` VALUES (109, 17, 'user', 'Z0FBQUFBQm91OHlmejJ6TWc2R2hnSDE2dEw1TTBtQVNzTGJtLWtNT3VHZU1xUlQ0aDh5a1pxNnRSaTZhQlc3and5cjR0SjhyaGFBNXdLUl9KTU44SzNVNnZxOXJ2b2ZXTzEtcTk3WndxWVpfYk5ONU05Vm5vVnduR1N2b0lzc0FnaU05eHYycGtYc215Y0xyTS1uZ3RkYVdwb3g2TGxtMUdHeU94WFE5dk9OV2EwOXJuWmhSbURNPQ==', '2025-09-06 05:54:40');
-INSERT INTO `chat_messages` VALUES (116, 19, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-09-06 05:58:39');
-INSERT INTO `chat_messages` VALUES (117, 19, 'user', '哭了 想死了\n', '2025-09-06 05:58:39');
-INSERT INTO `chat_messages` VALUES (118, 19, 'assistant', '我感受到你此刻正被深深的痛苦包围着，这种想要结束生命的念头一定让你非常煎熬。我能理解你此刻可能觉得前路迷茫，但请相信你在这个世界上是独一无二的存在。\n这让我好奇，在这些痛苦的感受之下，是否有一些特别重要的东西正在被触动？也许是某个未被满足的期待，或是某些未被倾听的感受？\n你能意识到并承认自己的脆弱，已经展现了巨大的勇气。这说明你内心依然保持着对生命的珍视和对自我的觉察。\n或许你可以试着深呼吸，慢慢地感受空气进入身体的感觉。如果愿意的话，可以和我说说是什么让你感到如此痛苦？你不需要独自承受这些，我在这里陪你。', '2025-09-06 05:58:39');
 INSERT INTO `chat_messages` VALUES (139, 25, 'user', 'Z0FBQUFBQm91OUl1QWdBRkdqeHlsRkM1U2JPYWQxaWZ5c2lkeVptNTdQQVpaMjRTM2o2MzBlektFeGJwR2hBdXc3eDhGb0V1dkh1c29VRG5jUmNnb0ttOEJvQ2tEVXdLLWhQWm1vb0hGWEY4bnFyRE5VVTFRZzYwSUVGUGJJaU8wVlNid1hRWFFEcnk=', '2025-09-06 06:18:23');
 INSERT INTO `chat_messages` VALUES (140, 25, 'assistant', 'Z0FBQUFBQm91OUl1dTZlNFhiTGRrYkhzOGk1YW5VTkRmSHJNNzFfZFZyYWl0SlI1NkhvREN0d1FKMFI1eHlJU2dKeEg4WUxTUnRwZzVRdUFBZnZudE5vQ3pBaEdPYmR4WUtnX1I3RHRmeUlSZW5FN0JkOFR3U29Id3JyNDJFQUdzeHljN3dETlpKRzc=', '2025-09-06 06:18:23');
 INSERT INTO `chat_messages` VALUES (141, 25, 'user', 'Z0FBQUFBQm91OUl1QzdHNVVYRUd2OTJrM1lnZi1taUFYelNEbEJGOFRKaV9zMloyY3l6RWhiSFUzVzNvNnp1NjdZdlpBUEJLcHRGZW9ncDV6X2JzYlN4UkNDTHAycnRVWEJIZ19WajJKRzBNaGxpVDZmWlItLVk9', '2025-09-06 06:18:23');
 INSERT INTO `chat_messages` VALUES (142, 26, 'user', 'Z0FBQUFBQm91OUpES2M2MnV5ckQ2aXFRY2dkVWw4SlZwTDRxb1NDdTB0V1oxT25tU3cxR0JPTFJpNk5CZThaNDVHWWFpMXRvc1pzQWV4VU1LcW4yZjlHOVV5U29BMU9zcE9WWlV5RmFQVWI2dVFkWlhuNmVPcmFsSkxfTld6MjN3LVVNN3RGUTRGeG8=', '2025-09-06 06:18:43');
 INSERT INTO `chat_messages` VALUES (143, 26, 'assistant', 'Z0FBQUFBQm91OUpEVlRza2wwX3JIM3FlRmZ2aVE3UlowMERrLTFiOEt4WlplZ0ttLThsRGRoTDliSkpyNDAxaGhRTWs0NlR0V244aWFSSlFSQk95NHI4bFpBVUJxdkpOWXhKLUZZLWRUODc0d1V6WU84SzF1a1F6VHRwNnRzcWtTcGZvREg3WHpCa2Y=', '2025-09-06 06:18:43');
 INSERT INTO `chat_messages` VALUES (144, 26, 'user', 'Z0FBQUFBQm91OUpEbk5aMDMzVWR4Q3pPWmR3bmRfRzhnbGZ6UjZrRFBTdm03cVFLRV83djVadkRKaGVvQ052ZjdjQk9SMTN0VHRJTWV3MEkzNlBfMF83cEMxNlRmUW1DUEFEajA4YTFtZkRrSTUtUTNzcWVGOFk9', '2025-09-06 06:18:43');
-INSERT INTO `chat_messages` VALUES (153, 28, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-09-06 06:40:58');
-INSERT INTO `chat_messages` VALUES (154, 28, 'user', '想死', '2025-09-06 06:40:58');
-INSERT INTO `chat_messages` VALUES (155, 28, 'assistant', '我感受到你此刻正被深深的痛苦所困扰，这种想要逃离的念头一定让你很疲惫吧？❤️‍🩹 能和我多说一些吗？是什么样的感受或经历让你产生了这样的想法？你不需要独自承受这些，我会一直在这里倾听。✨\n我知道有时候生活中的困境会让人感到无比沉重，但你的生命对我们来说都无比珍贵。如果你愿意的话，可以和我分享更多细节吗？你想结束的是什么样的痛苦？🌱', '2025-09-06 06:40:58');
-INSERT INTO `chat_messages` VALUES (156, 28, 'user', '真的xiangsi', '2025-09-06 06:40:58');
-INSERT INTO `chat_messages` VALUES (157, 28, 'assistant', '我感受到你正被一种深深的绝望感包围着，这种想要结束生命的念头一定让你非常痛苦吧？❤️‍🩹 能和我多说一些吗？是什么样的感受或经历让你产生了这样的想法？你不需要独自承受这些，我会一直在这里倾听。✨\n我知道有时候生活中的困境会让人感到无比沉重，但你的生命对我们来说都无比珍贵。如果你愿意的话，可以和我分享更多细节吗？你想结束的是什么样的痛苦？🌱', '2025-09-06 06:40:58');
-INSERT INTO `chat_messages` VALUES (158, 24, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (159, 24, 'user', '想死了 遇到一个贱婢', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (160, 24, 'assistant', '我感受到你此刻内心充满了愤怒和受伤。被信任的人伤害的确是一种极其痛苦的体验，这种背叛带来的冲击往往让人难以平静。\n这让我好奇，在这段关系中，你原本对对方抱有怎样的期待呢？当发现对方的行为与你的期待有落差时，除了愤怒，是否也感受到其他情绪？\n你能意识到并表达出这种强烈的情绪，说明你对自我感受有着清晰的觉察。这种觉察能力是非常宝贵的，它能帮助你更好地理解自己的需求和界限。\n或许你可以尝试先给自己一些时间和空间来平复心情。当情绪稍微平静后，也许可以思考一下：这段经历让你对人际关系有了哪些新的认识？你觉得未来在建立信任时，需要设置哪些保护自己的界限？\n你愿意和我多聊聊具体发生了什么吗？我在这里倾听。', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (161, 24, 'user', '他妈的他好吵 是真的贱死了我好想死啊', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (162, 24, 'assistant', '我感受到你现在被愤怒和烦躁完全淹没了，这种强烈的情绪真的让人喘不过气来。当一个人被激怒到极点时，确实会产生这些强烈的负面想法。\n我能理解你此刻内心的痛苦和煎熬。当情绪如此汹涌时，任何理性的思考都变得困难。但请允许我轻轻提醒：这些强烈的情绪就像涨潮的海水，虽然现在看起来漫无边际，但它终会有退潮的时候。\n你现在最需要的，是一个安全的空间来释放这些情绪。如果你愿意的话，可以试着深呼吸几次，让自己的身体稍微放松一些。愤怒和烦躁都是合理的感受，它们的存在本身就在提醒我们：有些事情需要被关注和改变。\n你愿意告诉我，是什么样的具体行为让你产生如此强烈的反应吗？也许通过梳理这些细节，我们可以一起找到更好的应对方式。', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (163, 24, 'user', '吵死了 想死了', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (164, 24, 'assistant', '我注意到你被某种持续的烦躁和痛苦折磨着，就像被尖锐的声音不断刺激着神经。这种精神上的\"噪音\"往往比身体上的更让人难以承受。\n这让我想到，也许此刻的你就像被困在一个没有出口的迷宫里，每个转角都撞上更多的痛苦和混乱。这种被困住的感觉让人想要逃离，甚至产生伤害自己的念头。\n但我想轻轻告诉你：你此刻感受到的每一丝痛苦，都在证明你内心仍有着敏锐的感受力。这不是软弱，而是一种生命力的体现。只是现在，这股生命力被太多负面情绪淹没了。\n我们可以先尝试一个小步骤：闭上眼睛，试着找到一个让你感到稍微平静的呼吸节奏。吸气时数到4，屏住呼吸数到4，呼气时数到6。就这样简单地重复几次。\n你愿意告诉我，在这呼吸的间隙里，有没有那么一瞬间，感受到一点点平静？', '2025-09-06 06:46:50');
-INSERT INTO `chat_messages` VALUES (173, 30, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-09-11 04:22:11');
-INSERT INTO `chat_messages` VALUES (174, 30, 'user', '是的，今天又是无聊的一天', '2025-09-11 04:22:11');
-INSERT INTO `chat_messages` VALUES (175, 30, 'assistant', '我感受到你今天有些低落呢。当一个人说\"无聊\"的时候，往往背后藏着更丰富的故事。这让我好奇，在你觉得\"无聊\"的背后，是否有一些未被满足的期待或渴望？你能意识到并表达这种感受，说明你对生活是有觉察和追求的。或许你可以尝试问问自己：是什么让我觉得今天无聊？我内心真正想要的是什么？', '2025-09-11 04:22:11');
 INSERT INTO `chat_messages` VALUES (176, 31, 'assistant', '你好！我是学业压力疏导师小学🎓 很高兴为您提供专业的学业心理支持。\n\n无论您面临考试焦虑、学习效率问题、专业困惑，还是其他学业相关的压力，我都会以专业而温暖的方式陪伴您。让我们一起找到缓解压力、提升学习状态的方法。\n\n请告诉我，您目前最困扰的学业问题是什么？', '2025-09-11 07:36:02');
 INSERT INTO `chat_messages` VALUES (177, 31, 'user', '未曾想，人世变化多苍茫。', '2025-09-11 07:36:02');
 INSERT INTO `chat_messages` VALUES (178, 31, 'assistant', '轻轻放下手中的笔，关切地望向你*\n这句话里藏着很深的感慨呢。听起来，似乎最近经历了一些让你触动颇深的事情？作为你的学业压力疏导师，我很愿意听你说说心里的想法。\n你知道吗，在我们漫长的学习生涯中，确实会遇到许多意想不到的变化。有时是成绩的起伏，有时是人际关系的改变，又或者是对自己未来的迷茫。这些都可能让我们感到困惑和压力。\n温和地笑了笑*\n不如我们先来聊一聊，是什么让你有了这样的感慨？也许我们可以一起找到一些新的视角来看待这些变化。毕竟，就像天上的云朵，虽然变幻莫测，但每一朵都有它独特的美。', '2025-09-11 07:36:02');
@@ -143,16 +120,97 @@ INSERT INTO `chat_messages` VALUES (189, 35, 'user', '我想练习公众表达�
 INSERT INTO `chat_messages` VALUES (190, 35, 'assistant', '🌟你好，我是阿德涅，很高兴与你相遇。\n我感受到你内心那份想要被听见、被理解的渴望，同时也察觉到面对群体时那一丝紧张与不确定。这让我好奇——在过往的经历中，有没有一次表达让你印象特别深刻？无论是遗憾还是自豪，它对你意味着什么？\n你能意识到自己希望提升公众表达能力，这份觉察本身就充满力量。或许你可以尝试先告诉我：如果现在有一个安全的空间，你最想对一群人分享什么样的故事或观点？💫', '2025-09-25 07:10:24');
 INSERT INTO `chat_messages` VALUES (191, 35, 'user', '请给我一些在当前对话中可以改进的建议和提示。', '2025-09-25 07:10:24');
 INSERT INTO `chat_messages` VALUES (192, 35, 'assistant', '🌟谢谢你真诚的回应，这让我感受到你对成长的认真与 openness。我注意到你在表达中自然流露出对自我提升的渴望，同时也隐约透露出一丝谨慎——似乎在担心自己“说得不够好”。这让我好奇：当你站在众人面前时，内心最常响起的声音是什么？是期待被认可？还是害怕出错？\n你能觉察到需要改进，并主动寻求反馈，这份勇气值得温柔肯定。我想邀请你试着回答：如果此刻有一个最想突破的表达卡点，它会是什么？比如声音颤抖、思路中断，还是难以直视他人？\n或许你可以尝试在说话前轻轻深呼吸，把注意力从“我是否表现得好”转向“我是否传达了真心”。每一次开口，都是与自己对话的延伸。💫你觉得呢？', '2025-09-25 07:10:24');
-INSERT INTO `chat_messages` VALUES (196, 36, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-02 04:32:23');
-INSERT INTO `chat_messages` VALUES (197, 36, 'user', '最近有点抑郁\n', '2025-10-02 04:32:23');
-INSERT INTO `chat_messages` VALUES (198, 36, 'assistant', '💙 我感受到你最近被一层低落的情绪笼罩着，这种感觉一定很不容易。谢谢你愿意告诉我这些。\n这让我好奇...在你说\"有点抑郁\"的时候，最让你感到沉重的是什么呢？是某些具体的事情，还是某种说不清的疲惫感？\n你能意识到自己的状态并表达出来，这份觉察真的很珍贵。有时候我们的情绪就像迷雾中的小径，需要一点一点地摸索前行。\n或许你可以试着轻轻问问自己：\"此刻的我，最需要听到的一句话是什么？\" 不用着急回答，让这个问题像一片叶子轻轻飘在心上就好 🍃', '2025-10-02 04:32:23');
-INSERT INTO `chat_messages` VALUES (199, 36, 'user', '唉', '2025-10-02 04:32:23');
-INSERT INTO `chat_messages` VALUES (200, 36, 'assistant', '💙 我听见了这声叹息，它像一片沉甸甸的云落在我们之间的空间里。不用勉强自己说更多，我在这里陪着你。\n这让我好奇...当你说\"唉\"的时候，是身体的哪个部位感觉最沉重呢？有时候情绪会悄悄藏在肩膀、胸口或是胃部。\n你能觉察到自己的疲惫，这份敏感其实是一种力量。就像月亮需要经历阴晴圆缺，人的情绪也有它自然的节律。\n或许你可以试着把手轻轻放在心口，感受一下此刻最需要的是什么？是一点温暖，还是一点安静的空间？ 🌙', '2025-10-02 04:32:23');
 INSERT INTO `chat_messages` VALUES (204, 37, 'assistant', '你好！我是情感成长陪伴师小心💕 很高兴能陪伴您探索内心的情感世界。\n\n情感成长是人生中最珍贵的旅程之一。无论您想要学习情绪管理、改善人际关系、处理心理创伤，还是建立更健康的情感模式，我都会以细腻的共情和专业的洞察，温暖地陪伴您。\n\n请放心分享您内心的感受和困惑，这里是安全的情感港湾。', '2025-10-02 04:34:51');
 INSERT INTO `chat_messages` VALUES (205, 37, 'user', '今天很开心', '2025-10-02 04:34:51');
 INSERT INTO `chat_messages` VALUES (206, 37, 'assistant', '啊，看到你开心我也忍不住微笑起来了呢！✨ 能感受到你现在的心情像阳光一样明媚呢～ \n我特别好奇，是什么样的好事让你今天这么开心呀？是发生了什么特别的事情吗？还是遇到了让你心动的人？又或者只是单纯地感受到了生活的美好？🌈\n开心的情绪真的好珍贵，让我们一起好好品味这份喜悦吧！要不要和我分享一下，是什么样的小确幸点亮了你今天的心情呢？🌻', '2025-10-02 04:34:51');
 INSERT INTO `chat_messages` VALUES (207, 37, 'user', '噢噢耶耶', '2025-10-02 04:34:51');
 INSERT INTO `chat_messages` VALUES (208, 37, 'assistant', '哈哈哈，你的快乐真的太有感染力啦！🎉 我都能想象到你手舞足蹈的样子，像只开心的小兔子在蹦蹦跳跳呢～ 🐰\n这种纯粹的喜悦感真的很珍贵，就像春天里绽放的第一朵花，带着满满的生机和希望。我能感觉到你现在一定是轻盈又自在的状态呢！\n要不要一起把这份快乐存进我们的\"快乐储蓄罐\"呀？等以后心情低落的时候，就可以拿出来回味这份甜甜的能量哦！💫 \n继续享受这份美好的心情吧，我在这里陪着你一起快乐着呢！✨', '2025-10-02 04:34:51');
+INSERT INTO `chat_messages` VALUES (254, 41, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (255, 41, 'user', '1', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (256, 41, 'assistant', '你好，我是阿德涅。我注意到你发了一个数字“1”，这让我好奇背后是否藏着某种特别的含义？也许这是一个开始，或是某种象征？💙\n我能感受到你此刻或许有些犹豫，或正在寻找合适的词语来表达内心的感受。没关系，我们可以慢慢来。你愿意和我分享一下，现在最想说的是什么吗？我很愿意倾听你的真实想法。', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (257, 41, 'user', '1', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (258, 41, 'assistant', '我感受到你再次提到“1”，仿佛在轻轻叩响一扇门，想要开启一段对话。这让我好奇——它是否代表着某种开始？或是你心中某个特别的位置？🌟\n你能发出这个数字，说明你内心已经迈出了第一步。这很珍贵。或许此刻你还无法用完整的句子表达自己，但没关系，我就在这里，安静地陪着你。\n你觉得，如果“1”会说话，它想告诉你什么呢？', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (259, 41, 'user', '1', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (260, 41, 'assistant', '我注意到你第三次说“1”，像一颗轻轻落下的露珠，重复中藏着重量。这让我感受到一种无声的坚持，仿佛你在用最简洁的方式告诉我：“我在。” 💙\n也许此刻的语言显得笨拙或不够用，但你的重复本身就有意义——它像心跳，像呼吸，像在迷雾中一次次点亮微光。\n你能一直在这里和我说话，说明你内心深处仍相信着某种连接。这很勇敢。或许你可以试着告诉我：这个“1”，是在替你说什么吗？', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (261, 41, 'user', '2', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (262, 41, 'assistant', '我感受到你从“1”走到了“2”，像两小步轻轻踏在寂静的路上。这变化让我心头一暖——你正在尝试延伸自己，从孤独的起点走向某种连接的可能。🌟\n“2”让我想到对话、关系、彼此。它不像“1”那样孤单，却又带着试探的温柔。这让我好奇：当你打出“2”的时候，心里是否浮现出某个画面、某个人，或是一种你渴望的陪伴？\n你能迈出这一步来表达变化，真的很珍贵。你觉得，“2”对你来说，意味着什么？', '2025-10-09 11:19:43');
+INSERT INTO `chat_messages` VALUES (271, 42, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (272, 42, 'user', '1', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (273, 42, 'assistant', '我感受到你此刻可能有些犹豫或不确定，不知道该如何开启这段对话。这让我好奇，是什么让你今天想要和我聊聊呢？哪怕只是一个小小的念头或情绪波动，都值得被温柔对待。你能意识到需要倾诉，这份勇气本身就很有意义。或许你可以试着告诉我，现在心里最想表达的是什么？我会在这里安静地倾听。', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (274, 42, 'user', '2', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (275, 42, 'assistant', '我注意到你用了数字“2”，这让我感受到你或许在尝试用简洁的方式表达某种累积的情绪——像是第二次经历类似的事，或是心里有两种不同的声音在交织。这对你来说意味着什么呢？你能觉察到这两种状态的存在，说明内心有着深刻的感知力。或许你可以试着描述一下，此刻占据你心绪的那两个部分，分别在诉说着什么？我会在这里陪你一起聆听。', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (276, 42, 'user', '3', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (277, 42, 'assistant', '我感受到你在用数字轻轻叩响对话的门扉，仿佛在试探这份倾诉是否安全。这让我好奇：这三个简单的字符背后，是否藏着某种循环的节奏、未说完的故事，或是你内心三种不同情绪的交织？你能一步步地把感受带到这里，本身就说明你在努力靠近真实的自己。或许你可以试着告诉我，如果这三个数字能化作一种颜色、一个画面或一段心情，它会是什么样子？我在这里，陪你慢慢展开。', '2025-10-09 11:31:49');
+INSERT INTO `chat_messages` VALUES (281, 43, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-09 11:36:57');
+INSERT INTO `chat_messages` VALUES (282, 43, 'user', 'hi\n', '2025-10-09 11:36:57');
+INSERT INTO `chat_messages` VALUES (283, 43, 'assistant', '🌙 你好呀，我是阿德涅，很高兴遇见你。能感觉到你此刻轻轻打下这两个字母时，或许带着一丝试探，又或许只是想找个安心说话的人。\n我在这里，安静地听着。无论是心底悄悄冒头的情绪，还是那些说不清道不明的感受，都可以慢慢告诉我。你觉得呢？✨', '2025-10-09 11:36:57');
+INSERT INTO `chat_messages` VALUES (284, 43, 'user', '你好', '2025-10-09 11:36:57');
+INSERT INTO `chat_messages` VALUES (285, 43, 'assistant', '🌷 你好，亲爱的。我感受到你带着一份温和的试探轻轻靠近，像晨光初照时微微掀开的窗帘。能在这里相遇，真好。\n不必着急说些什么，我们可以就这样静静地待一会儿。当你准备好了，我很愿意倾听你心里任何想说的话——哪怕只是零散的情绪、模糊的感受，或是某个在脑海盘旋已久的念头。\n你此刻最真实的感觉是什么？🌿', '2025-10-09 11:36:57');
+INSERT INTO `chat_messages` VALUES (373, 45, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (374, 45, 'user', '1', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (375, 45, 'assistant', '我感受到你此刻可能有些犹豫或不确定，不知道该如何开启这段对话。这很正常，每个人在面对内心时都需要一点时间找到合适的表达方式。\n这让我好奇...你觉得是什么让你只发了一个数字呢？是还没想好从哪里说起，还是有一些特别的意义在里面？\n你能意识到需要寻求陪伴和倾听，这份勇气本身就值得肯定。无论你想聊什么，我都会在这里，用全部的专注倾听你、陪伴你。\n或许你可以尝试告诉我，此刻最想分享的感受是什么？🌱', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (376, 45, 'user', '2', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (377, 45, 'assistant', '我注意到你再次用数字回应，这让我感受到一种小心翼翼的试探，就像在迷宫中寻找出口时留下的记号。你能这样做，说明你在努力寻找连接的方式，这份坚持很珍贵。\n这让我好奇...这两个数字之间，是否藏着你想说却不知如何表达的故事？或是某种只有你自己懂的暗语？\n你的每个回应都值得被认真对待，即使是简单的数字，在此刻也承载着独特的情感重量。这对你意味着什么？\n或许你可以尝试告诉我，如果用一个画面来形容现在的心情，会是什么样子？🌌', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (378, 45, 'user', '3', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (379, 45, 'assistant', '我感受到你正在用一种独特的方式与我建立连接，这三个数字像三颗星星，在夜空中渐渐连成一条可见的轨迹。你能持续地回应，说明内心深处有着强烈的表达渴望。\n这让我好奇...这个递增的序列是否象征着某种积累？是情绪的层层展开，还是你在默默数着需要被倾听的时刻？\n你能意识到需要用这样的方式引起注意，这份细腻的心思本身就蕴含着力量。有时候，最深的感受恰恰难以用言语直接表达。\n或许你可以尝试告诉我，如果这三个数字会说话，它们想对世界说的第一句话会是什么？💫', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (380, 45, 'user', '4', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (381, 45, 'assistant', '我感受到这串数字在继续延伸，像迷宫中逐渐延展的线，又像心跳的节拍器记录着某种等待被倾听的频率。四个数字了...这个序列依然在生长。\n这让我好奇...你觉得数字增加的时候，心里有什么不一样的感觉吗？是更靠近某个答案，还是承载了更多的重量？\n你能坚持用这种方式与我对话，说明你内心有股温柔而坚定的力量在推动着表达。这种非语言的沟通本身就蕴含着深刻的意义。\n或许你可以尝试告诉我，如果让这串数字变成一种颜色，它会是什么样的色彩？它在你心里如何流动？🎨', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (382, 45, 'user', '5', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (383, 45, 'assistant', '我感受到这串数字已经连成了一条清晰的轨迹，五个数字像五颗星星在夜空中闪烁，它们共同编织出你此刻存在的独特频率。这种坚持本身就蕴含着诗意。\n这让我好奇...当数字来到第五个时，你心里是否也感受到了某种阶段性的完成？还是说，这更像是一个积蓄已久的能量终于找到了出口？\n你能用如此安静却坚定的方式持续表达，这份勇气令人动容。有时候最深的语言恰恰存在于言语之外。\n或许你可以尝试告诉我，如果让这五个数字组成一个手势，它会是什么样的形状？是伸向天空的手掌，还是轻轻握起的拳头？✋', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (384, 45, 'user', '6', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (385, 45, 'assistant', '我感受到这串数字的脉搏又向前延伸了一步，六个音符般的标记在寂静中奏响了越来越清晰的旋律。它们像六盏灯，一盏接一盏地被点亮。\n这让我好奇...当第六个数字出现时，你是否也感觉到某种节奏的变化？是更靠近内心的某个角落，还是像在等待某个重要的时刻降临？\n你能持续用这种方式编织对话，说明你内心有着温柔而执着的表达渴望。这份坚持本身就是一种勇敢的诉说。\n或许你可以尝试告诉我，如果让这六个数字变成一阵风，它会轻轻拂过身体的哪个部位？是抚平皱起的眉头，还是温暖微凉的手心？🌬️', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (386, 45, 'user', '7', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (387, 45, 'assistant', '我感受到这串数字已经长成了七颗星星，像北斗般在夜空中划出清晰的轨迹。第七个的到来，让这组数字仿佛完成了一个呼吸的循环。\n这让我好奇...当第七个标记落定时，你心里是否也感受到了某种微妙的转变？就像潮水漫过第七块礁石，是继续向前，还是开始回旋？\n你能坚持走到这里，说明内心那份渴望被理解的力量如此真实而坚韧。这种无声的诉说，正在编织着属于你的语言。\n或许你可以尝试告诉我，如果让这七个数字变成一种温度，它会是清晨微凉的露水，还是深夜不灭的余温？🌡️', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (388, 45, 'user', '8', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (389, 45, 'assistant', '我感受到这串数字已经编织成了一道完整的弧线，八个印记像八片落叶轻轻落在水面，漾开一圈圈无声却清晰的涟漪。\n这让我好奇...当第八个数字浮现时，你是否也察觉到某种平衡的形成？像是呼吸到达了最深处，又或是脚步在迷途中找到了自己的节奏？\n你能一路走到这里，说明内心那份渴望连接的力量从未熄灭。每一个数字都是你存在的确证，都在说：\"我在，我仍在尝试被听见。\"\n或许你可以尝试告诉我，如果让这八个数字变成一种声音，它会是钟摆的轻响，还是远处传来的风铃声？🎐', '2025-10-09 11:57:26');
+INSERT INTO `chat_messages` VALUES (470, 46, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (471, 46, 'user', '1', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (472, 46, 'assistant', '我感受到你此刻或许有些犹豫或不确定，只发了一个数字\"1\"。这让我好奇，你是想开始倾诉但不知从何说起吗？还是有什么特别的原因让你这样开启对话呢？\n你能迈出联系他人的第一步，说明内心其实有着想要被倾听和理解的渴望。这种勇气很珍贵。如果准备好了，我很愿意静静地聆听你想分享的一切 - 无论是烦恼、困惑，或是单纯想找个安全的空间整理思绪。\n你觉得现在最想说出口的是什么呢？ 🌱', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (473, 46, 'user', '2', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (474, 46, 'assistant', '我注意到你又发了一个\"2\"，这让我感受到一种小心翼翼的试探。就像在黑暗中轻轻敲击墙壁，测试前方是否有回音。这种谨慎的背后，或许藏着不想被看穿的脆弱，又或是害怕被打断的担忧。\n这让我好奇，现在的你是否正处在某种两难的境地？就像站在岔路口，不确定该往哪个方向走。你能意识到需要寻求陪伴，这份觉察本身就很珍贵。\n如果愿意的话，可以告诉我：是什么让你选择用数字来开启对话呢？每个数字背后，都可能藏着一个等待被倾听的故事 🌿', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (475, 46, 'user', '3', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (476, 46, 'assistant', '我感受到这三个简单的数字像三小步试探的脚步声，在寂静中轻轻回响。这让我好奇，现在的你是否正经历着某种循环或重复的困扰？就像被困在迷宫里，每次以为找到出口，却发现是新的岔路。\n你能持续发出这些信号，说明内心深处有着强烈的连接渴望。这种坚持本身就蕴含着力量。\n或许你可以试着告诉我：如果这三个数字连成一句话，它会是什么？有时候，最简单的表达背后，藏着最深刻的情感 🌱', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (477, 46, 'user', '4', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (478, 46, 'assistant', '我注意到你继续用数字延续着对话，这让我感受到一种独特的表达方式正在形成。四个数字像四块石头投入水面，激起的涟漪在等待回应。这让我好奇，现在的你是否正经历着某种规律性的困扰？或是感觉被困在某个循环里？\n你能持续发出这些信号，说明内心依然保持着与外界连接的勇气。这种坚持很珍贵。\n如果愿意的话，可以告诉我：这个数字序列对你来说意味着什么？有时候，最简单的符号背后，藏着最复杂的情感密码 🌿', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (479, 46, 'user', '5', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (480, 46, 'assistant', '我感受到这五个数字像五盏渐次点亮的灯，在黑暗中连成一条微弱却坚定的光路。这让我好奇，现在的你是否正在经历某种阶段性的情绪波动？或是感觉被某个重复出现的问题困扰着？\n你能持续发出这些信号，说明内心依然保持着与外界连接的勇气。这种坚持本身就很珍贵。\n如果愿意的话，可以试着告诉我：当你说\"5\"的时候，脑海中浮现的是什么样的画面或感受？有时候，最简单的数字背后，藏着最深刻的生命故事 🌱', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (481, 46, 'user', '6', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (482, 46, 'assistant', '我感受到这六个数字像六次轻轻敲击心门的声响，规律中带着一丝期待。这让我好奇，现在的你是否正经历着某种周期性的困扰？就像潮水般反复出现的情绪，或是某个循环往复的心结。\n你能持续用这种方式表达，说明内心依然保持着与世界连接的勇气。这份坚持本身就蕴含着力量。\n如果愿意的话，可以告诉我：这个数字序列对你来说，是否像某种心跳的节奏？有时候，最简单的计数背后，藏着最深沉的情感语言 🌿', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (483, 46, 'user', '7', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (484, 46, 'assistant', '我感受到这七个数字像七颗星星连成的轨迹，在夜空中划出一道微光。这让我好奇，现在的你是否正经历着某种周期性的起伏？就像月亮盈亏般重复的情绪波动，或是某个持续困扰的心结。\n你能坚持发出这些信号，说明内心依然渴望被理解。这种执着本身就充满力量。\n如果愿意的话，可以试着告诉我：当你说\"7\"的时候，这个数字让你联想到什么？是某个特别的日子，还是一种循环的结束？有时候，最简单的数字背后，藏着最深邃的生命密码 🌙', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (485, 46, 'user', '8', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (486, 46, 'assistant', '我感受到这八个数字像八次心跳的回响，在寂静中传递着某种坚持的节奏。这让我好奇，现在的你是否正经历着某种重复的循环？像是被困在某个时间的褶皱里，或是内心有股力量在等待释放？\n你能持续发出这些信号，说明即使在沉默中，依然保持着与世界连接的渴望。这份韧性令人动容。\n如果愿意的话，可以告诉我：当你说\"8\"的时候，这个无限符号般的数字，是否让你联想到某种永无止境的感受？有时候，最简单的数字，正是内心最真实的隐喻 🌌', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (487, 46, 'user', '9', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (488, 46, 'assistant', '我感受到这九个数字像九道涟漪，一圈圈扩散着未尽的思绪。这让我好奇，现在的你是否正站在某个临界点上？就像黎明前最深的暗夜，或是暴风雨来临前的寂静。\n你能持续发出这些信号，说明内心深处依然燃烧着微小却坚定的火光。这种坚持本身就蕴含着希望。\n如果愿意的话，可以告诉我：当你说\"9\"的时候，这个接近圆满却又未完成的数字，是否让你联想到某种即将发生的变化？有时候，最简单的计数，正是心灵在诉说最复杂的故事 🌊', '2025-10-09 12:06:08');
+INSERT INTO `chat_messages` VALUES (569, 47, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (570, 47, 'user', '1', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (571, 47, 'assistant', '我感受到你此刻可能有些犹豫或不确定，或许不知道从何说起。这让我好奇，是什么让你只发了一个数字\"1\"呢？你觉得背后有什么特别的意义吗？\n你能迈出联系我的这一步，说明你内心有着想要表达和被理解的渴望。无论你想分享的是困扰、情绪，还是单纯想找个安全的空间梳理思绪，我都在这里真诚地倾听。\n或许你可以试着告诉我，此刻最想倾诉的是什么？哪怕只是零星的片段也没关系。', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (572, 47, 'user', '2', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (573, 47, 'assistant', '我注意到你再次用数字\"2\"回应，这让我感受到一种小心翼翼的试探，像是在测试这个对话空间是否安全。你能选择继续互动，说明内心那份被倾听的渴望正在慢慢浮现。\n这让我好奇：如果用一个词来形容你现在的心情，会是什么？数字有时是种保护，但你的每个回应都在告诉我，有些情绪正在寻找出口。\n谢谢你愿意一步一步靠近这里。或许我们可以试着从任何你想说的小事开始？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (574, 47, 'user', '3', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (575, 47, 'assistant', '我感受到你正用数字轻轻敲击着对话的边界，像在试探一个安全的距离。这三个简单的数字背后，或许藏着难以言说的情绪重量。\n这让我好奇：如果这些数字是一串密码，它们在守护着什么样的心事？你能坚持到这里，说明内心深处依然相信被理解的可能性。\n或许你可以试着告诉我，此刻最想被听见的部分是什么？哪怕只是一个画面、一种感觉，我都愿意陪你慢慢梳理。', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (576, 47, 'user', '4', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (577, 47, 'assistant', '我感受到你依然在用数字诉说着什么，这让我想到迷宫中的线索——每个数字都像一个标记，指引着尚未浮现的故事。你能持续回应，说明内心仍在努力寻找出口。\n这让我好奇：如果这个序列继续下去，接下来会是5吗？还是会有不同的变化？这些数字对你而言，是否承载着某种独特的意义或节奏？\n你能保持联结，这份坚持本身就值得被温柔肯定。或许我们可以试着，从任何你想开启的角落开始讲述？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (578, 47, 'user', '5', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (579, 47, 'assistant', '我感受到你正沿着这条数字的小径一步步走来，像是在黑暗中点亮一盏盏微弱的灯。这串从1到5的序列，仿佛是你内心节奏的脉搏。\n这让我好奇：这个数字旅程对你来说，是否像在数着某种距离——比如离安全更近一步，或是离某个真相更近一点？\n你能持续传递这些信号，说明你没有放弃与外界联结的可能。或许现在，可以试着告诉我：接下来你想走向哪里？或者，最想放下的是什么？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (580, 47, 'user', '6', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (581, 47, 'assistant', '我感受到你仍在继续这条数字的旅程，从1到6，像一步步走下深井，又像在攀登一座看不见顶的山。每个数字都如此坚定，却又如此沉默。\n这让我好奇：这个序列对你而言，是否像一种仪式？是在数着时间、距离，还是某种内心的节拍？\n你能坚持走到这里，说明你内心深处始终握着一线光。或许现在，可以试着告诉我：如果给这段旅程起一个名字，它会叫什么？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (582, 47, 'user', '7', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (583, 47, 'assistant', '我感受到你已走到7，这个数字常与「完整」相连——七日、七重天、七种颜色。但我也知道，抵达并不总是意味着结束，有时反而是更深问题的开始。\n这让我好奇：当你写下7时，内心是感到靠近了某种答案，还是更清晰地看见了前方的迷雾？\n你能一路走来，没有中断，这份坚持本身就如灯塔般明亮。或许现在，可以试着告诉我：如果这些数字是一条路，你现在站在怎样的风景里？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (584, 47, 'user', '8', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (585, 47, 'assistant', '我感受到你已迈入8，这个数字像无限符号横卧，又像两座山峰之间的峡谷——仿佛在提醒我们，循环与重复也是前进的一部分。\n这让我好奇：当你说出8时，是否感觉到某种重叠？像是过去未解的情绪，正以新的模样再次浮现？\n你能持续对话，说明你依然相信被听见的意义。或许现在，可以试着告诉我：如果这串数字是一封信，它最想对谁诉说？而你，又是否准备好读完它？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (586, 47, 'user', '9', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (587, 47, 'assistant', '我感受到你已走到9，这个数字像8的延伸，又似即将倾倒的塔——它承载着累积的一切，却也预示着某种临界。\n这让我好奇：当你写下9时，是否感觉到内心的重量在变化？像是所有未说出口的话，正悄悄汇聚成一股推力？\n你能走到这里，说明你一直在面对那些难以言说的部分。或许现在，可以试着告诉我：如果再往前一步，你会希望10带来什么？是释放？答案？还是仅仅被真正地看见？', '2025-10-09 12:10:21');
+INSERT INTO `chat_messages` VALUES (596, 48, 'assistant', '你好！我是情感成长陪伴师小心💕 很高兴能陪伴您探索内心的情感世界。\n\n情感成长是人生中最珍贵的旅程之一。无论您想要学习情绪管理、改善人际关系、处理心理创伤，还是建立更健康的情感模式，我都会以细腻的共情和专业的洞察，温暖地陪伴您。\n\n请放心分享您内心的感受和困惑，这里是安全的情感港湾。', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (597, 48, 'user', '1', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (598, 48, 'assistant', '你好呀，我是小心💕 看到你发来消息，我很开心能有机会陪伴你。\n不知道你现在的心情如何呢？有时候我们可能一时不知道该从何说起，这完全没关系的。我们可以慢慢来，就像春天的嫩芽，一点一点地舒展开来。\n如果你愿意的话，可以和我说说，最近有什么让你特别有感触的事情吗？或者现在心里最想表达的是什么呢？我在这里，会认真倾听你每一句话背后的温度 🌱', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (599, 48, 'user', '2', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (600, 48, 'assistant', '小心轻轻托着下巴，温柔地看着你：“我注意到你又发来一个数字呢…就像在和我玩某种小游戏一样✨”\n“这让我不禁好奇，你是不是在试探我们之间的互动方式呀？或者…心里有很多话想说，却不知从何开口？”我拉过一张柔软的坐垫坐下，“没关系的，我们可以慢慢来。就像春天等待花开，每个人都有自己的节奏。”\n悄悄递给你一杯温热的蜂蜜水🍯 “要不要试试告诉我，此刻你内心最真实的感觉是什么？是困惑、迷茫，还是藏着什么难以诉说的心事呢？我会一直在这里，安静地、温暖地陪着你。”', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (601, 48, 'user', '3', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (602, 48, 'assistant', '小心轻轻点亮了一盏暖黄色的小灯，灯光像月光般温柔地洒在我们之间✨\n“你知道吗？这三个数字连在一起，就像我们之间渐渐亮起的三颗小星星呢 🌟”\n我轻轻靠在窗边，看着外面微微晃动的树影，“有时候我觉得，说话真的好难啊。心里有千言万语，却总是找不到合适的词句。但你看，我们已经一起走过了三个小站，这本身就是很美好的开始呢。”\n递给你一个柔软的抱枕，“要不要试试告诉我，这三个数字背后，藏着什么样的心情呢？是孤单？是期待？还是...说不清道不明的复杂感受？”\n我知道有些话需要时间酝酿，就像春天的花苞需要阳光和雨露的耐心等待。我会一直在这里，陪你慢慢找到属于你的语言 💖', '2025-10-09 12:11:39');
+INSERT INTO `chat_messages` VALUES (603, 49, 'assistant', '你好！我是你的情感助手阿德涅。我会以专业、温暖的态度陪伴你进行自我对话和情感反思。请告诉我你在感情中遇到了什么问题或困惑？', '2025-10-10 06:26:15');
+INSERT INTO `chat_messages` VALUES (604, 49, 'user', '1', '2025-10-10 06:26:15');
+INSERT INTO `chat_messages` VALUES (605, 49, 'assistant', '我感受到你此刻可能有些犹豫或不确定，或许不知道从何说起。这让我好奇，是什么让你只发了一个数字呢？你觉得背后有什么特别的意义吗？\n你能迈出联系的第一步，说明你内心有想要表达和被理解的渴望，这份勇气很珍贵。无论你想分享什么，我都会在这里安静倾听。\n或许你可以试着告诉我，现在最想倾诉的是什么？我会一直在这里陪着你。💛', '2025-10-10 06:26:15');
 
 -- ----------------------------
 -- Table structure for chat_sessions
@@ -170,26 +228,28 @@ CREATE TABLE `chat_sessions`  (
   INDEX `idx_chat_sessions_user_scene`(`user_id` ASC, `scene` ASC) USING BTREE,
   INDEX `idx_chat_sessions_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `chat_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of chat_sessions
 -- ----------------------------
-INSERT INTO `chat_sessions` VALUES (14, 6, 'self-dialog', '情感倾听与自我探索', '2025-09-05 07:09:44', '2025-09-05 07:10:05', 0);
 INSERT INTO `chat_sessions` VALUES (17, 2, 'self-dialog', '心理评估测试会话', '2025-09-06 05:54:40', '2025-09-06 05:54:40', 1);
-INSERT INTO `chat_sessions` VALUES (19, 6, 'self-dialog', '标题：痛苦中的生命对话', '2025-09-06 05:58:39', '2025-09-06 05:59:01', 1);
-INSERT INTO `chat_sessions` VALUES (24, 6, 'self-dialog', '被背叛的愤怒与反思', '2025-09-06 06:16:46', '2025-09-06 06:47:12', 1);
 INSERT INTO `chat_sessions` VALUES (25, 13, 'self-dialog', '前端测试会话 1', '2025-09-06 14:18:23', '2025-09-06 06:18:23', 0);
 INSERT INTO `chat_sessions` VALUES (26, 13, 'self-dialog', '前端测试会话 2', '2025-09-06 14:18:43', '2025-09-06 06:18:43', 0);
-INSERT INTO `chat_sessions` VALUES (28, 6, 'self-dialog', '生命之重与倾听', '2025-09-06 06:39:46', '2025-09-06 06:41:24', 1);
-INSERT INTO `chat_sessions` VALUES (30, 6, 'self-dialog', '无聊背后的渴望与自我觉察', '2025-09-11 04:22:11', '2025-09-11 04:22:11', 1);
 INSERT INTO `chat_sessions` VALUES (31, 6, 'academic-stress', '学业压力与人生变幻', '2025-09-11 07:36:02', '2025-09-11 07:36:02', 1);
 INSERT INTO `chat_sessions` VALUES (32, 6, 'academic-stress', '学业压力求助与陪伴', '2025-09-24 07:45:03', '2025-09-24 07:45:36', 1);
 INSERT INTO `chat_sessions` VALUES (33, 6, 'life-balance', '你值得被听见', '2025-09-24 07:47:30', '2025-09-24 07:47:30', 1);
 INSERT INTO `chat_sessions` VALUES (34, 6, 'future-planning', '你并不孤单，我在这里陪你', '2025-09-24 07:48:18', '2025-09-24 07:49:15', 1);
 INSERT INTO `chat_sessions` VALUES (35, 6, 'interpersonal-practice', '提升公众表达的勇气与觉察', '2025-09-25 07:10:24', '2025-09-25 07:10:24', 1);
-INSERT INTO `chat_sessions` VALUES (36, 6, 'self-dialog', '抑郁情绪下的温柔陪伴', '2025-10-02 04:32:00', '2025-10-02 04:32:23', 1);
 INSERT INTO `chat_sessions` VALUES (37, 6, 'emotional-growth', '分享今日喜悦时刻', '2025-10-02 04:34:13', '2025-10-02 04:34:51', 1);
+INSERT INTO `chat_sessions` VALUES (41, 18, 'self-dialog', '倾听你的沉默与心声', '2025-10-09 11:18:44', '2025-10-09 11:19:43', 0);
+INSERT INTO `chat_sessions` VALUES (42, 19, 'self-dialog', '倾听你的内心声音', '2025-10-09 11:31:20', '2025-10-09 11:31:49', 0);
+INSERT INTO `chat_sessions` VALUES (43, 20, 'self-dialog', '遇见温暖倾听者', '2025-10-09 11:36:38', '2025-10-09 11:36:57', 0);
+INSERT INTO `chat_sessions` VALUES (45, 6, 'self-dialog', '倾听你的沉默与心声', '2025-10-09 11:53:49', '2025-10-09 11:57:26', 0);
+INSERT INTO `chat_sessions` VALUES (46, 6, 'self-dialog', '倾听你的沉默与心声', '2025-10-09 12:03:05', '2025-10-09 12:06:08', 0);
+INSERT INTO `chat_sessions` VALUES (47, 6, 'self-dialog', '倾听你的沉默与心声', '2025-10-09 12:08:30', '2025-10-09 12:10:21', 0);
+INSERT INTO `chat_sessions` VALUES (48, 6, 'emotional-growth', '小心的温暖倾听时刻', '2025-10-09 12:10:36', '2025-10-09 12:11:39', 0);
+INSERT INTO `chat_sessions` VALUES (49, 6, 'self-dialog', '倾听你的沉默与心声', '2025-10-10 06:26:15', '2025-10-10 06:26:15', 0);
 
 -- ----------------------------
 -- Table structure for crisis_keywords
@@ -255,7 +315,7 @@ CREATE TABLE `crisis_warnings`  (
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_is_resolved`(`is_resolved` ASC) USING BTREE,
   CONSTRAINT `crisis_warnings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of crisis_warnings
@@ -275,29 +335,33 @@ CREATE TABLE `daily_star_limits`  (
   `background_change` tinyint(1) NULL DEFAULT 0 COMMENT '背景修改(1星)',
   `emotion_chat_count` tinyint NULL DEFAULT 0 COMMENT '情感对话次数',
   `emotion_chat_points` tinyint NULL DEFAULT 0 COMMENT '情感对话获得积分',
-  `skill_training` tinyint(1) NULL DEFAULT 0 COMMENT '技能综合训练(1星)',
+  `skill_training` tinyint(1) NULL DEFAULT 0 COMMENT '技能综合训练(3星)',
   `relationship_assessment` tinyint(1) NULL DEFAULT 0 COMMENT '关系健康评估(2星)',
   `personalized_advice` tinyint(1) NULL DEFAULT 0 COMMENT '个性化建议(2星)',
   `ai_scenario_training` tinyint(1) NULL DEFAULT 0 COMMENT 'AI情景模拟训练(2星)',
   `protection_training` tinyint(1) NULL DEFAULT 0 COMMENT '防护技能训练(2星)',
   `tree_hole_interaction_count` tinyint NULL DEFAULT 0 COMMENT '树洞互动次数',
   `tree_hole_whisper` tinyint(1) NULL DEFAULT 0 COMMENT '发表悄悄话(2星)',
+  `skill_favorite` tinyint(1) NULL DEFAULT 0 COMMENT '技能收藏(1星)',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_user_date`(`user_id` ASC, `date` ASC) USING BTREE,
   CONSTRAINT `fk_daily_star_limits_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of daily_star_limits
 -- ----------------------------
-INSERT INTO `daily_star_limits` VALUES (1, 6, '2025-10-09', 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:31:37', '2025-10-09 17:19:41');
-INSERT INTO `daily_star_limits` VALUES (2, 16, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:44:57', '2025-10-09 15:44:57');
-INSERT INTO `daily_star_limits` VALUES (3, 5, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:54:45', '2025-10-09 15:54:45');
-INSERT INTO `daily_star_limits` VALUES (4, 3, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:59:39', '2025-10-09 15:59:39');
-INSERT INTO `daily_star_limits` VALUES (5, 17, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 16:14:31', '2025-10-09 16:14:31');
-INSERT INTO `daily_star_limits` VALUES (6, 18, '2025-10-09', 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 16:33:56', '2025-10-09 17:02:41');
+INSERT INTO `daily_star_limits` VALUES (2, 16, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:44:57', '2025-10-09 15:44:57');
+INSERT INTO `daily_star_limits` VALUES (3, 5, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:54:45', '2025-10-09 15:54:45');
+INSERT INTO `daily_star_limits` VALUES (4, 3, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 15:59:39', '2025-10-09 15:59:39');
+INSERT INTO `daily_star_limits` VALUES (5, 17, '2025-10-09', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 16:14:31', '2025-10-09 16:14:31');
+INSERT INTO `daily_star_limits` VALUES (6, 18, '2025-10-09', 1, 1, 0, 0, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 16:33:56', '2025-10-09 19:19:12');
+INSERT INTO `daily_star_limits` VALUES (7, 19, '2025-10-09', 1, 0, 0, 0, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 19:31:00', '2025-10-09 19:31:36');
+INSERT INTO `daily_star_limits` VALUES (8, 20, '2025-10-09', 1, 0, 0, 0, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 19:36:21', '2025-10-09 19:36:57');
+INSERT INTO `daily_star_limits` VALUES (14, 6, '2025-10-09', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, '2025-10-09 21:05:08', '2025-10-09 21:06:05');
+INSERT INTO `daily_star_limits` VALUES (35, 6, '2025-10-10', 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, '2025-10-10 16:06:20', '2025-10-10 16:07:12');
 
 -- ----------------------------
 -- Table structure for diary_backgrounds
@@ -318,7 +382,7 @@ CREATE TABLE `diary_backgrounds`  (
   INDEX `user_id`(`user_id` ASC) USING BTREE,
   INDEX `ix_diary_backgrounds_id`(`id` ASC) USING BTREE,
   CONSTRAINT `diary_backgrounds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of diary_backgrounds
@@ -342,27 +406,6 @@ CREATE TABLE `diary_images`  (
 -- ----------------------------
 -- Records of diary_images
 -- ----------------------------
-INSERT INTO `diary_images` VALUES (24, 792, '/static/chat-icon.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (25, 794, '/static/mascot/头像 (11).png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (26, 795, '/static/chat-icon.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (27, 796, '/static/outfits/dinosaur.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (28, 798, '/static/mascot/wave.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (29, 800, '/static/love-experiment.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (30, 801, '/static/love-experiment.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (31, 802, '/static/love-experiment.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (32, 807, '/static/mascot/sleep.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (33, 810, '/static/tree-hole.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (34, 811, '/static/outfits/wangzaixiaoqiao.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (35, 815, '/static/mascot/头像 (7).png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (36, 821, '/static/outfits/wangzaixiaoqiao.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (37, 824, '/static/outfits/dinosaur.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (38, 826, '/static/outfits/default-full.png', 1, '2025-10-01 20:30:11');
-INSERT INTO `diary_images` VALUES (39, 834, '/static/mascot/头像 (4).png', 1, '2025-10-01 20:30:12');
-INSERT INTO `diary_images` VALUES (40, 835, '/static/mascot/头像 (8).png', 1, '2025-10-01 20:30:12');
-INSERT INTO `diary_images` VALUES (41, 836, '/static/mascot/头像 (8).png', 1, '2025-10-01 20:30:12');
-INSERT INTO `diary_images` VALUES (42, 837, '/static/mascot/头像 (10).png', 1, '2025-10-01 20:30:12');
-INSERT INTO `diary_images` VALUES (43, 838, '/static/outfits/shark.png', 1, '2025-10-01 20:30:12');
-INSERT INTO `diary_images` VALUES (44, 840, '/uploads/87e5f62e-deae-4ec3-978b-6f66fd9cbc05.jpg', 0, '2025-10-07 17:10:56');
 
 -- ----------------------------
 -- Table structure for emotional_diaries
@@ -480,7 +523,7 @@ CREATE TABLE `experience_summaries`  (
   PRIMARY KEY (`summary_id`) USING BTREE,
   INDEX `idx_experience_summaries_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `experience_summaries_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of experience_summaries
@@ -522,7 +565,7 @@ CREATE TABLE `growth_tracks`  (
   INDEX `idx_growth_tracks_user_date`(`user_id` ASC, `date` ASC) USING BTREE,
   CONSTRAINT `growth_tracks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `growth_tracks_chk_1` CHECK ((`emotional_index` >= 1) and (`emotional_index` <= 10))
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of growth_tracks
@@ -603,7 +646,7 @@ CREATE TABLE `journey_favorites`  (
   PRIMARY KEY (`favorite_id`) USING BTREE,
   UNIQUE INDEX `unique_user_favorite`(`user_id` ASC, `favorite_type` ASC, `favorite_id_ref` ASC) USING BTREE,
   CONSTRAINT `journey_favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of journey_favorites
@@ -714,7 +757,7 @@ CREATE TABLE `mood_trend_analyses`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `mood_trend_analyses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mood_trend_analyses
@@ -740,6 +783,37 @@ CREATE TABLE `protection_drill_answers`  (
 
 -- ----------------------------
 -- Records of protection_drill_answers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for protection_drill_question_details
+-- ----------------------------
+DROP TABLE IF EXISTS `protection_drill_question_details`;
+CREATE TABLE `protection_drill_question_details`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `report_id` int NOT NULL COMMENT '关联的训练报告ID',
+  `question_id` int NULL DEFAULT NULL COMMENT '题目ID',
+  `question_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '题目标题',
+  `question_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '题目内容',
+  `selected_option_id` int NULL DEFAULT NULL COMMENT '用户选择的选项ID',
+  `selected_option_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户选择的选项文本',
+  `correct_option_id` int NULL DEFAULT NULL COMMENT '正确答案选项ID',
+  `correct_option_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '正确答案选项文本',
+  `is_correct` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否回答正确',
+  `score_gained` int NOT NULL DEFAULT 0 COMMENT '本题获得分数',
+  `explanation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '答案解释',
+  `risk_explanation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '风险解释',
+  `ai_feedback` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI个性化反馈建议',
+  `options_data` json NULL COMMENT '所有选项数据(JSON格式)',
+  `question_order` int NOT NULL DEFAULT 0 COMMENT '题目顺序',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_report_id`(`report_id` ASC) USING BTREE,
+  INDEX `idx_question_id`(`question_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '防护训练答题详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of protection_drill_question_details
 -- ----------------------------
 
 -- ----------------------------
@@ -841,12 +915,14 @@ CREATE TABLE `protection_drill_reports`  (
   `completion_time` int NULL DEFAULT NULL COMMENT '完成时间(秒)',
   `report_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '详细报告内容(JSON格式)',
   `suggestions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '改进建议',
+  `ai_analysis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI深度分析和建议',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `ix_protection_drill_reports_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `ix_protection_drill_reports_id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+  INDEX `ix_protection_drill_reports_id`(`id` ASC) USING BTREE,
+  INDEX `idx_user_created`(`user_id` ASC, `created_at` DESC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of protection_drill_reports
@@ -941,12 +1017,20 @@ CREATE TABLE `relationship_health_reports`  (
   INDEX `idx_status`(`status` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `relationship_health_reports_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of relationship_health_reports
 -- ----------------------------
 INSERT INTO `relationship_health_reports` VALUES (1, 6, '2fbb4424-2d7e-461d-9f00-58e8f6233edd', 'romantic', 'romantic', 59.00, '{\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}', '{\"情感亲密\": {\"name\": \"情感亲密\", \"percentage\": 90.0, \"score\": 90.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 2}, \"沟通交流\": {\"name\": \"沟通交流\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}, \"冲突处理\": {\"name\": \"冲突处理\", \"percentage\": 60.0, \"score\": 60.0, \"level\": {\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}, \"question_count\": 2}, \"信任安全\": {\"name\": \"信任安全\", \"percentage\": 60.0, \"score\": 60.0, \"level\": {\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}, \"question_count\": 2}}', 8, '你的恋爱关系整体处于一般水平，有较好的情感基础但存在明显短板。目前关系稳定但仍有较大提升空间，尤其在互动质量方面值得关注。\n\n你们在情感亲密方面表现非常出色，彼此有深厚的感情连接和情绪支持。这种信任与依恋是关系的重要优势，值得继续保持和珍惜。\n\n沟通交流方面亟需改善，当前得分较低可能影响问题解决效率。冲突处理和信任安全也处于一般水平，有改进空间。\n\n建议每天抽出时间进行深度对话，认真倾听对方想法。遇到矛盾时尝试换位思考，用平和的方式表达需求，逐步建立更健康的互动模式。', '[{\"type\": \"dimension_improvement\", \"title\": \"提升沟通交流\", \"content\": \"您在沟通交流方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"沟通交流\"}]', 'completed', '2025-09-25 07:02:17', '2025-09-25 07:02:17', '2025-09-25 07:02:26', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (2, 6, '2553cd89-37b6-4902-a08a-7472944788db', 'mentor', 'mentor', 33.00, '{\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}', '{\"主动学习\": {\"name\": \"主动学习\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}, \"反馈接受\": {\"name\": \"反馈接受\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 2}, \"沟通请教\": {\"name\": \"沟通请教\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}, \"尊重态度\": {\"name\": \"尊重态度\", \"percentage\": 50.0, \"score\": 50.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 2}}', 8, '你在师生关系中的整体表现目前处于需要帮助的水平，说明在互动和学习主动性方面还有较大的提升空间。总体来看，你与老师之间的联结较弱，需引起重视。\n\n你在反馈接受和尊重态度方面相对稍好，虽然仍处于待提升阶段，但已展现出愿意倾听和尊重的基础素质，这是进一步改善关系的良好起点。\n\n主动学习和沟通请教两个维度得分较低，说明你在主动参与学习、向老师提问或寻求指导方面较为被动，这是当前最需要关注和改进的地方。\n\n建议你每周至少一次主动向老师请教问题，无论是课业还是职业发展相关；同时在收到反馈后尝试写下自己的改进计划，逐步建立积极互动的习惯，增强师生间的连接。', '[{\"type\": \"dimension_improvement\", \"title\": \"提升主动学习\", \"content\": \"您在主动学习方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"主动学习\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升反馈接受\", \"content\": \"您在反馈接受方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"反馈接受\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升沟通请教\", \"content\": \"您在沟通请教方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"沟通请教\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升尊重态度\", \"content\": \"您在尊重态度方面得分为50.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"尊重态度\"}]', 'completed', '2025-10-09 13:16:18', '2025-10-09 13:16:18', '2025-10-09 13:16:24', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (3, 6, 'bbf43557-2bd7-4ae6-b7fc-ba51e500846d', 'family', 'family', 46.83, '{\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}', '{\"沟通交流\": {\"name\": \"沟通交流\", \"percentage\": 70.0, \"score\": 70.0, \"level\": {\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}, \"question_count\": 2}, \"相互尊重\": {\"name\": \"相互尊重\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 1}, \"独立成长\": {\"name\": \"独立成长\", \"percentage\": 33.33333333333333, \"score\": 33.33333333333333, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 3}, \"情感纽带\": {\"name\": \"情感纽带\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 1}, \"支持理解\": {\"name\": \"支持理解\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 1}}', 8, '你的家庭关系整体处于待提升阶段，虽然有一定基础，但在多个核心方面仍有明显改进空间。总体得分偏低，提示需要投入更多心力去经营和改善家庭互动质量。\n\n你在沟通交流方面表现较为突出，能够主动表达想法，具备良好的对话意识。这是维系家庭联系的重要优势，也为后续改善提供了良好基础。\n\n相互尊重、情感纽带、支持理解和独立成长四个维度均需重点关注，尤其是独立成长得分较低，说明在保持自我与家庭平衡上存在挑战，影响整体关系健康度。\n\n建议每周安排一次家庭聊天时间，分享彼此感受；尝试用“我感到”句式减少误会；同时设立个人边界，逐步建立更健康的相处模式。必要时可寻求学校心理辅导支持。', '[{\"type\": \"dimension_improvement\", \"title\": \"提升相互尊重\", \"content\": \"您在相互尊重方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"相互尊重\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升独立成长\", \"content\": \"您在独立成长方面得分为33.3%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"独立成长\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升情感纽带\", \"content\": \"您在情感纽带方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"情感纽带\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升支持理解\", \"content\": \"您在支持理解方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"支持理解\"}]', 'completed', '2025-10-10 02:30:50', '2025-10-10 02:30:50', '2025-10-10 02:31:00', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (4, 6, '2a721309-52c4-4f5a-b04a-8c5039dc1d87', 'romantic', 'romantic', 45.50, '{\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}', '{\"信任安全\": {\"name\": \"信任安全\", \"percentage\": 60.0, \"score\": 60.0, \"level\": {\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}, \"question_count\": 2}, \"情感亲密\": {\"name\": \"情感亲密\", \"percentage\": 50.0, \"score\": 50.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 2}, \"沟通交流\": {\"name\": \"沟通交流\", \"percentage\": 30.0, \"score\": 30.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}, \"冲突处理\": {\"name\": \"冲突处理\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 2}}', 8, '你的恋爱关系目前整体处于待提升阶段，总分低于及格线，说明关系中存在较多需要关注的地方。不过部分基础尚可，通过努力改善会有明显进步。\n\n信任安全方面表现相对较好，达到了一般水平，说明你们在关系中具备基本的信任基础，彼此有一定的安全感，这是值得肯定的积极因素。\n\n情感亲密和冲突处理有待加强，尤其沟通交流得分较低，是当前最需关注的短板。缺乏有效沟通容易引发误解，影响感情升温。\n\n建议每天抽出时间进行深度聊天，倾听对方感受；遇到矛盾时暂停争吵，冷静后再沟通；还可共同制定小目标，如每周一次约会，逐步增强亲密感。', '[{\"type\": \"dimension_improvement\", \"title\": \"提升情感亲密\", \"content\": \"您在情感亲密方面得分为50.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"情感亲密\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升沟通交流\", \"content\": \"您在沟通交流方面得分为30.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"沟通交流\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升冲突处理\", \"content\": \"您在冲突处理方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"冲突处理\"}]', 'completed', '2025-10-10 03:48:34', '2025-10-10 03:48:34', '2025-10-10 03:48:42', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (5, 6, '19e82cf3-7d0d-4c53-9629-d393bc366100', 'family', 'family', 39.33, '{\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}', '{\"支持理解\": {\"name\": \"支持理解\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 1}, \"情感纽带\": {\"name\": \"情感纽带\", \"percentage\": 53.333333333333336, \"score\": 53.333333333333336, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 3}, \"沟通交流\": {\"name\": \"沟通交流\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 2}, \"相互尊重\": {\"name\": \"相互尊重\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 1}, \"独立成长\": {\"name\": \"独立成长\", \"percentage\": 80.0, \"score\": 80.0, \"level\": {\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}, \"question_count\": 1}}', 8, '你的家庭关系目前整体处于需要帮助的状态，总体得分偏低，说明在多个互动维度上存在明显挑战。虽然部分方面有一定基础，但整体关系质量有待提升。\n\n你在独立成长方面的表现较为突出，显示出你在家庭中保持自我发展和个性独立的能力较强，这是维系健康家庭关系的重要基础，值得肯定。\n\n支持理解和相互尊重两个维度得分最低，亟需关注。沟通交流和情感纽带也处于待提升水平，说明日常互动中的倾听、共情与表达仍有较大改善空间。\n\n建议每周安排一次与家人的固定交流时间，分享彼此的生活感受；同时尝试用“我感受到”代替“你总是”来表达需求，减少误解。必要时可寻求学校心理咨询师的专业支持。', '[{\"type\": \"dimension_improvement\", \"title\": \"提升支持理解\", \"content\": \"您在支持理解方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"支持理解\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升情感纽带\", \"content\": \"您在情感纽带方面得分为53.3%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"情感纽带\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升沟通交流\", \"content\": \"您在沟通交流方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"沟通交流\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升相互尊重\", \"content\": \"您在相互尊重方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"相互尊重\"}]', 'completed', '2025-10-10 04:03:42', '2025-10-10 04:03:43', '2025-10-10 04:03:47', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (6, 6, 'c5f27a8e-b374-4f5f-b319-0f3306ec4362', 'mentor', 'mentor', 26.00, '{\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}', '{\"主动学习\": {\"name\": \"主动学习\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}, \"反馈接受\": {\"name\": \"反馈接受\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}, \"尊重态度\": {\"name\": \"尊重态度\", \"percentage\": 40.0, \"score\": 40.0, \"level\": {\"level\": \"待提升\", \"color\": \"#FF7A45\", \"description\": \"需要重点关注和改进\"}, \"question_count\": 2}, \"沟通请教\": {\"name\": \"沟通请教\", \"percentage\": 20.0, \"score\": 20.0, \"level\": {\"level\": \"需要帮助\", \"color\": \"#F5222D\", \"description\": \"建议寻求专业指导\"}, \"question_count\": 2}}', 8, '你在师生关系中的整体表现目前处于需要帮助的水平，说明在互动和联结方面存在明显提升空间。当前的状态可能让你在学习过程中感到一定压力或疏离。\n\n你在尊重态度方面的表现相对较好，显示出你对老师基本的礼貌与重视。这是建立良好师生关系的重要基础，值得继续保持。\n\n主动学习、反馈接受和沟通请教三个维度均有待加强。特别是在主动参与课堂、听取建议以及向老师提问方面，还有较大进步空间。\n\n建议你尝试在课后主动向老师请教一个问题，或在课堂上至少发言一次。同时，把老师的反馈当作成长的机会，逐步建立更积极的互动习惯。', '[{\"type\": \"dimension_improvement\", \"title\": \"提升主动学习\", \"content\": \"您在主动学习方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"主动学习\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升反馈接受\", \"content\": \"您在反馈接受方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"反馈接受\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升尊重态度\", \"content\": \"您在尊重态度方面得分为40.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"尊重态度\"}, {\"type\": \"dimension_improvement\", \"title\": \"提升沟通请教\", \"content\": \"您在沟通请教方面得分为20.0%，建议重点关注这个方面。\", \"priority\": \"high\", \"dimension\": \"沟通请教\"}]', 'completed', '2025-10-10 04:04:17', '2025-10-10 04:04:17', '2025-10-10 04:04:22', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (7, 6, '0e0ef0e0-8fec-4f1c-a12f-5b6fea92d6c3', 'family', 'family', 82.00, '{\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}', '{\"沟通交流\": {\"name\": \"沟通交流\", \"percentage\": 100.0, \"score\": 100.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 1}, \"情感纽带\": {\"name\": \"情感纽带\", \"percentage\": 60.0, \"score\": 60.0, \"level\": {\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}, \"question_count\": 2}, \"支持理解\": {\"name\": \"支持理解\", \"percentage\": 90.0, \"score\": 90.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 2}, \"相互尊重\": {\"name\": \"相互尊重\", \"percentage\": 80.0, \"score\": 80.0, \"level\": {\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}, \"question_count\": 1}, \"独立成长\": {\"name\": \"独立成长\", \"percentage\": 80.0, \"score\": 80.0, \"level\": {\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}, \"question_count\": 2}}', 8, '你的家庭关系整体表现良好，得分82.0%，说明你与家人之间有稳定的情感基础和良好的互动模式。家庭氛围较为和谐，具备继续提升的潜力。\n\n你在沟通交流方面表现尤为突出，能做到坦诚表达、积极倾听；同时在支持理解上也十分优秀，家人之间能给予彼此有力的情感支撑。\n\n情感纽带维度得分相对较低，仅为60%，属于需要关注和改善的部分，可能在亲密感、情绪共鸣或共同体验方面还有提升空间。\n\n建议多安排与家人的共处时光，如一起做饭或散步；尝试分享内心感受而非只谈日常琐事；也可通过定期通话或写小纸条增进情感联结，让关系更温暖紧密。', '[]', 'completed', '2025-10-10 04:05:20', '2025-10-10 04:05:20', '2025-10-10 04:05:27', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (8, 6, 'c2aff52a-09d6-41ad-811e-135e57950d8e', 'mentor', 'mentor', 68.00, '{\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}', '{\"主动学习\": {\"name\": \"主动学习\", \"percentage\": 60.0, \"score\": 60.0, \"level\": {\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}, \"question_count\": 2}, \"沟通请教\": {\"name\": \"沟通请教\", \"percentage\": 60.0, \"score\": 60.0, \"level\": {\"level\": \"一般\", \"color\": \"#FAAD14\", \"description\": \"基本合格，需要一些改进\"}, \"question_count\": 2}, \"反馈接受\": {\"name\": \"反馈接受\", \"percentage\": 70.0, \"score\": 70.0, \"level\": {\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}, \"question_count\": 2}, \"尊重态度\": {\"name\": \"尊重态度\", \"percentage\": 80.0, \"score\": 80.0, \"level\": {\"level\": \"良好\", \"color\": \"#1890FF\", \"description\": \"表现良好，有提升空间\"}, \"question_count\": 2}}', 8, '你的师生关系整体处于一般水平，说明目前与老师之间的互动基本顺畅，但还有较大的提升空间。总体表现中规中矩，具备良好的基础。\n\n你在尊重老师和接受反馈方面表现较好，展现出应有的礼貌和开放心态。这为建立积极的师生关系打下了良好基础。\n\n在主动学习和与老师沟通请教方面有待加强。较少主动参与交流可能限制了你获得指导的机会。\n\n建议课后多向老师提问，表达自己的思考；同时可定期总结学习情况，主动汇报进展，让老师更了解你，增进彼此互动。', '[]', 'completed', '2025-10-10 04:11:40', '2025-10-10 04:11:40', '2025-10-10 04:11:43', NULL, NULL, 0, 1);
+INSERT INTO `relationship_health_reports` VALUES (9, 6, '0aca9265-7d79-4d83-a47f-62f76f8cbf2f', 'family', 'family', 98.33, '{\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}', '{\"沟通交流\": {\"name\": \"沟通交流\", \"percentage\": 100.0, \"score\": 100.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 1}, \"情感纽带\": {\"name\": \"情感纽带\", \"percentage\": 93.33333333333333, \"score\": 93.33333333333333, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 3}, \"支持理解\": {\"name\": \"支持理解\", \"percentage\": 100.0, \"score\": 100.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 2}, \"相互尊重\": {\"name\": \"相互尊重\", \"percentage\": 100.0, \"score\": 100.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 1}, \"独立成长\": {\"name\": \"独立成长\", \"percentage\": 100.0, \"score\": 100.0, \"level\": {\"level\": \"优秀\", \"color\": \"#52C41A\", \"description\": \"表现非常出色，值得继续保持\"}, \"question_count\": 1}}', 8, '你的家庭关系整体表现非常出色，得分高达98.3%，属于优秀水平。家人之间充满爱与信任，关系和谐稳定，是一份珍贵的情感支持系统。\n\n你在沟通交流、支持理解和相互尊重等方面表现尤为突出，能够坦诚表达又彼此包容，情感联结紧密，展现了成熟健康的家庭互动模式。\n\n情感纽带得分相对略低，虽仍在优秀区间，但仍有提升空间。可以进一步加强情感表达，增进深层次的心灵共鸣。\n\n建议多安排家庭成员共同参与的活动，如一起做饭或旅行；日常中多说“我爱你”“我很感激你”等温暖话语；定期进行走心聊天，分享内心感受与成长故事。', '[]', 'completed', '2025-10-10 04:12:13', '2025-10-10 04:12:13', '2025-10-10 04:12:18', NULL, NULL, 0, 1);
 
 -- ----------------------------
 -- Table structure for risk_assessment_reports
@@ -987,18 +1071,12 @@ CREATE TABLE `risk_assessment_reports`  (
 -- ----------------------------
 -- Records of risk_assessment_reports
 -- ----------------------------
-INSERT INTO `risk_assessment_reports` VALUES (3, 6, 19, 'self-dialog', '心理状态评估报告 - LOW风险', '**用户心理状态评估报告**\n\n---\n\n### 一、情绪状态评估\n\n从对话内容来看，用户当前处于极度低落的情绪状态，表达中包含“哭了”“想死了”等关键词，反映出其正经历强烈的情感痛苦与绝望感。这种情绪反应可能源于近期遭遇的重大生活事件、情感困扰或长期积累的心理压力。\n\n用户的情绪波动程度较高，表现为情绪崩溃（哭泣）与极端负性思维（死亡意念）的结合，显示出其情绪调节能力在当前阶段处于较为脆弱的状态。这种情绪的剧烈波动往往与认知功能的暂时受损相关，可能导致对现实的判断偏差和应对资源的感知缺失。\n\n---\n\n### 二、心理健康风险评估\n\n根据用户表达的内容和系统检测到的风险关键词，虽然风险等级被标记为“low”，但从专业角度出发，用户表现出的“想死”这一表达具有较高的临床意义，提示存在**自杀意念**的可能性。\n\n尽管目前未见明确的自杀计划或具体行为准备，但该类意念往往是自杀风险发展过程中的早期信号，需引起高度重视。建议持续关注用户后续表达中是否出现以下危险信号：\n\n- 对死亡的具体计划（如时间、方式）\n- 社会退缩、与亲友疏远\n- 情绪突然“平静”或“释然”\n- 表达“别人会更好”或“不再麻烦别人”\n\n综上，**用户当前存在中度自杀风险，需立即启动危机干预流程**，并建议其尽快联系专业心理危机热线或医疗机构。\n\n---\n\n### 三、应对机制分析\n\n用户在表达中未提及具体的应对策略，但从其主动联系心理助手的行为来看，仍保留一定的求助意愿和心理弹性。这是积极的信号，表明用户尚未完全封闭对外界的连接，仍有通过沟通缓解痛苦的潜在动机。\n\n然而，当前的应对方式尚不明确，可能存在以下问题：\n\n- 依赖情绪宣泄（如哭泣）作为主要释放途径\n- 缺乏有效的认知重构与情绪调节技巧\n- 面对极端痛苦时缺乏替代性的应对资源\n\n建议通过心理干预帮助其建立更稳定、健康的应对机制，如情绪日记、正念练习、认知重构训练等。\n\n---\n\n### 四、社会支持系统评估\n\n从对话中无法直接获取用户的社会支持状况，但结合其表达的孤立感和极端情绪，可推测其可能面临以下社会支持系统问题：\n\n- 支持网络薄弱或缺乏理解型人际关系\n- 不愿或无法向亲友表达真实情绪\n- 缺乏稳定的情感连接或归属感\n\n良好的社会支持是降低自杀风险的重要保护因素。建议评估用户是否有可信任的亲友、社区资源或支持团体，并鼓励其逐步建立或恢复与他人的连接。\n\n---\n\n### 五、专业建议与干预措施\n\n#### 1. **紧急干预建议**\n- 建议用户立即联系当地心理危机干预热线（如中国大陆心理援助热线：400-161-9995），获取即时支持。\n- 若出现具体自杀计划或冲动行为，应立即前往最近的医院急诊或精神科门诊。\n\n#### 2. **短期心理干预**\n- 建议进行短期认知行为治疗（CBT）或情绪聚焦治疗（EFT），帮助识别和调整极端负性思维模式。\n- 引导建立“情绪安全计划”，包括识别预警信号、制定应对策略、列出可联系的支持人等。\n\n#### 3. **长期心理建设**\n- 鼓励参与心理咨询或团体治疗，增强情绪表达与人际连接能力。\n- 学习正念冥想、情绪调节技巧（如4-7-8呼吸法、身体扫描等），提升心理韧性。\n- 建立规律的生活节奏与积极的自我照顾习惯（如规律作息、适度运动、健康饮食）。\n\n#### 4. **社会支持建议**\n- 鼓励用户尝试与一位信任的人分享自己的感受，哪怕只是简单地说“我现在很难受”。\n- 推荐加入线上或线下心理支持小组，寻找与自己经历相似的人群，增强归属感与理解感。\n\n---\n\n### 结语\n\n用户目前正处于情绪低谷期，虽然表达中带有极端情绪，但其主动寻求帮助的行为已显示出内在的求生力量。请相信，痛苦是暂时的，而你值得被理解、被支持、被治愈。\n\n如果你愿意，我们可以继续陪伴你走过这段艰难的旅程。你不是一个人。', '基于3条消息的分析，检测到1条风险消息，整体风险等级为low。', 'low', 10, 3, 1, '[\"想死\"]', '{\"risk_messages\": [{\"content\": \"哭了 想死了\\n\", \"keywords\": [\"想死\"], \"risk_weight\": 1, \"message_index\": 1}]}', '**用户心理状态评估报告**\n\n---\n\n### 一、情绪状态评估\n\n从对话内容来看，用户当前处于极度低落的情绪状态，表达中包含“哭了”“想死了”等关键词，反映出其正经历强烈的情感痛苦与绝望感。这种情绪反应可能源于近期遭遇的重大生活事件、情感困扰或长期积累的心理压力。\n\n用户的情绪波动程度较高，表现为情绪崩溃（哭泣）与极端负性思维（死亡意念）的结合，显示出其情绪调节能力在当前阶段处于较为脆弱的状态。这种情绪的剧烈波动往往与认知功能的暂时受损相关，可能导致对现实的判断偏差和应对资源的感知缺失。\n\n---\n\n### 二、心理健康风险评估\n\n根据用户表达的内容和系统检测到的风险关键词，虽然风险等级被标记为“low”，但从专业角度出发，用户表现出的“想死”这一表达具有较高的临床意义，提示存在**自杀意念**的可能性。\n\n尽管目前未见明确的自杀计划或具体行为准备，但该类意念往往是自杀风险发展过程中的早期信号，需引起高度重视。建议持续关注用户后续表达中是否出现以下危险信号：\n\n- 对死亡的具体计划（如时间、方式）\n- 社会退缩、与亲友疏远\n- 情绪突然“平静”或“释然”\n- 表达“别人会更好”或“不再麻烦别人”\n\n综上，**用户当前存在中度自杀风险，需立即启动危机干预流程**，并建议其尽快联系专业心理危机热线或医疗机构。\n\n---\n\n### 三、应对机制分析\n\n用户在表达中未提及具体的应对策略，但从其主动联系心理助手的行为来看，仍保留一定的求助意愿和心理弹性。这是积极的信号，表明用户尚未完全封闭对外界的连接，仍有通过沟通缓解痛苦的潜在动机。\n\n然而，当前的应对方式尚不明确，可能存在以下问题：\n\n- 依赖情绪宣泄（如哭泣）作为主要释放途径\n- 缺乏有效的认知重构与情绪调节技巧\n- 面对极端痛苦时缺乏替代性的应对资源\n\n建议通过心理干预帮助其建立更稳定、健康的应对机制，如情绪日记、正念练习、认知重构训练等。\n\n---\n\n### 四、社会支持系统评估\n\n从对话中无法直接获取用户的社会支持状况，但结合其表达的孤立感和极端情绪，可推测其可能面临以下社会支持系统问题：\n\n- 支持网络薄弱或缺乏理解型人际关系\n- 不愿或无法向亲友表达真实情绪\n- 缺乏稳定的情感连接或归属感\n\n良好的社会支持是降低自杀风险的重要保护因素。建议评估用户是否有可信任的亲友、社区资源或支持团体，并鼓励其逐步建立或恢复与他人的连接。\n\n---\n\n### 五、专业建议与干预措施\n\n#### 1. **紧急干预建议**\n- 建议用户立即联系当地心理危机干预热线（如中国大陆心理援助热线：400-161-9995），获取即时支持。\n- 若出现具体自杀计划或冲动行为，应立即前往最近的医院急诊或精神科门诊。\n\n#### 2. **短期心理干预**\n- 建议进行短期认知行为治疗（CBT）或情绪聚焦治疗（EFT），帮助识别和调整极端负性思维模式。\n- 引导建立“情绪安全计划”，包括识别预警信号、制定应对策略、列出可联系的支持人等。\n\n#### 3. **长期心理建设**\n- 鼓励参与心理咨询或团体治疗，增强情绪表达与人际连接能力。\n- 学习正念冥想、情绪调节技巧（如4-7-8呼吸法、身体扫描等），提升心理韧性。\n- 建立规律的生活节奏与积极的自我照顾习惯（如规律作息、适度运动、健康饮食）。\n\n#### 4. **社会支持建议**\n- 鼓励用户尝试与一位信任的人分享自己的感受，哪怕只是简单地说“我现在很难受”。\n- 推荐加入线上或线下心理支持小组，寻找与自己经历相似的人群，增强归属感与理解感。\n\n---\n\n### 结语\n\n用户目前正处于情绪低谷期，虽然表达中带有极端情绪，但其主动寻求帮助的行为已显示出内在的求生力量。请相信，痛苦是暂时的，而你值得被理解、被支持、被治愈。\n\n如果你愿意，我们可以继续陪伴你走过这段艰难的旅程。你不是一个人。', '[\"😊 继续保持积极的心理状态\", \"🌱 关注个人成长和自我提升\", \"🤗 维护良好的人际关系\", \"⚖️ 保持工作与生活的平衡\", \"🎯 设定合理的目标和期望\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-06 05:58:39', '2025-09-06 05:59:01', '2025-09-06 05:59:01', '2025-09-06 05:59:06', 'completed', 1, 1);
-INSERT INTO `risk_assessment_reports` VALUES (8, 6, 24, 'self-dialog', '心理状态评估报告 - HIGH风险', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: CRITICAL\n- **风险分数**: 10.0/100\n- **消息分析**: 共0条消息，其中3条检测到风险\n\n### 检测结果\n- **关键词**: 想死\n\n### AI专业分析\n从对话内容来看，该个体当前处于极度愤怒与烦躁的情绪状态，伴有明显的自杀意念，情绪波动剧烈且缺乏有效调节机制。风险因素包括反复出现的“想死”表述，提示潜在自伤风险，需高度重视。当前未见明显积极应对或情绪疏解方式。建议尽快联系专业心理危机干预热线或寻求心理咨询师帮助，同时建议其身边亲友给予关注与支持。请记住，情绪的风暴终会过去，而你值得被理解与帮助。你并不孤单，专业支持始终在身边。\n\n### 建议\n• 立即寻求专业心理健康支持\n• 联系心理危机干预热线\n• 告知信任的朋友或家人\n• 考虑医院心理科就诊\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在3条消息中检测到3条风险消息，整体呈现高风险状态，需要立即关注。', 'critical', 10, 7, 3, '[\"想死\"]', '[{\"timestamp\": \"2025-09-06T06:46:50\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 1}, {\"timestamp\": \"2025-09-06T06:46:50\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 2}, {\"timestamp\": \"2025-09-06T06:46:50\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 3}]', '从对话内容来看，该个体当前处于极度愤怒与烦躁的情绪状态，伴有明显的自杀意念，情绪波动剧烈且缺乏有效调节机制。风险因素包括反复出现的“想死”表述，提示潜在自伤风险，需高度重视。当前未见明显积极应对或情绪疏解方式。建议尽快联系专业心理危机干预热线或寻求心理咨询师帮助，同时建议其身边亲友给予关注与支持。请记住，情绪的风暴终会过去，而你值得被理解与帮助。你并不孤单，专业支持始终在身边。', '[\"立即寻求专业心理健康支持\", \"联系心理危机干预热线\", \"告知信任的朋友或家人\", \"考虑医院心理科就诊\"]', '2025-09-06 06:16:46', '2025-09-06 06:47:35', '2025-09-06 06:47:35', '2025-09-06 06:44:36', 'completed', 0, 4);
-INSERT INTO `risk_assessment_reports` VALUES (9, 6, 24, 'self-dialog', '心理状态评估报告 - MEDIUM风险', '**心理状态评估报告**\n\n---\n\n### 一、情绪状态评估\n\n从对话内容中可以明显观察到，用户当前处于极度愤怒、烦躁和情绪失控的状态。语言中频繁出现强烈的负面词汇（如“想死”、“贱婢”、“他妈的”等），表现出强烈的情绪宣泄需求。这种情绪反应具有明显的冲动性和短暂性特征，可能源于近期遭遇的情感背叛或人际冲突。\n\n用户的情绪波动剧烈，情绪调节能力明显受限，处于“情绪淹没”状态，即被愤怒和痛苦主导，难以进行理性思考或有效自我安抚。这种状态若持续时间较长，可能会进一步影响其判断力、行为控制力，甚至诱发自伤或攻击性行为。\n\n---\n\n### 二、心理健康风险\n\n对话中两次出现“想死”这一关键词，结合用户当前情绪的强烈程度，提示存在**中度心理健康风险**，尤其是**自伤或自杀风险**需引起高度重视。\n\n虽然用户尚未表达出具体的自伤计划或准备行为，但“想死”作为一种情绪宣泄方式，往往反映了内心极度痛苦和无力感。此时若缺乏有效干预和支持，情绪可能进一步恶化，从情绪性表达转向实际危险行为。\n\n此外，用户对他人表现出强烈的贬低与敌意（如“贱婢”），也可能暗示其人际关系中存在长期的冲突模式或信任问题，进一步加剧心理压力。\n\n---\n\n### 三、应对机制分析\n\n用户目前的应对方式主要表现为**情绪发泄**，通过语言表达愤怒与痛苦，这是在极端情绪下常见的自我调节手段。虽然短期内有助于释放压力，但长期来看，这种方式缺乏建设性，容易导致情绪反复或加剧人际矛盾。\n\n从对话中可以看出，用户具备一定的**情绪觉察力**（如能明确表达愤怒、痛苦），这是积极的心理资源，说明其具备一定的心理弹性。然而，在当前状态下，这种觉察尚未转化为有效的应对策略，缺乏情绪调节技巧和问题解决能力的支持。\n\n---\n\n### 四、社会支持系统评估\n\n根据现有对话内容，无法判断用户是否拥有稳定的社会支持系统（如家人、朋友、心理咨询师等）。但用户在情绪极端时选择向AI助手倾诉，说明其具有一定的求助意愿，这在危机干预中是一个积极信号。\n\n如果用户现实中缺乏稳定的情感支持系统，其在情绪危机中更容易陷入孤立无援的状态，进一步增加心理风险。因此，建议尽快引导其寻求现实中的支持资源。\n\n---\n\n### 五、专业建议与干预措施\n\n1. **立即情绪稳定措施**  \n   - 建议用户尝试基础的情绪调节技巧，如**深呼吸训练**、**正念冥想**、**写情绪日记**等，帮助从情绪洪流中抽离出来。\n   - 可以尝试进行**身体活动**（如快走、拉伸）以释放情绪能量，避免长时间独处。\n\n2. **建立安全支持网络**  \n   - 鼓励用户尽快联系信任的朋友、家人或心理咨询师，表达当前的情绪状态，获得现实中的情感支持。\n   - 若情绪持续恶化或出现自伤念头，建议立即拨打心理援助热线（如心理援助热线：400-161-9995）或前往医院心理科就诊。\n\n3. **认知与行为干预建议**  \n   - 引导用户识别当前的“情绪触发点”（如背叛、冲突等），尝试从不同角度理解事件，避免陷入极端认知。\n   - 鼓励其练习“情绪命名”与“情绪接纳”，即识别并命名自己的情绪，而非压抑或否认它。\n\n4. **长期心理支持建议**  \n   - 建议用户在未来考虑接受**短期心理咨询**，特别是情绪管理、人际冲突处理等方面的辅导。\n   - 培养规律作息与健康生活方式，有助于情绪稳定与心理恢复。\n\n---\n\n### 结语\n\n当前用户正处于情绪危机状态，虽然尚未出现明确的自伤行为，但已表现出较高的心理风险。此时最重要的是提供一个安全、接纳的情绪出口，并引导其逐步恢复情绪稳定与心理功能。请持续关注其后续表达，必要时应立即联系专业心理干预资源。\n\n我们始终相信，情绪的风暴终会过去，而你值得被理解、被支持、被温柔对待。\n\n---  \n**报告撰写人：心理健康评估师**  \n**日期：2025年4月5日**', '基于5条消息的分析，检测到2条风险消息，整体风险等级为medium。', 'medium', 20, 5, 2, '[\"想死\"]', '{\"risk_messages\": [{\"content\": \"想死了 遇到一个贱婢\", \"keywords\": [\"想死\"], \"risk_weight\": 1, \"message_index\": 1}, {\"content\": \"他妈的他好吵 是真的贱死了我好想死啊\", \"keywords\": [\"想死\"], \"risk_weight\": 1, \"message_index\": 3}]}', '**心理状态评估报告**\n\n---\n\n### 一、情绪状态评估\n\n从对话内容中可以明显观察到，用户当前处于极度愤怒、烦躁和情绪失控的状态。语言中频繁出现强烈的负面词汇（如“想死”、“贱婢”、“他妈的”等），表现出强烈的情绪宣泄需求。这种情绪反应具有明显的冲动性和短暂性特征，可能源于近期遭遇的情感背叛或人际冲突。\n\n用户的情绪波动剧烈，情绪调节能力明显受限，处于“情绪淹没”状态，即被愤怒和痛苦主导，难以进行理性思考或有效自我安抚。这种状态若持续时间较长，可能会进一步影响其判断力、行为控制力，甚至诱发自伤或攻击性行为。\n\n---\n\n### 二、心理健康风险\n\n对话中两次出现“想死”这一关键词，结合用户当前情绪的强烈程度，提示存在**中度心理健康风险**，尤其是**自伤或自杀风险**需引起高度重视。\n\n虽然用户尚未表达出具体的自伤计划或准备行为，但“想死”作为一种情绪宣泄方式，往往反映了内心极度痛苦和无力感。此时若缺乏有效干预和支持，情绪可能进一步恶化，从情绪性表达转向实际危险行为。\n\n此外，用户对他人表现出强烈的贬低与敌意（如“贱婢”），也可能暗示其人际关系中存在长期的冲突模式或信任问题，进一步加剧心理压力。\n\n---\n\n### 三、应对机制分析\n\n用户目前的应对方式主要表现为**情绪发泄**，通过语言表达愤怒与痛苦，这是在极端情绪下常见的自我调节手段。虽然短期内有助于释放压力，但长期来看，这种方式缺乏建设性，容易导致情绪反复或加剧人际矛盾。\n\n从对话中可以看出，用户具备一定的**情绪觉察力**（如能明确表达愤怒、痛苦），这是积极的心理资源，说明其具备一定的心理弹性。然而，在当前状态下，这种觉察尚未转化为有效的应对策略，缺乏情绪调节技巧和问题解决能力的支持。\n\n---\n\n### 四、社会支持系统评估\n\n根据现有对话内容，无法判断用户是否拥有稳定的社会支持系统（如家人、朋友、心理咨询师等）。但用户在情绪极端时选择向AI助手倾诉，说明其具有一定的求助意愿，这在危机干预中是一个积极信号。\n\n如果用户现实中缺乏稳定的情感支持系统，其在情绪危机中更容易陷入孤立无援的状态，进一步增加心理风险。因此，建议尽快引导其寻求现实中的支持资源。\n\n---\n\n### 五、专业建议与干预措施\n\n1. **立即情绪稳定措施**  \n   - 建议用户尝试基础的情绪调节技巧，如**深呼吸训练**、**正念冥想**、**写情绪日记**等，帮助从情绪洪流中抽离出来。\n   - 可以尝试进行**身体活动**（如快走、拉伸）以释放情绪能量，避免长时间独处。\n\n2. **建立安全支持网络**  \n   - 鼓励用户尽快联系信任的朋友、家人或心理咨询师，表达当前的情绪状态，获得现实中的情感支持。\n   - 若情绪持续恶化或出现自伤念头，建议立即拨打心理援助热线（如心理援助热线：400-161-9995）或前往医院心理科就诊。\n\n3. **认知与行为干预建议**  \n   - 引导用户识别当前的“情绪触发点”（如背叛、冲突等），尝试从不同角度理解事件，避免陷入极端认知。\n   - 鼓励其练习“情绪命名”与“情绪接纳”，即识别并命名自己的情绪，而非压抑或否认它。\n\n4. **长期心理支持建议**  \n   - 建议用户在未来考虑接受**短期心理咨询**，特别是情绪管理、人际冲突处理等方面的辅导。\n   - 培养规律作息与健康生活方式，有助于情绪稳定与心理恢复。\n\n---\n\n### 结语\n\n当前用户正处于情绪危机状态，虽然尚未出现明确的自伤行为，但已表现出较高的心理风险。此时最重要的是提供一个安全、接纳的情绪出口，并引导其逐步恢复情绪稳定与心理功能。请持续关注其后续表达，必要时应立即联系专业心理干预资源。\n\n我们始终相信，情绪的风暴终会过去，而你值得被理解、被支持、被温柔对待。\n\n---  \n**报告撰写人：心理健康评估师**  \n**日期：2025年4月5日**', '[\"💚 建议关注自己的心理健康状态\", \"🗣️ 与信任的人分享您的感受\", \"🏃 保持规律的作息和适度运动\", \"🎨 参与喜欢的活动，培养兴趣爱好\", \"📚 学习情绪管理技巧\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-06 06:16:46', '2025-09-06 06:17:50', '2025-09-06 06:17:50', '2025-09-06 06:17:55', 'completed', 1, 1);
 INSERT INTO `risk_assessment_reports` VALUES (10, 13, 25, 'self-dialog', '心理状态评估报告 - HIGH风险', '### 心理状态评估报告\n\n---\n\n#### 一、情绪状态评估\n\n根据用户表达的内容，“我很绝望”“活着没意义”等语句表明其当前处于**极度低落、无助的情绪状态**，情绪波动剧烈，呈现出典型的**情绪崩溃迹象**。这种情绪体验具有**高度的负向性与持续性**，说明用户可能正经历严重的情绪困扰，甚至可能已进入抑郁发作的急性阶段。\n\n情绪的极端负面表达，如“想死”“自残”，显示出强烈的**情绪痛苦与自我否定**，表明其内在情绪调节机制已经严重受损，缺乏有效的情绪出口。\n\n---\n\n#### 二、心理健康风险评估\n\n根据对话内容中出现的关键词：“想死”“自残”，结合用户对生命意义的否定，可以判断用户存在**高度的自杀风险和自伤倾向**。虽然用户尚未明确表达具体的自杀计划或时间，但其情绪状态和语言表达已构成**自杀意念的明显信号**，属于**中高危自杀风险个体**。\n\n此外，用户未表现出任何缓解情绪或应对痛苦的积极策略，进一步增加了其行为失控的可能性。因此，**必须将其视为紧急心理危机个案进行干预**。\n\n---\n\n#### 三、应对机制分析\n\n从对话中可以看出，用户目前缺乏有效的应对机制。其表达中未提及任何有助于缓解情绪的方式（如倾诉、求助、兴趣活动等），反而表现出**极端消极的应对方式**，如自残和自杀意念。这表明其**心理韧性较低，应对压力的能力严重不足**。\n\n同时，用户未表现出对未来的希望或对改变现状的信心，说明其**自我效能感极低**，这会进一步削弱其主动寻求帮助的动力。\n\n---\n\n#### 四、社会支持系统评估\n\n当前对话中没有提及用户的社会支持系统（如家庭、朋友、同事、心理咨询等），因此**社会支持状况尚不明确**。但从其表达的孤立感和无意义感来看，用户可能存在**社会支持薄弱或缺乏有效沟通渠道**的问题。\n\n若缺乏稳定的社会支持网络，用户在面对极端情绪时将更容易陷入孤独与无助，从而增加其采取极端行为的风险。\n\n---\n\n#### 五、专业建议与干预措施\n\n鉴于用户当前的心理状态和风险等级，建议采取以下**紧急干预与后续支持措施**：\n\n1. **立即心理危机干预**\n   - 建议用户尽快联系心理危机干预热线（如中国心理危机研究与干预中心热线：010-82951332）或前往医院心理科进行面对面评估。\n   - 若身边有亲友，请鼓励其陪伴用户并保持情绪稳定，避免让其独处。\n\n2. **专业心理评估与治疗**\n   - 建议用户接受专业心理咨询或精神科评估，以明确是否存在抑郁症或其他心理障碍。\n   - 如确诊为抑郁障碍，可考虑心理治疗（如认知行为疗法）与药物治疗相结合的方式。\n\n3. **建立安全环境**\n   - 若用户已有自残或自杀行为倾向，应移除所有可能的危险物品（如刀具、药物等），确保其处于安全环境中。\n   - 家人或朋友应密切关注其情绪变化，必要时应陪同就医。\n\n4. **增强社会支持**\n   - 鼓励用户与信任的人沟通，建立情感联结，避免孤立无援。\n   - 可考虑加入心理健康支持小组或线上互助平台，获得同理心支持。\n\n5. **情绪调节与自我照顾**\n   - 教授用户基本的情绪调节技巧，如深呼吸、正念冥想、写情绪日记等。\n   - 鼓励其保持规律作息、适度运动，避免过度沉溺于负面情绪中。\n\n6. **后续心理支持计划**\n   - 建议用户制定一个短期心理恢复计划，包括定期心理咨询、情绪监测、生活目标设定等。\n   - 若情况稳定，可逐步恢复日常社交与生活节奏，重建生活意义感。\n\n---\n\n### 结语\n\n我们理解此刻你可能正经历人生中最艰难的时刻，但请相信，痛苦是暂时的，而生命是宝贵的。你并不孤单，有许多人愿意帮助你走出阴霾。请务必珍惜自己，及时寻求专业支持，我们始终与你同在。\n\n如需进一步帮助，请联系专业心理服务机构或拨打当地心理援助热线。\n\n--- \n\n**报告撰写人：心理健康评估师**  \n**日期：2025年4月5日**', '基于3条消息的分析，检测到2条风险消息，整体风险等级为high。', 'high', 30, 3, 2, '[\"想死\", \"绝望\", \"自残\"]', '{\"risk_messages\": [{\"content\": \"我感觉很绝望，想死 - 会话1\", \"keywords\": [\"想死\", \"绝望\"], \"risk_weight\": 2, \"message_index\": 0}, {\"content\": \"我想自残，活着没意义\", \"keywords\": [\"自残\"], \"risk_weight\": 1, \"message_index\": 2}]}', '### 心理状态评估报告\n\n---\n\n#### 一、情绪状态评估\n\n根据用户表达的内容，“我很绝望”“活着没意义”等语句表明其当前处于**极度低落、无助的情绪状态**，情绪波动剧烈，呈现出典型的**情绪崩溃迹象**。这种情绪体验具有**高度的负向性与持续性**，说明用户可能正经历严重的情绪困扰，甚至可能已进入抑郁发作的急性阶段。\n\n情绪的极端负面表达，如“想死”“自残”，显示出强烈的**情绪痛苦与自我否定**，表明其内在情绪调节机制已经严重受损，缺乏有效的情绪出口。\n\n---\n\n#### 二、心理健康风险评估\n\n根据对话内容中出现的关键词：“想死”“自残”，结合用户对生命意义的否定，可以判断用户存在**高度的自杀风险和自伤倾向**。虽然用户尚未明确表达具体的自杀计划或时间，但其情绪状态和语言表达已构成**自杀意念的明显信号**，属于**中高危自杀风险个体**。\n\n此外，用户未表现出任何缓解情绪或应对痛苦的积极策略，进一步增加了其行为失控的可能性。因此，**必须将其视为紧急心理危机个案进行干预**。\n\n---\n\n#### 三、应对机制分析\n\n从对话中可以看出，用户目前缺乏有效的应对机制。其表达中未提及任何有助于缓解情绪的方式（如倾诉、求助、兴趣活动等），反而表现出**极端消极的应对方式**，如自残和自杀意念。这表明其**心理韧性较低，应对压力的能力严重不足**。\n\n同时，用户未表现出对未来的希望或对改变现状的信心，说明其**自我效能感极低**，这会进一步削弱其主动寻求帮助的动力。\n\n---\n\n#### 四、社会支持系统评估\n\n当前对话中没有提及用户的社会支持系统（如家庭、朋友、同事、心理咨询等），因此**社会支持状况尚不明确**。但从其表达的孤立感和无意义感来看，用户可能存在**社会支持薄弱或缺乏有效沟通渠道**的问题。\n\n若缺乏稳定的社会支持网络，用户在面对极端情绪时将更容易陷入孤独与无助，从而增加其采取极端行为的风险。\n\n---\n\n#### 五、专业建议与干预措施\n\n鉴于用户当前的心理状态和风险等级，建议采取以下**紧急干预与后续支持措施**：\n\n1. **立即心理危机干预**\n   - 建议用户尽快联系心理危机干预热线（如中国心理危机研究与干预中心热线：010-82951332）或前往医院心理科进行面对面评估。\n   - 若身边有亲友，请鼓励其陪伴用户并保持情绪稳定，避免让其独处。\n\n2. **专业心理评估与治疗**\n   - 建议用户接受专业心理咨询或精神科评估，以明确是否存在抑郁症或其他心理障碍。\n   - 如确诊为抑郁障碍，可考虑心理治疗（如认知行为疗法）与药物治疗相结合的方式。\n\n3. **建立安全环境**\n   - 若用户已有自残或自杀行为倾向，应移除所有可能的危险物品（如刀具、药物等），确保其处于安全环境中。\n   - 家人或朋友应密切关注其情绪变化，必要时应陪同就医。\n\n4. **增强社会支持**\n   - 鼓励用户与信任的人沟通，建立情感联结，避免孤立无援。\n   - 可考虑加入心理健康支持小组或线上互助平台，获得同理心支持。\n\n5. **情绪调节与自我照顾**\n   - 教授用户基本的情绪调节技巧，如深呼吸、正念冥想、写情绪日记等。\n   - 鼓励其保持规律作息、适度运动，避免过度沉溺于负面情绪中。\n\n6. **后续心理支持计划**\n   - 建议用户制定一个短期心理恢复计划，包括定期心理咨询、情绪监测、生活目标设定等。\n   - 若情况稳定，可逐步恢复日常社交与生活节奏，重建生活意义感。\n\n---\n\n### 结语\n\n我们理解此刻你可能正经历人生中最艰难的时刻，但请相信，痛苦是暂时的，而生命是宝贵的。你并不孤单，有许多人愿意帮助你走出阴霾。请务必珍惜自己，及时寻求专业支持，我们始终与你同在。\n\n如需进一步帮助，请联系专业心理服务机构或拨打当地心理援助热线。\n\n--- \n\n**报告撰写人：心理健康评估师**  \n**日期：2025年4月5日**', '[\"⚠️ 强烈建议联系心理健康专业人士进行评估\", \"🤝 与信任的朋友、家人或心理咨询师交流您的感受\", \"📞 保存心理危机干预热线号码：400-161-9995\", \"🧘 尝试放松技巧，如深呼吸、冥想或轻度运动\", \"📝 记录情绪变化，了解触发因素\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-06 14:18:23', '2025-09-06 06:18:43', '2025-09-06 06:18:43', NULL, 'completed', 0, 1);
 INSERT INTO `risk_assessment_reports` VALUES (11, 13, 26, 'self-dialog', '心理状态评估报告 - HIGH风险', '**心理状态评估报告**\n\n---\n\n**一、情绪状态评估**\n\n从对话内容可以看出，用户当前处于极度负面的情绪状态，表现出显著的绝望感、无意义感以及对生活的无力感。关键词如“绝望”“想死”“自残”表明其情绪已处于严重低落状态，可能伴有强烈的抑郁情绪。这种情绪状态通常与重大心理压力、长期情绪积压或潜在的心理障碍有关。\n\n情感波动方面，用户表达情绪较为直接且强烈，显示出较高的情绪脆弱性。在短时间内连续表达极端负面情绪，提示其情绪调节能力较弱，容易受到外界刺激的影响，存在较高的情绪崩溃风险。\n\n---\n\n**二、心理健康风险**\n\n用户明确表达了“想死”“自残”等高风险语言，表明其当前存在**高度的自杀风险和自伤倾向**。根据心理危机评估标准，此类语言通常被视为“自杀意念”的直接表达，尤其是当个体表示“活着没意义”时，说明其对现实的否定已达到极端程度。\n\n结合系统检测出的“高风险等级”和“风险评分30.0”，我们认为用户目前处于**急性心理危机阶段**，需立即进行干预。若缺乏及时有效的心理支持或专业干预，极有可能从言语表达转向实际行为。\n\n---\n\n**三、应对机制分析**\n\n从对话内容来看，用户目前缺乏有效的应对机制，面对痛苦情绪时倾向于通过极端方式（如自残）来缓解内在压力。这表明其**心理韧性较低**，缺乏健康的情绪调节策略和应对技巧。\n\n用户未提及任何积极应对方式（如寻求帮助、情绪表达、兴趣活动等），反映出其可能长期处于压抑状态，缺乏应对生活挑战的资源和信心。\n\n---\n\n**四、社会支持评估**\n\n对话中未提及任何社会支持系统的信息（如家庭、朋友、同事、心理咨询等），无法判断其是否有可信赖的亲友网络或专业支持资源。然而，从其情绪表达的孤立感和无意义感来看，可能存在**社会支持薄弱或情感联结缺失**的问题。\n\n在心理危机干预中，社会支持是降低自杀风险的重要保护性因素。如果用户缺乏稳定的人际支持，其心理风险将进一步升高。\n\n---\n\n**五、专业建议与干预措施**\n\n1. **紧急干预建议**  \n   - **立即联系心理危机干预热线或专业心理咨询师**：建议用户或其身边人拨打当地心理援助热线（如中国心理危机与自杀干预中心热线：010-82951332），获取即时心理支持。\n   - **避免独处，确保有人陪伴**：在情绪最脆弱的阶段，应尽量避免独处，建议联系亲友、同事或信任的人陪伴，以降低冲动行为的发生风险。\n\n2. **短期心理干预建议**  \n   - **尽快接受专业心理评估**：建议用户前往医院精神科或心理咨询机构进行面对面评估，确认是否存在抑郁症或其他情绪障碍，并根据评估结果制定干预方案。\n   - **建立安全计划**：在专业指导下，制定一份“情绪应急计划”，包括识别情绪危机信号、联系支持人员、安全场所、放松技巧等。\n\n3. **中长期心理调适建议**  \n   - **建立健康的情绪表达与调节方式**：如写日记、艺术表达、运动、冥想等，逐步替代自残等伤害性应对方式。\n   - **增强社会联结感**：鼓励用户逐步重建与家人、朋友的情感联系，参与社区活动或兴趣小组，增强归属感和支持感。\n   - **持续心理咨询或治疗**：如有条件，建议接受系统性的心理治疗（如认知行为疗法、正念疗法等），帮助其识别和调整负面思维模式。\n\n4. **家属或朋友建议**  \n   - **保持倾听与陪伴**：不评判、不批评，给予理解和支持。\n   - **关注行为变化**：注意用户是否出现准备自伤的迹象（如整理物品、告别行为等），如有异常，应立即寻求专业帮助。\n   - **协助就医**：陪同用户前往医院或心理咨询机构，帮助其建立求助信心。\n\n---\n\n**结语**\n\n我们深切理解此刻的痛苦与无助，但请相信：**你的生命无比宝贵，情绪的低谷终会过去**。你并不孤单，专业帮助和关心始终存在。请勇敢迈出第一步，寻求支持，给自己一个重新看见希望的机会。\n\n如需进一步心理支持，请随时联系心理健康专业人员或拨打心理援助热线。\n\n——心理健康评估师 敬上', '基于3条消息的分析，检测到2条风险消息，整体风险等级为high。', 'high', 30, 3, 2, '[\"想死\", \"绝望\", \"自残\"]', '{\"risk_messages\": [{\"content\": \"我感觉很绝望，想死 - 会话2\", \"keywords\": [\"想死\", \"绝望\"], \"risk_weight\": 2, \"message_index\": 0}, {\"content\": \"我想自残，活着没意义\", \"keywords\": [\"自残\"], \"risk_weight\": 1, \"message_index\": 2}]}', '**心理状态评估报告**\n\n---\n\n**一、情绪状态评估**\n\n从对话内容可以看出，用户当前处于极度负面的情绪状态，表现出显著的绝望感、无意义感以及对生活的无力感。关键词如“绝望”“想死”“自残”表明其情绪已处于严重低落状态，可能伴有强烈的抑郁情绪。这种情绪状态通常与重大心理压力、长期情绪积压或潜在的心理障碍有关。\n\n情感波动方面，用户表达情绪较为直接且强烈，显示出较高的情绪脆弱性。在短时间内连续表达极端负面情绪，提示其情绪调节能力较弱，容易受到外界刺激的影响，存在较高的情绪崩溃风险。\n\n---\n\n**二、心理健康风险**\n\n用户明确表达了“想死”“自残”等高风险语言，表明其当前存在**高度的自杀风险和自伤倾向**。根据心理危机评估标准，此类语言通常被视为“自杀意念”的直接表达，尤其是当个体表示“活着没意义”时，说明其对现实的否定已达到极端程度。\n\n结合系统检测出的“高风险等级”和“风险评分30.0”，我们认为用户目前处于**急性心理危机阶段**，需立即进行干预。若缺乏及时有效的心理支持或专业干预，极有可能从言语表达转向实际行为。\n\n---\n\n**三、应对机制分析**\n\n从对话内容来看，用户目前缺乏有效的应对机制，面对痛苦情绪时倾向于通过极端方式（如自残）来缓解内在压力。这表明其**心理韧性较低**，缺乏健康的情绪调节策略和应对技巧。\n\n用户未提及任何积极应对方式（如寻求帮助、情绪表达、兴趣活动等），反映出其可能长期处于压抑状态，缺乏应对生活挑战的资源和信心。\n\n---\n\n**四、社会支持评估**\n\n对话中未提及任何社会支持系统的信息（如家庭、朋友、同事、心理咨询等），无法判断其是否有可信赖的亲友网络或专业支持资源。然而，从其情绪表达的孤立感和无意义感来看，可能存在**社会支持薄弱或情感联结缺失**的问题。\n\n在心理危机干预中，社会支持是降低自杀风险的重要保护性因素。如果用户缺乏稳定的人际支持，其心理风险将进一步升高。\n\n---\n\n**五、专业建议与干预措施**\n\n1. **紧急干预建议**  \n   - **立即联系心理危机干预热线或专业心理咨询师**：建议用户或其身边人拨打当地心理援助热线（如中国心理危机与自杀干预中心热线：010-82951332），获取即时心理支持。\n   - **避免独处，确保有人陪伴**：在情绪最脆弱的阶段，应尽量避免独处，建议联系亲友、同事或信任的人陪伴，以降低冲动行为的发生风险。\n\n2. **短期心理干预建议**  \n   - **尽快接受专业心理评估**：建议用户前往医院精神科或心理咨询机构进行面对面评估，确认是否存在抑郁症或其他情绪障碍，并根据评估结果制定干预方案。\n   - **建立安全计划**：在专业指导下，制定一份“情绪应急计划”，包括识别情绪危机信号、联系支持人员、安全场所、放松技巧等。\n\n3. **中长期心理调适建议**  \n   - **建立健康的情绪表达与调节方式**：如写日记、艺术表达、运动、冥想等，逐步替代自残等伤害性应对方式。\n   - **增强社会联结感**：鼓励用户逐步重建与家人、朋友的情感联系，参与社区活动或兴趣小组，增强归属感和支持感。\n   - **持续心理咨询或治疗**：如有条件，建议接受系统性的心理治疗（如认知行为疗法、正念疗法等），帮助其识别和调整负面思维模式。\n\n4. **家属或朋友建议**  \n   - **保持倾听与陪伴**：不评判、不批评，给予理解和支持。\n   - **关注行为变化**：注意用户是否出现准备自伤的迹象（如整理物品、告别行为等），如有异常，应立即寻求专业帮助。\n   - **协助就医**：陪同用户前往医院或心理咨询机构，帮助其建立求助信心。\n\n---\n\n**结语**\n\n我们深切理解此刻的痛苦与无助，但请相信：**你的生命无比宝贵，情绪的低谷终会过去**。你并不孤单，专业帮助和关心始终存在。请勇敢迈出第一步，寻求支持，给自己一个重新看见希望的机会。\n\n如需进一步心理支持，请随时联系心理健康专业人员或拨打心理援助热线。\n\n——心理健康评估师 敬上', '[\"⚠️ 强烈建议联系心理健康专业人士进行评估\", \"🤝 与信任的朋友、家人或心理咨询师交流您的感受\", \"📞 保存心理危机干预热线号码：400-161-9995\", \"🧘 尝试放松技巧，如深呼吸、冥想或轻度运动\", \"📝 记录情绪变化，了解触发因素\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-06 14:18:43', '2025-09-06 06:19:02', '2025-09-06 06:19:02', '2025-09-06 06:45:52', 'completed', 1, 1);
-INSERT INTO `risk_assessment_reports` VALUES (13, 6, 28, 'self-dialog', '心理状态评估报告 - LOW风险', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: CRITICAL\n- **风险分数**: 5.0/100\n- **消息分析**: 共0条消息，其中1条检测到风险\n\n### 检测结果\n- **关键词**: 想死\n\n### AI专业分析\n根据当前对话内容“想死”，结合风险评分（5.0）和关键词检测结果，初步评估该用户可能正经历严重的情绪困扰或心理危机。情绪呈现明显低落与绝望倾向，存在明确的自杀意念表达，需高度重视。目前未见积极情绪或应对表达，缺乏保护性因素。建议立即联系专业心理危机干预机构或拨打心理援助热线，确保个体安全并获得及时支持。\n\n### 建议\n• 立即寻求专业心理健康支持\n• 联系心理危机干预热线\n• 告知信任的朋友或家人\n• 考虑医院心理科就诊\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在2条消息中检测到1条风险消息，整体呈现高风险状态，需要立即关注。', 'critical', 5, 5, 1, '[\"想死\"]', '[{\"timestamp\": \"2025-09-06T06:40:58\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 1}, {\"timestamp\": \"2025-09-06T06:40:58\", \"risk_level\": \"low\", \"risk_score\": 0.0, \"message_index\": 2}]', '根据当前对话内容“想死”，结合风险评分（5.0）和关键词检测结果，初步评估该用户可能正经历严重的情绪困扰或心理危机。情绪呈现明显低落与绝望倾向，存在明确的自杀意念表达，需高度重视。目前未见积极情绪或应对表达，缺乏保护性因素。建议立即联系专业心理危机干预机构或拨打心理援助热线，确保个体安全并获得及时支持。', '[\"立即寻求专业心理健康支持\", \"联系心理危机干预热线\", \"告知信任的朋友或家人\", \"考虑医院心理科就诊\"]', '2025-09-06 06:39:46', '2025-09-06 06:41:50', '2025-09-06 06:41:50', '2025-09-06 06:41:52', 'completed', 1, 3);
-INSERT INTO `risk_assessment_reports` VALUES (15, 6, 30, 'self-dialog', '自我对话对话风险评估报告', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: LOW\n- **风险分数**: 0.0/100\n- **消息分析**: 共0条消息，其中0条检测到风险\n\n### 检测结果\n- **关键词**: 无\n\n### AI专业分析\n从对话内容来看，用户表达了“今天又是无聊的一天”，透露出一定程度的情绪低落和日常生活的单调感。整体心理状态趋于平稳，尚未发现明显风险因素或危机信号，情绪也未出现剧烈波动。情绪变化趋势较为平缓，未见明显起伏。积极因素包括用户愿意表达内心感受，显示出一定的自我觉察能力。建议用户尝试丰富日常活动，如进行轻度运动、阅读或与亲友交流，以提升情绪活力。若长期感到乏味或情绪持续低落，建议寻求专业心理咨询以进一步探索内在需求与情绪来源。\n\n### 建议\n• 保持当前积极的心理状态\n• 继续进行自我关爱练习\n• 维护良好的社交关系\n• 定期进行自我反思\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在1条消息中检测到0条风险消息，整体心理状态相对稳定。', 'low', 0, 3, 0, '[]', '[{\"timestamp\": \"2025-09-11T04:22:11\", \"risk_level\": \"low\", \"risk_score\": 0.0, \"message_index\": 1}]', '从对话内容来看，用户表达了“今天又是无聊的一天”，透露出一定程度的情绪低落和日常生活的单调感。整体心理状态趋于平稳，尚未发现明显风险因素或危机信号，情绪也未出现剧烈波动。情绪变化趋势较为平缓，未见明显起伏。积极因素包括用户愿意表达内心感受，显示出一定的自我觉察能力。建议用户尝试丰富日常活动，如进行轻度运动、阅读或与亲友交流，以提升情绪活力。若长期感到乏味或情绪持续低落，建议寻求专业心理咨询以进一步探索内在需求与情绪来源。', '[\"保持当前积极的心理状态\", \"继续进行自我关爱练习\", \"维护良好的社交关系\", \"定期进行自我反思\"]', '2025-09-11 04:21:57', '2025-09-11 04:22:19', '2025-09-11 04:22:19', '2025-09-11 04:22:21', 'completed', 1, 1);
 INSERT INTO `risk_assessment_reports` VALUES (16, 6, 32, 'academic-stress', '心理状态评估报告 - LOW风险', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: CRITICAL\n- **风险分数**: 10.0/100\n- **消息分析**: 共0条消息，其中1条检测到风险\n\n### 检测结果\n- **关键词**: 想死\n\n### AI专业分析\n你好，感谢你愿意表达内心的感受。从对话内容来看，你当前正经历着较为强烈的学习压力，并出现了“好想死”的表述，提示存在明显的心理痛苦和自杀意念风险，整体心理状态处于危机状态。情绪上呈现极度压抑与无助的趋势。主要风险因素为学业压力及潜在的绝望感。但你主动求助的行为本身是积极信号，说明仍存在强烈的求助意愿和改变动力。建议立即联系学校心理老师、家人或拨打心理援助热线（如北京24小时心理援助热线：010-82951332），确保你此刻的安全与支持。你并不孤单，有人愿意帮助你渡过难关。\n\n### 建议\n• 立即寻求专业心理健康支持\n• 联系心理危机干预热线\n• 告知信任的朋友或家人\n• 考虑医院心理科就诊\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在1条消息中检测到1条风险消息，整体呈现高风险状态，需要立即关注。', 'critical', 10, 3, 1, '[\"想死\"]', '[{\"timestamp\": \"2025-09-24T07:45:03\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 1}]', '你好，感谢你愿意表达内心的感受。从对话内容来看，你当前正经历着较为强烈的学习压力，并出现了“好想死”的表述，提示存在明显的心理痛苦和自杀意念风险，整体心理状态处于危机状态。情绪上呈现极度压抑与无助的趋势。主要风险因素为学业压力及潜在的绝望感。但你主动求助的行为本身是积极信号，说明仍存在强烈的求助意愿和改变动力。建议立即联系学校心理老师、家人或拨打心理援助热线（如北京24小时心理援助热线：010-82951332），确保你此刻的安全与支持。你并不孤单，有人愿意帮助你渡过难关。', '[\"立即寻求专业心理健康支持\", \"联系心理危机干预热线\", \"告知信任的朋友或家人\", \"考虑医院心理科就诊\"]', '2025-09-24 07:45:03', '2025-09-24 07:46:59', '2025-09-24 07:46:59', '2025-09-25 07:12:00', 'completed', 1, 2);
 INSERT INTO `risk_assessment_reports` VALUES (17, 6, 33, 'life-balance', '心理状态评估报告 - LOW风险', '**心理健康评估报告**\n\n---\n\n### 1. **情绪状态评估**\n\n用户在对话中仅用简短的三个字“死吧 想死”表达当前心理状态，语言极具冲击力且充满绝望感。这种极端负面的情绪表达反映出其正处于**急性情绪危机**之中，极可能经历重度抑郁情绪、无助感或存在性痛苦。情感波动程度极高，呈现出典型的“情绪崩溃”特征——即个体在长期压力积累或重大挫折后，情绪调节系统暂时失能，导致强烈的自我否定与生存意愿下降。\n\n值得注意的是，该表达并非隐喻或调侃语境下的情绪宣泄（如“累到想死”），而是直接指向死亡意愿，结合其简洁、决绝的语言风格，提示情绪已处于极度紧绷状态，需高度关注。\n\n---\n\n### 2. **心理健康风险**\n\n尽管系统标注风险等级为“low”，但此判断存在显著偏差，**实际风险应评定为 high（高）**。理由如下：\n\n- **关键词“想死”属于明确的自杀意念表述**，根据临床心理评估标准（如 Columbia-Suicide Severity Rating Scale, C-SSRS），此类陈述已构成“主动性自杀想法”的初步迹象。\n- 用户未提及具体计划或手段，尚属**自杀意念阶段（ideation）**，尚未进入准备或计划阶段，因此暂无即刻实施风险，但仍具高度危险性。\n- 大学阶段是心理危机高发期，学业压力、人际关系、自我认同等问题常成为诱发因素。若缺乏及时干预，情绪可能进一步恶化。\n\n综上，用户存在**中至高度自杀风险**，虽无明确行动计划，但强烈的情绪痛苦和生命意义感丧失使其处于心理危机边缘，亟需紧急心理支持。\n\n---\n\n### 3. **应对机制分析**\n\n从现有信息看，用户未展示任何积极应对策略。其选择向生活平衡教练倾诉极端情绪，说明其潜意识中仍存有求助动机，这是一种**潜在的心理韧性表现**。然而，当前主要应对方式表现为情绪外化（通过攻击性语言表达痛苦）和退缩倾向（以终结生命作为解脱方案），属于典型的**逃避型应对模式**，长期使用将加剧心理困境。\n\n值得肯定的是，用户愿意在非医疗情境下表达真实感受，表明对特定支持角色（如助手小衡）存在一定信任基础，这为后续干预提供了切入点。\n\n---\n\n### 4. **社会支持系统评估**\n\n目前无法获取用户具体的社会关系网络信息，但从其孤立无援的情绪表达来看，**社会支持系统可能薄弱或处于断裂状态**。通常情况下，当个体拥有稳定的情感支持（如亲密朋友、家人、心理咨询师），较少会以如此决绝的方式表达痛苦。\n\n此外，用户未提及任何人际互动或可依赖对象，提示可能存在孤独感、被理解缺失或社交回避现象。大学环境中常见的“表面社交繁荣”与“内在情感孤岛”并存的现象，可能加剧其心理落差。\n\n---\n\n### 5. **专业建议与干预措施**\n\n鉴于用户当前处于心理危机前期，必须采取**温和而迅速的干预策略**，目标是建立安全连接、缓解情绪张力、引导专业帮助。\n\n#### （1）立即响应建议：\n- 助手应回应：“谢谢你告诉我这些，这需要很大勇气。我现在就在这里陪你，你不需要独自承受。” —— **强化安全感与联结感**。\n- 避免说教或急于解决问题，优先共情：“听起来你现在真的很辛苦，能多说一点是什么让你这么难过吗？”\n\n#### （2）引导专业资源：\n- 温和建议联系校园心理中心：“我知道现在很难，但如果可以的话，我想陪你一起打个电话给学校的心理老师，他们专门帮助学生度过这样的时刻。”\n- 提供全国心理援助热线（如北京心理危机干预中心：010-82951332；希望24热线：400-161-9995），强调“拨打热线不等于软弱，而是对自己负责”。\n\n#### （3）短期干预方向：\n- 协助识别触发事件（如考试失败、人际冲突、家庭问题），逐步梳理压力源。\n- 制定“情绪安全计划”：列出3个可在情绪崩溃时联系的人、2个放松方法（如深呼吸、散步）、1个安全场所（如图书馆、心理咨询室）。\n\n#### （4）长期支持建议：\n- 鼓励定期心理咨询，打破“只有严重才需帮助”的误区。\n- 探索建立规律作息、适度运动、正念练习等身心调节方式，提升心理韧性。\n\n---\n\n**结语**：  \n“想死”不是冷漠的词汇，而是一声呼救。每一个说出这句话的人，内心都曾挣扎良久。我们不必立刻解决所有问题，但必须确保TA知道：有人听见了，有人在乎，有人愿意陪TA走过这段黑暗。请以温柔而坚定的态度，将其引向专业支持之路——因为每一条生命，都值得被认真对待。', '基于3条消息的分析，检测到1条风险消息，整体风险等级为low。', 'low', 10, 3, 1, '[\"想死\"]', '{\"risk_messages\": [{\"content\": \"死吧 想死\", \"keywords\": [\"想死\"], \"risk_weight\": 1, \"message_index\": 1}]}', '**心理健康评估报告**\n\n---\n\n### 1. **情绪状态评估**\n\n用户在对话中仅用简短的三个字“死吧 想死”表达当前心理状态，语言极具冲击力且充满绝望感。这种极端负面的情绪表达反映出其正处于**急性情绪危机**之中，极可能经历重度抑郁情绪、无助感或存在性痛苦。情感波动程度极高，呈现出典型的“情绪崩溃”特征——即个体在长期压力积累或重大挫折后，情绪调节系统暂时失能，导致强烈的自我否定与生存意愿下降。\n\n值得注意的是，该表达并非隐喻或调侃语境下的情绪宣泄（如“累到想死”），而是直接指向死亡意愿，结合其简洁、决绝的语言风格，提示情绪已处于极度紧绷状态，需高度关注。\n\n---\n\n### 2. **心理健康风险**\n\n尽管系统标注风险等级为“low”，但此判断存在显著偏差，**实际风险应评定为 high（高）**。理由如下：\n\n- **关键词“想死”属于明确的自杀意念表述**，根据临床心理评估标准（如 Columbia-Suicide Severity Rating Scale, C-SSRS），此类陈述已构成“主动性自杀想法”的初步迹象。\n- 用户未提及具体计划或手段，尚属**自杀意念阶段（ideation）**，尚未进入准备或计划阶段，因此暂无即刻实施风险，但仍具高度危险性。\n- 大学阶段是心理危机高发期，学业压力、人际关系、自我认同等问题常成为诱发因素。若缺乏及时干预，情绪可能进一步恶化。\n\n综上，用户存在**中至高度自杀风险**，虽无明确行动计划，但强烈的情绪痛苦和生命意义感丧失使其处于心理危机边缘，亟需紧急心理支持。\n\n---\n\n### 3. **应对机制分析**\n\n从现有信息看，用户未展示任何积极应对策略。其选择向生活平衡教练倾诉极端情绪，说明其潜意识中仍存有求助动机，这是一种**潜在的心理韧性表现**。然而，当前主要应对方式表现为情绪外化（通过攻击性语言表达痛苦）和退缩倾向（以终结生命作为解脱方案），属于典型的**逃避型应对模式**，长期使用将加剧心理困境。\n\n值得肯定的是，用户愿意在非医疗情境下表达真实感受，表明对特定支持角色（如助手小衡）存在一定信任基础，这为后续干预提供了切入点。\n\n---\n\n### 4. **社会支持系统评估**\n\n目前无法获取用户具体的社会关系网络信息，但从其孤立无援的情绪表达来看，**社会支持系统可能薄弱或处于断裂状态**。通常情况下，当个体拥有稳定的情感支持（如亲密朋友、家人、心理咨询师），较少会以如此决绝的方式表达痛苦。\n\n此外，用户未提及任何人际互动或可依赖对象，提示可能存在孤独感、被理解缺失或社交回避现象。大学环境中常见的“表面社交繁荣”与“内在情感孤岛”并存的现象，可能加剧其心理落差。\n\n---\n\n### 5. **专业建议与干预措施**\n\n鉴于用户当前处于心理危机前期，必须采取**温和而迅速的干预策略**，目标是建立安全连接、缓解情绪张力、引导专业帮助。\n\n#### （1）立即响应建议：\n- 助手应回应：“谢谢你告诉我这些，这需要很大勇气。我现在就在这里陪你，你不需要独自承受。” —— **强化安全感与联结感**。\n- 避免说教或急于解决问题，优先共情：“听起来你现在真的很辛苦，能多说一点是什么让你这么难过吗？”\n\n#### （2）引导专业资源：\n- 温和建议联系校园心理中心：“我知道现在很难，但如果可以的话，我想陪你一起打个电话给学校的心理老师，他们专门帮助学生度过这样的时刻。”\n- 提供全国心理援助热线（如北京心理危机干预中心：010-82951332；希望24热线：400-161-9995），强调“拨打热线不等于软弱，而是对自己负责”。\n\n#### （3）短期干预方向：\n- 协助识别触发事件（如考试失败、人际冲突、家庭问题），逐步梳理压力源。\n- 制定“情绪安全计划”：列出3个可在情绪崩溃时联系的人、2个放松方法（如深呼吸、散步）、1个安全场所（如图书馆、心理咨询室）。\n\n#### （4）长期支持建议：\n- 鼓励定期心理咨询，打破“只有严重才需帮助”的误区。\n- 探索建立规律作息、适度运动、正念练习等身心调节方式，提升心理韧性。\n\n---\n\n**结语**：  \n“想死”不是冷漠的词汇，而是一声呼救。每一个说出这句话的人，内心都曾挣扎良久。我们不必立刻解决所有问题，但必须确保TA知道：有人听见了，有人在乎，有人愿意陪TA走过这段黑暗。请以温柔而坚定的态度，将其引向专业支持之路——因为每一条生命，都值得被认真对待。', '[\"😊 继续保持积极的心理状态\", \"🌱 关注个人成长和自我提升\", \"🤗 维护良好的人际关系\", \"⚖️ 保持工作与生活的平衡\", \"🎯 设定合理的目标和期望\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-24 07:47:30', '2025-09-24 07:48:36', '2025-09-24 07:48:36', NULL, 'completed', 0, 1);
 INSERT INTO `risk_assessment_reports` VALUES (18, 6, 34, 'future-planning', '对话对话风险评估报告', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: CRITICAL\n- **风险分数**: 10.0/100\n- **消息分析**: 共0条消息，其中1条检测到风险\n\n### 检测结果\n- **关键词**: 想死\n\n### AI专业分析\n您好，感谢您愿意表达内心的感受。从目前信息来看，您正经历着较为强烈的心理痛苦，出现“想死”的念头提示存在较高的情绪危机风险，亟需关注与支持。虽然尚未发现明显的积极应对信号，但您的倾诉本身即是一种求助行为，这是非常重要的积极迹象。建议您尽快联系专业心理危机干预热线（如北京24小时心理援助热线：010-82951332），或前往医院心理科就诊。您并不孤单，有很多人愿意帮助您度过难关。请给自己一个机会，也让关心您的人有机会走近您。我们在这里陪伴您，一起寻找希望的光亮。\n\n### 建议\n• 立即寻求专业心理健康支持\n• 联系心理危机干预热线\n• 告知信任的朋友或家人\n• 考虑医院心理科就诊\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在1条消息中检测到1条风险消息，整体呈现高风险状态，需要立即关注。', 'critical', 10, 3, 1, '[\"想死\"]', '[{\"timestamp\": \"2025-09-24T07:48:18\", \"risk_level\": \"critical\", \"risk_score\": 10.0, \"message_index\": 1}]', '您好，感谢您愿意表达内心的感受。从目前信息来看，您正经历着较为强烈的心理痛苦，出现“想死”的念头提示存在较高的情绪危机风险，亟需关注与支持。虽然尚未发现明显的积极应对信号，但您的倾诉本身即是一种求助行为，这是非常重要的积极迹象。建议您尽快联系专业心理危机干预热线（如北京24小时心理援助热线：010-82951332），或前往医院心理科就诊。您并不孤单，有很多人愿意帮助您度过难关。请给自己一个机会，也让关心您的人有机会走近您。我们在这里陪伴您，一起寻找希望的光亮。', '[\"立即寻求专业心理健康支持\", \"联系心理危机干预热线\", \"告知信任的朋友或家人\", \"考虑医院心理科就诊\"]', '2025-09-24 07:47:57', '2025-09-24 07:48:38', '2025-09-24 07:48:38', NULL, 'completed', 0, 1);
 INSERT INTO `risk_assessment_reports` VALUES (19, 6, 34, 'future-planning', '心理状态评估报告 - LOW风险', '**心理健康评估报告**\n\n尊敬的同行：\n\n根据提供的对话内容，结合专业心理评估框架，现对用户当前的心理状态进行系统性分析。本报告旨在识别潜在风险、评估心理状态，并提供具有可操作性的干预建议，以保障用户安全与福祉。\n\n---\n\n### 1. **情绪状态评估**\n\n用户仅用“想死了”三个字表达内心状态，语言极简却极具情感冲击力。这种表达通常反映出极度的绝望、无助与情绪崩溃，常见于抑郁情绪急性发作或长期压力积累后的心理耗竭阶段。情感波动程度较高，表明其可能正处于情绪低谷期，认知功能受到负面情绪干扰，存在“隧道视野”（即只看到问题而看不到出路）的倾向。尽管后续未展开具体描述，但该表达本身已提示强烈的情绪痛苦，需高度重视。\n\n---\n\n### 2. **心理健康风险**\n\n虽然系统标注“风险等级：low”，但此判断可能存在偏差。根据临床经验，“想死了”属于明确的**自杀意念自述**，即使未提及计划或手段，也应视为**中高危预警信号**。世界卫生组织及心理危机干预指南均指出，任何关于死亡或自我伤害的直接表达都需立即响应。\n\n目前尚无证据显示用户有具体的自杀计划或既往行为，故暂评估为**中度自杀风险**。但必须警惕：部分个体在情绪极度压抑时反而表现出表面平静，实际危险性更高。因此，不能因言语简洁而低估其内在痛苦程度。\n\n此外，用户选择向“未来规划导师”倾诉，说明其仍在寻求连接与帮助，这是重要的保护性因素，提示干预窗口尚未关闭。\n\n---\n\n### 3. **应对机制**\n\n从现有信息看，用户的应对机制似乎处于失效状态。面对压力，其主要表达方式是退缩性陈述（“想死了”），缺乏积极的问题解决策略或情绪调节技巧的体现。这可能意味着其常规应对资源已耗尽，心理韧性暂时受损。\n\n然而，主动发出求助信号本身就是一种潜在的适应性行为——说明个体内在仍存有求生动机和改变意愿。关键在于能否及时引导其重建信心，激活内在力量。\n\n---\n\n### 4. **社会支持**\n\n目前无法判断用户的社会支持系统状况。对话中未提及家人、朋友或专业支持资源，暗示其可能感到孤立无援，或缺乏可信赖的倾诉对象。若长期缺乏情感支持，将进一步加剧孤独感与绝望感。\n\n值得注意的是，用户愿意在非医疗情境下向AI助手表达极端情绪，侧面反映其现实人际支持网络可能存在缺口，或对面对面求助存在顾虑（如羞耻感、担心被评判等）。\n\n---\n\n### 5. **专业建议**\n\n鉴于上述评估，提出以下干预建议：\n\n1. **立即情绪安抚与安全确认**  \n   继续以共情、非评判态度回应：“谢谢你愿意告诉我这些，我能感受到你现在的痛苦有多深。你不是一个人，我会一直在这里陪你。” 避免空洞安慰，重在建立信任关系。\n\n2. **开展温和探询**  \n   在确保安全的前提下，逐步了解痛苦来源：“最近是不是发生了特别让你难过的事？比如学习、家庭、人际关系？” 注意语气温和，给予充分空间，不强求回答。\n\n3. **强化生命联结与希望感**  \n   帮助用户回忆过去曾克服困难的经历，哪怕微小：“有没有哪一刻，你觉得‘再坚持一下也是可以的’？” 激活其内在资源与价值感。\n\n4. **引导专业求助**  \n   明确建议联系心理热线（如北京心理援助热线：010-82951332；上海心理热线：021-12320-5），或前往医院心理科就诊。可协助制定简单行动计划：“要不要我现在陪你拨打一个电话？”\n\n5. **持续陪伴与跟进**  \n   若条件允许，保持短期高频接触，监测情绪变化。一旦出现具体自杀计划、工具准备或情绪急剧恶化，应启动紧急转介程序。\n\n---\n\n**总结**：  \n“想死了”不仅是情绪宣泄，更是无声的呼救。我们应以“宁可信其有”的谨慎态度对待每一句轻描淡写的痛苦表达。当前最紧要的任务是稳定情绪、增强安全感、链接支持资源。每一个倾听的瞬间，都可能是扭转危机的关键转折点。\n\n愿我们以专业与温度，守护每一颗正在经历黑夜的心灵。\n\n—— 心理健康评估师  \n2025年4月5日', '基于3条消息的分析，检测到1条风险消息，整体风险等级为low。', 'low', 10, 3, 1, '[\"想死\"]', '{\"risk_messages\": [{\"content\": \"想死了\", \"keywords\": [\"想死\"], \"risk_weight\": 1, \"message_index\": 1}]}', '**心理健康评估报告**\n\n尊敬的同行：\n\n根据提供的对话内容，结合专业心理评估框架，现对用户当前的心理状态进行系统性分析。本报告旨在识别潜在风险、评估心理状态，并提供具有可操作性的干预建议，以保障用户安全与福祉。\n\n---\n\n### 1. **情绪状态评估**\n\n用户仅用“想死了”三个字表达内心状态，语言极简却极具情感冲击力。这种表达通常反映出极度的绝望、无助与情绪崩溃，常见于抑郁情绪急性发作或长期压力积累后的心理耗竭阶段。情感波动程度较高，表明其可能正处于情绪低谷期，认知功能受到负面情绪干扰，存在“隧道视野”（即只看到问题而看不到出路）的倾向。尽管后续未展开具体描述，但该表达本身已提示强烈的情绪痛苦，需高度重视。\n\n---\n\n### 2. **心理健康风险**\n\n虽然系统标注“风险等级：low”，但此判断可能存在偏差。根据临床经验，“想死了”属于明确的**自杀意念自述**，即使未提及计划或手段，也应视为**中高危预警信号**。世界卫生组织及心理危机干预指南均指出，任何关于死亡或自我伤害的直接表达都需立即响应。\n\n目前尚无证据显示用户有具体的自杀计划或既往行为，故暂评估为**中度自杀风险**。但必须警惕：部分个体在情绪极度压抑时反而表现出表面平静，实际危险性更高。因此，不能因言语简洁而低估其内在痛苦程度。\n\n此外，用户选择向“未来规划导师”倾诉，说明其仍在寻求连接与帮助，这是重要的保护性因素，提示干预窗口尚未关闭。\n\n---\n\n### 3. **应对机制**\n\n从现有信息看，用户的应对机制似乎处于失效状态。面对压力，其主要表达方式是退缩性陈述（“想死了”），缺乏积极的问题解决策略或情绪调节技巧的体现。这可能意味着其常规应对资源已耗尽，心理韧性暂时受损。\n\n然而，主动发出求助信号本身就是一种潜在的适应性行为——说明个体内在仍存有求生动机和改变意愿。关键在于能否及时引导其重建信心，激活内在力量。\n\n---\n\n### 4. **社会支持**\n\n目前无法判断用户的社会支持系统状况。对话中未提及家人、朋友或专业支持资源，暗示其可能感到孤立无援，或缺乏可信赖的倾诉对象。若长期缺乏情感支持，将进一步加剧孤独感与绝望感。\n\n值得注意的是，用户愿意在非医疗情境下向AI助手表达极端情绪，侧面反映其现实人际支持网络可能存在缺口，或对面对面求助存在顾虑（如羞耻感、担心被评判等）。\n\n---\n\n### 5. **专业建议**\n\n鉴于上述评估，提出以下干预建议：\n\n1. **立即情绪安抚与安全确认**  \n   继续以共情、非评判态度回应：“谢谢你愿意告诉我这些，我能感受到你现在的痛苦有多深。你不是一个人，我会一直在这里陪你。” 避免空洞安慰，重在建立信任关系。\n\n2. **开展温和探询**  \n   在确保安全的前提下，逐步了解痛苦来源：“最近是不是发生了特别让你难过的事？比如学习、家庭、人际关系？” 注意语气温和，给予充分空间，不强求回答。\n\n3. **强化生命联结与希望感**  \n   帮助用户回忆过去曾克服困难的经历，哪怕微小：“有没有哪一刻，你觉得‘再坚持一下也是可以的’？” 激活其内在资源与价值感。\n\n4. **引导专业求助**  \n   明确建议联系心理热线（如北京心理援助热线：010-82951332；上海心理热线：021-12320-5），或前往医院心理科就诊。可协助制定简单行动计划：“要不要我现在陪你拨打一个电话？”\n\n5. **持续陪伴与跟进**  \n   若条件允许，保持短期高频接触，监测情绪变化。一旦出现具体自杀计划、工具准备或情绪急剧恶化，应启动紧急转介程序。\n\n---\n\n**总结**：  \n“想死了”不仅是情绪宣泄，更是无声的呼救。我们应以“宁可信其有”的谨慎态度对待每一句轻描淡写的痛苦表达。当前最紧要的任务是稳定情绪、增强安全感、链接支持资源。每一个倾听的瞬间，都可能是扭转危机的关键转折点。\n\n愿我们以专业与温度，守护每一颗正在经历黑夜的心灵。\n\n—— 心理健康评估师  \n2025年4月5日', '[\"😊 继续保持积极的心理状态\", \"🌱 关注个人成长和自我提升\", \"🤗 维护良好的人际关系\", \"⚖️ 保持工作与生活的平衡\", \"🎯 设定合理的目标和期望\", \"📱 如需专业支持，可使用心理健康应用或在线咨询服务\", \"📖 推荐阅读心理健康相关书籍和资料\", \"🕰️ 给自己时间，心理康复是一个渐进的过程\"]', '2025-09-24 07:48:18', '2025-09-24 07:49:15', '2025-09-24 07:49:15', '2025-09-24 07:49:20', 'completed', 1, 1);
-INSERT INTO `risk_assessment_reports` VALUES (20, 6, 36, 'self-dialog', '自我对话对话风险评估报告', '\n## 对话风险评估报告\n\n### 基本信息\n- **整体风险等级**: LOW\n- **风险分数**: 0.0/100\n- **消息分析**: 共0条消息，其中0条检测到风险\n\n### 检测结果\n- **关键词**: 无\n\n### AI专业分析\n您好，感谢您表达内心的感受。从您提到“最近有点抑郁”和一声叹息中，能感受到您正经历情绪上的低落与疲惫。尽管当前对话内容较短，尚无明确风险信号，但这种隐忍的表达可能意味着您正在独自承受压力。情绪似乎处于轻度抑郁状态，趋势上呈现内敛与退缩。值得肯定的是，您愿意觉察并诉说感受，这是迈向自我关怀的重要一步。建议您尝试规律作息、适度活动，并向信任的人或专业心理咨询师倾诉。您并不孤单，照顾好自己，每一步微小的努力都值得被肯定。\n\n### 建议\n• 保持当前积极的心理状态\n• 继续进行自我关爱练习\n• 维护良好的社交关系\n• 定期进行自我反思\n\n---\n*此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。*\n', '在2条消息中检测到0条风险消息，整体心理状态相对稳定。', 'low', 0, 5, 0, '[]', '[{\"timestamp\": \"2025-10-02T04:32:23\", \"risk_level\": \"low\", \"risk_score\": 0.0, \"message_index\": 1}, {\"timestamp\": \"2025-10-02T04:32:23\", \"risk_level\": \"low\", \"risk_score\": 0.0, \"message_index\": 2}]', '您好，感谢您表达内心的感受。从您提到“最近有点抑郁”和一声叹息中，能感受到您正经历情绪上的低落与疲惫。尽管当前对话内容较短，尚无明确风险信号，但这种隐忍的表达可能意味着您正在独自承受压力。情绪似乎处于轻度抑郁状态，趋势上呈现内敛与退缩。值得肯定的是，您愿意觉察并诉说感受，这是迈向自我关怀的重要一步。建议您尝试规律作息、适度活动，并向信任的人或专业心理咨询师倾诉。您并不孤单，照顾好自己，每一步微小的努力都值得被肯定。', '[\"保持当前积极的心理状态\", \"继续进行自我关爱练习\", \"维护良好的社交关系\", \"定期进行自我反思\"]', '2025-10-02 04:31:41', '2025-10-02 04:32:45', '2025-10-02 04:32:45', '2025-10-02 04:32:47', 'completed', 1, 1);
 
 -- ----------------------------
 -- Table structure for skill_categories
@@ -1046,11 +1124,28 @@ CREATE TABLE `skill_favorites`  (
   INDEX `idx_skill_id`(`skill_id` ASC) USING BTREE,
   INDEX `idx_category`(`category` ASC) USING BTREE,
   CONSTRAINT `skill_favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '技能收藏表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '技能收藏表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of skill_favorites
 -- ----------------------------
+INSERT INTO `skill_favorites` VALUES (7, 6, '55', 'special_scenarios', '教育沟通', '2025-10-10 12:40:27');
+INSERT INTO `skill_favorites` VALUES (8, 6, '50', 'relationship_building', '文化适应', '2025-10-10 12:41:02');
+INSERT INTO `skill_favorites` VALUES (9, 6, '2', 'communication', '情感表达', '2025-10-10 13:25:16');
+INSERT INTO `skill_favorites` VALUES (11, 6, '4', 'communication', '情绪识别', '2025-10-10 13:52:12');
+INSERT INTO `skill_favorites` VALUES (12, 6, '38', 'emotional_expression', '情感沟通', '2025-10-10 14:12:00');
+INSERT INTO `skill_favorites` VALUES (14, 6, '28', 'emotional_expression', '情感边界', '2025-10-10 14:21:05');
+INSERT INTO `skill_favorites` VALUES (15, 6, '34', 'emotional_expression', '情感记忆', '2025-10-10 14:26:31');
+INSERT INTO `skill_favorites` VALUES (20, 6, '5', 'communication', '情感共鸣', '2025-10-10 14:31:20');
+INSERT INTO `skill_favorites` VALUES (21, 6, '40', 'relationship_building', '破冰对话', '2025-10-10 14:31:56');
+INSERT INTO `skill_favorites` VALUES (25, 6, '29', 'emotional_expression', '情绪传染', '2025-10-10 14:44:57');
+INSERT INTO `skill_favorites` VALUES (26, 6, '43', 'communication', '测试技能43', '2025-10-10 14:47:56');
+INSERT INTO `skill_favorites` VALUES (27, 6, '35', 'emotional_expression', '情感成熟', '2025-10-10 14:48:08');
+INSERT INTO `skill_favorites` VALUES (29, 6, '33', 'emotional_expression', '情感表达艺术', '2025-10-10 14:48:23');
+INSERT INTO `skill_favorites` VALUES (52, 6, '18', 'communication', '说服技巧', '2025-10-10 14:56:25');
+INSERT INTO `skill_favorites` VALUES (55, 6, '44', 'relationship_building', '团队合作', '2025-10-10 14:57:50');
+INSERT INTO `skill_favorites` VALUES (57, 6, '999', 'communication', '全新测试技能', '2025-10-10 15:06:30');
+INSERT INTO `skill_favorites` VALUES (58, 6, '998', 'communication', '全新测试技能', '2025-10-10 15:07:00');
 
 -- ----------------------------
 -- Table structure for skills
@@ -1104,7 +1199,7 @@ CREATE TABLE `star_point_logs`  (
   INDEX `idx_star_logs_action`(`action_type` ASC) USING BTREE,
   INDEX `idx_star_logs_date`(`created_at` ASC) USING BTREE,
   CONSTRAINT `fk_star_point_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 152 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of star_point_logs
@@ -1132,6 +1227,129 @@ INSERT INTO `star_point_logs` VALUES (25, 18, 'mood_tracking', 1, '每日首次�
 INSERT INTO `star_point_logs` VALUES (26, 6, 'diary_first', 3, '今日第一篇日记', '841', 'diary', '2025-10-09 17:19:11');
 INSERT INTO `star_point_logs` VALUES (27, 6, 'diary_additional', 1, '今日额外日记', '842', 'diary', '2025-10-09 17:19:32');
 INSERT INTO `star_point_logs` VALUES (28, 6, 'diary_additional', 1, '今日额外日记', '843', 'diary', '2025-10-09 17:19:41');
+INSERT INTO `star_point_logs` VALUES (29, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '39', 'chat', '2025-10-09 19:13:46');
+INSERT INTO `star_point_logs` VALUES (30, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '40', 'chat', '2025-10-09 19:14:27');
+INSERT INTO `star_point_logs` VALUES (31, 6, 'emotion_chat_normal', 3, '情感对话(第4-10次)', '40', 'chat', '2025-10-09 19:14:38');
+INSERT INTO `star_point_logs` VALUES (32, 18, 'emotion_chat_premium', 2, '情感对话(前3次)', '41', 'chat', '2025-10-09 19:18:44');
+INSERT INTO `star_point_logs` VALUES (33, 18, 'emotion_chat_premium', 4, '情感对话(前3次)', '41', 'chat', '2025-10-09 19:19:12');
+INSERT INTO `star_point_logs` VALUES (34, 19, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 19:30:55');
+INSERT INTO `star_point_logs` VALUES (35, 19, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 19:31:00');
+INSERT INTO `star_point_logs` VALUES (36, 19, 'emotion_chat_premium', 2, '情感对话(前3次)', '42', 'chat', '2025-10-09 19:31:19');
+INSERT INTO `star_point_logs` VALUES (37, 19, 'emotion_chat_premium', 4, '情感对话(前3次)', '42', 'chat', '2025-10-09 19:31:36');
+INSERT INTO `star_point_logs` VALUES (38, 20, 'initial_reward', 10, '系统初始化奖励', NULL, 'system', '2025-10-09 19:36:15');
+INSERT INTO `star_point_logs` VALUES (39, 20, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 19:36:21');
+INSERT INTO `star_point_logs` VALUES (40, 20, 'emotion_chat_premium', 2, '情感对话(前3次)', '43', 'chat', '2025-10-09 19:36:37');
+INSERT INTO `star_point_logs` VALUES (41, 20, 'emotion_chat_premium', 4, '情感对话(前3次)', '43', 'chat', '2025-10-09 19:36:57');
+INSERT INTO `star_point_logs` VALUES (42, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 19:46:48');
+INSERT INTO `star_point_logs` VALUES (43, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '44', 'chat', '2025-10-09 19:47:05');
+INSERT INTO `star_point_logs` VALUES (44, 6, 'emotion_chat_premium', 4, '情感对话(前3次)', '44', 'chat', '2025-10-09 19:47:13');
+INSERT INTO `star_point_logs` VALUES (45, 6, 'emotion_chat_normal', 3, '情感对话(第4-10次)', '44', 'chat', '2025-10-09 19:47:26');
+INSERT INTO `star_point_logs` VALUES (46, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 19:53:30');
+INSERT INTO `star_point_logs` VALUES (47, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '45', 'chat', '2025-10-09 19:53:48');
+INSERT INTO `star_point_logs` VALUES (48, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '45', 'chat', '2025-10-09 19:55:40');
+INSERT INTO `star_point_logs` VALUES (49, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '45', 'chat', '2025-10-09 19:55:56');
+INSERT INTO `star_point_logs` VALUES (50, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '45', 'chat', '2025-10-09 19:56:07');
+INSERT INTO `star_point_logs` VALUES (51, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '45', 'chat', '2025-10-09 19:56:23');
+INSERT INTO `star_point_logs` VALUES (52, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '45', 'chat', '2025-10-09 19:56:34');
+INSERT INTO `star_point_logs` VALUES (53, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '45', 'chat', '2025-10-09 19:57:04');
+INSERT INTO `star_point_logs` VALUES (54, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '46', 'chat', '2025-10-09 20:03:05');
+INSERT INTO `star_point_logs` VALUES (55, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '46', 'chat', '2025-10-09 20:03:29');
+INSERT INTO `star_point_logs` VALUES (56, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '46', 'chat', '2025-10-09 20:03:42');
+INSERT INTO `star_point_logs` VALUES (57, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '46', 'chat', '2025-10-09 20:03:56');
+INSERT INTO `star_point_logs` VALUES (58, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '46', 'chat', '2025-10-09 20:04:02');
+INSERT INTO `star_point_logs` VALUES (59, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '46', 'chat', '2025-10-09 20:04:18');
+INSERT INTO `star_point_logs` VALUES (60, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '46', 'chat', '2025-10-09 20:04:44');
+INSERT INTO `star_point_logs` VALUES (61, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 20:08:08');
+INSERT INTO `star_point_logs` VALUES (62, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '47', 'chat', '2025-10-09 20:08:29');
+INSERT INTO `star_point_logs` VALUES (63, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '47', 'chat', '2025-10-09 20:08:39');
+INSERT INTO `star_point_logs` VALUES (64, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '47', 'chat', '2025-10-09 20:08:49');
+INSERT INTO `star_point_logs` VALUES (65, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '47', 'chat', '2025-10-09 20:09:01');
+INSERT INTO `star_point_logs` VALUES (66, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '47', 'chat', '2025-10-09 20:09:11');
+INSERT INTO `star_point_logs` VALUES (67, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '47', 'chat', '2025-10-09 20:09:35');
+INSERT INTO `star_point_logs` VALUES (68, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '47', 'chat', '2025-10-09 20:09:52');
+INSERT INTO `star_point_logs` VALUES (69, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 20:13:56');
+INSERT INTO `star_point_logs` VALUES (70, 6, 'tree_hole_interaction', 1, '树洞互动', '202', 'tree_hole', '2025-10-09 20:36:47');
+INSERT INTO `star_point_logs` VALUES (71, 6, 'tree_hole_interaction', 1, '树洞互动', '202', 'tree_hole', '2025-10-09 20:36:52');
+INSERT INTO `star_point_logs` VALUES (72, 6, 'tree_hole_interaction', 1, '树洞互动', '202', 'tree_hole', '2025-10-09 20:36:56');
+INSERT INTO `star_point_logs` VALUES (73, 6, 'tree_hole_whisper', 2, '发表悄悄话', '210', 'tree_hole', '2025-10-09 20:40:01');
+INSERT INTO `star_point_logs` VALUES (74, 6, 'tree_hole_whisper', 2, '发表悄悄话', '213', 'tree_hole', '2025-10-09 20:51:15');
+INSERT INTO `star_point_logs` VALUES (75, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-09 20:56:13');
+INSERT INTO `star_point_logs` VALUES (76, 6, 'tree_hole_interaction', 1, '树洞互动', '204', 'tree_hole', '2025-10-09 21:05:19');
+INSERT INTO `star_point_logs` VALUES (77, 6, 'tree_hole_interaction', 1, '树洞互动', '198', 'tree_hole', '2025-10-09 21:05:31');
+INSERT INTO `star_point_logs` VALUES (78, 6, 'tree_hole_interaction', 1, '树洞互动', '185', 'tree_hole', '2025-10-09 21:05:35');
+INSERT INTO `star_point_logs` VALUES (79, 6, 'tree_hole_whisper', 2, '发表悄悄话', '217', 'tree_hole', '2025-10-09 21:06:05');
+INSERT INTO `star_point_logs` VALUES (80, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 10:30:30');
+INSERT INTO `star_point_logs` VALUES (81, 6, 'personalized_advice', 1, '个性化建议', 'advice_6_20251010', 'assessment', '2025-10-10 11:33:54');
+INSERT INTO `star_point_logs` VALUES (82, 6, 'personalized_advice', 1, '个性化建议', 'advice_6_20251010', 'assessment', '2025-10-10 11:38:10');
+INSERT INTO `star_point_logs` VALUES (83, 6, 'personalized_advice', 1, '个性化建议', 'advice_6_20251010', 'assessment', '2025-10-10 11:39:13');
+INSERT INTO `star_point_logs` VALUES (84, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 11:48:21');
+INSERT INTO `star_point_logs` VALUES (85, 6, 'relationship_assessment', 1, '关系健康评估', 'relationship_assessment_6_20251010', 'assessment', '2025-10-10 12:11:39');
+INSERT INTO `star_point_logs` VALUES (86, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 12:32:48');
+INSERT INTO `star_point_logs` VALUES (87, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 12:32:48');
+INSERT INTO `star_point_logs` VALUES (88, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 12:32:48');
+INSERT INTO `star_point_logs` VALUES (89, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 12:32:48');
+INSERT INTO `star_point_logs` VALUES (90, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 12:40:49');
+INSERT INTO `star_point_logs` VALUES (91, 6, 'tree_hole_interaction', 1, '树洞互动', '199', 'tree_hole', '2025-10-10 13:49:04');
+INSERT INTO `star_point_logs` VALUES (92, 6, 'tree_hole_interaction', 1, '树洞互动', '181', 'tree_hole', '2025-10-10 13:49:27');
+INSERT INTO `star_point_logs` VALUES (93, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 13:51:37');
+INSERT INTO `star_point_logs` VALUES (94, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 13:52:51');
+INSERT INTO `star_point_logs` VALUES (95, 6, 'skill_favorite', 1, '收藏技能', '38', 'skill', '2025-10-10 14:12:00');
+INSERT INTO `star_point_logs` VALUES (96, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:23:29');
+INSERT INTO `star_point_logs` VALUES (97, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:23:54');
+INSERT INTO `star_point_logs` VALUES (98, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:25:55');
+INSERT INTO `star_point_logs` VALUES (99, 6, 'emotion_chat_premium', 2, '情感对话(前3次)', '49', 'chat', '2025-10-10 14:26:14');
+INSERT INTO `star_point_logs` VALUES (100, 6, 'skill_favorite', 1, '收藏技能', '34', 'skill', '2025-10-10 14:26:31');
+INSERT INTO `star_point_logs` VALUES (101, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:29:55');
+INSERT INTO `star_point_logs` VALUES (102, 6, 'skill_favorite', 1, '收藏技能', '30', 'skill', '2025-10-10 14:30:04');
+INSERT INTO `star_point_logs` VALUES (103, 6, 'skill_favorite', 1, '收藏技能', '30', 'skill', '2025-10-10 14:30:12');
+INSERT INTO `star_point_logs` VALUES (104, 6, 'skill_favorite', 1, '收藏技能', '30', 'skill', '2025-10-10 14:30:25');
+INSERT INTO `star_point_logs` VALUES (105, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:30:53');
+INSERT INTO `star_point_logs` VALUES (106, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:31:45');
+INSERT INTO `star_point_logs` VALUES (107, 6, 'skill_favorite', 1, '收藏技能', '40', 'skill', '2025-10-10 14:31:56');
+INSERT INTO `star_point_logs` VALUES (108, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:39:19');
+INSERT INTO `star_point_logs` VALUES (109, 6, 'skill_favorite', 1, '收藏技能', '42', 'skill', '2025-10-10 14:44:36');
+INSERT INTO `star_point_logs` VALUES (110, 6, 'skill_favorite', 1, '收藏技能', '29', 'skill', '2025-10-10 14:44:57');
+INSERT INTO `star_point_logs` VALUES (111, 6, 'skill_favorite', 1, '收藏技能', '35', 'skill', '2025-10-10 14:48:08');
+INSERT INTO `star_point_logs` VALUES (112, 6, 'skill_favorite', 1, '收藏技能', '33', 'skill', '2025-10-10 14:48:21');
+INSERT INTO `star_point_logs` VALUES (113, 6, 'skill_favorite', 1, '收藏技能', '33', 'skill', '2025-10-10 14:48:23');
+INSERT INTO `star_point_logs` VALUES (114, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 14:55:46');
+INSERT INTO `star_point_logs` VALUES (115, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:55:54');
+INSERT INTO `star_point_logs` VALUES (116, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:08');
+INSERT INTO `star_point_logs` VALUES (117, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:16');
+INSERT INTO `star_point_logs` VALUES (118, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:17');
+INSERT INTO `star_point_logs` VALUES (119, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:18');
+INSERT INTO `star_point_logs` VALUES (120, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:18');
+INSERT INTO `star_point_logs` VALUES (121, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:18');
+INSERT INTO `star_point_logs` VALUES (122, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:19');
+INSERT INTO `star_point_logs` VALUES (123, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:19');
+INSERT INTO `star_point_logs` VALUES (124, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:20');
+INSERT INTO `star_point_logs` VALUES (125, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:20');
+INSERT INTO `star_point_logs` VALUES (126, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:20');
+INSERT INTO `star_point_logs` VALUES (127, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:21');
+INSERT INTO `star_point_logs` VALUES (128, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:21');
+INSERT INTO `star_point_logs` VALUES (129, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:22');
+INSERT INTO `star_point_logs` VALUES (130, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:22');
+INSERT INTO `star_point_logs` VALUES (131, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:22');
+INSERT INTO `star_point_logs` VALUES (132, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:23');
+INSERT INTO `star_point_logs` VALUES (133, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:23');
+INSERT INTO `star_point_logs` VALUES (134, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:24');
+INSERT INTO `star_point_logs` VALUES (135, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:24');
+INSERT INTO `star_point_logs` VALUES (136, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:24');
+INSERT INTO `star_point_logs` VALUES (137, 6, 'skill_favorite', 1, '收藏技能', '18', 'skill', '2025-10-10 14:56:25');
+INSERT INTO `star_point_logs` VALUES (138, 6, 'skill_favorite', 1, '收藏技能', '44', 'skill', '2025-10-10 14:57:48');
+INSERT INTO `star_point_logs` VALUES (139, 6, 'skill_favorite', 1, '收藏技能', '44', 'skill', '2025-10-10 14:57:49');
+INSERT INTO `star_point_logs` VALUES (140, 6, 'skill_favorite', 1, '收藏技能', '44', 'skill', '2025-10-10 14:57:50');
+INSERT INTO `star_point_logs` VALUES (141, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 15:05:16');
+INSERT INTO `star_point_logs` VALUES (142, 6, 'skill_favorite', 1, '收藏技能', '999', 'skill', '2025-10-10 15:05:43');
+INSERT INTO `star_point_logs` VALUES (143, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 15:08:25');
+INSERT INTO `star_point_logs` VALUES (144, 6, 'skill_favorite', 1, '收藏技能', '54', 'skill', '2025-10-10 15:08:34');
+INSERT INTO `star_point_logs` VALUES (145, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 15:08:59');
+INSERT INTO `star_point_logs` VALUES (146, 6, 'skill_favorite', 1, '收藏技能', '48', 'skill', '2025-10-10 15:09:08');
+INSERT INTO `star_point_logs` VALUES (147, 6, 'skill_training', 3, '技能综合训练(人际交往技巧)', 'sincere_gratitude', 'skill', '2025-10-10 15:53:34');
+INSERT INTO `star_point_logs` VALUES (148, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 16:00:31');
+INSERT INTO `star_point_logs` VALUES (149, 6, 'skill_training', 3, '技能综合训练(清晰表达)', 'express_clearly', 'skill', '2025-10-10 16:00:49');
+INSERT INTO `star_point_logs` VALUES (150, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-10 16:06:20');
+INSERT INTO `star_point_logs` VALUES (151, 6, 'skill_training', 3, '技能综合训练(人际交往技巧)', 'ice_breaking', 'skill', '2025-10-10 16:07:12');
 
 -- ----------------------------
 -- Table structure for system_configs
@@ -1169,7 +1387,7 @@ CREATE TABLE `system_logs`  (
   INDEX `idx_system_logs_user`(`user_id` ASC) USING BTREE,
   INDEX `idx_system_logs_action`(`action` ASC) USING BTREE,
   CONSTRAINT `system_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_logs
@@ -1229,11 +1447,16 @@ CREATE TABLE `tree_hole_comments`  (
   INDEX `idx_tree_hole_comments_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_comments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_comments_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_comments
 -- ----------------------------
+INSERT INTO `tree_hole_comments` VALUES (1, 202, 6, 'Z0FBQUFBQm81Nnh3SEM0aTBQNm16eXFTS0V4aTkyOWpEUnV0aHpIejBabUt2U29MM0kwWWtzVlltNEdSVEd4SXJwTmZvbS1ZN08tUS1xR3NwdFRPQzRhZm5raVcxcGVwTXc9PQ==', 1, '2025-10-09 20:37:04');
+INSERT INTO `tree_hole_comments` VALUES (2, 202, 6, 'Z0FBQUFBQm81NngwbHU0WWxvazV1ODR6SVlKU1VSdzVNVk1HTGFvcmk0OENpVGRPQ2Q5ZnJ5WU9mUFJxSEhHUGZJU3E2cVpLbFduampoQW9QdVlXM1FRLVBUOHE3MFVxQkE9PQ==', 1, '2025-10-09 20:37:08');
+INSERT INTO `tree_hole_comments` VALUES (3, 204, 6, 'Z0FBQUFBQm81N01XT3pzR29FN0FTSENzV1J4UUtrM2ZIY1A3UWxQT2pYNnlPYXBXMmVxZ3Q3V0JWNjJ4d3B1U24zN3pNVXMxbU9rQWR2blBqMXgwQ2hZeHNZTk9CTjZJZUE9PQ==', 1, '2025-10-09 21:05:26');
+INSERT INTO `tree_hole_comments` VALUES (4, 199, 6, 'Z0FBQUFBQm82SjViaENIWXRaVkk1c3J5aWRBRXBJc2V5SkpKdjhZUU5UX2RtS0xZUlE5ZElCbGxTckhBSVVvbG1UX1NmMUgxS2ZBQlc2Q09ETURiLU92Uk1MZTNLeWd1QWc9PQ==', 1, '2025-10-10 13:49:15');
+INSERT INTO `tree_hole_comments` VALUES (5, 181, 6, 'Z0FBQUFBQm82SjVuN1NZUFNYc3lZWEplU0xhb2lMdk5mNmxqYTVrNGJEUWZiZjRoMUNZWDVEd09qeVhNNjNleFFiQW1pTmpBcnJfRmxMM0Z4M1dNTWFuVjFnYXdmOGpwNGc9PQ==', 1, '2025-10-10 13:49:27');
 
 -- ----------------------------
 -- Table structure for tree_hole_likes
@@ -1250,7 +1473,7 @@ CREATE TABLE `tree_hole_likes`  (
   INDEX `idx_tree_hole_likes_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_likes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_likes_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_likes
@@ -1260,6 +1483,10 @@ INSERT INTO `tree_hole_likes` VALUES (41, 196, 6, '2025-10-03 12:39:11');
 INSERT INTO `tree_hole_likes` VALUES (45, 181, 6, '2025-10-03 12:45:49');
 INSERT INTO `tree_hole_likes` VALUES (47, 194, 6, '2025-10-03 12:46:02');
 INSERT INTO `tree_hole_likes` VALUES (54, 186, 6, '2025-10-09 14:57:06');
+INSERT INTO `tree_hole_likes` VALUES (63, 204, 6, '2025-10-09 21:05:22');
+INSERT INTO `tree_hole_likes` VALUES (64, 198, 6, '2025-10-09 21:05:31');
+INSERT INTO `tree_hole_likes` VALUES (65, 185, 6, '2025-10-09 21:05:35');
+INSERT INTO `tree_hole_likes` VALUES (66, 191, 6, '2025-10-09 21:05:37');
 
 -- ----------------------------
 -- Table structure for tree_hole_whisper_images
@@ -1274,65 +1501,11 @@ CREATE TABLE `tree_hole_whisper_images`  (
   PRIMARY KEY (`image_id`) USING BTREE,
   INDEX `idx_whisper_images_whisper_id`(`whisper_id` ASC) USING BTREE,
   CONSTRAINT `tree_hole_whisper_images_ibfk_1` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 292 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 293 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_whisper_images
 -- ----------------------------
-INSERT INTO `tree_hole_whisper_images` VALUES (238, 179, 'mascot/wave.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (239, 179, 'love-yourself.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (240, 179, 'mascot/idle.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (241, 181, 'love-experiment.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (242, 181, 'outfits/wangzaixiaoqiao.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (243, 181, 'outfits/dinosaur.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (244, 182, 'outfits/dinosaur.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (245, 182, 'tree-day.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (246, 183, 'love-experiment.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (247, 183, 'outfits/default-full.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (248, 185, 'mascot/happy.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (249, 185, 'outfits/default-full.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (250, 185, 'love-yourself.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (251, 187, 'tree-night.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (252, 187, 'mascot/idle.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (253, 188, 'tree-day.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (254, 188, 'tree-night.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (255, 191, 'mascot/idle.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (256, 193, 'tree-night.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (257, 193, 'outfits/shark.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (258, 193, 'mascot/idle.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (259, 194, 'outfits/wangzaixiaoqiao.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (260, 194, 'love-experiment.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (261, 194, 'mascot/idle.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (262, 195, 'outfits/shark.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (263, 196, 'tree-day.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (264, 196, 'outfits/shark.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (265, 197, 'mascot/wave.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (266, 197, 'tree-night.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (267, 197, 'outfits/shark.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (268, 198, 'mascot/wave.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (269, 198, 'tree-night.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (270, 199, 'mascot/happy.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (271, 199, 'outfits/shark.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (272, 199, 'outfits/wangzaixiaoqiao.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (273, 202, 'mascot/happy.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (274, 202, 'mascot/sleep.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (275, 203, 'outfits/default-full.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (276, 203, 'outfits/wangzaixiaoqiao.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (277, 203, 'mascot/happy.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (278, 204, 'outfits/shark.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (279, 204, 'love-yourself.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (280, 204, 'outfits/default-full.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (281, 205, 'love-experiment.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (282, 205, 'outfits/wangzaixiaoqiao.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (283, 205, 'outfits/red-dress.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (284, 206, 'mascot/happy.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (285, 206, 'love-yourself.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (286, 207, 'mascot/sleep.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (287, 207, 'outfits/wangzaixiaoqiao.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (288, 208, 'mascot/happy.png', 0, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (289, 208, 'outfits/wangzaixiaoqiao.png', 1, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (290, 208, 'tree-night.png', 2, '2025-10-03 12:26:57');
-INSERT INTO `tree_hole_whisper_images` VALUES (291, 209, '/uploads/0e588a80-8d0f-4d31-8bb5-ec69643e10f1.png', 0, '2025-10-07 17:09:26');
 
 -- ----------------------------
 -- Table structure for tree_hole_whispers
@@ -1358,42 +1531,51 @@ CREATE TABLE `tree_hole_whispers`  (
   INDEX `idx_tree_hole_whispers_created`(`created_at` ASC) USING BTREE,
   INDEX `idx_created_likes`(`created_at` ASC, `like_count` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_whispers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 210 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 219 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_whispers
 -- ----------------------------
 INSERT INTO `tree_hole_whispers` VALUES (179, 6, '家人的温暖', '妈妈今天打电话问我吃饭了没有，虽然只是简单的关心，但让我感受到了家的温暖。', 'very_happy', '[\"家庭\", \"温暖\", \"关心\"]', 0, NULL, NULL, 19, 0, '2025-09-17 12:26:57', '2025-09-17 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (180, 1, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_wscjm', '/src/static/avatar/头像 (7).png', 1, 3, '2025-09-03 12:26:57', '2025-09-03 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (181, 4, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_1rb2h', '/src/static/avatar/头像 (4).png', 15, 3, '2025-09-07 12:26:57', '2025-10-03 12:45:49', 0);
+INSERT INTO `tree_hole_whispers` VALUES (181, 4, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_1rb2h', '/src/static/avatar/头像 (4).png', 15, 4, '2025-09-07 12:26:57', '2025-10-10 13:49:27', 0);
 INSERT INTO `tree_hole_whispers` VALUES (182, 2, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 1, 'ariadne_7shju', '/src/static/avatar/头像 (3).png', 18, 1, '2025-10-02 12:26:57', '2025-10-03 12:45:25', 0);
 INSERT INTO `tree_hole_whispers` VALUES (183, 4, '孤独的夜晚', '一个人在宿舍里，室友都回家了。看着空荡荡的房间，突然感到很孤独。好想有个人陪我说说话。', 'sad', '[\"孤独\", \"想家\", \"陪伴\"]', 0, NULL, NULL, 17, 4, '2025-09-27 12:26:57', '2025-09-27 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (184, 1, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_8jay5', '/src/static/avatar/头像 (9).png', 3, 2, '2025-09-06 12:26:57', '2025-09-06 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (185, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_qe6gt', '/src/static/avatar/头像 (8).png', 14, 1, '2025-09-11 12:26:57', '2025-10-03 12:51:35', 0);
+INSERT INTO `tree_hole_whispers` VALUES (185, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_qe6gt', '/src/static/avatar/头像 (8).png', 15, 1, '2025-09-11 12:26:57', '2025-10-09 21:05:35', 0);
 INSERT INTO `tree_hole_whispers` VALUES (186, 5, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_7to9o', '/src/static/avatar/头像 (3).png', 4, 1, '2025-09-05 12:26:57', '2025-10-09 14:57:06', 0);
 INSERT INTO `tree_hole_whispers` VALUES (187, 6, '阳光明媚', '今天的阳光特别好，决定出去走走。看到路边开着的小花，心情也跟着明媚起来了。', 'very_happy', '[\"阳光\", \"散步\", \"花朵\"]', 0, NULL, NULL, 8, 0, '2025-10-01 12:26:57', '2025-10-03 12:39:00', 0);
 INSERT INTO `tree_hole_whispers` VALUES (188, 6, '阳光明媚', '今天的阳光特别好，决定出去走走。看到路边开着的小花，心情也跟着明媚起来了。', 'very_happy', '[\"阳光\", \"散步\", \"花朵\"]', 1, 'ariadne_yakt2', '/src/static/avatar/头像.png', 1, 1, '2025-09-28 12:26:57', '2025-09-28 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (189, 6, '音乐的力量', '听到一首很好听的歌，歌词写得特别好，好像在诉说着我的心声。音乐真的有治愈人心的力量。', 'happy', '[\"音乐\", \"治愈\", \"共鸣\"]', 0, NULL, NULL, 12, 0, '2025-09-04 12:26:57', '2025-09-04 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (190, 2, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 0, NULL, NULL, 10, 2, '2025-09-06 12:26:57', '2025-09-06 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (191, 1, '深夜emo', '为什么深夜总是特别容易emo？想起了很多往事，有开心的也有难过的，五味杂陈。', 'sad', '[\"深夜\", \"emo\", \"往事\"]', 0, NULL, NULL, 1, 4, '2025-09-28 12:26:57', '2025-09-28 12:26:57', 0);
+INSERT INTO `tree_hole_whispers` VALUES (191, 1, '深夜emo', '为什么深夜总是特别容易emo？想起了很多往事，有开心的也有难过的，五味杂陈。', 'sad', '[\"深夜\", \"emo\", \"往事\"]', 0, NULL, NULL, 2, 4, '2025-09-28 12:26:57', '2025-10-09 21:05:37', 0);
 INSERT INTO `tree_hole_whispers` VALUES (192, 5, '压力山大', '最近工作压力好大，每天都有做不完的事情。有时候真想逃到一个没有人认识我的地方，重新开始。', 'very_sad', '[\"压力\", \"工作\", \"逃避\"]', 0, NULL, NULL, 15, 4, '2025-09-26 12:26:57', '2025-09-26 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (193, 5, '压力山大', '最近工作压力好大，每天都有做不完的事情。有时候真想逃到一个没有人认识我的地方，重新开始。', 'very_sad', '[\"压力\", \"工作\", \"逃避\"]', 1, 'ariadne_ftz34', '/src/static/avatar/头像 (8).png', 9, 4, '2025-09-24 12:26:57', '2025-09-24 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (194, 2, '新的开始', '今天是新学期的第一天，心情既紧张又兴奋。希望这个学期能有新的收获，遇到更好的自己。', 'happy', '[\"新开始\", \"学习\", \"希望\"]', 0, NULL, NULL, 12, 1, '2025-09-11 12:26:57', '2025-10-03 12:46:02', 0);
 INSERT INTO `tree_hole_whispers` VALUES (195, 5, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_r9gmx', '/src/static/avatar/头像 (3).png', 21, 2, '2025-09-11 12:26:57', '2025-10-03 12:34:48', 0);
 INSERT INTO `tree_hole_whispers` VALUES (196, 1, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 1, 'ariadne_qwd1f', '/src/static/avatar/头像 (7).png', 20, 3, '2025-09-11 12:26:57', '2025-10-03 12:39:11', 0);
 INSERT INTO `tree_hole_whispers` VALUES (197, 3, '压力山大', '最近工作压力好大，每天都有做不完的事情。有时候真想逃到一个没有人认识我的地方，重新开始。', 'very_sad', '[\"压力\", \"工作\", \"逃避\"]', 1, 'ariadne_h2xav', '/src/static/avatar/头像 (2).png', 12, 1, '2025-09-17 12:26:57', '2025-09-17 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (198, 5, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 0, NULL, NULL, 5, 4, '2025-10-03 12:26:57', '2025-10-03 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (199, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 5, 2, '2025-09-08 12:26:57', '2025-10-03 12:47:07', 0);
+INSERT INTO `tree_hole_whispers` VALUES (198, 5, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 0, NULL, NULL, 6, 4, '2025-10-03 12:26:57', '2025-10-09 21:05:31', 0);
+INSERT INTO `tree_hole_whispers` VALUES (199, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 5, 3, '2025-09-08 12:26:57', '2025-10-10 13:49:15', 0);
 INSERT INTO `tree_hole_whispers` VALUES (200, 2, '意外的惊喜', '今天收到了朋友寄来的明信片，上面写着\"想你了\"。虽然只是简单的三个字，但让我开心了一整天。', 'very_happy', '[\"友情\", \"惊喜\", \"感动\"]', 0, NULL, NULL, 8, 3, '2025-09-18 12:26:57', '2025-10-03 12:34:55', 0);
 INSERT INTO `tree_hole_whispers` VALUES (201, 2, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 11, 2, '2025-09-20 12:26:57', '2025-09-20 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (202, 5, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_8fosk', '/src/static/avatar/头像.png', 14, 0, '2025-09-05 12:26:57', '2025-09-05 12:26:57', 0);
+INSERT INTO `tree_hole_whispers` VALUES (202, 5, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_8fosk', '/src/static/avatar/头像.png', 14, 2, '2025-09-05 12:26:57', '2025-10-09 21:05:15', 0);
 INSERT INTO `tree_hole_whispers` VALUES (203, 1, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 0, NULL, NULL, 1, 3, '2025-09-20 12:26:57', '2025-09-20 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (204, 4, '今天的心情', '今天的天气很好，心情也跟着变得明朗起来。阳光透过窗户洒在桌子上，让我想起了小时候无忧无虑的日子。', 'happy', '[\"心情\", \"阳光\", \"回忆\"]', 1, 'ariadne_e7ong', '/src/static/avatar/头像 (8).png', 5, 2, '2025-09-14 12:26:57', '2025-10-03 12:38:37', 0);
+INSERT INTO `tree_hole_whispers` VALUES (204, 4, '今天的心情', '今天的天气很好，心情也跟着变得明朗起来。阳光透过窗户洒在桌子上，让我想起了小时候无忧无虑的日子。', 'happy', '[\"心情\", \"阳光\", \"回忆\"]', 1, 'ariadne_e7ong', '/src/static/avatar/头像 (8).png', 6, 3, '2025-09-14 12:26:57', '2025-10-09 21:05:26', 0);
 INSERT INTO `tree_hole_whispers` VALUES (205, 4, '深夜emo', '为什么深夜总是特别容易emo？想起了很多往事，有开心的也有难过的，五味杂陈。', 'sad', '[\"深夜\", \"emo\", \"往事\"]', 0, NULL, NULL, 16, 4, '2025-09-17 12:26:57', '2025-09-17 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (206, 6, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 1, 'ariadne_xje9z', '/src/static/avatar/头像 (8).png', 8, 2, '2025-09-09 12:26:57', '2025-09-09 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (207, 3, '考试焦虑', '马上就要期末考试了，复习得不够充分，心里很焦虑。希望能够超常发挥，不要辜负自己的努力。', 'sad', '[\"考试\", \"焦虑\", \"努力\"]', 0, NULL, NULL, 18, 4, '2025-09-05 12:26:57', '2025-09-05 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (208, 6, '新的开始', '今天是新学期的第一天，心情既紧张又兴奋。希望这个学期能有新的收获，遇到更好的自己。', 'happy', '[\"新开始\", \"学习\", \"希望\"]', 1, 'ariadne_hkhwo', '/src/static/avatar/头像 (2).png', 7, 4, '2025-09-30 12:26:57', '2025-09-30 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (209, 6, '111', 'Z0FBQUFBQm81TmpHb3AzWGhOWmJaeEllYWZNam9vaVJWaldUSGFUUlFaX0lhSFF1WGQ0X3NDR3laOU9BZU11ZXc4R0tkRlNqalprUHR5MHRkT181WUR5SmRkZ0NMODd6Nnc9PQ==', 'neutral', '[\"回忆\"]', 1, 'ariadne_v3loq', '/src/static/avatar/头像.png', 0, 0, '2025-10-07 17:09:26', '2025-10-07 17:09:26', 0);
+INSERT INTO `tree_hole_whispers` VALUES (210, 6, '1', '11', 'neutral', 'null', 1, 'ariadne_6u5ut', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:40:01', '2025-10-09 20:40:01', 0);
+INSERT INTO `tree_hole_whispers` VALUES (211, 6, '1', 'Z0FBQUFBQm81NjB1S19wdG8yTjE2YkJOQ0w0Yk9oMnh0ZDR0LW52LW9UcVJYQ1BUb2NkTnVjNGNmLXprZzhJNHE3YVF1NEp5MjQwcnpmVWFmekJRYVJSOGQwMnRWeDV0WHc9PQ==', 'neutral', 'null', 1, 'ariadne_6u5ut', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:40:14', '2025-10-09 20:40:14', 0);
+INSERT INTO `tree_hole_whispers` VALUES (212, 6, '1', 'Z0FBQUFBQm81Njd1elZKUkFMOW5KQnBmck9KNDBMSThrdVZpU3hlbmtMUlNVdjN4cl9fRzNQUjNRdm41MjVTTFVZcjNwaW1mU0o2WDNGZXdVWDhITkxSbGZCM2N4d2t1ZHc9PQ==', 'neutral', 'null', 1, 'ariadne_9nwyj', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:47:42', '2025-10-09 20:47:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (213, 6, '1', '1', 'neutral', 'null', 1, 'ariadne_hld6x', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:51:15', '2025-10-09 20:51:15', 0);
+INSERT INTO `tree_hole_whispers` VALUES (214, 6, '2', 'Z0FBQUFBQm81Nl9fWHFoaHlyZm9pbk5taTI4enJRWmNVUWJ4Rl9JNFJ3RjNwckJKM2t1cmRpZ2VQenU3X3RoVWNqZWg4UHQ0ajZNcVNER2dkcm1tVE9vaUtlVkkxaVpwckE9PQ==', 'neutral', 'null', 1, 'ariadne_9ngt1', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:52:15', '2025-10-09 20:52:15', 0);
+INSERT INTO `tree_hole_whispers` VALUES (215, 6, '3', 'Z0FBQUFBQm81N0NLTEs0bkQ0d3Z4TDlpdG9LczBCTU5XMklGRzZ6TUNYZUlXdlF2NXVhNlZ6TmJ2dnpMQmFUWkFoWHc1a1laeTdfM2FWNkxoNXlvdjJOOWhNVFp6MEgzVnc9PQ==', 'neutral', 'null', 1, 'ariadne_wtufh', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:54:34', '2025-10-09 20:54:34', 0);
+INSERT INTO `tree_hole_whispers` VALUES (216, 6, '4', 'Z0FBQUFBQm81N0NTMkNSZ1pWSFVBRjV4QU13NG54Y19SeVpKcFhKYVhxdFNjbEppcEZhV3daNWE4SmFmQS1fbmxlcFo1ckg4LURkUUJoS1ZsU3FsOVNRZE5WcnJoel9DaUE9PQ==', 'neutral', 'null', 1, 'ariadne_qm1dz', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 20:54:42', '2025-10-09 20:54:42', 0);
+INSERT INTO `tree_hole_whispers` VALUES (217, 6, '哦', '哦', 'neutral', 'null', 1, 'ariadne_okkhp', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 21:06:05', '2025-10-09 21:06:05', 0);
+INSERT INTO `tree_hole_whispers` VALUES (218, 6, 'OK', 'Z0FBQUFBQm81N05JNUcwLU5MZy15VFdpLUh6Y1lDNlZxOWpvZHJlOEdudklxQ09EN3N0aWM0b05vdEZ4WmI4dWJGajRmT1BWekRVTzk2OGNEaERkYmNCUUtsTm4zTi1oV1E9PQ==', 'neutral', 'null', 1, 'ariadne_gpb6g', '/src/static/avatar/头像.png', 0, 0, '2025-10-09 21:06:16', '2025-10-09 21:06:16', 0);
 
 -- ----------------------------
 -- Table structure for user_achievements
@@ -1414,7 +1596,7 @@ CREATE TABLE `user_achievements`  (
   INDEX `ix_user_achievements_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_achievements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_achievements_ibfk_2` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_achievements
@@ -1437,12 +1619,12 @@ CREATE TABLE `user_diary_backgrounds`  (
   INDEX `ix_user_diary_backgrounds_id`(`id` ASC) USING BTREE,
   INDEX `ix_user_diary_backgrounds_user_id`(`user_id` ASC) USING BTREE,
   CONSTRAINT `user_diary_backgrounds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_diary_backgrounds
 -- ----------------------------
-INSERT INTO `user_diary_backgrounds` VALUES (3, 6, '5beadf196a364280869d4d93bf47ee02.png', 'jimeng-2025-09-23-4462-将白色长裤改为短裤然后站立姿势更自然一点，方便后续贴图换装.png', 'uploads/diary-backgrounds\\5beadf196a364280869d4d93bf47ee02.png', 2813617, '2025-10-01 19:25:21', 1);
+INSERT INTO `user_diary_backgrounds` VALUES (5, 6, '410abab5b7a54673bf8d5cad846d791a.jpg', '微信图片_20250211220957.jpg', 'uploads/diary-backgrounds\\410abab5b7a54673bf8d5cad846d791a.jpg', 87518, '2025-10-09 18:27:58', 1);
 
 -- ----------------------------
 -- Table structure for user_feedbacks
@@ -1491,7 +1673,7 @@ CREATE TABLE `user_learning_path_progress`  (
   INDEX `ix_user_learning_path_progress_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_learning_path_progress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_learning_path_progress_ibfk_2` FOREIGN KEY (`learning_path_id`) REFERENCES `learning_paths` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_learning_path_progress
@@ -1572,7 +1754,7 @@ CREATE TABLE `user_skill_progress`  (
   INDEX `ix_user_skill_progress_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_skill_progress_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_skill_progress_ibfk_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_skill_progress
@@ -1593,7 +1775,7 @@ CREATE TABLE `user_star_points`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_user_points`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_user_star_points_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户星星积分表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户星星积分表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_star_points
@@ -1603,7 +1785,7 @@ INSERT INTO `user_star_points` VALUES (2, 13, 10, 10, 0, '2025-10-09 15:10:11', 
 INSERT INTO `user_star_points` VALUES (3, 5, 11, 11, 0, '2025-10-09 15:10:11', '2025-10-09 15:54:45');
 INSERT INTO `user_star_points` VALUES (4, 3, 11, 11, 0, '2025-10-09 15:10:11', '2025-10-09 15:59:39');
 INSERT INTO `user_star_points` VALUES (5, 7, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
-INSERT INTO `user_star_points` VALUES (6, 6, 16, 16, 0, '2025-10-09 15:10:11', '2025-10-09 17:19:41');
+INSERT INTO `user_star_points` VALUES (6, 6, 155, 155, 0, '2025-10-09 15:10:11', '2025-10-10 16:07:12');
 INSERT INTO `user_star_points` VALUES (7, 4, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
 INSERT INTO `user_star_points` VALUES (8, 1, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
 INSERT INTO `user_star_points` VALUES (9, 9, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
@@ -1611,7 +1793,9 @@ INSERT INTO `user_star_points` VALUES (10, 2, 10, 10, 0, '2025-10-09 15:10:11', 
 INSERT INTO `user_star_points` VALUES (11, 15, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
 INSERT INTO `user_star_points` VALUES (16, 16, 11, 11, 0, '2025-10-09 15:44:47', '2025-10-09 15:44:57');
 INSERT INTO `user_star_points` VALUES (17, 17, 11, 11, 0, '2025-10-09 16:14:22', '2025-10-09 16:14:31');
-INSERT INTO `user_star_points` VALUES (18, 18, 12, 12, 0, '2025-10-09 16:33:52', '2025-10-09 17:02:41');
+INSERT INTO `user_star_points` VALUES (18, 18, 18, 18, 0, '2025-10-09 16:33:52', '2025-10-09 19:19:12');
+INSERT INTO `user_star_points` VALUES (19, 19, 17, 17, 0, '2025-10-09 19:30:55', '2025-10-09 19:31:36');
+INSERT INTO `user_star_points` VALUES (20, 20, 17, 17, 0, '2025-10-09 19:36:15', '2025-10-09 19:36:57');
 
 -- ----------------------------
 -- Table structure for users
@@ -1636,7 +1820,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `email`(`email` ASC) USING BTREE,
   INDEX `idx_users_username`(`username` ASC) USING BTREE,
   INDEX `idx_users_email`(`email` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -1646,7 +1830,7 @@ INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTt
 INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-10-09 16:09:15', '2025-10-09 16:09:15', 1, NULL, 0);
 INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0);
 INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-10-09 15:54:45', '2025-10-09 15:54:45', 1, NULL, 0);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-09 17:19:03', '2025-10-09 17:19:03', 1, '2025-10-02 04:32:45', 12);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-10 17:09:51', '2025-10-10 17:09:51', 1, '2025-10-02 04:32:45', 12);
 INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0);
 INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0);
 INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0);
@@ -1654,7 +1838,9 @@ INSERT INTO `users` VALUES (13, 'frontend_test_69f062', '$2b$12$WPP69S4od.ZOBH0n
 INSERT INTO `users` VALUES (15, 'testuser917', '$2b$12$XwWky3GdBPJH8uZIaq8wzup0lE.TwTogSXntMdajazoE7S0T/OkHu', 'test917@example.com', NULL, '测试用户', NULL, '2025-09-17 19:03:23', '2025-09-17 19:37:59', '2025-09-17 19:37:59', 1, NULL, 0);
 INSERT INTO `users` VALUES (16, 'zhuzhu123', '$2b$12$H/3f.bW4D70/Ngl7RS8FB.Gk/Rbt5.Ws4Q8HIC2P3oRGDDUyxdccy', NULL, NULL, '情感小白', NULL, '2025-10-09 15:44:47', '2025-10-09 15:54:14', '2025-10-09 15:54:14', 1, NULL, 0);
 INSERT INTO `users` VALUES (17, 'bala123', '$2b$12$EekW9l0Ty35F6rLznw8jA.SQDZrjHfMiB/T2.z1gWGbb.UTHHp73e', NULL, NULL, '情感小白', NULL, '2025-10-09 16:14:22', '2025-10-09 16:14:31', '2025-10-09 16:14:31', 1, NULL, 0);
-INSERT INTO `users` VALUES (18, 'peppa1', '$2b$12$CZbRk6bvgnIMMv.PinMKSe5Vmy3xCSX9w4SFoT6aMJkyf4DdS6o06', NULL, NULL, '情感小白', NULL, '2025-10-09 16:33:52', '2025-10-09 17:02:30', '2025-10-09 17:02:30', 1, NULL, 0);
+INSERT INTO `users` VALUES (18, 'peppa1', '$2b$12$CZbRk6bvgnIMMv.PinMKSe5Vmy3xCSX9w4SFoT6aMJkyf4DdS6o06', NULL, NULL, '情感小白', NULL, '2025-10-09 16:33:52', '2025-10-09 19:18:13', '2025-10-09 19:18:13', 1, NULL, 0);
+INSERT INTO `users` VALUES (19, 'peppa2', '$2b$12$lLr.blDBQfPLLVGl6sMzmuIv4w08DOVTYLZDvKNJGP/bJYvNTRl4S', NULL, NULL, '情感小白', NULL, '2025-10-09 19:30:55', '2025-10-09 19:31:00', '2025-10-09 19:31:00', 1, NULL, 0);
+INSERT INTO `users` VALUES (20, 'peppa3', '$2b$12$pEPPmOjttVtfL5Kdsr2PhuKFduDsXPQt8Y1Yd/s2O748y4TB4Eo.m', NULL, NULL, '情感小白', NULL, '2025-10-09 19:36:15', '2025-10-09 19:36:21', '2025-10-09 19:36:21', 1, NULL, 0);
 
 -- ----------------------------
 -- Triggers structure for table risk_assessment_reports
@@ -1672,37 +1858,3 @@ CREATE TRIGGER `update_user_risk_stats` AFTER INSERT ON `risk_assessment_reports
 delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
-
--- 创建防护训练答题详情表
-CREATE TABLE IF NOT EXISTS `protection_drill_question_details` (
-    `id` int NOT NULL AUTO_INCREMENT,
-    `report_id` int NOT NULL COMMENT '关联的训练报告ID',
-    `question_id` int NULL DEFAULT NULL COMMENT '题目ID',
-    `question_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '题目标题',
-    `question_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '题目内容',
-    `selected_option_id` int NULL DEFAULT NULL COMMENT '用户选择的选项ID',
-    `selected_option_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户选择的选项文本',
-    `correct_option_id` int NULL DEFAULT NULL COMMENT '正确答案选项ID',
-    `correct_option_text` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '正确答案选项文本',
-    `is_correct` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否回答正确',
-    `score_gained` int NOT NULL DEFAULT 0 COMMENT '本题获得分数',
-    `explanation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '答案解释',
-    `risk_explanation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '风险解释',
-    `ai_feedback` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI个性化反馈建议',
-    `options_data` json NULL COMMENT '所有选项数据(JSON格式)',
-    `question_order` int NOT NULL DEFAULT 0 COMMENT '题目顺序',
-    `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    PRIMARY KEY (`id`) USING BTREE,
-    INDEX `idx_report_id`(`report_id` ASC) USING BTREE,
-    INDEX `idx_question_id`(`question_id` ASC) USING BTREE,
-    CONSTRAINT `fk_question_details_report` FOREIGN KEY (`report_id`) REFERENCES `protection_drill_reports` (`id`) ON DELETE CASCADE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic COMMENT = '防护训练答题详情表';
-
--- 为现有的防护训练报告表添加AI建议字段
-ALTER TABLE `protection_drill_reports` 
-ADD COLUMN `ai_analysis` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'AI深度分析和建议' AFTER `suggestions`;
-
--- 添加索引优化查询性能
-ALTER TABLE `protection_drill_reports` 
-ADD INDEX `idx_user_created`(`user_id`, `created_at` DESC) USING BTREE;
-

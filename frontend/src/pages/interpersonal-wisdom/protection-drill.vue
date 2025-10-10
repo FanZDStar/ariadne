@@ -14,12 +14,7 @@
 
       <view class="training-modes">
         <text class="section-title">🛡️ 选择训练模式</text>
-        <view
-          v-for="mode in trainingModes"
-          :key="mode.id"
-          class="mode-card"
-          @click="selectMode(mode)"
-        >
+        <view v-for="mode in trainingModes" :key="mode.id" class="mode-card" @click="selectMode(mode)">
           <view class="mode-header">
             <text class="mode-icon">{{ mode.icon }}</text>
             <view class="mode-info">
@@ -46,11 +41,7 @@
             <view class="mode-skills">
               <text class="skills-title">训练技能：</text>
               <view class="skills-tags">
-                <text
-                  v-for="skill in mode.skills"
-                  :key="skill"
-                  class="skill-tag"
-                >
+                <text v-for="skill in mode.skills" :key="skill" class="skill-tag">
                   {{ skill }}
                 </text>
               </view>
@@ -75,19 +66,13 @@
           <view class="warning-section">
             <text class="warning-icon">🚨</text>
             <text class="warning-title">重要提醒</text>
-            <text class="warning-text"
-              >这是模拟训练，帮助你在安全环境中学习识别和应对风险。真实情况下如遇到危险，请立即寻求帮助。</text
-            >
+            <text class="warning-text">这是模拟训练，帮助你在安全环境中学习识别和应对风险。真实情况下如遇到危险，请立即寻求帮助。</text>
           </view>
 
           <view class="training-objectives">
             <text class="section-label">🎯 训练目标</text>
             <view class="objectives-list">
-              <text
-                v-for="objective in selectedMode.objectives"
-                :key="objective"
-                class="objective-item"
-              >
+              <text v-for="objective in selectedMode.objectives" :key="objective" class="objective-item">
                 • {{ objective }}
               </text>
             </view>
@@ -96,11 +81,7 @@
           <view class="risk-signals">
             <text class="section-label">⚠️ 重点识别信号</text>
             <view class="signals-list">
-              <view
-                v-for="signal in selectedMode.riskSignals"
-                :key="signal.type"
-                class="signal-item"
-              >
+              <view v-for="signal in selectedMode.riskSignals" :key="signal.type" class="signal-item">
                 <view class="signal-header">
                   <text class="signal-icon">{{ signal.icon }}</text>
                   <text class="signal-type">{{ signal.type }}</text>
@@ -113,11 +94,7 @@
           <view class="protection-strategies">
             <text class="section-label">🛡️ 保护策略</text>
             <view class="strategies-list">
-              <text
-                v-for="strategy in selectedMode.strategies"
-                :key="strategy"
-                class="strategy-item"
-              >
+              <text v-for="strategy in selectedMode.strategies" :key="strategy" class="strategy-item">
                 ✓ {{ strategy }}
               </text>
             </view>
@@ -139,14 +116,9 @@
     <view v-if="currentStage === 'training'" class="training-stage">
       <view class="training-header">
         <view class="progress-info">
-          <text class="progress-text"
-            >场景 {{ currentScenario }}/{{ totalScenarios }}</text
-          >
+          <text class="progress-text">场景 {{ currentScenario }}/{{ totalScenarios }}</text>
           <view class="progress-bar">
-            <view
-              class="progress-fill"
-              :style="{ width: (currentScenario / totalScenarios) * 100 + '%' }"
-            >
+            <view class="progress-fill" :style="{ width: (currentScenario / totalScenarios) * 100 + '%' }">
             </view>
           </view>
         </view>
@@ -165,15 +137,10 @@
         </view>
 
         <view class="scenario-dialogue">
-          <view
-            v-for="message in currentTrainingStep.dialogue"
-            :key="message.id"
-            class="dialogue-item"
-            :class="{
-              'risk-message': message.isRisk,
-              'normal-message': !message.isRisk,
-            }"
-          >
+          <view v-for="message in currentTrainingStep.dialogue" :key="message.id" class="dialogue-item" :class="{
+            'risk-message': message.isRisk,
+            'normal-message': !message.isRisk,
+          }">
             <view class="speaker-info">
               <text class="speaker-name">{{ message.speaker }}</text>
               <text v-if="message.isRisk" class="risk-indicator">⚠️</text>
@@ -191,12 +158,8 @@
           }}</text>
 
           <view class="answer-options">
-            <view
-              v-for="option in currentTrainingStep.question.options"
-              :key="option.id"
-              class="option-item"
-              @click="selectAnswer(option)"
-            >
+            <view v-for="option in currentTrainingStep.question.options" :key="option.id" class="option-item"
+              @click="selectAnswer(option)">
               <view class="option-header">
                 <text class="option-letter">{{
                   String.fromCharCode(65 + option.id - 1)
@@ -236,15 +199,13 @@
             feedbackResult.isCorrect ? "回答正确！" : "需要改进"
           }}</text>
           <view class="feedback-score">
-            <text class="score-gained"
-              >+{{ feedbackResult.scoreGained }}分</text
-            >
+            <text class="score-gained">+{{ feedbackResult.scoreGained }}分</text>
           </view>
         </view>
 
         <view class="feedback-content">
           <view class="correct-analysis">
-            <text class="analysis-title">正确分析：</text>
+            <text class="analysis-title">{{ feedbackResult.isCorrect ? '正确分析：' : '错误提示：' }}</text>
             <text class="analysis-text">{{
               feedbackResult.correctAnalysis
             }}</text>
@@ -260,11 +221,7 @@
           <view class="protection-advice">
             <text class="advice-title">防护建议：</text>
             <view class="advice-list">
-              <text
-                v-for="advice in feedbackResult.protectionAdvice"
-                :key="advice"
-                class="advice-item"
-              >
+              <text v-for="advice in feedbackResult.protectionAdvice" :key="advice" class="advice-item">
                 • {{ advice }}
               </text>
             </view>
@@ -279,8 +236,7 @@
         <view class="feedback-actions">
           <view class="feedback-btn primary" @click="nextScenario">
             <text class="btn-text">{{
-              currentScenario < totalScenarios ? "下一个场景" : "查看结果"
-            }}</text>
+              currentScenario < totalScenarios ? "下一个场景" : "查看结果" }}</text>
           </view>
         </view>
       </view>
@@ -298,10 +254,7 @@
         <view class="final-score">
           <text class="score-number">{{ finalResult.totalScore }}</text>
           <text class="score-label">总分</text>
-          <view
-            class="score-level"
-            :class="getScoreLevel(finalResult.totalScore)"
-          >
+          <view class="score-level" :class="getScoreLevel(finalResult.totalScore)">
             <text class="level-text">{{
               getScoreLevelText(finalResult.totalScore)
             }}</text>
@@ -318,9 +271,7 @@
             <text class="stat-label">总题目</text>
           </view>
           <view class="stat-item">
-            <text class="stat-number"
-              >{{ Math.round(finalResult.accuracy) }}%</text
-            >
+            <text class="stat-number">{{ Math.round(finalResult.accuracy) }}%</text>
             <text class="stat-label">准确率</text>
           </view>
         </view>
@@ -328,20 +279,13 @@
 
       <view class="skills-mastery">
         <text class="mastery-title">🎯 技能掌握度</text>
-        <view
-          v-for="skill in finalResult.skillsMastery"
-          :key="skill.name"
-          class="skill-mastery-item"
-        >
+        <view v-for="skill in finalResult.skillsMastery" :key="skill.name" class="skill-mastery-item">
           <view class="skill-header">
             <text class="skill-name">{{ skill.name }}</text>
             <text class="skill-score">{{ skill.score }}%</text>
           </view>
           <view class="skill-progress">
-            <view
-              class="skill-progress-fill"
-              :style="{ width: skill.score + '%' }"
-            ></view>
+            <view class="skill-progress-fill" :style="{ width: skill.score + '%' }"></view>
           </view>
           <text class="skill-feedback">{{ skill.feedback }}</text>
         </view>
@@ -349,19 +293,11 @@
 
       <view class="improvement-suggestions">
         <text class="improvement-title">📈 提升建议</text>
-        <view
-          v-for="suggestion in finalResult.improvements"
-          :key="suggestion.area"
-          class="improvement-item"
-        >
+        <view v-for="suggestion in finalResult.improvements" :key="suggestion.area" class="improvement-item">
           <text class="improvement-area">{{ suggestion.area }}</text>
           <text class="improvement-desc">{{ suggestion.description }}</text>
           <view class="improvement-actions">
-            <text
-              v-for="action in suggestion.actions"
-              :key="action"
-              class="improvement-action"
-            >
+            <text v-for="action in suggestion.actions" :key="action" class="improvement-action">
               • {{ action }}
             </text>
           </view>
@@ -872,12 +808,12 @@ export default {
           score_gained: scoreGained,
           options: currentQuestion.options
             ? currentQuestion.options.map((opt) => ({
-                id: opt.id,
-                text: opt.text,
-                description: opt.description,
-                is_selected: opt.id === option.id,
-                is_correct: opt.id === feedback.correct_option_id,
-              }))
+              id: opt.id,
+              text: opt.text,
+              description: opt.description,
+              is_selected: opt.id === option.id,
+              is_correct: opt.id === feedback.correct_option_id,
+            }))
             : [],
         });
 
@@ -911,7 +847,7 @@ export default {
       console.log("使用备选答案逻辑:", option);
 
       const currentQuestion = this.trainingQuestions[this.currentQuestionIndex];
-      const isCorrect = option.isCorrect;
+      const isCorrect = option.isCorrect === true || option.is_correct === true;
       const scoreGained = isCorrect ? 10 : 3;
 
       this.currentScore += scoreGained;
@@ -921,6 +857,11 @@ export default {
         this.correctAnswers++;
         console.log("备选逻辑 - 正确答案数增加到:", this.correctAnswers);
       }
+
+      // 查找正确答案，兼容不同的字段名
+      const correctOption = currentQuestion?.options?.find(opt =>
+        opt.isCorrect === true || opt.is_correct === true
+      );
 
       // 收集答题分析数据
       this.questionAnalysis.push({
@@ -933,12 +874,12 @@ export default {
         is_correct: isCorrect,
         selected_option: option.text,
         selected_option_id: option.id,
-        correct_option: isCorrect ? option.text : "设定边界", // 备选正确答案
-        correct_option_id: isCorrect ? option.id : 1,
-        explanation: isCorrect
-          ? "你正确识别了这个风险信号！应该明确设定个人边界"
-          : "应该明确设定个人边界，不被情感威胁所绑架",
-        risk_explanation:
+        correct_option: correctOption?.text || "未知正确答案", // 从数据中获取正确答案
+        correct_option_id: correctOption?.id || 1,
+        explanation: correctOption?.description || (isCorrect
+          ? "你正确识别了这个风险信号！"
+          : `正确答案是：${correctOption?.text || '未知'}`),
+        risk_explanation: currentQuestion?.risk_explanation ||
           "这是典型的情感操控行为，通过威胁分手来控制对方的社交关系。",
         score_gained: scoreGained,
         options:
@@ -947,7 +888,7 @@ export default {
             text: opt.text,
             description: opt.description,
             is_selected: opt.id === option.id,
-            is_correct: opt.isCorrect || false,
+            is_correct: opt.isCorrect === true || opt.is_correct === true,
           })) || [],
       });
 
@@ -957,17 +898,17 @@ export default {
         isCorrect,
         scoreGained,
         correctAnalysis: isCorrect
-          ? "你正确识别了这个风险信号！"
-          : "这个答案需要再考虑一下。",
-        riskExplanation:
+          ? (currentQuestion?.correct_analysis || "你正确识别了这个风险信号！")
+          : "这个答案需要再考虑一下。不要灰心，通过练习你会越来越敏锐地识别这些风险信号。",
+        riskExplanation: currentQuestion?.risk_explanation ||
           "这是典型的情感操控行为，通过威胁分手来控制对方的社交关系。",
-        protectionAdvice: [
+        protectionAdvice: currentQuestion?.protection_advice || [
           "明确表达自己的立场和边界",
           "不被情感威胁所绑架",
           "寻求朋友或专业人士的意见",
           "考虑这种关系是否健康",
         ],
-        betterChoice: isCorrect ? null : "正确答案是A：情感操控",
+        betterChoice: isCorrect ? null : (currentQuestion?.better_choice || `正确答案：${correctOption?.text}`),
       };
 
       this.currentStage = "feedback";
