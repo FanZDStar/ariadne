@@ -113,7 +113,8 @@ STAR_POINT_REWARDS: Dict[StarPointAction, PointReward] = {
     StarPointAction.SKILL_FAVORITE: PointReward(
         points=1, 
         description="收藏技能", 
-        probability=0.5
+        probability=1.0,
+        daily_limit=1
     ),
     StarPointAction.SCENARIO_PRACTICE: PointReward(
         points=1, 

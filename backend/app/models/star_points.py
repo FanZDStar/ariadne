@@ -66,6 +66,7 @@ class DailyStarLimits(Base):
     protection_training = Column(Boolean, default=False, comment="防护技能训练(2星)")
     tree_hole_interaction_count = Column(Integer, default=0, comment="树洞互动次数")
     tree_hole_whisper = Column(Boolean, default=False, comment="发表悄悄话(2星)")
+    skill_favorite = Column(Boolean, default=False, comment="技能收藏(1星)")
     
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), comment="更新时间")

@@ -167,6 +167,10 @@ export default {
     this.checkFavoriteStatus();
   },
 
+  onShow() {
+    // 页面显示时的处理（已移除星点奖励检查）
+  },
+
   methods: {
     async loadSkillDetail() {
       try {
@@ -324,6 +328,18 @@ export default {
           ? 'http://localhost:8000/skill-favorites/remove'
           : 'http://localhost:8000/skill-favorites/add';
 
+        const requestData = {
+          skill_id: String(this.skillId), // 确保是字符串类型
+          category: this.getCategoryFromSkillId(),
+          skill_name: this.skillData.name
+        };
+
+        console.log('发送收藏请求:', {
+          url: url,
+          data: requestData,
+          isFavorited: this.isFavorited
+        });
+
         const response = await uni.request({
           url: url,
           method: 'POST',
@@ -331,26 +347,48 @@ export default {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          data: {
-            skill_id: this.skillId,
-            category: this.getCategoryFromSkillId(),
-            skill_name: this.skillData.name
-          }
+          data: requestData
         });
 
+        console.log('收藏请求响应:', response);
+
         if (response.statusCode === 200) {
+          const responseData = response.data;
+          const wasAddingFavorite = !this.isFavorited; // 记录操作类型
           this.isFavorited = !this.isFavorited;
-          uni.showToast({
-            title: this.isFavorited ? '收藏成功' : '取消收藏成功',
-            icon: 'success'
-          });
+
+          // 处理星点奖励 - 只有添加收藏时才处理奖励
+          if (wasAddingFavorite && responseData.star_reward && responseData.star_reward.is_rewarded) {
+            // 先显示收藏成功提示
+            uni.showToast({
+              title: '收藏成功',
+              icon: 'success',
+              duration: 1500
+            });
+
+            // 延迟显示星点奖励提示
+            setTimeout(() => {
+              uni.showToast({
+                title: responseData.star_reward.description,
+                icon: 'none',
+                duration: 2500
+              });
+            }, 1800);
+          } else {
+            uni.showToast({
+              title: this.isFavorited ? '收藏成功' : '取消收藏成功',
+              icon: 'success'
+            });
+          }
         } else {
-          throw new Error('操作失败');
+          console.error('API响应状态码不是200:', response.statusCode, response);
+          throw new Error(`操作失败，状态码: ${response.statusCode}`);
         }
       } catch (error) {
         console.error('收藏操作失败:', error);
+        console.error('完整错误信息:', JSON.stringify(error));
         uni.showToast({
-          title: '操作失败',
+          title: error.message || '操作失败',
           icon: 'none'
         });
       } finally {
@@ -377,6 +415,8 @@ export default {
       if (skillNum <= 51) return 'relationship_building';
       return 'special_scenarios';
     },
+
+
   },
 };
 </script>

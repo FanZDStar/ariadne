@@ -938,23 +938,23 @@ async def submit_relationship_assessment(
             star_reward = StarRewardInfo()
             try:
                 star_service = StarPointService(db)
-                award_result, message, points = star_service.award_points(
+                award_result = star_service.award_points(
                     user_id=current_user.user_id,
                     action=StarPointAction.RELATIONSHIP_ASSESSMENT,
                     source_type=SourceType.ASSESSMENT,
                     source_id=f"relationship_assessment_{current_user.user_id}_{datetime.now().strftime('%Y%m%d')}"
                 )
                 
-                if award_result:
+                if award_result.rewarded:
                     star_reward = StarRewardInfo(
-                        earned_points=points,
+                        earned_points=award_result.points_awarded,
                         is_rewarded=True,
                         action_type=StarPointAction.RELATIONSHIP_ASSESSMENT.value,
-                        description=f"关系健康评估获得{points}星点"
+                        description=f"关系健康评估获得{award_result.points_awarded}星点"
                     )
-                    print(f"⭐ 关系评估奖励成功: {points}星点")
+                    print(f"⭐ 关系评估奖励成功: {award_result.points_awarded}星点")
                 else:
-                    print(f"⭐ 关系评估奖励: {message}")
+                    print(f"⭐ 关系评估奖励: {award_result.message}")
             except Exception as e:
                 print(f"❌ 关系评估奖励失败: {str(e)}")
             
@@ -1162,23 +1162,23 @@ async def submit_relationship_assessment(
         star_reward = StarRewardInfo()
         try:
             star_service = StarPointService(db)
-            award_result, message, points = star_service.award_points(
+            award_result = star_service.award_points(
                 user_id=current_user.user_id,
                 action=StarPointAction.RELATIONSHIP_ASSESSMENT,
                 source_type=SourceType.ASSESSMENT,
                 source_id=f"relationship_assessment_{current_user.user_id}_{datetime.now().strftime('%Y%m%d')}"
             )
             
-            if award_result:
+            if award_result.rewarded:
                 star_reward = StarRewardInfo(
-                    earned_points=points,
+                    earned_points=award_result.points_awarded,
                     is_rewarded=True,
                     action_type=StarPointAction.RELATIONSHIP_ASSESSMENT.value,
-                    description=f"关系健康评估获得{points}星点"
+                    description=f"关系健康评估获得{award_result.points_awarded}星点"
                 )
-                print(f"⭐ 关系评估奖励成功: {points}星点")
+                print(f"⭐ 关系评估奖励成功: {award_result.points_awarded}星点")
             else:
-                print(f"⭐ 关系评估奖励: {message}")
+                print(f"⭐ 关系评估奖励: {award_result.message}")
         except Exception as e:
             print(f"❌ 关系评估奖励失败: {str(e)}")
 
@@ -1349,23 +1349,23 @@ async def get_personalized_protection_advice(
         star_reward = StarRewardInfo()
         try:
             star_service = StarPointService(db)
-            award_result, message, points = star_service.award_points(
+            award_result = star_service.award_points(
                 user_id=current_user.user_id,
                 action=StarPointAction.PERSONALIZED_ADVICE,
                 source_type=SourceType.ASSESSMENT,
                 source_id=f"advice_{current_user.user_id}_{datetime.now().strftime('%Y%m%d')}"
             )
             
-            if award_result:
+            if award_result.rewarded:
                 star_reward = StarRewardInfo(
-                    earned_points=points,
+                    earned_points=award_result.points_awarded,
                     is_rewarded=True,
                     action_type=StarPointAction.PERSONALIZED_ADVICE.value,
-                    description=f"个性化建议获得{points}星点"
+                    description=f"个性化建议获得{award_result.points_awarded}星点"
                 )
-                print(f"⭐ 个性化建议奖励成功: {points}星点")
+                print(f"⭐ 个性化建议奖励成功: {award_result.points_awarded}星点")
             else:
-                print(f"⭐ 个性化建议奖励: {message}")
+                print(f"⭐ 个性化建议奖励: {award_result.message}")
         except Exception as e:
             print(f"❌ 个性化建议奖励失败: {str(e)}")
         

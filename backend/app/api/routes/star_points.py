@@ -168,4 +168,5 @@ def award_user_points(
 ) -> tuple[bool, str, int]:
     """供其他模块调用的积分奖励函数"""
     service = get_star_point_service(db)
-    return service.award_points(user_id, action, source_id, source_type)
+    result = service.award_points(user_id, action, source_id, source_type)
+    return result.rewarded, result.message, result.points_awarded

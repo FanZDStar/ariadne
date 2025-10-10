@@ -4,6 +4,8 @@ from sqlalchemy import text
 from app.database.session import get_db
 from app.api.deps import get_current_user
 from app.models.user import User
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
 from pydantic import BaseModel
 from typing import List, Optional
 import json
@@ -32,7 +34,19 @@ class FavoritesListResponse(BaseModel):
     favorites: List[SkillFavoriteResponse]
     total: int
 
-@router.post("/add", status_code=status.HTTP_200_OK)
+# 星点奖励信息
+class StarRewardInfo(BaseModel):
+    earned_points: int = 0
+    is_rewarded: bool = False
+    action_type: str = ""
+    description: str = ""
+
+class SkillFavoriteAddResponse(BaseModel):
+    message: str
+    status: str
+    star_reward: StarRewardInfo = StarRewardInfo()
+
+@router.post("/add", status_code=status.HTTP_200_OK, response_model=SkillFavoriteAddResponse)
 async def add_skill_favorite(
     favorite_data: SkillFavoriteCreate,
     current_user: User = Depends(get_current_user),
@@ -52,7 +66,10 @@ async def add_skill_favorite(
         }).fetchone()
         
         if existing:
-            return {"message": "已收藏该技能", "status": "already_exists"}
+            return SkillFavoriteAddResponse(
+                message="已收藏该技能", 
+                status="already_exists"
+            )
         
         # 添加收藏记录
         insert_query = text("""
@@ -70,7 +87,40 @@ async def add_skill_favorite(
         
         logger.info(f"用户 {current_user.user_id} 收藏了技能 {favorite_data.skill_id}: {favorite_data.skill_name}")
         
-        return {"message": "收藏成功", "status": "success"}
+        # 尝试奖励星点
+        star_reward = StarRewardInfo()
+        try:
+            print(f"开始处理星点奖励 - 用户ID: {current_user.user_id}, 技能ID: {favorite_data.skill_id}")
+            star_service = StarPointService(db)
+            reward_result = star_service.award_points(
+                user_id=current_user.user_id,
+                action=StarPointAction.SKILL_FAVORITE,
+                source_type=SourceType.SKILL,
+                source_id=favorite_data.skill_id
+            )
+            
+            print(f"星点奖励结果: rewarded={reward_result.rewarded}, points={reward_result.points_awarded}, message={reward_result.message}")
+            
+            if reward_result.rewarded:
+                star_reward = StarRewardInfo(
+                    earned_points=reward_result.points_awarded,
+                    is_rewarded=True,
+                    action_type="skill_favorite",
+                    description=f"首次收藏技能【{favorite_data.skill_name}】，获得{reward_result.points_awarded}个星星！"
+                )
+                print(f"⭐ 技能收藏奖励成功: {reward_result.points_awarded}星点")
+            else:
+                print(f"⭐ 技能收藏奖励: {reward_result.message}")
+        except Exception as e:
+            # 星点奖励失败不影响收藏功能
+            print(f"❌ 星点奖励失败: {str(e)}")
+            logger.error(f"星点奖励失败: {str(e)}")
+        
+        return SkillFavoriteAddResponse(
+            message="收藏成功", 
+            status="success",
+            star_reward=star_reward
+        )
         
     except Exception as e:
         logger.error(f"添加技能收藏失败: {e}")
@@ -80,7 +130,7 @@ async def add_skill_favorite(
             detail="添加收藏失败"
         )
 
-@router.post("/remove", status_code=status.HTTP_200_OK)
+@router.post("/remove", status_code=status.HTTP_200_OK, response_model=SkillFavoriteAddResponse)
 async def remove_skill_favorite(
     favorite_data: dict,
     current_user: User = Depends(get_current_user),
@@ -108,11 +158,17 @@ async def remove_skill_favorite(
         db.commit()
         
         if result.rowcount == 0:
-            return {"message": "该技能未被收藏", "status": "not_found"}
+            return SkillFavoriteAddResponse(
+                message="该技能未被收藏", 
+                status="not_found"
+            )
         
         logger.info(f"用户 {current_user.user_id} 取消收藏技能 {skill_id}")
         
-        return {"message": "取消收藏成功", "status": "success"}
+        return SkillFavoriteAddResponse(
+            message="取消收藏成功", 
+            status="success"
+        )
         
     except Exception as e:
         logger.error(f"移除技能收藏失败: {e}")

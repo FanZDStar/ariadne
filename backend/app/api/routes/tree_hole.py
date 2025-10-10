@@ -73,23 +73,23 @@ def create_whisper(
     star_reward = StarRewardInfo()
     try:
         star_service = StarPointService(db)
-        award_result, message, points = star_service.award_points(
+        award_result = star_service.award_points(
             user_id=current_user.user_id,
             action=StarPointAction.TREE_HOLE_WHISPER,
             source_type=SourceType.TREE_HOLE,
             source_id=str(db_whisper.whisper_id),
         )
 
-        if award_result:
+        if award_result.rewarded:
             star_reward = StarRewardInfo(
-                earned_points=points,
+                earned_points=award_result.points_awarded,
                 is_rewarded=True,
                 action_type=StarPointAction.TREE_HOLE_WHISPER.value,
-                description=f"发表悄悄话获得{points}星点",
+                description=f"发表悄悄话获得{award_result.points_awarded}星点",
             )
-            print(f"⭐ 悄悄话奖励成功: {points}星点")
+            print(f"⭐ 悄悄话奖励成功: {award_result.points_awarded}星点")
         else:
-            print(f"⭐ 悄悄话奖励: {message}")
+            print(f"⭐ 悄悄话奖励: {award_result.message}")
     except Exception as e:
         print(f"❌ 悄悄话奖励失败: {str(e)}")
 
@@ -418,23 +418,23 @@ def like_whisper(
     if is_liked:  # 只有点赞（不是取消点赞）时才给奖励
         try:
             star_service = StarPointService(db)
-            award_result, message, points = star_service.award_points(
+            award_result = star_service.award_points(
                 user_id=current_user.user_id,
                 action=StarPointAction.TREE_HOLE_INTERACTION,
                 source_type=SourceType.TREE_HOLE,
                 source_id=str(whisper_id),
             )
 
-            if award_result:
+            if award_result.rewarded:
                 star_reward = StarRewardInfo(
-                    earned_points=points,
+                    earned_points=award_result.points_awarded,
                     is_rewarded=True,
                     action_type=StarPointAction.TREE_HOLE_INTERACTION.value,
-                    description=f"点赞获得{points}星点",
+                    description=f"点赞获得{award_result.points_awarded}星点",
                 )
-                print(f"⭐ 点赞奖励成功: {points}星点")
+                print(f"⭐ 点赞奖励成功: {award_result.points_awarded}星点")
             else:
-                print(f"⭐ 点赞奖励: {message}")
+                print(f"⭐ 点赞奖励: {award_result.message}")
         except Exception as e:
             print(f"❌ 点赞奖励失败: {str(e)}")
 
@@ -623,23 +623,23 @@ def create_whisper_comment(
     star_reward = StarRewardInfo()
     try:
         star_service = StarPointService(db)
-        award_result, message, points = star_service.award_points(
+        award_result = star_service.award_points(
             user_id=current_user.user_id,
             action=StarPointAction.TREE_HOLE_INTERACTION,
             source_type=SourceType.TREE_HOLE,
             source_id=str(whisper_id),
         )
 
-        if award_result:
+        if award_result.rewarded:
             star_reward = StarRewardInfo(
-                earned_points=points,
+                earned_points=award_result.points_awarded,
                 is_rewarded=True,
                 action_type=StarPointAction.TREE_HOLE_INTERACTION.value,
-                description=f"评论获得{points}星点",
+                description=f"评论获得{award_result.points_awarded}星点",
             )
-            print(f"⭐ 评论奖励成功: {points}星点")
+            print(f"⭐ 评论奖励成功: {award_result.points_awarded}星点")
         else:
-            print(f"⭐ 评论奖励: {message}")
+            print(f"⭐ 评论奖励: {award_result.message}")
     except Exception as e:
         print(f"❌ 评论奖励失败: {str(e)}")
 

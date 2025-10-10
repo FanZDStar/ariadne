@@ -6,6 +6,7 @@ from datetime import date, datetime
 from typing import Optional, Tuple, List
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+from dataclasses import dataclass
 
 from app.models.star_points import UserStarPoints, StarPointLog, DailyStarLimits
 from app.models.user import User
@@ -13,6 +14,13 @@ from app.utils.star_point_types import (
     StarPointAction, SourceType, PointReward,
     get_reward_config, get_action_display_name, is_daily_limited
 )
+
+@dataclass
+class StarPointResult:
+    """星点奖励结果"""
+    rewarded: bool
+    message: str
+    points_awarded: int
 
 
 class StarPointService:
@@ -146,8 +154,10 @@ class StarPointService:
                     return False, "今日已为此悄悄话获得过互动积分"
             elif action == StarPointAction.TREE_HOLE_WHISPER and daily_limits.tree_hole_whisper:
                 return False, "今日已经获得悄悄话积分"
+            elif action == StarPointAction.SKILL_FAVORITE and daily_limits.skill_favorite:
+                return False, "今日已经获得技能收藏积分"
         
-        # 检查概率（如技能收藏的50%概率）
+        # 检查概率
         if reward_config.probability < 1.0:
             if random.random() > reward_config.probability:
                 return False, f"未达到获得积分的概率要求 ({reward_config.probability*100}%)"
@@ -155,12 +165,12 @@ class StarPointService:
         return True, "可以获得积分"
     
     def award_points(self, user_id: int, action: StarPointAction, 
-                     source_id: str = None, source_type: SourceType = None) -> Tuple[bool, str, int]:
+                     source_id: str = None, source_type: SourceType = None) -> StarPointResult:
         """奖励用户积分"""
         # 检查是否可以获得积分
         can_earn, message = self.can_earn_points(user_id, action, source_id)
         if not can_earn:
-            return False, message, 0
+            return StarPointResult(rewarded=False, message=message, points_awarded=0)
         
         reward_config = get_reward_config(action)
         points = reward_config.points
@@ -187,7 +197,11 @@ class StarPointService:
         )
         
         self.db.commit()
-        return True, f"获得 {points} 个星星！{reward_config.description}", points
+        return StarPointResult(
+            rewarded=True, 
+            message=f"获得 {points} 个星星！{reward_config.description}", 
+            points_awarded=points
+        )
     
     def spend_points(self, user_id: int, points: int, description: str, 
                      source_id: str = None, source_type: SourceType = None) -> Tuple[bool, str]:
@@ -249,6 +263,8 @@ class StarPointService:
             daily_limits.tree_hole_interaction_count += 1
         elif action == StarPointAction.TREE_HOLE_WHISPER:
             daily_limits.tree_hole_whisper = True
+        elif action == StarPointAction.SKILL_FAVORITE:
+            daily_limits.skill_favorite = True
 
 
 def get_star_point_service(db: Session) -> StarPointService:

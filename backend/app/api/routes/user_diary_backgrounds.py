@@ -13,7 +13,7 @@ from app.models.user_diary_backgrounds import UserDiaryBackground
 from app.schemas.user_diary_backgrounds import UserDiaryBackgroundResponse, UserDiaryBackgroundWithStarResponse
 from app.api.deps import get_current_user
 from app.services.star_point_service import StarPointService
-from app.utils.star_point_types import StarPointAction
+from app.utils.star_point_types import StarPointAction, SourceType
 
 router = APIRouter(prefix="/user-diary-backgrounds", tags=["用户日记背景图片"])
 
@@ -144,11 +144,9 @@ async def upload_background(
         star_service = StarPointService(db)
         star_result = star_service.award_points(
             user_id=current_user.user_id,
-            action=StarPointAction.DIARY_BACKGROUND_MODIFY,
-            action_details={
-                "background_id": db_background.id,
-                "filename": db_background.original_filename
-            }
+            action=StarPointAction.BACKGROUND_CHANGE,
+            source_type=SourceType.DIARY,
+            source_id=str(db_background.id)
         )
         
         # 准备响应数据
