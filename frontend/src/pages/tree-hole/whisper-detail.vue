@@ -11,6 +11,10 @@
             formatTimestamp(whisper.created_at)
           }}</text>
         </view>
+        <!-- 右上角分享按钮 -->
+        <view class="share-button" @click="shareWhisper">
+          <text class="share-icon">📤</text>
+        </view>
       </view>
 
       <!-- 悄悄话内容 -->
@@ -55,43 +59,30 @@
         </view>
       </view>
 
-      <!-- 互动统计 -->
+      <!-- 互动统计 - 可交互 -->
       <view class="interaction-stats">
-        <view class="stat-item">
-          <text class="stat-icon">❤️</text>
+        <view 
+          class="stat-item stat-clickable" 
+          :class="{ 'stat-liked': whisper.liked }"
+          @click="toggleLike"
+        >
+          <text class="stat-icon">{{ whisper.liked ? "❤️" : "🤍" }}</text>
           <text class="stat-text">{{ whisper.like_count || 0 }}</text>
         </view>
-        <view class="stat-item">
+        <view 
+          class="stat-item stat-clickable" 
+          @click="goToChat"
+        >
           <text class="stat-icon">💬</text>
           <text class="stat-text">{{ whisper.comment_count || 0 }}</text>
         </view>
       </view>
     </view>
 
-    <!-- 操作按钮 -->
-    <view class="action-bar">
-      <view
-        class="action-button"
-        :class="{ liked: whisper.liked }"
-        @click="toggleLike"
-      >
-        <text class="action-icon">{{ whisper.liked ? "❤️" : "🤍" }}</text>
-        <text class="action-text">{{ whisper.liked ? "已点赞" : "点赞" }}</text>
-      </view>
-      <view class="action-button" @click="goToChat">
-        <text class="action-icon">💬</text>
-        <text class="action-text">评论</text>
-      </view>
-      <view class="action-button" @click="shareWhisper">
-        <text class="action-icon">📤</text>
-        <text class="action-text">分享</text>
-      </view>
-    </view>
-
     <!-- 评论列表区域 -->
     <view class="comments-section">
       <view class="section-title">
-        <text class="title-text">评论 ({{ comments.length }})</text>
+        <text class="title-text">评论 ({{ whisper.comment_count || 0 }})</text>
       </view>
 
       <view v-if="comments.length === 0" class="empty-comments">
@@ -218,18 +209,46 @@ export default {
     }
   },
   methods: {
-    async loadWhisperDetail() {
+    async loadWhisperDetail(retryCount = 0) {
       const token = storage.getToken();
       if (!token) {
         uni.showToast({ title: "请先登录", icon: "none" });
         return;
       }
 
+      const maxRetries = 2; // 最多重试2次
+
       try {
         this.whisper = await api.getWhisperDetails(token, this.whisperId);
       } catch (error) {
-        console.error("Failed to load whisper detail:", error);
-        uni.showToast({ title: "加载失败", icon: "none" });
+        console.error(`Failed to load whisper detail (attempt ${retryCount + 1}):`, error);
+        
+        // 如果是网络错误或服务器错误，且还有重试次数，自动重试
+        if (retryCount < maxRetries) {
+          console.log(`⏳ 自动重试中... (${retryCount + 1}/${maxRetries})`);
+          
+          // 延迟后重试，延迟时间随重试次数增加
+          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+          
+          return this.loadWhisperDetail(retryCount + 1);
+        }
+        
+        // 重试失败后显示错误，并提供手动重试选项
+        uni.showModal({
+          title: '加载失败',
+          content: '无法加载帖子详情，是否重试？',
+          confirmText: '重试',
+          cancelText: '返回',
+          success: (res) => {
+            if (res.confirm) {
+              // 用户选择重试
+              this.loadWhisperDetail(0);
+            } else {
+              // 用户选择返回
+              uni.navigateBack();
+            }
+          }
+        });
       }
     },
 
@@ -398,6 +417,7 @@ export default {
                 this.replyingTo.id,
                 commentData
               );
+              // 回复成功，评论数不增加（回复不算独立评论）
             } catch (error) {
               // 如果回复接口不存在，fallback到普通评论
               console.log("回复接口暂未实现，使用普通评论模式");
@@ -418,6 +438,7 @@ export default {
                 this.replyingTo.commentId,
                 commentData
               );
+              // 回复成功，评论数不增加（回复不算独立评论）
             } catch (error) {
               // 如果回复接口不存在，fallback到普通评论
               console.log("回复接口暂未实现，使用普通评论模式");
@@ -536,8 +557,23 @@ export default {
     },
 
     goToChat() {
-      uni.navigateTo({
-        url: `/pages/tree-hole/whisper-chat?whisper_id=${this.whisperId}`,
+      // 聚焦到评论输入框
+      const query = uni.createSelectorQuery().in(this);
+      query.select('.comment-input').boundingClientRect();
+      query.exec((res) => {
+        if (res[0]) {
+          uni.pageScrollTo({
+            scrollTop: res[0].top - 100,
+            duration: 300
+          });
+        }
+      });
+      
+      // 提示用户可以评论
+      uni.showToast({
+        title: "请在底部输入评论",
+        icon: "none",
+        duration: 1500
       });
     },
 
@@ -616,6 +652,7 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 25rpx;
+  position: relative;
 }
 
 .avatar {
@@ -629,6 +666,29 @@ export default {
 
 .user-details {
   flex: 1;
+}
+
+/* 右上角分享按钮 */
+.share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70rpx;
+  height: 70rpx;
+  background: linear-gradient(135deg, #f8f4e6, #f0e6d2);
+  border-radius: 50%;
+  border: 2rpx solid #e8dcc6;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.share-button:active {
+  transform: scale(0.9);
+  background: linear-gradient(135deg, #f0e6d2, #e8dcc6);
+}
+
+.share-icon {
+  font-size: 32rpx;
 }
 
 .username {
@@ -729,9 +789,11 @@ export default {
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 }
 
+/* 互动统计区域 - 可交互 */
 .interaction-stats {
   display: flex;
   align-items: center;
+  gap: 30rpx;
   margin-top: 25rpx;
   padding-top: 20rpx;
   border-top: 1rpx solid #e8dcc6;
@@ -740,62 +802,37 @@ export default {
 .stat-item {
   display: flex;
   align-items: center;
-  margin-right: 40rpx;
+  gap: 8rpx;
+  transition: transform 0.2s ease;
+}
+
+/* 可点击的统计项 */
+.stat-clickable {
+  cursor: pointer;
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx;
+  background-color: #f8f4e6;
+  border: 1rpx solid #e8dcc6;
+}
+
+.stat-clickable:active {
+  transform: scale(0.95);
+  background-color: #f0e6d2;
+}
+
+/* 已点赞状态 */
+.stat-liked {
+  background: linear-gradient(135deg, #ffe5e5, #ffd1d1);
+  border-color: #ffb3b3;
 }
 
 .stat-icon {
   font-size: 28rpx;
-  margin-right: 8rpx;
 }
 
 .stat-text {
   font-size: 24rpx;
   color: #666;
-  font-weight: 500;
-}
-
-.action-bar {
-  display: flex;
-  justify-content: space-around;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20rpx);
-  margin: 0 20rpx 20rpx;
-  border-radius: 24rpx;
-  padding: 25rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
-}
-
-.action-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15rpx 20rpx;
-  border-radius: 16rpx;
-  transition: all 0.3s ease;
-  min-width: 120rpx;
-}
-
-.action-button.liked {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-  color: white;
-}
-
-.action-button.liked .action-text {
-  color: white;
-}
-
-.action-button:active {
-  transform: scale(0.95);
-}
-
-.action-icon {
-  font-size: 32rpx;
-  margin-bottom: 8rpx;
-}
-
-.action-text {
-  font-size: 24rpx;
-  color: #64748b;
   font-weight: 500;
 }
 
