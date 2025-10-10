@@ -34,12 +34,14 @@
                 <text class="section-title">请选择你要评估的关系类型：</text>
                 <view class="type-grid">
                     <view v-for="type in relationTypes" :key="type.id" class="type-card"
-                        :class="{ selected: selectedRelationType === type.id }" 
+                        :class="{ selected: selectedRelationType === type.id }"
                         :style="selectedRelationType === type.id ? `border-color: ${type.color}; background: linear-gradient(135deg, ${type.lightColor} 0%, #ffffff 100%); --selected-color: ${type.color}` : ''"
                         @click="selectRelationType(type.id)">
                         <text class="type-icon">{{ type.icon }}</text>
                         <view class="type-content">
-                            <text class="type-name" :style="selectedRelationType === type.id ? `color: ${type.color}` : ''">{{ type.name }}</text>
+                            <text class="type-name"
+                                :style="selectedRelationType === type.id ? `color: ${type.color}` : ''">{{ type.name
+                                }}</text>
                             <text class="type-desc">{{ type.desc }}</text>
                         </view>
                     </view>
@@ -97,11 +99,11 @@
                     </view>
                 </view>
             </view>
-            
+
             <view class="analyzing-content">
                 <text class="analyzing-title">AI正在分析您的回答</text>
                 <text class="analyzing-subtitle">这可能需要1-2分钟...</text>
-                
+
                 <view class="analyzing-steps">
                     <view class="step-item active">
                         <view class="step-icon">✅</view>
@@ -117,7 +119,7 @@
                     </view>
                 </view>
             </view>
-            
+
             <view class="notification-card">
                 <view class="notification-header">
                     <text class="notification-icon">📋</text>
@@ -162,13 +164,14 @@
             <!-- 维度分析 -->
             <view class="dimension-analysis" v-if="assessmentResult.dimension_analysis">
                 <text class="analysis-title">📊 各维度表现</text>
-                <view v-for="(dimension, name) in assessmentResult.dimension_analysis" :key="name" class="dimension-item">
+                <view v-for="(dimension, name) in assessmentResult.dimension_analysis" :key="name"
+                    class="dimension-item">
                     <view class="dimension-header">
                         <text class="dimension-name">{{ name }}</text>
                         <text class="dimension-score">{{ dimension.percentage.toFixed(1) }}%</text>
                     </view>
                     <view class="dimension-bar">
-                        <view class="bar-fill" :style="{ 
+                        <view class="bar-fill" :style="{
                             width: dimension.percentage + '%',
                             backgroundColor: getDimensionColor(dimension.percentage)
                         }"></view>
@@ -184,7 +187,8 @@
                 </view>
             </view>
 
-            <view class="recommendations" v-if="assessmentResult.recommendations && assessmentResult.recommendations.length > 0">
+            <view class="recommendations"
+                v-if="assessmentResult.recommendations && assessmentResult.recommendations.length > 0">
                 <text class="rec-title">💡 个性化建议</text>
                 <view v-for="(rec, index) in assessmentResult.recommendations" :key="index" class="rec-item">
                     <view class="rec-header">
@@ -361,21 +365,21 @@ export default {
                 // 切换到分析状态
                 this.currentStep = 'analyzing';
                 this.analyzingStep = 1;
-                
+
                 console.log('当前步骤：', this.currentStep);
-                
+
                 // 启动分析步骤动画
                 setTimeout(() => {
                     console.log('步骤2激活');
                     this.analyzingStep = 2;
                 }, 1000);
-                
+
                 setTimeout(() => {
                     console.log('步骤3激活');
                     this.analyzingStep = 3;
                 }, 2000);
 
-                // 提交评估数据（异步，不等待AI分析结果）
+                // 提交评估数据
                 const response = await uni.request({
                     url: `${process.env.VUE_APP_API_BASE_URL}/emotional-protection/protection/relationship-assessment/submit`,
                     method: 'POST',
@@ -394,6 +398,19 @@ export default {
                 console.log('API响应:', response);
 
                 if (response.statusCode === 200) {
+                    const responseData = response.data;
+
+                    // 处理星点奖励
+                    if (responseData.star_reward && responseData.star_reward.is_rewarded) {
+                        console.log('⭐ 获得星点奖励:', responseData.star_reward);
+                        // 显示星点奖励提示
+                        uni.showToast({
+                            title: `🌟 ${responseData.star_reward.description}`,
+                            icon: 'none',
+                            duration: 2000
+                        });
+                    }
+
                     // 3秒后显示完成提示并跳转回人际智慧主页
                     setTimeout(() => {
                         console.log('显示成功提示');
@@ -402,7 +419,7 @@ export default {
                             icon: 'success',
                             duration: 2000
                         });
-                        
+
                         // Toast显示完后跳转回人际智慧主页
                         setTimeout(() => {
                             console.log('准备跳转回上一页');
@@ -484,7 +501,7 @@ export default {
 
         formatAnalysisText(text) {
             if (!text) return '';
-            
+
             return text
                 // 处理加粗文本 **text** 或 __text__
                 .replace(/\*\*(.*?)\*\*/g, '<strong class="bold-text">$1</strong>')
@@ -506,7 +523,35 @@ export default {
                 // 包装整体内容为段落
                 .replace(/^/, '<p class="paragraph">')
                 .replace(/$/, '</p>');
+        },
+
+        // 检查并显示星点奖励
+        async checkStarReward() {
+            try {
+                const starReward = uni.getStorageSync('pending_star_reward_RELATIONSHIP_ASSESSMENT');
+                if (starReward) {
+                    console.log('⭐ 显示关系评估星点奖励:', starReward);
+
+                    // 清除存储的奖励信息
+                    uni.removeStorageSync('pending_star_reward_RELATIONSHIP_ASSESSMENT');
+
+                    // 显示奖励提示
+                    uni.showToast({
+                        title: `🌟 ${starReward.description}`,
+                        icon: 'none',
+                        duration: 2000
+                    });
+                }
+            } catch (error) {
+                console.error('检查星点奖励失败:', error);
+            }
         }
+    },
+
+    // 页面显示时检查星点奖励
+    onShow() {
+        console.log('📱 关系健康评估页面显示');
+        this.checkStarReward();
     }
 }
 </script>
@@ -569,6 +614,7 @@ export default {
 .header-text {
     flex: 1;
 }
+
 .title {
     font-size: 48rpx;
     font-weight: bold;
@@ -756,7 +802,7 @@ export default {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s;
 }
 
@@ -1333,20 +1379,20 @@ export default {
     .result-actions {
         flex-direction: column;
     }
-    
+
     .analyzing-steps {
         max-width: 100%;
     }
-    
+
     .notification-path {
         flex-direction: column;
         gap: 8rpx;
     }
-    
+
     .path-arrow {
         transform: rotate(90deg);
     }
-    
+
     .analyzing-actions {
         flex-direction: column;
     }
@@ -1375,12 +1421,19 @@ export default {
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
         transform: translateY(0);
     }
+
     40% {
         transform: translateY(-20rpx);
     }
+
     60% {
         transform: translateY(-10rpx);
     }
@@ -1401,15 +1454,27 @@ export default {
     animation: thinking 1.4s infinite ease-in-out;
 }
 
-.dot1 { animation-delay: -0.32s; }
-.dot2 { animation-delay: -0.16s; }
-.dot3 { animation-delay: 0; }
+.dot1 {
+    animation-delay: -0.32s;
+}
+
+.dot2 {
+    animation-delay: -0.16s;
+}
+
+.dot3 {
+    animation-delay: 0;
+}
 
 @keyframes thinking {
-    0%, 80%, 100% {
+
+    0%,
+    80%,
+    100% {
         transform: scale(0.8);
         opacity: 0.5;
     }
+
     40% {
         transform: scale(1.2);
         opacity: 1;

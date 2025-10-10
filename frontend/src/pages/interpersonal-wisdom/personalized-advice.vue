@@ -262,6 +262,11 @@ export default {
         this.loadAdviceHistory();
     },
 
+    onShow() {
+        // 检查星点奖励
+        this.checkStarReward();
+    },
+
     methods: {
         selectRelationType(typeId) {
             this.formData.relationType = typeId;
@@ -317,8 +322,23 @@ export default {
                     this.adviceResult = this.parseAdviceResult(response.data.personalized_advice);
                     this.currentStep = 'advice';
 
+                    // 检查星点奖励
+                    if (response.data.star_reward && response.data.star_reward.is_rewarded) {
+                        // 立即显示星点奖励Toast
+                        setTimeout(() => {
+                            uni.showToast({
+                                title: response.data.star_reward.description,
+                                icon: 'none',
+                                duration: 2500
+                            });
+                        }, 500); // 延迟500ms显示，让加载完成
+                    }
+
                     // 保存到历史记录
                     this.saveToHistory();
+
+                    // 重置表单
+                    this.resetForm();
                 }
             } catch (error) {
                 console.error('获取建议失败:', error);
@@ -335,10 +355,10 @@ export default {
         parseAdviceResult(adviceText) {
             // 这里应该解析AI返回的文本，提取结构化信息
             // 简化示例，实际项目中可能需要更复杂的解析逻辑
-            
+
             // 根据用户的关系类型和情况，智能推荐相关技能
             const recommendedSkills = this.getRecommendedSkillsBasedOnSituation();
-            
+
             return {
                 core_advice: "基于你的情况，建议你先从建立基本的沟通信心开始。",
                 action_steps: [
@@ -441,13 +461,7 @@ export default {
 
         restartAdviceInput() {
             this.currentStep = 'input';
-            this.formData = {
-                situation: '',
-                relationType: '',
-                emotionLevel: 3,
-                concerns: '',
-                urgency: 'normal'
-            };
+            this.resetForm();
             this.adviceResult = null;
         },
 
@@ -467,7 +481,7 @@ export default {
         practiceSkill(skill) {
             // 从统一数据源获取完整的技能信息
             const skillData = this.getSkillDataById(skill.id);
-            
+
             if (!skillData) {
                 uni.showToast({
                     title: '技能数据加载失败',
@@ -517,7 +531,7 @@ export default {
                 "listen_actively": {
                     id: 1,
                     name: "积极倾听技巧",
-                    title: "积极倾听技巧", 
+                    title: "积极倾听技巧",
                     description: "学习如何专注、理解并回应他人的话语，建立更深层的连接",
                     brief: "学会用心倾听对方的话语和情感",
                     tags: ["沟通", "倾听", "理解"],
@@ -542,7 +556,7 @@ export default {
                 },
                 "emotion_sharing": {
                     id: 5,
-                    name: "共情能力培养", 
+                    name: "共情能力培养",
                     title: "共情能力培养",
                     description: "理解和感受他人情感，增进人际关系的深度",
                     brief: "提升理解他人情感的能力",
@@ -556,7 +570,7 @@ export default {
                 "express_clearly": {
                     id: 2,
                     name: "建设性反馈",
-                    title: "建设性反馈", 
+                    title: "建设性反馈",
                     description: "以支持性的方式提供反馈，促进他人成长",
                     brief: "学会给出有效的建设性意见",
                     tags: ["反馈", "成长", "支持"],
@@ -570,7 +584,7 @@ export default {
                     id: 4,
                     name: "冲突解决策略",
                     title: "冲突解决策略",
-                    description: "有效处理分歧和冲突，寻找双赢解决方案", 
+                    description: "有效处理分歧和冲突，寻找双赢解决方案",
                     brief: "学会妥善处理人际冲突",
                     tags: ["冲突", "解决", "合作"],
                     scenarios: ["工作争议", "朋友矛盾", "家庭分歧"],
@@ -584,7 +598,7 @@ export default {
                     name: "情感智力提升",
                     title: "情感智力提升",
                     description: "识别、理解和管理自己及他人的情感",
-                    brief: "提升情感认知和管理能力", 
+                    brief: "提升情感认知和管理能力",
                     tags: ["情感", "智力", "管理"],
                     scenarios: ["情感表达", "情绪管理", "关系维护"],
                     practiceScenarios: [
@@ -680,6 +694,34 @@ export default {
         getRelationTypeName(typeId) {
             const type = this.relationTypes.find(t => t.id === typeId);
             return type ? type.name : '未知';
+        },
+
+        checkStarReward() {
+            // 检查是否有星星奖励信息
+            const { storage } = require('@/utils/api.js');
+            const starReward = storage.getStarReward();
+            if (starReward && starReward.message) {
+                // 显示星星奖励提示
+                uni.showToast({
+                    title: starReward.message,
+                    icon: 'none',
+                    duration: 2500
+                });
+
+                // 清除奖励信息，避免重复显示
+                storage.clearStarReward();
+            }
+        },
+
+        resetForm() {
+            // 重置表单数据
+            this.formData = {
+                situation: '',
+                relationType: '',
+                emotionLevel: 3,
+                concerns: '',
+                urgency: 'normal'
+            };
         }
     }
 }
@@ -728,8 +770,15 @@ export default {
 }
 
 @keyframes wave {
-    0%, 100% { transform: translateX(0px); }
-    50% { transform: translateX(-100px); }
+
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+
+    50% {
+        transform: translateX(-100px);
+    }
 }
 
 .title {
@@ -1582,8 +1631,13 @@ export default {
 }
 
 @keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
 .progress-bar {
@@ -1719,6 +1773,7 @@ export default {
         opacity: 0;
         transform: translateY(40rpx);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1730,6 +1785,7 @@ export default {
         opacity: 0;
         transform: translateX(-40rpx);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1741,6 +1797,7 @@ export default {
         opacity: 0;
         transform: translateX(40rpx);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1752,6 +1809,7 @@ export default {
         opacity: 0;
         transform: scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -1827,15 +1885,15 @@ export default {
         min-width: 160rpx;
         justify-content: center;
     }
-    
+
     .header {
         padding: 60rpx 30rpx 50rpx;
     }
-    
+
     .title {
         font-size: 48rpx;
     }
-    
+
     .form-card {
         padding: 32rpx;
         margin: 0 20rpx 40rpx;

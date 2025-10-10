@@ -39,8 +39,8 @@ class StarPointAction(Enum):
     SCENARIO_PRACTICE = "scenario_practice"     # 情景演练 1星
     
     # 人际智慧 - 防护指南
-    RELATIONSHIP_ASSESSMENT = "relationship_assessment"  # 关系评估 2星
-    PERSONALIZED_ADVICE = "personalized_advice"        # 个性化建议 2星
+    RELATIONSHIP_ASSESSMENT = "relationship_assessment"  # 关系评估 1星
+    PERSONALIZED_ADVICE = "personalized_advice"        # 个性化建议 1星
     
     # 人际智慧 - 实战练习
     AI_SCENARIO_TRAINING = "ai_scenario_training"       # AI情景训练 2星
@@ -122,12 +122,12 @@ STAR_POINT_REWARDS: Dict[StarPointAction, PointReward] = {
     
     # 防护指南
     StarPointAction.RELATIONSHIP_ASSESSMENT: PointReward(
-        points=2, 
+        points=1, 
         description="关系健康评估", 
         daily_limit=1
     ),
     StarPointAction.PERSONALIZED_ADVICE: PointReward(
-        points=2, 
+        points=1, 
         description="个性化建议", 
         daily_limit=1
     ),

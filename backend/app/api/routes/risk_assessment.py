@@ -12,6 +12,10 @@ from app.api.deps import get_current_user
 from app.models.user import User
 from app.models.risk_assessment_report import RiskAssessmentReport
 from app.services.risk_assessment_service import RiskAssessmentService
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
 
 router = APIRouter()
 
@@ -23,6 +27,13 @@ class GenerateReportRequest(BaseModel):
 
 class MarkViewedRequest(BaseModel):
     report_id: int
+
+# 星点奖励信息
+class StarRewardInfo(BaseModel):
+    earned_points: int = 0
+    is_rewarded: bool = False
+    action_type: str = ""
+    description: str = ""
 
 # 响应模型
 class RiskAssessmentReportResponse(BaseModel):
@@ -51,7 +62,10 @@ class StatisticsResponse(BaseModel):
     avg_risk_score: float
     improvement_trend: float
 
-@router.post("/generate-report", response_model=RiskAssessmentReportResponse)
+class RiskAssessmentReportWithStarResponse(RiskAssessmentReportResponse):
+    star_reward: StarRewardInfo = StarRewardInfo()
+
+@router.post("/generate-report", response_model=RiskAssessmentReportWithStarResponse)
 async def generate_session_report(
     request: GenerateReportRequest,
     background_tasks: BackgroundTasks,
@@ -75,7 +89,31 @@ async def generate_session_report(
         if not report:
             raise HTTPException(status_code=400, detail="报告生成失败")
         
-        return RiskAssessmentReportResponse(
+        # 处理星点奖励 - 每日第一次关系健康评估获得1星点
+        star_reward = StarRewardInfo()
+        try:
+            star_service = StarPointService(db)
+            award_result, message, points = star_service.award_points(
+                user_id=current_user.user_id,
+                action=StarPointAction.RELATIONSHIP_ASSESSMENT,
+                source_type=SourceType.ASSESSMENT,
+                source_id=str(report.report_id)
+            )
+            
+            if award_result:
+                star_reward = StarRewardInfo(
+                    earned_points=points,
+                    is_rewarded=True,
+                    action_type=StarPointAction.RELATIONSHIP_ASSESSMENT.value,
+                    description=f"关系健康评估获得{points}星点"
+                )
+                print(f"⭐ 关系评估奖励成功: {points}星点")
+            else:
+                print(f"⭐ 关系评估奖励: {message}")
+        except Exception as e:
+            print(f"❌ 关系评估奖励失败: {str(e)}")
+        
+        return RiskAssessmentReportWithStarResponse(
             report_id=report.report_id,
             session_id=report.session_id,
             session_title=report.session.title if report.session else "未知会话",
@@ -94,7 +132,8 @@ async def generate_session_report(
             conversation_end_time=report.conversation_end_time,
             report_generated_time=report.report_generated_time,
             is_viewed=report.is_viewed,
-            version=report.version
+            version=report.version,
+            star_reward=star_reward
         )
         
     except Exception as e:

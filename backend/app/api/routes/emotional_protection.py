@@ -12,11 +12,27 @@ from app.core.ai_service import AIService
 from app.core.prompts import PROMPTS
 from app.api.deps import get_current_user
 from app.models.user import User
+from app.services.star_point_service import StarPointService
+from app.utils.star_point_types import StarPointAction, SourceType
+from pydantic import BaseModel
 
 router = APIRouter()
 
 # 设置日志
 logger = logging.getLogger(__name__)
+
+# 星点奖励信息
+class StarRewardInfo(BaseModel):
+    earned_points: int = 0
+    is_rewarded: bool = False
+    action_type: str = ""
+    description: str = ""
+
+# 个性化建议响应模式
+class PersonalizedAdviceResponse(BaseModel):
+    personalized_advice: str
+    advice_for: Dict[str, Any]
+    star_reward: StarRewardInfo = StarRewardInfo()
 
 # 感情防护知识库
 PROTECTION_DATABASE = {
@@ -918,6 +934,30 @@ async def submit_relationship_assessment(
             db.refresh(new_report)
             report_id = new_report.id
             
+            # 处理星点奖励 - 异步模式下也要给奖励
+            star_reward = StarRewardInfo()
+            try:
+                star_service = StarPointService(db)
+                award_result, message, points = star_service.award_points(
+                    user_id=current_user.user_id,
+                    action=StarPointAction.RELATIONSHIP_ASSESSMENT,
+                    source_type=SourceType.ASSESSMENT,
+                    source_id=f"relationship_assessment_{current_user.user_id}_{datetime.now().strftime('%Y%m%d')}"
+                )
+                
+                if award_result:
+                    star_reward = StarRewardInfo(
+                        earned_points=points,
+                        is_rewarded=True,
+                        action_type=StarPointAction.RELATIONSHIP_ASSESSMENT.value,
+                        description=f"关系健康评估获得{points}星点"
+                    )
+                    print(f"⭐ 关系评估奖励成功: {points}星点")
+                else:
+                    print(f"⭐ 关系评估奖励: {message}")
+            except Exception as e:
+                print(f"❌ 关系评估奖励失败: {str(e)}")
+            
             # 启动后台任务处理AI分析
             asyncio.create_task(process_async_analysis(report_id, answers, relationship_type))
             
@@ -925,7 +965,8 @@ async def submit_relationship_assessment(
                 "message": "评估提交成功，正在进行AI分析...",
                 "report_id": report_id,
                 "status": "processing",
-                "estimated_completion": "预计1-2分钟后完成"
+                "estimated_completion": "预计1-2分钟后完成",
+                "star_reward": star_reward
             }
         
         # 原有同步模式逻辑
@@ -1117,6 +1158,30 @@ async def submit_relationship_assessment(
                     "dimension": dim
                 })
         
+        # 处理星点奖励 - 每日第一次关系健康评估获得1星点
+        star_reward = StarRewardInfo()
+        try:
+            star_service = StarPointService(db)
+            award_result, message, points = star_service.award_points(
+                user_id=current_user.user_id,
+                action=StarPointAction.RELATIONSHIP_ASSESSMENT,
+                source_type=SourceType.ASSESSMENT,
+                source_id=f"relationship_assessment_{current_user.user_id}_{datetime.now().strftime('%Y%m%d')}"
+            )
+            
+            if award_result:
+                star_reward = StarRewardInfo(
+                    earned_points=points,
+                    is_rewarded=True,
+                    action_type=StarPointAction.RELATIONSHIP_ASSESSMENT.value,
+                    description=f"关系健康评估获得{points}星点"
+                )
+                print(f"⭐ 关系评估奖励成功: {points}星点")
+            else:
+                print(f"⭐ 关系评估奖励: {message}")
+        except Exception as e:
+            print(f"❌ 关系评估奖励失败: {str(e)}")
+
         return {
             "assessment_result": {
                 "session_token": session_token,
@@ -1129,7 +1194,8 @@ async def submit_relationship_assessment(
                 "completed_at": "刚刚完成"
             },
             "ai_analysis": ai_analysis,
-            "recommendations": recommendations
+            "recommendations": recommendations,
+            "star_reward": star_reward
         }
         
     except Exception as e:
@@ -1241,7 +1307,7 @@ async def get_protection_items_by_category(category_id: str):
         "items": category_data["items"]
     }
 
-@router.post("/protection/personalized-advice")
+@router.post("/protection/personalized-advice", response_model=PersonalizedAdviceResponse)
 async def get_personalized_protection_advice(
     request_data: Dict[str, Any],
     current_user: User = Depends(get_current_user),
@@ -1279,15 +1345,40 @@ async def get_personalized_protection_advice(
         messages = [{"role": "user", "content": advice_prompt}]
         personalized_advice = await ai_service.get_response(messages, "emotional-protection")
         
-        return {
-            "personalized_advice": personalized_advice,
-            "advice_for": {
+        # 处理星点奖励 - 每日第一次个性化建议获得1星点
+        star_reward = StarRewardInfo()
+        try:
+            star_service = StarPointService(db)
+            award_result, message, points = star_service.award_points(
+                user_id=current_user.user_id,
+                action=StarPointAction.PERSONALIZED_ADVICE,
+                source_type=SourceType.ASSESSMENT,
+                source_id=f"advice_{current_user.user_id}_{datetime.now().strftime('%Y%m%d')}"
+            )
+            
+            if award_result:
+                star_reward = StarRewardInfo(
+                    earned_points=points,
+                    is_rewarded=True,
+                    action_type=StarPointAction.PERSONALIZED_ADVICE.value,
+                    description=f"个性化建议获得{points}星点"
+                )
+                print(f"⭐ 个性化建议奖励成功: {points}星点")
+            else:
+                print(f"⭐ 个性化建议奖励: {message}")
+        except Exception as e:
+            print(f"❌ 个性化建议奖励失败: {str(e)}")
+        
+        return PersonalizedAdviceResponse(
+            personalized_advice=personalized_advice,
+            advice_for={
                 "situation": situation_description,
                 "relationship_type": relationship_type,
                 "concerns": specific_concerns,
                 "urgency": urgency_level
-            }
-        }
+            },
+            star_reward=star_reward
+        )
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"生成个性化建议失败: {str(e)}")
