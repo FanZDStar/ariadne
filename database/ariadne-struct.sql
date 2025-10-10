@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 10/10/2025 17:47:27
+ Date: 10/10/2025 23:40:25
 */
 
 SET NAMES utf8mb4;
@@ -64,7 +64,7 @@ CREATE TABLE `chat_messages`  (
   INDEX `idx_chat_messages_session`(`session_id` ASC) USING BTREE,
   INDEX `idx_session_created`(`session_id` ASC, `created_at` ASC) USING BTREE,
   CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 606 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 646 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for chat_sessions
@@ -82,7 +82,7 @@ CREATE TABLE `chat_sessions`  (
   INDEX `idx_chat_sessions_user_scene`(`user_id` ASC, `scene` ASC) USING BTREE,
   INDEX `idx_chat_sessions_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `chat_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for crisis_keywords
@@ -145,7 +145,7 @@ CREATE TABLE `daily_star_limits`  (
   `relationship_assessment` tinyint(1) NULL DEFAULT 0 COMMENT '关系健康评估(2星)',
   `personalized_advice` tinyint(1) NULL DEFAULT 0 COMMENT '个性化建议(2星)',
   `ai_scenario_training` tinyint(1) NULL DEFAULT 0 COMMENT 'AI情景模拟训练(2星)',
-  `protection_training` tinyint(1) NULL DEFAULT 0 COMMENT '防护技能训练(2星)',
+  `protection_training` tinyint(1) NULL DEFAULT 0 COMMENT '防护技能训练(1星)',
   `tree_hole_interaction_count` tinyint NULL DEFAULT 0 COMMENT '树洞互动次数',
   `tree_hole_whisper` tinyint(1) NULL DEFAULT 0 COMMENT '发表悄悄话(2星)',
   `skill_favorite` tinyint(1) NULL DEFAULT 0 COMMENT '技能收藏(1星)',
@@ -448,7 +448,7 @@ CREATE TABLE `protection_drill_question_details`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_report_id`(`report_id` ASC) USING BTREE,
   INDEX `idx_question_id`(`question_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '防护训练答题详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 179 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '防护训练答题详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for protection_drill_questions
@@ -498,7 +498,7 @@ CREATE TABLE `protection_drill_reports`  (
   INDEX `ix_protection_drill_reports_user_id`(`user_id` ASC) USING BTREE,
   INDEX `ix_protection_drill_reports_id`(`id` ASC) USING BTREE,
   INDEX `idx_user_created`(`user_id` ASC, `created_at` DESC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for protection_drill_sessions
@@ -696,7 +696,7 @@ CREATE TABLE `star_point_logs`  (
   INDEX `idx_star_logs_action`(`action_type` ASC) USING BTREE,
   INDEX `idx_star_logs_date`(`created_at` ASC) USING BTREE,
   CONSTRAINT `fk_star_point_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 152 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 161 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for system_configs
