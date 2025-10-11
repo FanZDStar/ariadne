@@ -1,18 +1,11 @@
 <template>
     <view class="skill-favorites-container">
-        <!-- 页面标题 -->
-        <view class="page-header">
-            <text class="page-title">技能收藏</text>
-            <text class="page-subtitle">{{ totalCount }}个已收藏的技能</text>
-        </view>
-
         <!-- 分类筛选 -->
         <view class="category-filter">
             <scroll-view scroll-x="true" class="category-scroll">
                 <view class="category-tabs">
                     <view v-for="category in categories" :key="category.id" class="category-tab"
                         :class="{ active: selectedCategory === category.id }" @click="selectCategory(category.id)">
-                        <text class="category-icon">{{ category.icon }}</text>
                         <text class="category-name">{{ category.name }}</text>
                         <text class="category-count">({{ getCategoryCount(category.id) }})</text>
                     </view>
@@ -38,7 +31,7 @@
                 </view>
                 <view class="skill-actions">
                     <view class="action-btn remove" @click.stop="removeFavorite(skill)">
-                        <text class="action-icon">🗑️</text>
+                        <text class="action-text">删除</text>
                     </view>
                     <view class="action-btn practice" @click.stop="startPractice(skill)">
                         <text class="action-text">练习</text>
@@ -49,7 +42,6 @@
 
         <!-- 空状态 -->
         <view class="empty-state" v-else>
-            <text class="empty-icon">💫</text>
             <text class="empty-title">
                 {{ selectedCategory === 'all' ? '还没有收藏任何技能' : '该分类下暂无收藏' }}
             </text>
@@ -80,11 +72,11 @@ export default {
             selectedCategory: 'all',
             favoriteSkills: [],
             categories: [
-                { id: 'all', name: '全部', icon: '📋' },
-                { id: 'communication', name: '沟通技巧', icon: '💬' },
-                { id: 'emotional_expression', name: '情感表达', icon: '❤️' },
-                { id: 'relationship_building', name: '关系建立', icon: '🤝' },
-                { id: 'special_scenarios', name: '特殊场景', icon: '🎭' }
+                { id: 'all', name: '全部' },
+                { id: 'communication', name: '沟通技巧' },
+                { id: 'emotional_expression', name: '情感表达' },
+                { id: 'relationship_building', name: '关系建立' },
+                { id: 'special_scenarios', name: '特殊场景' }
             ]
         };
     },
@@ -285,33 +277,20 @@ export default {
 
 <style scoped>
 .skill-favorites-container {
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, #f8fafc 0%, #e1f5fe 30%, #f0f9ff 100%);
     min-height: 100vh;
     padding-bottom: 40rpx;
 }
 
-.page-header {
-    background: linear-gradient(135deg, #87ceeb 0%, #add8e6 100%);
-    padding: 60rpx 40rpx 40rpx;
-    color: #2c3e50;
-}
-
-.page-title {
-    font-size: 48rpx;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 16rpx;
-}
-
-.page-subtitle {
-    font-size: 26rpx;
-    opacity: 0.9;
-}
-
 .category-filter {
-    background-color: white;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     padding: 24rpx 0;
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+    margin: 0 32rpx 32rpx;
+    border-radius: 16rpx;
+    border: 1px solid rgba(224, 242, 254, 0.6);
+    box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.08);
 }
 
 .category-scroll {
@@ -328,19 +307,21 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16rpx 24rpx;
+    padding: 20rpx 28rpx;
     border-radius: 16rpx;
-    background-color: #f8f9ff;
-    border: 2rpx solid transparent;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(224, 242, 254, 0.6);
     transition: all 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .category-tab.active {
-    background-color: #667eea;
-    color: white;
-    border-color: #667eea;
+    background: rgba(59, 130, 246, 0.15);
+    border-color: #38bdf8;
+    box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.2);
 }
 
 .category-icon {
@@ -349,34 +330,44 @@ export default {
 }
 
 .category-name {
-    font-size: 24rpx;
+    font-size: 26rpx;
     font-weight: 500;
+    color: #0369a1;
+}
+
+.category-tab.active .category-name {
+    color: #0369a1;
+    font-weight: 600;
 }
 
 .category-count {
-    font-size: 20rpx;
-    opacity: 0.8;
+    font-size: 22rpx;
+    color: #64748b;
     margin-top: 4rpx;
 }
 
 .skills-list {
-    padding: 32rpx 40rpx;
+    padding: 0 32rpx 32rpx;
 }
 
 .skill-card {
-    background-color: white;
-    border-radius: 16rpx;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(224, 242, 254, 0.8);
+    border-radius: 20rpx;
     padding: 32rpx;
     margin-bottom: 24rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .skill-card:active {
-    transform: translateY(2rpx);
+    transform: translateY(-2rpx);
+    box-shadow: 0 12rpx 40rpx rgba(59, 130, 246, 0.15);
 }
 
 .skill-info {
@@ -394,7 +385,7 @@ export default {
 .skill-name {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #0369a1;
     flex: 1;
 }
 
@@ -403,17 +394,19 @@ export default {
 }
 
 .category-tag {
-    background-color: #f0f4ff;
-    color: #667eea;
-    padding: 6rpx 12rpx;
+    background: rgba(224, 242, 254, 0.7);
+    color: #0369a1;
+    padding: 8rpx 16rpx;
     border-radius: 12rpx;
-    font-size: 20rpx;
-    border: 1rpx solid #e0e8ff;
+    font-size: 22rpx;
+    border: 1px solid rgba(224, 242, 254, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .skill-description {
     font-size: 26rpx;
-    color: #666;
+    color: #475569;
     line-height: 1.5;
     margin-bottom: 16rpx;
     display: -webkit-box;
@@ -431,7 +424,7 @@ export default {
 
 .favorite-time {
     font-size: 22rpx;
-    color: #999;
+    color: #64748b;
 }
 
 .skill-actions {
@@ -442,12 +435,15 @@ export default {
 }
 
 .action-btn {
-    padding: 12rpx 20rpx;
+    padding: 16rpx 24rpx;
     border-radius: 12rpx;
     text-align: center;
     font-size: 24rpx;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     min-width: 80rpx;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid transparent;
 }
 
 .action-btn:active {
@@ -455,21 +451,23 @@ export default {
 }
 
 .action-btn.remove {
-    background-color: #fee;
-    color: #f56565;
-    border: 1rpx solid #fed7d7;
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.2);
 }
 
 .action-btn.practice {
-    background-color: #667eea;
-    color: white;
+    background: rgba(59, 130, 246, 0.15);
+    color: #0369a1;
+    border-color: rgba(59, 130, 246, 0.3);
 }
 
 .action-btn.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(29, 78, 216, 0.9));
     color: white;
     padding: 24rpx 48rpx;
     font-size: 28rpx;
+    box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.3);
 }
 
 .action-icon {
@@ -491,6 +489,13 @@ export default {
     justify-content: center;
     padding: 120rpx 40rpx;
     text-align: center;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(224, 242, 254, 0.6);
+    border-radius: 20rpx;
+    margin: 0 32rpx;
+    box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.08);
 }
 
 .empty-icon {
@@ -502,13 +507,13 @@ export default {
 .empty-title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #0369a1;
     margin-bottom: 16rpx;
 }
 
 .empty-subtitle {
     font-size: 26rpx;
-    color: #666;
+    color: #475569;
     line-height: 1.5;
     margin-bottom: 48rpx;
 }
@@ -525,6 +530,6 @@ export default {
 
 .loading-text {
     font-size: 26rpx;
-    color: #666;
+    color: #64748b;
 }
 </style>

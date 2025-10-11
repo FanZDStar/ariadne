@@ -639,12 +639,12 @@ export default {
 
     getCategoryIcon(categoryId) {
       const icons = {
-        communication: "💬",
-        emotional_expression: "💝",
-        relationship_building: "🤝",
-        special_scenarios: "🎯",
+        communication: "",
+        emotional_expression: "",
+        relationship_building: "",
+        special_scenarios: "",
       };
-      return icons[categoryId] || "📚";
+      return icons[categoryId] || "";
     },
 
     formatDate(date) {
@@ -1033,7 +1033,7 @@ export default {
   background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
   backdrop-filter: blur(10rpx);
   border-radius: 28rpx;
-  padding: 32rpx;
+  padding: 24rpx 32rpx;
   text-align: center;
   box-shadow: 0 8rpx 24rpx rgba(21, 101, 192, 0.08),
     0 4rpx 12rpx rgba(21, 101, 192, 0.05);
@@ -1068,8 +1068,8 @@ export default {
 .tool-icon,
 .practice-icon {
   font-size: 40rpx;
-  display: block;
-  margin-bottom: 12rpx;
+  display: none;
+  margin-bottom: 0rpx;
   position: relative;
   z-index: 1;
 }
