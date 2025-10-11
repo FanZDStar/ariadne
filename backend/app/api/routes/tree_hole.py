@@ -249,7 +249,6 @@ def get_user_interactions(
     基于 user_whisper_interactions 表，只返回 is_active=True 的互动记录
     排除自己的悄悄话，按最后互动时间倒序
     """
-    print("1111dfadfafdddddddddddddddddddddddddddd")
 
     # 1) 先把候选 whisper 批量查出（带必要的关系）
     whispers: list[TreeHoleWhisper] = (

@@ -343,7 +343,6 @@ export default {
       const token = storage.getToken();
       if (!token) return;
       try {
-        console.log("00000000000000000000000000");
         this.myInteractedWhispers = await api.getMyInteractedWhispers(token);
       } catch (error) {
         console.error("Failed to fetch interacted whispers:", error);

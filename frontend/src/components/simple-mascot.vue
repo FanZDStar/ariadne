@@ -5,7 +5,12 @@
     <view class="mascot" :class="currentAction" :style="{ left: position.x + 'px', top: position.y + 'px' }"
       @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" @tap="handleTap">
       <!-- 静态小人图片 -->
-      <image v-if="!isPlayingAnimation" class="mascot-image" :src="currentImage" mode="aspectFit"></image>
+      <image v-if="!isPlayingAnimation" class="mascot-image" :src="currentImage" mode="aspectFit" @load="onImageLoad"
+        @error="onImageError"></image>
+      <!-- 图片加载中的占位符 -->
+      <view v-if="!isPlayingAnimation && imageLoading" class="image-loading">
+        <text>🔄</text>
+      </view>
       <!-- Lottie动画容器 -->
       <view v-if="isPlayingAnimation" class="lottie-container" :id="lottieContainerId"></view>
     </view>
@@ -42,6 +47,8 @@ export default {
       startTouch: { x: 0, y: 0 },
       currentAction: "idle",
       currentImage: "/static/outfits/default-full.png",
+      imageLoading: false,
+      nextImage: null, // 预加载的下一张图片
       showBubble: false,
       currentSpeech: "",
       showDressUp: false,
@@ -56,6 +63,8 @@ export default {
       animationCache: {}, // 缓存已检查的动画文件状态
 
       outfitCheckTimer: null,
+      serverSyncTimer: null,
+      lastServerSyncTime: 0, // 上次服务器同步时间
       lastOutfitId: null, // 记录上次的服装ID，用于检测变化
       currentOutfitId: 1, // 当前小人ID
 
@@ -167,10 +176,21 @@ export default {
     // 开始随机动作定时器
     this.startRandomActions();
 
-    // 监听服装变化
+    // 监听服装变化 - 本地检查频繁，服务器同步较少
     this.outfitCheckTimer = setInterval(() => {
       this.checkOutfitStorage();
-    }, 2000);
+    }, 30000);
+
+    // 定期从服务器同步，确保多端一致性 (每2分钟检查一次)
+    this.serverSyncTimer = setInterval(() => {
+      this.syncFromServerIfNeeded();
+    }, 120000);
+
+    // 监听全局服装切换事件
+    uni.$on('outfitChanged', this.handleOutfitChanged);
+
+    // 监听页面焦点变化，实现跨标签页同步
+    this.setupFocusSync();
   },
 
   onLoad() {
@@ -179,19 +199,29 @@ export default {
   },
 
   onShow() {
-    // 页面显示时重新加载服装设置
-    this.loadSavedOutfit();
+    // 页面显示时立即检查服装变化（可能刚从换装页面返回）
+    this.checkOutfitStorage();
+    // 重置定时器，确保及时检测变化
+    this.resetOutfitCheckTimer();
   },
 
   onReady() {
     // 页面渲染完成时检查服装
-    this.loadSavedOutfit();
+    this.checkOutfitStorage();
   },
 
   beforeDestroy() {
     // 清理定时器和Lottie实例
     this.clearAllTimers();
     this.clearLottieInstance();
+
+    // 取消全局事件监听
+    uni.$off('outfitChanged', this.handleOutfitChanged);
+
+    // 清理焦点事件监听
+    if (this.focusCleanup) {
+      this.focusCleanup();
+    }
   },
 
   methods: {
@@ -210,18 +240,17 @@ export default {
 
     // 检查服装存储
     async checkOutfitStorage() {
-      // 先尝试从服务器同步
-      await this.syncOutfitFromServer();
-
+      // 只检查本地存储的变化，不频繁请求服务器
       const savedOutfit = uni.getStorageSync("selectedOutfit");
 
       if (savedOutfit && savedOutfit.mascotImage) {
         const outfitId = savedOutfit.id || 1;
 
-        // 检查是否有服装变化
-        if (this.lastOutfitId !== outfitId) {
+        // 检查是否有服装变化（包括图片路径变化）
+        if (this.lastOutfitId !== outfitId || this.currentImage !== savedOutfit.mascotImage) {
           this.currentOutfitId = outfitId;
-          this.currentImage = savedOutfit.mascotImage;
+          // 预加载新图片，避免切换时的空白
+          this.preloadAndSwitchImage(savedOutfit.mascotImage);
           this.lastOutfitId = outfitId;
 
           // 清除动画缓存，强制重新检查可用动作
@@ -456,6 +485,186 @@ export default {
         clearInterval(this.outfitCheckTimer);
         this.outfitCheckTimer = null;
       }
+      if (this.serverSyncTimer) {
+        clearInterval(this.serverSyncTimer);
+        this.serverSyncTimer = null;
+      }
+    },
+
+    // 重置服装检查定时器
+    resetOutfitCheckTimer() {
+      // 清除现有定时器
+      if (this.outfitCheckTimer) {
+        clearInterval(this.outfitCheckTimer);
+      }
+
+      // 立即检查一次（包含服务器同步）
+      this.checkOutfitStorage();
+      this.syncFromServerIfNeeded();
+
+      // 重新设置定时器
+      this.outfitCheckTimer = setInterval(() => {
+        this.checkOutfitStorage();
+      }, 30000);
+    },    // 处理服装切换事件
+    handleOutfitChanged(outfit) {
+      console.log('收到服装切换通知:', outfit);
+      // 立即更新显示
+      this.checkOutfitStorage();
+      // 重置定时器
+      this.resetOutfitCheckTimer();
+    },
+
+    // 预加载并切换图片
+    preloadAndSwitchImage(newImageSrc) {
+      if (this.currentImage === newImageSrc) {
+        return; // 图片没有变化，无需切换
+      }
+
+      // 设置加载状态
+      this.imageLoading = true;
+      this.nextImage = newImageSrc;
+
+      // 创建临时Image对象预加载
+      const tempImg = new Image();
+
+      tempImg.onload = () => {
+        // 预加载成功，立即切换
+        this.currentImage = newImageSrc;
+        this.imageLoading = false;
+        this.nextImage = null;
+      };
+
+      tempImg.onerror = () => {
+        // 预加载失败，直接切换（可能是相对路径）
+        console.warn('图片预加载失败，直接切换:', newImageSrc);
+        this.currentImage = newImageSrc;
+        this.imageLoading = false;
+        this.nextImage = null;
+      };
+
+      // 开始预加载
+      tempImg.src = newImageSrc;
+
+      // 设置超时，防止无限等待
+      setTimeout(() => {
+        if (this.imageLoading && this.nextImage === newImageSrc) {
+          this.currentImage = newImageSrc;
+          this.imageLoading = false;
+          this.nextImage = null;
+        }
+      }, 1000);
+    },
+
+    // 图片加载完成
+    onImageLoad() {
+      this.imageLoading = false;
+    },
+
+    // 图片加载错误
+    onImageError() {
+      console.error('看板娘图片加载失败:', this.currentImage);
+      this.imageLoading = false;
+      // 回退到默认图片
+      if (this.currentImage !== "/static/outfits/default-full.png") {
+        this.currentImage = "/static/outfits/default-full.png";
+      }
+    },
+
+    // 按需从服务器同步
+    async syncFromServerIfNeeded() {
+      const token = uni.getStorageSync('access_token');
+      if (!token) return; // 未登录时不同步
+
+      const now = Date.now();
+      // 避免频繁同步，至少间隔1分钟
+      if (now - this.lastServerSyncTime < 60000) {
+        return;
+      }
+
+      try {
+        const response = await uni.request({
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000'}/mascot-outfits/current`,
+          method: 'GET',
+          header: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.statusCode === 200 && response.data) {
+          const serverOutfit = response.data;
+          const localOutfit = uni.getStorageSync('selectedOutfit');
+
+          // 比较服务器数据和本地数据
+          if (!localOutfit || localOutfit.id !== serverOutfit.id) {
+            console.log('🔄 发现服务器数据更新，同步到本地:', serverOutfit.name);
+
+            const newOutfit = {
+              id: serverOutfit.id,
+              name: serverOutfit.name,
+              mascotImage: serverOutfit.mascot_image
+            };
+
+            // 更新本地存储
+            uni.setStorageSync('selectedOutfit', newOutfit);
+
+            // 立即更新显示
+            this.preloadAndSwitchImage(newOutfit.mascotImage);
+            this.currentOutfitId = serverOutfit.id;
+            this.lastOutfitId = serverOutfit.id;
+            this.updateCurrentSpeech();
+
+            // 显示同步提示
+            this.showSyncNotification();
+          }
+        }
+
+        this.lastServerSyncTime = now;
+      } catch (error) {
+        console.error('从服务器同步服装失败:', error);
+      }
+    },
+
+    // 显示同步通知
+    showSyncNotification() {
+      this.currentSpeech = "检测到其他设备的换装，已同步更新~";
+      this.showBubble = true;
+      setTimeout(() => {
+        this.showBubble = false;
+      }, 3000);
+    },
+
+    // 设置页面焦点同步
+    setupFocusSync() {
+      // 监听页面可见性变化
+      const handleVisibilityChange = () => {
+        if (!document.hidden) {
+          // 页面变为可见时，检查服务器更新
+          console.log('🔍 页面重新聚焦，检查服务器同步...');
+          setTimeout(() => {
+            this.syncFromServerIfNeeded();
+          }, 500); // 延迟500ms确保页面完全加载
+        }
+      };
+
+      // 监听窗口焦点变化
+      const handleFocus = () => {
+        console.log('🔍 窗口重新聚焦，检查服务器同步...');
+        setTimeout(() => {
+          this.syncFromServerIfNeeded();
+        }, 500);
+      };
+
+      // 添加事件监听器
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('focus', handleFocus);
+
+      // 存储引用以便清理
+      this.focusCleanup = () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        window.removeEventListener('focus', handleFocus);
+      };
     },
 
     // 从服务器同步服装设置
@@ -695,6 +904,26 @@ export default {
   width: 100%;
   height: 100%;
   transition: opacity 0.3s ease-in-out;
+}
+
+.image-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  opacity: 0.6;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .lottie-container {
