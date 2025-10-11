@@ -484,7 +484,7 @@ export default {
           // 更新本地存储
           uni.setStorageSync('selectedOutfit', localOutfit);
 
-          console.log('从服务器同步服装设置:', localOutfit);
+          //console.log('从服务器同步服装设置:', localOutfit);
         }
       } catch (error) {
         console.error('从服务器同步服装失败:', error);
