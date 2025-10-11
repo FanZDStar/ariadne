@@ -15,7 +15,6 @@
             <view class="star-points-container" @click="goToStarPointsDetail">
                 <view class="star-icon">⭐</view>
                 <text class="star-count">{{ starPoints }}</text>
-                <text class="star-label">个星星</text>
             </view>
         </view>
 

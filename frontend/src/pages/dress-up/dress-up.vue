@@ -14,7 +14,6 @@
             <view class="star-points-container">
                 <view class="star-icon">⭐</view>
                 <text class="star-count">{{ starPoints }}</text>
-                <text class="star-label">个星星</text>
             </view>
         </view>
 
@@ -625,7 +624,7 @@ export default {
 .mascot-image {
     width: 500rpx;
     height: 500rpx;
-    border-radius: 250rpx;
+    border-radius: 0;
 }
 
 .current-outfit-name {
