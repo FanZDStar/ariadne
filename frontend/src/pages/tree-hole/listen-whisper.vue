@@ -74,16 +74,16 @@
 
           <!-- 卡片底部统计信息 - 可交互 -->
           <view class="whisper-stats">
-            <view 
-              class="stat-item stat-clickable" 
+            <view
+              class="stat-item stat-clickable"
               :class="{ 'stat-liked': liked }"
               @click.stop="toggleLike"
             >
               <text class="stat-icon">{{ liked ? "❤️" : "🤍" }}</text>
               <text class="stat-count">{{ likeCount }}</text>
             </view>
-            <view 
-              class="stat-item stat-clickable" 
+            <view
+              class="stat-item stat-clickable"
               @click.stop="goToWhisperDetail"
             >
               <text class="stat-icon">💬</text>
@@ -139,7 +139,36 @@ export default {
   onLoad() {
     this.fetchRandomWhisper();
   },
+  onShow() {
+    // 从详情页返回时刷新当前悄悄话数据
+    if (this.whisper && this.whisper.whisper_id) {
+      this.refreshCurrentWhisper();
+    }
+  },
   methods: {
+    // 刷新当前悄悄话的点赞和评论数
+    async refreshCurrentWhisper() {
+      const token = storage.getToken();
+      if (!token || !this.whisper) return;
+
+      try {
+        const updatedWhisper = await api.getWhisperDetails(
+          token,
+          this.whisper.whisper_id
+        );
+        // 更新点赞和评论数
+        this.whisper.like_count = updatedWhisper.like_count;
+        this.whisper.comment_count = updatedWhisper.comment_count;
+        this.whisper.liked = updatedWhisper.liked;
+
+        // 同步到本地变量
+        this.likeCount = updatedWhisper.like_count || 0;
+        this.liked = updatedWhisper.liked || false;
+      } catch (error) {
+        console.error("Failed to refresh whisper:", error);
+        // 刷新失败不影响用户体验，静默处理
+      }
+    },
     async fetchRandomWhisper() {
       // 触发翻页动画
       this.isFlipping = true;
@@ -220,7 +249,7 @@ export default {
       // 否则使用用户头像
       const avatarUrl = this.whisper.user?.avatar_url;
       if (!avatarUrl) return "/static/avatar.png";
-      
+
       return this.getImageUrl(avatarUrl);
     },
 
@@ -318,7 +347,7 @@ export default {
       });
     },
 
-        // 点赞功能
+    // 点赞功能
     async toggleLike() {
       if (!this.whisper) return;
 
@@ -383,18 +412,24 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
   overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .content-wrapper {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 40rpx;
+  align-items: flex-start;
+  padding: 60rpx 40rpx 40rpx 40rpx;
   padding-bottom: 200rpx;
-  /* 为底部按钮留出空间 */
+  overflow: hidden;
+  /* 禁止滚动 */
 }
 
 /* 卡片堆叠容器 */

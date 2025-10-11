@@ -470,285 +470,354 @@ export default {
 
 <style scoped>
 .report-history-page {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8fafe;
   min-height: 100vh;
-  padding: 20rpx;
+  padding: 24rpx;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 30rpx;
+  margin-bottom: 40rpx;
+  padding: 40rpx 0;
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  margin: 24rpx 0 40rpx 0;
 }
 
 .title {
   display: block;
-  font-size: 36rpx;
-  font-weight: bold;
-  color: white;
-  margin-bottom: 10rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12rpx;
+  letter-spacing: 1rpx;
 }
 
 .subtitle {
   display: block;
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+  color: #64748b;
+  font-weight: 400;
 }
 
 .overview-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .stats-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 15rpx;
-  padding: 30rpx;
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx 32rpx;
   display: flex;
   justify-content: space-around;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  border: 1rpx solid #e2e8f0;
 }
 
 .stat-item {
   text-align: center;
+  position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -50rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rpx;
+  height: 60rpx;
+  background: #e2e8f0;
 }
 
 .stat-number {
   display: block;
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #667eea;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #3b82f6;
+  margin-bottom: 8rpx;
 }
 
 .stat-label {
   display: block;
-  font-size: 22rpx;
-  color: #666;
-  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .filter-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .filter-picker {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 25rpx;
-  padding: 20rpx 30rpx;
+  background: white;
+  border-radius: 16rpx;
+  padding: 24rpx 32rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 2rpx 16rpx rgba(59, 130, 246, 0.06);
+  border: 1rpx solid #e2e8f0;
+  font-size: 28rpx;
+  color: #374151;
+  font-weight: 500;
 }
 
 .picker-arrow {
-  color: #667eea;
+  color: #3b82f6;
+  font-size: 24rpx;
+  font-weight: 600;
 }
 
 .reports-section {
-  margin-bottom: 100rpx;
+  margin-bottom: 120rpx;
 }
 
 .report-card {
   background: white;
-  border-radius: 15rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  border-radius: 20rpx;
+  padding: 36rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  border: 1rpx solid #e2e8f0;
   position: relative;
+  transition: all 0.3s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-2rpx);
+  box-shadow: 0 6rpx 30rpx rgba(59, 130, 246, 0.12);
 }
 
 .report-title {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
 }
 
 .title-text {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e293b;
   flex: 1;
-  margin-right: 20rpx;
-  line-height: 1.4;
+  margin-right: 24rpx;
+  line-height: 1.5;
 }
 
 .report-date {
-  font-size: 22rpx;
-  color: #999;
+  font-size: 24rpx;
+  color: #64748b;
   white-space: nowrap;
+  background: #f1f5f9;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
 }
 
 .report-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20rpx;
-  padding: 15rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  margin-bottom: 24rpx;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f1f5f9;
 }
 
 .risk-info {
   display: flex;
   align-items: center;
-  gap: 15rpx;
+  gap: 20rpx;
 }
 
 .risk-badge {
   display: flex;
   align-items: center;
-  padding: 8rpx 16rpx;
-  border-radius: 20rpx;
-  font-size: 22rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  border: 1rpx solid transparent;
 }
 
 .risk-critical {
-  background: #ffebee;
-  color: #c62828;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
 .risk-high {
-  background: #fff3e0;
-  color: #ef6c00;
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fed7aa;
 }
 
 .risk-medium {
-  background: #e3f2fd;
-  color: #1565c0;
+  background: #dbeafe;
+  color: #2563eb;
+  border-color: #bfdbfe;
 }
 
 .risk-low {
-  background: #e8f5e8;
-  color: #2e7d32;
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
 }
 
 .risk-icon {
   margin-right: 8rpx;
-  font-size: 20rpx;
+  font-size: 22rpx;
 }
 
 .risk-text {
-  font-size: 22rpx;
-  font-weight: bold;
+  font-size: 24rpx;
+  font-weight: 600;
 }
 
 .risk-score {
-  font-size: 24rpx;
-  font-weight: bold;
-  color: #667eea;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #dbeafe;
 }
 
 .stats-info {
   display: flex;
-  gap: 15rpx;
+  gap: 16rpx;
 }
 
 .stat-text {
-  font-size: 22rpx;
-  color: #666;
-  background: #f8f9fa;
-  padding: 6rpx 12rpx;
+  font-size: 24rpx;
+  color: #4b5563;
+  background: #f8fafc;
+  padding: 10rpx 16rpx;
   border-radius: 12rpx;
+  font-weight: 500;
+  border: 1rpx solid #e2e8f0;
 }
 
 .report-summary {
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
 }
 
 .summary-text {
-  font-size: 24rpx;
-  line-height: 1.5;
-  color: #555;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #374151;
+  font-weight: 400;
 }
 
 .trend-section {
-  padding-top: 15rpx;
-  border-top: 1rpx solid #f0f0f0;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f1f5f9;
 }
 
 .trend-indicator {
   display: flex;
   align-items: center;
-  gap: 10rpx;
+  gap: 12rpx;
 }
 
 .trend-arrow {
-  width: 32rpx;
-  height: 32rpx;
+  width: 36rpx;
+  height: 36rpx;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18rpx;
-  font-weight: bold;
+  font-size: 20rpx;
+  font-weight: 700;
 }
 
 .trend-improving .trend-arrow {
-  background: #e8f5e8;
-  color: #2e7d32;
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 .trend-worsening .trend-arrow {
-  background: #ffebee;
-  color: #c62828;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .trend-stable .trend-arrow {
-  background: #f5f5f5;
-  color: #666;
+  background: #f1f5f9;
+  color: #64748b;
 }
 
 .trend-text {
-  font-size: 20rpx;
-  color: #666;
+  font-size: 24rpx;
+  color: #4b5563;
+  font-weight: 500;
 }
 
 .empty-state {
   text-align: center;
-  padding: 100rpx 0;
+  padding: 120rpx 32rpx;
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  border: 1rpx solid #e2e8f0;
 }
 
 .empty-icon {
-  font-size: 80rpx;
+  font-size: 100rpx;
   display: block;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.8;
 }
 
 .empty-title {
   display: block;
-  font-size: 28rpx;
-  color: white;
-  margin-bottom: 10rpx;
+  font-size: 32rpx;
+  color: #1e293b;
+  margin-bottom: 12rpx;
+  font-weight: 600;
 }
 
 .empty-desc {
   display: block;
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 30rpx;
+  font-size: 26rpx;
+  color: #64748b;
+  margin-bottom: 40rpx;
+  line-height: 1.5;
 }
 
 .empty-btn {
-  background: white;
-  color: #667eea;
-  padding: 20rpx 40rpx;
-  border-radius: 25rpx;
+  background: #3b82f6;
+  color: white;
+  padding: 24rpx 48rpx;
+  border-radius: 16rpx;
   border: none;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 20rpx rgba(59, 130, 246, 0.3);
 }
 
 .load-more {
   text-align: center;
-  margin: 30rpx 0;
+  margin: 40rpx 0;
 }
 
 .load-more-btn {
-  background: rgba(255, 255, 255, 0.9);
-  color: #667eea;
-  padding: 20rpx 40rpx;
-  border-radius: 25rpx;
-  border: none;
+  background: white;
+  color: #3b82f6;
+  padding: 24rpx 48rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid #3b82f6;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 2rpx 16rpx rgba(59, 130, 246, 0.1);
 }
 
 .loading {
   text-align: center;
-  padding: 50rpx 0;
-  color: white;
+  padding: 60rpx 0;
+  color: #64748b;
+  font-size: 28rpx;
+  font-weight: 500;
 }
 </style>

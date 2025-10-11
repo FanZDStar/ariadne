@@ -1,11 +1,19 @@
 <template>
-  <view class="tree-hole-container" :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }">
+  <view
+    class="tree-hole-container"
+    :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }"
+  >
     <view class="theme-switch" @click="toggleTheme">
-      <text class="theme-icon">{{ theme === 'day' ? '🌙' : '☀️' }}</text>
+      <text class="theme-icon">{{ theme === "day" ? "🌙" : "☀️" }}</text>
     </view>
 
     <view class="tree-area">
       <image class="tree-image" :src="treeImage" mode="aspectFit" />
+      <image
+        class="kettle-image"
+        src="../../static/kettle.png"
+        mode="aspectFit"
+      />
     </view>
 
     <view class="options-container">
@@ -26,16 +34,16 @@
 export default {
   data() {
     return {
-      theme: 'day', // 'day' or 'night'
+      theme: "day", // 'day' or 'night'
     };
   },
   computed: {
     treeImage() {
       // 确保你的 static 目录下有 tree-day.png 和 tree-night.png
-      if (this.theme === 'day') {
-        return '/static/tree-day.png';
+      if (this.theme === "day") {
+        return "/static/tree-day.png";
       } else {
-        return '/static/tree-night.png';
+        return "/static/tree-night.png";
       }
     },
   },
@@ -51,30 +59,30 @@ export default {
       const hour = new Date().getHours();
       // 晚上6点到早上6点之间为夜晚
       if (hour >= 18 || hour < 6) {
-        this.theme = 'night';
+        this.theme = "night";
       } else {
-        this.theme = 'day';
+        this.theme = "day";
       }
     },
     toggleTheme() {
-      this.theme = this.theme === 'day' ? 'night' : 'day';
+      this.theme = this.theme === "day" ? "night" : "day";
       this.updateNavBar();
     },
     updateNavBar() {
-      const isDay = this.theme === 'day';
+      const isDay = this.theme === "day";
       uni.setNavigationBarColor({
-        frontColor: isDay ? '#000000' : '#ffffff', // 白天用黑色文字，晚上用白色
-        backgroundColor: isDay ? '#87CEEB' : '#2c3e50',
+        frontColor: isDay ? "#000000" : "#ffffff", // 白天用黑色文字，晚上用白色
+        backgroundColor: isDay ? "#87CEEB" : "#2c3e50",
       });
     },
     goToListen() {
       uni.navigateTo({
-        url: '/pages/tree-hole/listen-whisper'
+        url: "/pages/tree-hole/listen-whisper",
       });
     },
     goToMyWhispers() {
       uni.navigateTo({
-        url: '/pages/tree-hole/my-whispers',
+        url: "/pages/tree-hole/my-whispers",
       });
     },
   },
@@ -128,6 +136,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .tree-image {
@@ -135,6 +144,22 @@ export default {
   height: 100%;
   max-width: 600rpx;
   max-height: 600rpx;
+}
+
+.kettle-image {
+  position: absolute;
+  right: 5rpx;
+  top: 60%;
+  transform: translateY(-50%);
+  width: 180rpx;
+  height: 180rpx;
+  opacity: 0.9;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.kettle-image:active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.05);
 }
 
 .options-container {

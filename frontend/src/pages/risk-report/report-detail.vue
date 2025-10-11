@@ -4,7 +4,7 @@
   <view class="report-detail-page">
     <!-- 页面头部 -->
     <view class="header">
-      <text class="title">💙 心理状态评估报告</text>
+      <text class="title">心理状态评估报告</text>
       <text class="date" v-if="report">{{
         formatDate(report.report_generated_time)
       }}</text>
@@ -14,7 +14,7 @@
     <view class="report-content" v-if="report">
       <!-- 会话信息 -->
       <view class="session-section">
-        <text class="section-title">💬 相关会话</text>
+        <text class="section-title">相关会话</text>
         <view class="session-info">
           <text class="session-title">{{
             report.session_title || "未知会话"
@@ -43,7 +43,7 @@
 
       <!-- 基本统计 -->
       <view class="stats-section">
-        <text class="section-title">📊 对话统计</text>
+        <text class="section-title">对话统计</text>
         <view class="stats-grid">
           <view class="stat-item">
             <text class="stat-number">{{ report.total_messages }}</text>
@@ -62,13 +62,13 @@
 
       <!-- 摘要 -->
       <view class="summary-section" v-if="report.summary">
-        <text class="section-title">📝 报告摘要</text>
+        <text class="section-title">报告摘要</text>
         <text class="summary-text">{{ report.summary }}</text>
       </view>
 
       <!-- AI专业分析 -->
       <view class="ai-analysis-section" v-if="report.ai_analysis">
-        <text class="section-title">🤖 AI专业分析</text>
+        <text class="section-title">AI专业分析</text>
         <view class="analysis-container">
           <MarkdownRenderer :content="report.ai_analysis" />
         </view>
@@ -76,7 +76,7 @@
 
       <!-- 检测到的关键词 -->
       <view class="keywords-section" v-if="report.detected_keywords && report.detected_keywords.length > 0">
-        <text class="section-title">🔍 检测关键词</text>
+        <text class="section-title">检测关键词</text>
         <view class="keywords-list">
           <text class="keyword-tag" v-for="(keyword, index) in report.detected_keywords" :key="index">
             {{ keyword }}
@@ -86,7 +86,7 @@
 
       <!-- 专业建议 -->
       <view class="recommendations-section" v-if="report.recommendations && report.recommendations.length > 0">
-        <text class="section-title">💡 专业建议</text>
+        <text class="section-title">专业建议</text>
         <view class="recommendations-list">
           <view class="recommendation-item" v-for="(rec, index) in report.recommendations" :key="index">
             <text class="rec-bullet">•</text>
@@ -97,7 +97,7 @@
 
       <!-- 时间信息 -->
       <view class="time-info-section">
-        <text class="section-title">⏰ 时间信息</text>
+        <text class="section-title">时间信息</text>
         <view class="time-list">
           <view class="time-item" v-if="report.conversation_start_time">
             <text class="time-label">对话开始：</text>
@@ -122,13 +122,12 @@
 
       <!-- 操作按钮 -->
       <view class="action-buttons">
-        <button class="btn btn-primary" @click="getHelp">💙 获取帮助</button>
+        <button class="btn btn-primary" @click="getHelp">获取帮助</button>
       </view>
 
       <!-- 免责声明 -->
       <view class="disclaimer">
         <text class="disclaimer-text">
-          ⚠️
           此报告由AI系统自动生成，仅供参考。如有严重心理健康问题，请及时寻求专业帮助。
           如需紧急帮助，请拨打心理危机干预热线：400-161-9995
         </text>
@@ -215,12 +214,12 @@ export default {
      */
     getRiskIcon(level) {
       const icons = {
-        critical: "🚨",
-        high: "⚠️",
-        medium: "⚡",
-        low: "✅",
+        critical: "",
+        high: "",
+        medium: "",
+        low: "",
       };
-      return icons[level] || "❓";
+      return icons[level] || "";
     },
 
     /**
@@ -260,10 +259,10 @@ export default {
     getHelp() {
       uni.showActionSheet({
         itemList: [
-          "🛡️ 防护技能训练",
-          "📚 技能学习",
-          "💬 情感对话",
-          "📞 心理援助热线",
+          "防护技能训练",
+          "技能学习",
+          "情感对话",
+          "心理援助热线",
         ],
         success: (res) => {
           switch (res.tapIndex) {
@@ -369,64 +368,82 @@ export default {
 
 <style scoped>
 .report-detail-page {
-  padding: 20rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24rpx;
+  background: #f8fafe;
   min-height: 100vh;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx 32rpx;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  border: 1rpx solid #e2e8f0;
 }
 
 .title {
   display: block;
-  font-size: 36rpx;
-  font-weight: bold;
-  color: white;
-  margin-bottom: 10rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12rpx;
+  letter-spacing: 1rpx;
 }
 
 .date {
   display: block;
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  display: inline-block;
+  font-weight: 500;
 }
 
 .report-content {
   background: white;
   border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  padding: 36rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  border: 1rpx solid #e2e8f0;
 }
 
 .risk-overview {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx;
-  border-radius: 15rpx;
-  margin-bottom: 30rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  margin-bottom: 32rpx;
+  border: 1rpx solid transparent;
 }
 
 .risk-critical {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-  color: white;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
 .risk-high {
-  background: linear-gradient(135deg, #feca57, #ff9ff3);
-  color: white;
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fed7aa;
 }
 
 .risk-medium {
-  background: linear-gradient(135deg, #48dbfb, #0abde3);
-  color: white;
+  background: #dbeafe;
+  color: #2563eb;
+  border-color: #bfdbfe;
 }
 
 .risk-low {
-  background: linear-gradient(135deg, #1dd1a1, #10ac84);
-  color: white;
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
 }
 
 .risk-header {
@@ -435,13 +452,14 @@ export default {
 }
 
 .risk-icon {
-  font-size: 40rpx;
-  margin-right: 20rpx;
+  font-size: 0rpx;
+  margin-right: 0rpx;
+  width: 0rpx;
 }
 
 .risk-title {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .risk-score {
@@ -450,231 +468,310 @@ export default {
 
 .score-number {
   font-size: 48rpx;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .score-text {
   font-size: 24rpx;
-  opacity: 0.8;
+  opacity: 0.7;
+  font-weight: 500;
 }
 
 .section-title {
   display: block;
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 24rpx;
+  position: relative;
+  padding-left: 16rpx;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4rpx;
+  height: 24rpx;
+  background: #3b82f6;
+  border-radius: 2rpx;
 }
 
 .session-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .session-info {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  padding: 20rpx;
+  background: #f8fafc;
+  padding: 24rpx;
   border-radius: 16rpx;
-  border-left: 6rpx solid #667eea;
+  border-left: 4rpx solid #3b82f6;
+  border: 1rpx solid #e2e8f0;
 }
 
 .session-title {
   display: block;
-  font-size: 26rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  color: #333;
+  color: #1e293b;
   margin-bottom: 8rpx;
 }
 
 .session-meta {
-  font-size: 22rpx;
-  color: #666;
+  font-size: 24rpx;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .stats-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .stats-grid {
   display: flex;
   justify-content: space-around;
+  background: #f8fafc;
+  padding: 32rpx 24rpx;
+  border-radius: 16rpx;
+  border: 1rpx solid #e2e8f0;
 }
 
 .stat-item {
   text-align: center;
+  position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -40rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rpx;
+  height: 60rpx;
+  background: #e2e8f0;
 }
 
 .stat-number {
   display: block;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #667eea;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #3b82f6;
+  margin-bottom: 8rpx;
 }
 
 .stat-label {
   display: block;
   font-size: 24rpx;
-  color: #666;
-  margin-top: 10rpx;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .summary-section,
 .ai-analysis-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .summary-text {
   display: block;
-  font-size: 26rpx;
+  font-size: 28rpx;
   line-height: 1.6;
-  color: #555;
-  background: #f8f9fa;
-  padding: 20rpx;
-  border-radius: 10rpx;
+  color: #374151;
+  background: #f8fafc;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #e2e8f0;
+  font-weight: 400;
 }
 
 .analysis-container {
-  background: #f8f9fa;
-  padding: 20rpx;
-  border-radius: 10rpx;
-  border: 2rpx solid #e9ecef;
+  background: #f8fafc;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #e2e8f0;
 }
 
 .analysis-text {
   display: block;
-  font-size: 26rpx;
+  font-size: 28rpx;
   line-height: 1.6;
-  color: #555;
-  background: #f8f9fa;
-  padding: 20rpx;
-  border-radius: 10rpx;
+  color: #374151;
+  background: #f8fafc;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-weight: 400;
 }
 
 .keywords-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .keywords-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10rpx;
+  gap: 12rpx;
 }
 
 .keyword-tag {
-  background: #e3f2fd;
-  color: #1976d2;
-  padding: 10rpx 20rpx;
-  border-radius: 20rpx;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 12rpx 20rpx;
+  border-radius: 16rpx;
   font-size: 24rpx;
+  font-weight: 500;
+  border: 1rpx solid #bfdbfe;
 }
 
 .recommendations-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .recommendations-list {
-  background: #f8f9fa;
-  padding: 20rpx;
-  border-radius: 10rpx;
+  background: #f8fafc;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #e2e8f0;
 }
 
 .recommendation-item {
   display: flex;
-  margin-bottom: 15rpx;
+  margin-bottom: 16rpx;
+}
+
+.recommendation-item:last-child {
+  margin-bottom: 0;
 }
 
 .rec-bullet {
-  color: #667eea;
-  margin-right: 15rpx;
-  font-weight: bold;
+  color: #3b82f6;
+  margin-right: 16rpx;
+  font-weight: 700;
+  font-size: 28rpx;
 }
 
 .rec-text {
   flex: 1;
-  font-size: 26rpx;
-  line-height: 1.5;
-  color: #555;
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #374151;
+  font-weight: 400;
 }
 
 .time-info-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .time-list {
-  background: #f8f9fa;
-  padding: 20rpx;
-  border-radius: 10rpx;
+  background: #f8fafc;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #e2e8f0;
 }
 
 .time-item {
   display: flex;
-  margin-bottom: 15rpx;
+  margin-bottom: 16rpx;
+  align-items: center;
+}
+
+.time-item:last-child {
+  margin-bottom: 0;
 }
 
 .time-label {
-  width: 150rpx;
-  font-size: 24rpx;
-  color: #666;
+  width: 160rpx;
+  font-size: 26rpx;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .time-value {
   flex: 1;
-  font-size: 24rpx;
-  color: #333;
+  font-size: 26rpx;
+  color: #1e293b;
+  font-weight: 400;
 }
 
 .action-buttons {
   display: flex;
   justify-content: center;
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
 }
 
 .btn {
-  padding: 25rpx;
-  border-radius: 10rpx;
-  font-size: 26rpx;
+  padding: 28rpx 48rpx;
+  border-radius: 16rpx;
+  font-size: 28rpx;
   text-align: center;
   border: none;
   width: 100%;
-  max-width: 100%;
+  max-width: 400rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .btn-primary {
-  background: #667eea;
+  background: #3b82f6;
   color: white;
+  box-shadow: 0 4rpx 20rpx rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-2rpx);
+  box-shadow: 0 6rpx 25rpx rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
-  background: #f8f9fa;
-  color: #667eea;
-  border: 2rpx solid #667eea;
+  background: white;
+  color: #3b82f6;
+  border: 2rpx solid #3b82f6;
 }
 
 .disclaimer {
-  background: #fff3cd;
-  padding: 20rpx;
-  border-radius: 10rpx;
-  border-left: 4rpx solid #ffc107;
+  background: #fef3c7;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  border-left: 4rpx solid #f59e0b;
+  border: 1rpx solid #fed7aa;
 }
 
 .disclaimer-text {
-  font-size: 22rpx;
-  line-height: 1.5;
-  color: #856404;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #92400e;
+  font-weight: 400;
 }
 
 .loading,
 .error {
   text-align: center;
-  padding: 100rpx 0;
-  color: white;
+  padding: 120rpx 32rpx;
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 20rpx rgba(59, 130, 246, 0.08);
+  border: 1rpx solid #e2e8f0;
+  margin: 24rpx;
+}
+
+.loading text,
+.error text {
+  color: #64748b;
+  font-size: 28rpx;
+  font-weight: 500;
 }
 
 .retry-btn {
-  margin-top: 20rpx;
-  background: white;
-  color: #667eea;
-  padding: 20rpx 40rpx;
-  border-radius: 25rpx;
+  margin-top: 24rpx;
+  background: #3b82f6;
+  color: white;
+  padding: 24rpx 48rpx;
+  border-radius: 16rpx;
   border: none;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 20rpx rgba(59, 130, 246, 0.3);
 }
 </style>
