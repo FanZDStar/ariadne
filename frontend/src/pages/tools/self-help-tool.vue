@@ -663,6 +663,18 @@ export default {
     },
 
     startPractice() {
+      // 检查是否为开发中的功能
+      if (this.toolId == 3 || this.toolId == 6) {
+        // 冥想指导(3) 和 压力测试(6) 功能开发中
+        uni.showModal({
+          title: "功能开发中",
+          content: this.toolId == 3 ? "冥想指导功能正在开发中，敬请期待！" : "压力测试功能正在开发中，敬请期待！",
+          showCancel: false,
+          confirmText: "知道了",
+        });
+        return;
+      }
+
       // 根据不同工具跳转到相应的实践页面
       let route = null;
       if (this.toolId == 2) {
@@ -671,10 +683,8 @@ export default {
       } else {
         const practiceRoutes = {
           1: "/pages/tools/breathing-practice",
-          3: "/pages/tools/meditation-practice",
           4: "/pages/tools/positive-thinking-practice",
           5: "/pages/tools/sleep-guide",
-          6: "/pages/tools/stress-assessment",
         };
         route = practiceRoutes[this.toolId];
       }
