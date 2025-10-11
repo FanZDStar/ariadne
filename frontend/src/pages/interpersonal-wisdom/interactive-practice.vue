@@ -1,15 +1,9 @@
 <template>
   <view class="dialog-container">
-    <view class="header">
-      <text class="title">AI对话练习</text>
-      <text class="subtitle">与AI助手进行人际交往技能练习</text>
-    </view>
-
     <!-- AI助手介绍 -->
     <view class="assistant-intro">
       <view class="intro-card">
         <view class="assistant-avatar">
-          <text class="avatar-emoji">🤖</text>
           <view class="status-indicator"></view>
         </view>
         <view class="intro-content">
@@ -18,9 +12,9 @@
             >专业的人际交往技能训练助手，可以与你进行各种场景的对话练习</text
           >
           <view class="assistant-features">
-            <text class="feature-item">💬 真实对话模拟</text>
-            <text class="feature-item">📊 实时反馈指导</text>
-            <text class="feature-item">🎯 个性化练习</text>
+            <text class="feature-item">真实对话模拟</text>
+            <text class="feature-item">实时反馈指导</text>
+            <text class="feature-item">个性化练习</text>
           </view>
         </view>
       </view>
@@ -28,7 +22,7 @@
 
     <!-- 练习场景选择 -->
     <view v-if="!scenarioSelected" class="practice-scenarios">
-      <text class="section-title">🎭 选择练习场景</text>
+      <text class="section-title">选择练习场景</text>
       <view class="scenarios-grid">
         <view
           v-for="scenario in practiceScenarios"
@@ -37,7 +31,6 @@
           :class="{ active: selectedScenario === scenario.id }"
           @click="selectScenario(scenario)"
         >
-          <text class="scenario-icon">{{ scenario.icon }}</text>
           <text class="scenario-name">{{ scenario.name }}</text>
           <text class="scenario-desc">{{ scenario.description }}</text>
         </view>
@@ -62,7 +55,6 @@
           :class="{ disabled: isAiTyping }"
           @click="getPracticeHint"
         >
-          <text class="control-icon">💡</text>
           <text class="control-text">获取提示</text>
         </view>
         <view
@@ -70,7 +62,6 @@
           :class="{ disabled: isAiTyping }"
           @click="analyzePractice"
         >
-          <text class="control-icon">📊</text>
           <text class="control-text">分析表现</text>
         </view>
         <view
@@ -78,7 +69,6 @@
           :class="{ disabled: isAiTyping }"
           @click="switchScenario"
         >
-          <text class="control-icon">🔄</text>
           <text class="control-text">切换场景</text>
         </view>
       </view>
@@ -129,37 +119,31 @@ export default {
       practiceScenarios: [
         {
           id: "self_introduction",
-          icon: "👋",
           name: "自我介绍",
           description: "练习在不同场合介绍自己",
         },
         {
           id: "small_talk",
-          icon: "💬",
           name: "闲聊技巧",
           description: "学习如何进行轻松的日常对话",
         },
         {
           id: "conflict_resolution",
-          icon: "⚖️",
           name: "冲突解决",
           description: "练习处理分歧和冲突的技巧",
         },
         {
           id: "workplace_communication",
-          icon: "💼",
           name: "职场沟通",
           description: "提升职场环境下的沟通能力",
         },
         {
           id: "dating_conversation",
-          icon: "💕",
           name: "约会对话",
           description: "学习约会和恋爱中的沟通技巧",
         },
         {
           id: "public_speaking",
-          icon: "🎤",
           name: "公众表达",
           description: "提升在群体中的表达能力",
         },
@@ -465,29 +449,9 @@ export default {
 .dialog-container {
   height: 100vh;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #f8fafc 0%, #e1f5fe 30%, #f0f9ff 100%);
   display: flex;
   flex-direction: column;
-}
-
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 40rpx 40rpx;
-  color: white;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
 }
 
 .assistant-intro {
@@ -496,21 +460,27 @@ export default {
 }
 
 .intro-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(224, 242, 254, 0.8);
+  border-radius: 20rpx;
   padding: 32rpx;
   display: flex;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.08);
 }
 
 .assistant-avatar {
   position: relative;
   margin-right: 24rpx;
-}
-
-.avatar-emoji {
-  font-size: 64rpx;
-  display: block;
+  width: 80rpx;
+  height: 80rpx;
+  background: linear-gradient(135deg, #e0f2fe, #b3e5fc);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.15);
 }
 
 .status-indicator {
@@ -519,7 +489,7 @@ export default {
   right: 4rpx;
   width: 16rpx;
   height: 16rpx;
-  background-color: #52c41a;
+  background-color: #4ade80;
   border-radius: 50%;
   border: 2rpx solid white;
   animation: pulse 2s infinite;
@@ -532,14 +502,14 @@ export default {
 .assistant-name {
   font-size: 30rpx;
   font-weight: bold;
-  color: #333;
+  color: #0369a1;
   margin-bottom: 12rpx;
   display: block;
 }
 
 .assistant-desc {
   font-size: 26rpx;
-  color: #666;
+  color: #475569;
   line-height: 1.5;
   margin-bottom: 20rpx;
 }
@@ -552,68 +522,81 @@ export default {
 
 .feature-item {
   font-size: 22rpx;
-  color: #667eea;
-  background-color: #f0f4ff;
+  color: #0369a1;
+  background: rgba(224, 242, 254, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 6rpx 12rpx;
   border-radius: 12rpx;
+  border: 1px solid rgba(224, 242, 254, 0.8);
 }
 
 .practice-scenarios {
-  padding: 0 40rpx 40rpx;
+  padding: 20rpx 40rpx 40rpx;
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-title {
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 24rpx;
+  color: #0369a1;
+  margin-bottom: 32rpx;
   display: block;
+  text-align: center;
 }
 
 .scenarios-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16rpx;
+  gap: 24rpx;
+  flex: 1;
+  align-content: start;
 }
 
 .scenario-card {
-  background-color: white;
-  border: 2rpx solid #e0e0e0;
-  border-radius: 16rpx;
-  padding: 24rpx 20rpx;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(224, 242, 254, 0.8);
+  border-radius: 20rpx;
+  padding: 40rpx 32rpx;
   text-align: center;
   transition: all 0.3s ease;
+  box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.08);
+  min-height: 180rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .scenario-card.active {
-  border-color: #667eea;
-  background-color: #f0f4ff;
+  border-color: #38bdf8;
+  background: rgba(224, 242, 254, 0.4);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.15);
 }
 
 .scenario-card:active {
   transform: scale(0.98);
 }
 
-.scenario-icon {
-  font-size: 40rpx;
-  margin-bottom: 12rpx;
-  display: block;
-}
-
 .scenario-name {
-  font-size: 26rpx;
+  font-size: 32rpx;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 8rpx;
+  color: #0369a1;
+  margin-bottom: 16rpx;
   display: block;
 }
 
 .scenario-desc {
-  font-size: 22rpx;
-  color: #666;
-  line-height: 1.4;
+  font-size: 26rpx;
+  color: #475569;
+  line-height: 1.5;
 }
 
 .chat-container {
@@ -621,10 +604,13 @@ export default {
   display: flex;
   flex-direction: column;
   margin: 0 40rpx;
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(224, 242, 254, 0.8);
+  border-radius: 20rpx;
   overflow: hidden;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.1);
 }
 
 .chat-messages-wrapper {
@@ -634,16 +620,18 @@ export default {
 
 .chat-input {
   flex-shrink: 0;
-  border-top: 1rpx solid #e0e0e0;
+  border-top: 1px solid rgba(224, 242, 254, 0.8);
 }
 
 .practice-controls {
   display: flex;
   justify-content: space-around;
   padding: 16rpx 20rpx;
-  background-color: #f8f8f8;
-  border-top: 1rpx solid #e0e0e0;
-  border-bottom: 1rpx solid #e0e0e0;
+  background: rgba(224, 242, 254, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(224, 242, 254, 0.6);
+  border-bottom: 1px solid rgba(224, 242, 254, 0.6);
   flex-shrink: 0;
 }
 
@@ -651,9 +639,11 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8rpx 12rpx;
+  padding: 12rpx 16rpx;
   border-radius: 12rpx;
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(224, 242, 254, 0.6);
 }
 
 .control-item.disabled {
@@ -662,18 +652,14 @@ export default {
 }
 
 .control-item:active:not(.disabled) {
-  background-color: #f0f4ff;
+  background: rgba(224, 242, 254, 0.5);
   transform: scale(0.95);
 }
 
-.control-icon {
-  font-size: 28rpx;
-  margin-bottom: 4rpx;
-}
-
 .control-text {
-  font-size: 20rpx;
-  color: #666;
+  font-size: 24rpx;
+  color: #0369a1;
+  font-weight: 500;
 }
 
 @keyframes pulse {
@@ -691,6 +677,20 @@ export default {
 @media (max-width: 750rpx) {
   .scenarios-grid {
     grid-template-columns: 1fr;
+    gap: 20rpx;
+  }
+  
+  .scenario-card {
+    min-height: 140rpx;
+    padding: 32rpx 24rpx;
+  }
+  
+  .scenario-name {
+    font-size: 28rpx;
+  }
+  
+  .scenario-desc {
+    font-size: 24rpx;
   }
 
   .intro-card {
@@ -702,6 +702,21 @@ export default {
     margin-right: 0;
     margin-bottom: 20rpx;
     align-self: center;
+  }
+}
+
+/* 大屏幕优化 */
+@media (min-width: 1200rpx) {
+  .scenarios-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32rpx;
+    max-width: 1200rpx;
+    margin: 0 auto;
+  }
+  
+  .scenario-card {
+    min-height: 200rpx;
+    padding: 48rpx 40rpx;
   }
 }
 </style>
