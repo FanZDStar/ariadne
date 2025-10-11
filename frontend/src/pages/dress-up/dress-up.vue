@@ -353,6 +353,9 @@ export default {
             // 保存到本地存储
             uni.setStorageSync('selectedOutfit', outfit);
 
+            // 发出全局事件通知看板娘更新
+            uni.$emit('outfitChanged', outfit);
+
             // 同步到服务器
             const token = uni.getStorageSync('access_token');
             if (token) {
