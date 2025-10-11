@@ -70,8 +70,7 @@
           <text class="stat-text">{{ whisper.like_count || 0 }}</text>
         </view>
         <view 
-          class="stat-item stat-clickable" 
-          @click="goToChat"
+          class="stat-item"
         >
           <text class="stat-icon">💬</text>
           <text class="stat-text">{{ whisper.comment_count || 0 }}</text>
@@ -546,26 +545,27 @@ export default {
       });
     },
 
-    goToChat() {
-      // 聚焦到评论输入框
-      const query = uni.createSelectorQuery().in(this);
-      query.select('.comment-input').boundingClientRect();
-      query.exec((res) => {
-        if (res[0]) {
-          uni.pageScrollTo({
-            scrollTop: res[0].top - 100,
-            duration: 300
-          });
-        }
-      });
-      
-      // 提示用户可以评论
-      uni.showToast({
-        title: "请在底部输入评论",
-        icon: "none",
-        duration: 1500
-      });
-    },
+    // 聊天功能已隐藏，评论统计现在只显示不可点击
+    // goToChat() {
+    //   // 聚焦到评论输入框
+    //   const query = uni.createSelectorQuery().in(this);
+    //   query.select('.comment-input').boundingClientRect();
+    //   query.exec((res) => {
+    //     if (res[0]) {
+    //       uni.pageScrollTo({
+    //         scrollTop: res[0].top - 100,
+    //         duration: 300
+    //       });
+    //     }
+    //   });
+    //   
+    //   // 提示用户可以评论
+    //   uni.showToast({
+    //     title: "请在底部输入评论",
+    //     icon: "none",
+    //     duration: 1500
+    //   });
+    // },
 
     shareWhisper() {
       uni.showActionSheet({
