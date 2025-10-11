@@ -1,39 +1,27 @@
 <template>
   <view class="protection-container">
-    <view class="header">
-      <text class="title">防护技能训练</text>
-      <text class="subtitle">识别风险信号，学会自我保护</text>
-    </view>
-
     <!-- 训练模式选择 -->
     <view v-if="currentStage === 'selection'" class="mode-selection">
       <view class="risk-alert">
-        <text class="alert-icon">⚠️</text>
         <text class="alert-text">学习识别和应对人际关系中的潜在风险</text>
       </view>
 
       <view class="training-modes">
-        <text class="section-title">🛡️ 选择训练模式</text>
+        <text class="section-title">选择训练模式</text>
         <view v-for="mode in trainingModes" :key="mode.id" class="mode-card" @click="selectMode(mode)">
           <view class="mode-header">
-            <text class="mode-icon">{{ mode.icon }}</text>
             <view class="mode-info">
               <text class="mode-title">{{ mode.title }}</text>
               <text class="mode-desc">{{ mode.description }}</text>
-            </view>
-            <view class="mode-level" :class="'level-' + mode.level">
-              <text class="level-text">{{ getLevelText(mode.level) }}</text>
             </view>
           </view>
 
           <view class="mode-details">
             <view class="mode-stats">
               <view class="stat-item">
-                <text class="stat-icon">🎯</text>
                 <text class="stat-text">{{ mode.scenarios }}个场景</text>
               </view>
               <view class="stat-item">
-                <text class="stat-icon">⏱️</text>
                 <text class="stat-text">{{ mode.duration }}</text>
               </view>
             </view>
@@ -55,7 +43,6 @@
     <view v-if="currentStage === 'briefing'" class="briefing-stage">
       <view class="briefing-card">
         <view class="briefing-header">
-          <text class="briefing-icon">{{ selectedMode.icon }}</text>
           <view class="briefing-title-area">
             <text class="briefing-title">{{ selectedMode.title }}</text>
             <text class="briefing-subtitle">训练说明</text>
@@ -64,13 +51,12 @@
 
         <view class="briefing-content">
           <view class="warning-section">
-            <text class="warning-icon">🚨</text>
             <text class="warning-title">重要提醒</text>
             <text class="warning-text">这是模拟训练，帮助你在安全环境中学习识别和应对风险。真实情况下如遇到危险，请立即寻求帮助。</text>
           </view>
 
           <view class="training-objectives">
-            <text class="section-label">🎯 训练目标</text>
+            <text class="section-label">训练目标</text>
             <view class="objectives-list">
               <text v-for="objective in selectedMode.objectives" :key="objective" class="objective-item">
                 • {{ objective }}
@@ -79,11 +65,10 @@
           </view>
 
           <view class="risk-signals">
-            <text class="section-label">⚠️ 重点识别信号</text>
+            <text class="section-label">重点识别信号</text>
             <view class="signals-list">
               <view v-for="signal in selectedMode.riskSignals" :key="signal.type" class="signal-item">
                 <view class="signal-header">
-                  <text class="signal-icon">{{ signal.icon }}</text>
                   <text class="signal-type">{{ signal.type }}</text>
                 </view>
                 <text class="signal-desc">{{ signal.description }}</text>
@@ -92,10 +77,10 @@
           </view>
 
           <view class="protection-strategies">
-            <text class="section-label">🛡️ 保护策略</text>
+            <text class="section-label">保护策略</text>
             <view class="strategies-list">
               <text v-for="strategy in selectedMode.strategies" :key="strategy" class="strategy-item">
-                ✓ {{ strategy }}
+                • {{ strategy }}
               </text>
             </view>
           </view>
@@ -123,7 +108,6 @@
           </view>
         </view>
         <view class="training-score">
-          <text class="score-icon">🏆</text>
           <text class="score-text">{{ currentScore }}分</text>
         </view>
       </view>
@@ -143,7 +127,7 @@
           }">
             <view class="speaker-info">
               <text class="speaker-name">{{ message.speaker }}</text>
-              <text v-if="message.isRisk" class="risk-indicator">⚠️</text>
+              <text v-if="message.isRisk" class="risk-indicator">风险</text>
             </view>
             <text class="dialogue-text">{{ message.text }}</text>
           </view>
@@ -174,15 +158,12 @@
 
       <view class="training-controls">
         <view class="control-btn" @click="getHint">
-          <text class="control-icon">💡</text>
           <text class="control-text">提示</text>
         </view>
         <view class="control-btn" @click="skipScenario">
-          <text class="control-icon">⏭️</text>
           <text class="control-text">跳过</text>
         </view>
         <view class="control-btn" @click="pauseTraining">
-          <text class="control-icon">⏸️</text>
           <text class="control-text">暂停</text>
         </view>
       </view>
@@ -192,9 +173,6 @@
     <view v-if="currentStage === 'feedback'" class="feedback-stage">
       <view class="feedback-card">
         <view class="feedback-header">
-          <text class="feedback-icon">{{
-            feedbackResult.isCorrect ? "✅" : "❌"
-          }}</text>
           <text class="feedback-title">{{
             feedbackResult.isCorrect ? "回答正确！" : "需要改进"
           }}</text>
@@ -245,7 +223,6 @@
     <!-- 训练结果 -->
     <view v-if="currentStage === 'result'" class="result-stage">
       <view class="result-header">
-        <text class="result-icon">🏆</text>
         <text class="result-title">训练完成！</text>
         <text class="result-subtitle">{{ selectedMode.title }}</text>
       </view>
@@ -278,7 +255,7 @@
       </view>
 
       <view class="skills-mastery">
-        <text class="mastery-title">🎯 技能掌握度</text>
+        <text class="mastery-title">技能掌握度</text>
         <view v-for="skill in finalResult.skillsMastery" :key="skill.name" class="skill-mastery-item">
           <view class="skill-header">
             <text class="skill-name">{{ skill.name }}</text>
@@ -292,7 +269,7 @@
       </view>
 
       <view class="improvement-suggestions">
-        <text class="improvement-title">📈 提升建议</text>
+        <text class="improvement-title">提升建议</text>
         <view v-for="suggestion in finalResult.improvements" :key="suggestion.area" class="improvement-item">
           <text class="improvement-area">{{ suggestion.area }}</text>
           <text class="improvement-desc">{{ suggestion.description }}</text>
@@ -1352,28 +1329,9 @@ export default {
 
 <style scoped>
 .protection-container {
-  padding: 0;
-  background-color: #f5f5f5;
+  padding: 40rpx 0 0;
+  background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 50%, #ffffff 100%);
   min-height: 100vh;
-}
-
-.header {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-  padding: 60rpx 40rpx 40rpx;
-  color: white;
-  text-align: center;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
 }
 
 /* 模式选择阶段 */
@@ -1382,24 +1340,21 @@ export default {
 }
 
 .risk-alert {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
-  border: 2rpx solid #ff6b6b;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(59, 130, 246, 0.2);
+  border-radius: 20rpx;
   padding: 24rpx;
   margin-bottom: 32rpx;
   text-align: center;
-}
-
-.alert-icon {
-  font-size: 32rpx;
-  margin-bottom: 12rpx;
-  display: block;
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.1);
 }
 
 .alert-text {
   font-size: 26rpx;
-  color: #d32f2f;
+  color: #3b82f6;
   line-height: 1.5;
+  font-weight: 500;
 }
 
 .training-modes {
@@ -1407,35 +1362,33 @@ export default {
 }
 
 .section-title {
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  color: #333;
+  color: #1e40af;
   margin-bottom: 24rpx;
   display: block;
 }
 
 .mode-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.15);
+  border: 1rpx solid rgba(59, 130, 246, 0.1);
+  transition: all 0.3s ease;
 }
 
 .mode-card:active {
-  transform: translateY(2rpx);
+  transform: translateY(-2rpx) scale(0.98);
+  box-shadow: 0 12rpx 40rpx rgba(59, 130, 246, 0.25);
 }
 
 .mode-header {
   display: flex;
   align-items: flex-start;
   margin-bottom: 20rpx;
-}
-
-.mode-icon {
-  font-size: 40rpx;
-  margin-right: 20rpx;
 }
 
 .mode-info {
@@ -1445,7 +1398,7 @@ export default {
 .mode-title {
   font-size: 30rpx;
   font-weight: bold;
-  color: #333;
+  color: #1e40af;
   margin-bottom: 8rpx;
   display: block;
 }
@@ -1454,31 +1407,6 @@ export default {
   font-size: 26rpx;
   color: #666;
   line-height: 1.5;
-}
-
-.mode-level {
-  padding: 8rpx 16rpx;
-  border-radius: 12rpx;
-  font-size: 22rpx;
-}
-
-.mode-level.level-1 {
-  background-color: #f6ffed;
-  color: #52c41a;
-}
-
-.mode-level.level-2 {
-  background-color: #fff7e6;
-  color: #fa8c16;
-}
-
-.mode-level.level-3 {
-  background-color: #fff2f0;
-  color: #f5222d;
-}
-
-.level-text {
-  font-weight: bold;
 }
 
 .mode-details {
@@ -1495,16 +1423,16 @@ export default {
   display: flex;
   align-items: center;
   flex: 1;
-}
-
-.stat-icon {
-  font-size: 24rpx;
-  margin-right: 8rpx;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  padding: 12rpx 16rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid rgba(59, 130, 246, 0.1);
 }
 
 .stat-text {
   font-size: 24rpx;
-  color: #666;
+  color: #1e40af;
+  font-weight: 500;
 }
 
 .mode-skills {
@@ -1525,11 +1453,12 @@ export default {
 }
 
 .skill-tag {
-  background-color: #f0f0f0;
-  color: #666;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  color: #1e40af;
   padding: 8rpx 16rpx;
   border-radius: 20rpx;
   font-size: 22rpx;
+  border: 1rpx solid rgba(59, 130, 246, 0.2);
 }
 
 /* 训练简介阶段 */
@@ -1538,10 +1467,12 @@ export default {
 }
 
 .briefing-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.15);
+  border: 1rpx solid rgba(59, 130, 246, 0.1);
 }
 
 .briefing-header {
@@ -1549,12 +1480,7 @@ export default {
   align-items: center;
   margin-bottom: 32rpx;
   padding-bottom: 24rpx;
-  border-bottom: 2rpx solid #f0f0f0;
-}
-
-.briefing-icon {
-  font-size: 48rpx;
-  margin-right: 20rpx;
+  border-bottom: 1rpx solid rgba(59, 130, 246, 0.1);
 }
 
 .briefing-title-area {
@@ -1564,7 +1490,7 @@ export default {
 .briefing-title {
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: #1e40af;
   margin-bottom: 8rpx;
   display: block;
 }
@@ -1579,37 +1505,31 @@ export default {
 }
 
 .warning-section {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
-  border: 2rpx solid #ff6b6b;
-  border-radius: 12rpx;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  border: 1rpx solid rgba(59, 130, 246, 0.3);
+  border-radius: 16rpx;
   padding: 24rpx;
   margin-bottom: 32rpx;
-}
-
-.warning-icon {
-  font-size: 28rpx;
-  margin-bottom: 12rpx;
-  display: block;
 }
 
 .warning-title {
   font-size: 28rpx;
   font-weight: bold;
-  color: #d32f2f;
+  color: #1e40af;
   margin-bottom: 12rpx;
   display: block;
 }
 
 .warning-text {
   font-size: 26rpx;
-  color: #d32f2f;
+  color: #1e40af;
   line-height: 1.6;
 }
 
 .section-label {
   font-size: 28rpx;
   font-weight: bold;
-  color: #333;
+  color: #1e40af;
   margin-bottom: 16rpx;
   display: block;
 }
@@ -1684,7 +1604,7 @@ export default {
 .action-btn {
   flex: 1;
   padding: 28rpx;
-  border-radius: 12rpx;
+  border-radius: 16rpx;
   text-align: center;
   font-size: 28rpx;
   font-weight: bold;
@@ -1692,23 +1612,26 @@ export default {
 }
 
 .action-btn:active {
-  transform: translateY(2rpx);
+  transform: translateY(2rpx) scale(0.98);
 }
 
 .action-btn.primary {
-  background-color: #ff6b6b;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
+  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.3);
 }
 
 .action-btn.secondary {
-  background-color: #f0f0f0;
-  color: #666;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  color: #1e40af;
+  border: 1rpx solid rgba(59, 130, 246, 0.3);
 }
 
 .action-btn.tertiary {
-  background-color: #fff7e6;
-  color: #fa8c16;
-  border: 2rpx solid #fa8c16;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  color: #1e40af;
+  border: 1rpx solid rgba(59, 130, 246, 0.3);
 }
 
 .btn-text {
@@ -1752,7 +1675,7 @@ export default {
 
 .progress-fill {
   height: 100%;
-  background-color: #ff6b6b;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   border-radius: 4rpx;
   transition: width 0.3s ease;
 }
@@ -1771,15 +1694,17 @@ export default {
 .score-text {
   font-size: 28rpx;
   font-weight: bold;
-  color: #ff6b6b;
+  color: #3b82f6;
 }
 
 .scenario-content {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.15);
+  border: 1rpx solid rgba(59, 130, 246, 0.1);
 }
 
 .scenario-background {
@@ -1965,10 +1890,12 @@ export default {
 }
 
 .feedback-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.15);
+  border: 1rpx solid rgba(59, 130, 246, 0.1);
 }
 
 .feedback-header {
@@ -2087,7 +2014,7 @@ export default {
 .result-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #333;
+  color: #1e40af;
   margin-bottom: 12rpx;
   display: block;
 }

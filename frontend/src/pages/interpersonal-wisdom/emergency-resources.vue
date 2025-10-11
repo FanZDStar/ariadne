@@ -1,16 +1,8 @@
 <template>
   <view class="emergency-container">
-    <view class="header">
-      <text class="title">应急资源</text>
-      <text class="subtitle">紧急情况下的专业支持与求助渠道</text>
-    </view>
-
-    <!-- 紧急状态评估 -->
-
-
     <!-- 专业热线 -->
     <view class="hotline-section">
-      <text class="section-title">📞 专业求助热线</text>
+      <text class="section-title">专业求助热线</text>
       <view
         v-for="hotline in hotlines"
         :key="hotline.id"
@@ -21,13 +13,13 @@
           <text class="hotline-name">{{ hotline.name }}</text>
           <text class="hotline-desc">{{ hotline.description }}</text>
           <view class="hotline-details">
-            <text class="hotline-time">⏰ {{ hotline.time }}</text>
+            <text class="hotline-time">{{ hotline.time }}</text>
             <text class="hotline-type">{{ hotline.type }}</text>
           </view>
         </view>
         <view class="hotline-action">
           <text class="hotline-number">{{ hotline.number }}</text>
-          <text class="call-icon">📞</text>
+          <text class="call-icon">拨打</text>
         </view>
       </view>
     </view>
@@ -36,7 +28,7 @@
 
     <!-- 自助工具 -->
     <view class="tools-section">
-      <text class="section-title">🛠️ 心理自助工具</text>
+      <text class="section-title">心理自助工具</text>
       <view class="tools-grid">
         <view
           v-for="tool in selfHelpTools"
@@ -58,7 +50,7 @@
 
     <!-- 资源库 -->
     <view class="resources-section">
-      <text class="section-title">📚 心理健康资源</text>
+      <text class="section-title">心理健康资源</text>
       <view class="resources-tabs">
         <view
           v-for="tab in resourceTabs"
@@ -131,7 +123,7 @@ export default {
         {
           id: 1,
           name: "在线心理咨询",
-          icon: "💭",
+          icon: "",
           description: "与专业心理咨询师一对一在线交流",
           status: "online",
           features: ["实时对话", "隐私保护", "专业认证"],
@@ -139,7 +131,7 @@ export default {
         {
           id: 2,
           name: "情绪支持聊天室",
-          icon: "🤝",
+          icon: "",
           description: "与其他用户分享经历，互相支持",
           status: "online",
           features: ["匿名交流", "同伴支持", "监管安全"],
@@ -147,7 +139,7 @@ export default {
         {
           id: 3,
           name: "视频心理咨询",
-          icon: "📹",
+          icon: "",
           description: "通过视频与心理专家面对面交流",
           status: "busy",
           features: ["面对面交流", "专业诊断", "预约制"],
@@ -157,25 +149,25 @@ export default {
         {
           id: 1,
           name: "呼吸练习",
-          icon: "🫁",
+          icon: "",
           description: "缓解焦虑的呼吸技巧",
         },
         {
           id: 2,
           name: "情绪记录",
-          icon: "📝",
+          icon: "",
           description: "追踪和分析情绪变化",
         },
         {
           id: 3,
           name: "冥想指导",
-          icon: "🧘",
+          icon: "",
           description: "正念冥想练习",
         },
         {
           id: 6,
           name: "压力测试",
-          icon: "📊",
+          icon: "",
           description: "评估当前压力水平",
         },
         // {
@@ -431,98 +423,15 @@ export default {
 
 <style scoped>
 .emergency-container {
-  padding: 0;
-  background-color: #f5f5f5;
+  padding: 40rpx 0 0;
+  background: linear-gradient(135deg, #ffe6e6 0%, #fff5f5 50%, #ffffff 100%);
   min-height: 100vh;
 }
 
-.header {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-  padding: 60rpx 40rpx 40rpx;
-  color: white;
-  text-align: center;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
-}
-
-.emergency-assessment {
-  padding: 40rpx;
-}
-
-.assessment-card {
-  background-color: white;
-  border-radius: 16rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-}
-
-.assessment-card.urgent {
-  border: 2rpx solid #ff6b6b;
-  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
-}
-
-.assessment-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
-.assessment-icon {
-  font-size: 32rpx;
-  margin-right: 16rpx;
-}
-
-.assessment-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.assessment-desc {
-  font-size: 26rpx;
-  color: #666;
-  margin-bottom: 32rpx;
-  line-height: 1.6;
-}
-
-.assessment-actions {
-  display: flex;
-  gap: 20rpx;
-}
-
-.action-btn {
-  flex: 1;
-  padding: 24rpx;
-  border-radius: 12rpx;
-  text-align: center;
-  font-size: 26rpx;
-  font-weight: bold;
-}
-
-.action-btn.emergency {
-  background-color: #ff6b6b;
-  color: white;
-}
-
-.action-btn.assessment {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
 .section-title {
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  color: #333;
+  color: #c53030;
   margin-bottom: 24rpx;
   padding: 0 40rpx;
   display: block;
@@ -533,18 +442,21 @@ export default {
 }
 
 .hotline-card {
-  background-color: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
   margin: 0 40rpx 16rpx;
-  border-radius: 16rpx;
+  border-radius: 20rpx;
   padding: 32rpx;
   display: flex;
   align-items: center;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8rpx 32rpx rgba(197, 48, 48, 0.15);
+  border: 1rpx solid rgba(197, 48, 48, 0.1);
+  transition: all 0.3s ease;
 }
 
 .hotline-card:active {
-  transform: translateY(2rpx);
+  transform: translateY(2rpx) scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(197, 48, 48, 0.25);
 }
 
 .hotline-info {
@@ -554,7 +466,7 @@ export default {
 .hotline-name {
   font-size: 30rpx;
   font-weight: bold;
-  color: #333;
+  color: #c53030;
   margin-bottom: 8rpx;
   display: block;
 }
@@ -578,10 +490,11 @@ export default {
 
 .hotline-type {
   font-size: 22rpx;
-  color: #52c41a;
-  background-color: #f6ffed;
-  padding: 4rpx 8rpx;
-  border-radius: 8rpx;
+  color: #e53e3e;
+  background: linear-gradient(135deg, #fed7d7 0%, #fee2e2 100%);
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid rgba(229, 62, 62, 0.2);
 }
 
 .hotline-action {
@@ -594,11 +507,16 @@ export default {
 .hotline-number {
   font-size: 24rpx;
   font-weight: bold;
-  color: #ff6b6b;
+  color: #c53030;
 }
 
 .call-icon {
-  font-size: 32rpx;
+  font-size: 24rpx;
+  color: #e53e3e;
+  background: linear-gradient(135deg, #fed7d7 0%, #fee2e2 100%);
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  border: 1rpx solid rgba(229, 62, 62, 0.2);
 }
 
 .online-section {
@@ -606,11 +524,13 @@ export default {
 }
 
 .service-card {
-  background-color: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
   margin: 0 40rpx 16rpx;
-  border-radius: 16rpx;
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(197, 48, 48, 0.1);
+  border: 1rpx solid rgba(197, 48, 48, 0.1);
 }
 
 .service-header {
@@ -631,7 +551,7 @@ export default {
 .service-name {
   font-size: 30rpx;
   font-weight: bold;
-  color: #333;
+  color: #c53030;
   margin-bottom: 4rpx;
   display: block;
 }
@@ -672,10 +592,11 @@ export default {
 
 .feature-tag {
   font-size: 20rpx;
-  color: #667eea;
-  background-color: #f0f4ff;
+  color: #e53e3e;
+  background: linear-gradient(135deg, #fed7d7 0%, #fee2e2 100%);
   padding: 6rpx 12rpx;
   border-radius: 12rpx;
+  border: 1rpx solid rgba(229, 62, 62, 0.2);
 }
 
 .tools-section {
@@ -690,28 +611,32 @@ export default {
 }
 
 .tool-card {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx 24rpx;
   text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8rpx 32rpx rgba(197, 48, 48, 0.1);
+  border: 1rpx solid rgba(197, 48, 48, 0.1);
+  transition: all 0.3s ease;
 }
 
 .tool-card:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 16rpx rgba(197, 48, 48, 0.2);
 }
 
 .tool-icon {
   font-size: 48rpx;
   margin-bottom: 16rpx;
   display: block;
+  color: #c53030;
 }
 
 .tool-name {
   font-size: 26rpx;
   font-weight: bold;
-  color: #333;
+  color: #c53030;
   margin-bottom: 8rpx;
   display: block;
 }
@@ -899,14 +824,17 @@ export default {
   flex: 1;
   padding: 16rpx;
   text-align: center;
-  background-color: #f8f9fa;
-  border-radius: 12rpx;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10rpx);
+  border-radius: 16rpx;
+  border: 1rpx solid rgba(197, 48, 48, 0.1);
   transition: all 0.3s ease;
 }
 
 .tab-item.active {
-  background-color: #667eea;
+  background: linear-gradient(135deg, #c53030 0%, #e53e3e 100%);
   color: white;
+  box-shadow: 0 4rpx 16rpx rgba(197, 48, 48, 0.3);
 }
 
 .tab-text {
@@ -924,22 +852,25 @@ export default {
 }
 
 .resource-item {
-  background-color: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8rpx 32rpx rgba(197, 48, 48, 0.1);
+  border: 1rpx solid rgba(197, 48, 48, 0.1);
+  transition: all 0.3s ease;
 }
 
 .resource-item:active {
-  transform: translateY(2rpx);
+  transform: translateY(-2rpx);
+  box-shadow: 0 12rpx 40rpx rgba(197, 48, 48, 0.2);
 }
 
 .resource-title {
   font-size: 30rpx;
   font-weight: bold;
-  color: #333;
+  color: #c53030;
   margin-bottom: 12rpx;
   display: block;
   line-height: 1.4;
@@ -960,10 +891,11 @@ export default {
 
 .resource-type {
   font-size: 22rpx;
-  color: #667eea;
-  background-color: #f0f4ff;
+  color: #e53e3e;
+  background: linear-gradient(135deg, #fed7d7 0%, #fee2e2 100%);
   padding: 6rpx 12rpx;
   border-radius: 12rpx;
+  border: 1rpx solid rgba(229, 62, 62, 0.2);
 }
 
 .resource-time {
@@ -1214,25 +1146,25 @@ export default {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ff6b6b;
+  background: #c53030;
   border-radius: 3rpx;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ee5a6f;
+  background: #e53e3e;
 }
 
 /* 焦点状态 */
 .action-btn:focus,
 .tab-item:focus {
-  outline: 2rpx solid #667eea;
+  outline: 2rpx solid #c53030;
   outline-offset: 2rpx;
 }
 
 /* 无障碍访问增强 */
 .hotline-card[aria-pressed="true"] {
-  background-color: #f0f4ff;
-  border-color: #667eea;
+  background: linear-gradient(135deg, #fed7d7 0%, #fee2e2 100%);
+  border-color: #c53030;
 }
 
 /* 文字选择样式 */

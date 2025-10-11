@@ -1,14 +1,8 @@
 <template>
   <view class="reports-container">
-    <view class="header">
-      <text class="title">防护技能训练报告</text>
-      <text class="subtitle">查看防护技能训练记录和评估报告</text>
-    </view>
-
     <!-- 快捷操作区 -->
     <view class="quick-actions">
       <view class="action-card" @click="startNewDrill">
-        <text class="action-icon">🛡️</text>
         <text class="action-title">开始新训练</text>
         <text class="action-desc">进行防护技能训练</text>
       </view>
@@ -35,9 +29,9 @@
     <!-- 历史报告列表 -->
     <view class="reports-section">
       <view class="section-header">
-        <text class="section-title">📋 训练记录</text>
+        <text class="section-title">训练记录</text>
         <view class="refresh-btn" @click="refreshReports">
-          <text class="refresh-icon">🔄</text>
+          <text class="refresh-icon">刷新</text>
         </view>
       </view>
 
@@ -110,7 +104,6 @@
       <!-- 空状态 -->
       <view v-else class="empty-state">
         <view class="empty-content fade-in">
-          <text class="empty-icon">🛡️</text>
           <text class="empty-title">暂无训练记录</text>
           <text class="empty-desc"
             >开始第一次防护技能训练，提升自我保护能力</text
@@ -391,28 +384,8 @@ export default {
 <style scoped>
 .reports-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20rpx;
-}
-
-.header {
-  text-align: center;
-  padding: 60rpx 40rpx 40rpx;
-  color: white;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 20rpx;
-  display: block;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
-}
-
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
-  display: block;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0fdf4 50%, #ffffff 100%);
+  padding: 40rpx 20rpx 20rpx;
 }
 
 .quick-actions {
@@ -421,23 +394,24 @@ export default {
 
 .action-card {
   background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
   border-radius: 24rpx;
   padding: 40rpx;
   text-align: center;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10rpx);
+  box-shadow: 0 8rpx 32rpx rgba(34, 197, 94, 0.15);
+  border: 1rpx solid rgba(34, 197, 94, 0.1);
+  transition: all 0.3s ease;
 }
 
-.action-icon {
-  font-size: 48rpx;
-  display: block;
-  margin-bottom: 16rpx;
+.action-card:active {
+  transform: translateY(2rpx) scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(34, 197, 94, 0.25);
 }
 
 .action-title {
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: #059669;
   display: block;
   margin-bottom: 8rpx;
 }
@@ -454,12 +428,13 @@ export default {
 
 .stats-card {
   background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
   border-radius: 24rpx;
   padding: 40rpx;
   display: flex;
   justify-content: space-around;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10rpx);
+  box-shadow: 0 8rpx 32rpx rgba(34, 197, 94, 0.15);
+  border: 1rpx solid rgba(34, 197, 94, 0.1);
 }
 
 .stat-item {
@@ -469,7 +444,7 @@ export default {
 .stat-number {
   font-size: 36rpx;
   font-weight: bold;
-  color: #667eea;
+  color: #059669;
   display: block;
   margin-bottom: 8rpx;
 }
@@ -482,9 +457,11 @@ export default {
 
 .reports-section {
   background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
   border-radius: 24rpx 24rpx 0 0;
   min-height: 60vh;
-  backdrop-filter: blur(10rpx);
+  border: 1rpx solid rgba(34, 197, 94, 0.1);
+  box-shadow: 0 8rpx 32rpx rgba(34, 197, 94, 0.1);
 }
 
 .section-header {
@@ -492,26 +469,34 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 40rpx 40rpx 20rpx;
-  border-bottom: 1rpx solid #eee;
+  border-bottom: 1rpx solid rgba(34, 197, 94, 0.1);
 }
 
 .section-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #333;
+  color: #059669;
 }
 
 .refresh-btn {
-  padding: 16rpx;
-  border-radius: 50%;
-  background: #f0f0f0;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(34, 197, 94, 0.3);
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:active {
+  transform: scale(0.95);
 }
 
 .refresh-icon {
-  font-size: 28rpx;
+  font-size: 24rpx;
+  color: white;
+  font-weight: bold;
 }
 
 .loading-section {
@@ -525,9 +510,11 @@ export default {
 }
 
 .skeleton-report-item {
-  background: #f8f9fa;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
+  border: 1rpx solid rgba(34, 197, 94, 0.1);
   animation: skeleton-shimmer 1.5s infinite;
 }
 
@@ -544,7 +531,7 @@ export default {
 
 .skeleton-title {
   height: 32rpx;
-  background: #e9ecef;
+  background: linear-gradient(90deg, #e8f5e8 0%, #d1fae5 50%, #e8f5e8 100%);
   border-radius: 4rpx;
   margin-bottom: 16rpx;
   width: 60%;
@@ -552,7 +539,7 @@ export default {
 
 .skeleton-date {
   height: 24rpx;
-  background: #e9ecef;
+  background: linear-gradient(90deg, #e8f5e8 0%, #d1fae5 50%, #e8f5e8 100%);
   border-radius: 4rpx;
   width: 40%;
 }
@@ -560,13 +547,13 @@ export default {
 .skeleton-score {
   width: 80rpx;
   height: 60rpx;
-  background: #e9ecef;
+  background: linear-gradient(90deg, #e8f5e8 0%, #d1fae5 50%, #e8f5e8 100%);
   border-radius: 8rpx;
 }
 
 .skeleton-content {
   height: 60rpx;
-  background: #e9ecef;
+  background: linear-gradient(90deg, #e8f5e8 0%, #d1fae5 50%, #e8f5e8 100%);
   border-radius: 4rpx;
   width: 100%;
 }
@@ -591,17 +578,19 @@ export default {
 }
 
 .report-item {
-  background: white;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 32rpx rgba(34, 197, 94, 0.1);
+  border: 1rpx solid rgba(34, 197, 94, 0.1);
   position: relative;
   transition: all 0.3s ease;
 }
 
 .report-item:active {
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transform: translateY(-2rpx) scale(0.98);
+  box-shadow: 0 12rpx 40rpx rgba(34, 197, 94, 0.2);
 }
 
 .fade-in {
@@ -629,7 +618,7 @@ export default {
 .report-title {
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: #059669;
   display: block;
   margin-bottom: 8rpx;
 }
@@ -661,28 +650,33 @@ export default {
 }
 
 .score-excellent {
-  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: white;
+  box-shadow: 0 4rpx 16rpx rgba(5, 150, 105, 0.3);
 }
 
 .score-good {
-  background: linear-gradient(135deg, #2196f3, #03a9f4);
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
   color: white;
+  box-shadow: 0 4rpx 16rpx rgba(34, 197, 94, 0.3);
 }
 
 .score-average {
-  background: linear-gradient(135deg, #ff9800, #ffc107);
+  background: linear-gradient(135deg, #65a30d 0%, #84cc16 100%);
   color: white;
+  box-shadow: 0 4rpx 16rpx rgba(132, 204, 22, 0.3);
 }
 
 .score-poor {
-  background: linear-gradient(135deg, #ff5722, #ff9800);
+  background: linear-gradient(135deg, #ca8a04 0%, #eab308 100%);
   color: white;
+  box-shadow: 0 4rpx 16rpx rgba(234, 179, 8, 0.3);
 }
 
 .score-critical {
-  background: linear-gradient(135deg, #f44336, #e91e63);
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
   color: white;
+  box-shadow: 0 4rpx 16rpx rgba(239, 68, 68, 0.3);
 }
 
 .report-summary {
@@ -705,7 +699,7 @@ export default {
 .summary-value {
   font-size: 28rpx;
   font-weight: bold;
-  color: #333;
+  color: #059669;
   display: block;
 }
 
@@ -734,17 +728,10 @@ export default {
   text-align: center;
 }
 
-.empty-icon {
-  font-size: 80rpx;
-  display: block;
-  margin-bottom: 32rpx;
-  opacity: 0.5;
-}
-
 .empty-title {
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: #059669;
   display: block;
   margin-bottom: 16rpx;
 }
@@ -758,14 +745,20 @@ export default {
 }
 
 .start-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: white;
   padding: 24rpx 48rpx;
   border-radius: 48rpx;
   display: inline-block;
   font-size: 28rpx;
   font-weight: bold;
-  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8rpx 24rpx rgba(5, 150, 105, 0.3);
+  transition: all 0.3s ease;
+}
+
+.start-btn:active {
+  transform: translateY(2rpx) scale(0.98);
+  box-shadow: 0 4rpx 12rpx rgba(5, 150, 105, 0.4);
 }
 
 .btn-text {

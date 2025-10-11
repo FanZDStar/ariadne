@@ -326,8 +326,7 @@
       "path": "pages/interpersonal-wisdom/protection-drill-reports",
       "style": {
         "navigationBarTitleText": "历史防护训练",
-        "navigationBarBackgroundColor": "#667eea",
-        "navigationBarTextStyle": "white"
+        "navigationBarTextStyle": "black"
       }
     },
     {
