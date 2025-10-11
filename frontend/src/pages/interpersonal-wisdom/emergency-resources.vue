@@ -51,7 +51,8 @@
     <!-- 资源库 -->
     <view class="resources-section">
       <text class="section-title">心理健康资源</text>
-      <view class="resources-tabs">
+      <!-- 隐藏标签横条，因为只有一个分类 -->
+      <!-- <view class="resources-tabs">
         <view
           v-for="tab in resourceTabs"
           :key="tab.id"
@@ -61,7 +62,7 @@
         >
           <text class="tab-text">{{ tab.name }}</text>
         </view>
-      </view>
+      </view> -->
       <view class="resources-content">
         <view
           v-for="resource in currentResources"
@@ -185,15 +186,12 @@ export default {
       ],
       emergencyContacts: [],
       hasSafetyPlan: false,
-      currentResourceTab: "articles",
+      currentResourceTab: "all",
       resourceTabs: [
-        { id: "articles", name: "文章" },
-        { id: "videos", name: "视频" },
-        { id: "books", name: "书籍" },
-        { id: "apps", name: "应用" },
+        { id: "all", name: "心理健康资源" },
       ],
       resources: {
-        articles: [
+        all: [
           {
             id: 1,
             title: "小心人际间的\"情绪感染\"",
@@ -210,33 +208,40 @@ export default {
             readTime: "8分钟",
             url: "https://ncmhc.org.cn/channel/newsinfo/6319",
           },
-        ],
-        videos: [
           {
-            id: 1,
+            id: 3,
             title: "正念冥想入门教程",
             description: "跟随专家学习基础的冥想技巧",
             type: "教学视频",
             readTime: "15分钟",
+            url: "https://www.bilibili.com/video/BV1Pf4y157pj",
           },
-        ],
-        books: [
           {
-            id: 1,
-            title: "《感受的治愈力》",
-            description: "了解情绪的本质和调节方法",
-            type: "心理学著作",
-            readTime: "推荐阅读",
+            id: 4,
+            title: "中国心理健康网",
+            description: "权威的心理健康资讯平台，提供专业的心理健康知识和服务",
+            type: "官方网站",
+            readTime: "浏览推荐",
+            url: "https://www.cnnmh.cn/",
           },
-        ],
-        apps: [
-          {
-            id: 1,
-            title: "Headspace",
-            description: "专业的冥想和正念练习应用",
-            type: "冥想应用",
-            readTime: "免费试用",
-          },
+          // 隐藏《感受的治愈力》 - 暂时不可用
+          // {
+          //   id: 4,
+          //   title: "《感受的治愈力》",
+          //   description: "了解情绪的本质和调节方法",
+          //   type: "心理学著作",
+          //   readTime: "推荐阅读",
+          //   url: "https://book.douban.com/subject/35194142/",
+          // },
+          // 隐藏Headspace - 暂时不可用
+          // {
+          //   id: 5,
+          //   title: "Headspace",
+          //   description: "专业的冥想和正念练习应用",
+          //   type: "冥想应用",
+          //   readTime: "免费试用",
+          //   url: "https://www.headspace.com/",
+          // },
         ],
       },
     };

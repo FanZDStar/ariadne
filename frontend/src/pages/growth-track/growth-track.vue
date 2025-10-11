@@ -5,25 +5,6 @@
       <text class="subtitle">查看你的情感变化趋势</text>
     </view>
 
-    <view class="period-selector">
-      <scroll-view class="period-scroll" scroll-x>
-        <view class="period-list">
-          <view class="period-item" v-for="period in periods" :key="period.value"
-            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
-            <text class="period-text">{{ period.label }}</text>
-          </view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <!-- 情感趋势图表组件 -->
-    <EmotionalTrendChart :currentPeriod="currentPeriod" :periods="periods" :isLoggedIn="isLoggedIn" ref="trendChart" />
-
-    <!-- 心情晴雨表组件 -->
-    <view class="mood-tracker-section">
-      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" @mood-saved="handleMoodSaved" />
-    </view>
-
     <!-- 心理测评栏目 -->
     <view class="psychological-assessment-section">
       <view class="assessment-card" @click="goToPsychologicalAssessment">
@@ -37,6 +18,25 @@
         </view>
       </view>
     </view>
+
+    <!-- 心情晴雨表组件 -->
+    <view class="mood-tracker-section">
+      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" @mood-saved="handleMoodSaved" />
+    </view>
+
+    <view class="period-selector">
+      <scroll-view class="period-scroll" scroll-x>
+        <view class="period-list">
+          <view class="period-item" v-for="period in periods" :key="period.value"
+            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
+            <text class="period-text">{{ period.label }}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 情感趋势图表组件 -->
+    <EmotionalTrendChart :currentPeriod="currentPeriod" :periods="periods" :isLoggedIn="isLoggedIn" ref="trendChart" />
   </view>
 </template>
 
@@ -181,17 +181,17 @@ export default {
 }
 
 .assessment-card {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #ffb3ba, #ffdfba);
   border-radius: 20rpx;
   padding: 40rpx;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10rpx 30rpx rgba(255, 179, 186, 0.3);
 }
 
 .assessment-card:active {
   transform: translateY(2rpx);
-  box-shadow: 0 8rpx 25rpx rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8rpx 25rpx rgba(255, 179, 186, 0.4);
 }
 
 .assessment-header {
@@ -208,12 +208,12 @@ export default {
 .assessment-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: white;
+  color: #5d4e37;
 }
 
 .assessment-desc {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(93, 78, 55, 0.8);
   margin-bottom: 20rpx;
 }
 
@@ -226,7 +226,7 @@ export default {
 
 .arrow-text {
   font-size: 32rpx;
-  color: white;
+  color: #5d4e37;
   font-weight: bold;
 }
 </style>

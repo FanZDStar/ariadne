@@ -30,12 +30,13 @@
       >
         我互动的
       </view>
-      <view
+      <!-- 聊天功能已隐藏 -->
+      <!-- <view
         :class="['tab-item', { active: activeTab === 'chats' }]"
         @click="activeTab = 'chats'"
       >
         聊天
-      </view>
+      </view> -->
     </view>
 
     <scroll-view class="content-scroll-view" scroll-y>
@@ -203,7 +204,8 @@
         </view>
       </view>
 
-      <view v-if="activeTab === 'chats'" class="whisper-list">
+      <!-- 聊天功能已隐藏 -->
+      <!-- <view v-if="activeTab === 'chats'" class="whisper-list">
         <view v-if="myChats.length === 0" class="empty-state">
           <text class="empty-text">你还没有参与过任何聊天...</text>
         </view>
@@ -232,7 +234,7 @@
             <text class="stat-item">💬 {{ chat.comment_count || 0 }}</text>
           </view>
         </view>
-      </view>
+      </view> -->
     </scroll-view>
 
     <!-- 回到顶部组件 -->
@@ -276,7 +278,7 @@ export default {
       activeTab: "posted",
       myPostedWhispers: [],
       myInteractedWhispers: [],
-      myChats: [],
+      myChats: [], // 聊天功能已隐藏，保留数据结构避免错误
       managementMode: false,
       scrollTop: 0,
       calendarVisible: false,
@@ -324,7 +326,7 @@ export default {
     async loadData() {
       await this.fetchMyPostedWhispers();
       await this.fetchMyInteractedWhispers();
-      await this.fetchMyChats();
+      // await this.fetchMyChats(); // 聊天功能已隐藏
     },
     async fetchMyPostedWhispers() {
       const token = storage.getToken();
@@ -348,15 +350,16 @@ export default {
         this.myInteractedWhispers = [];
       }
     },
-    async fetchMyChats() {
-      const token = storage.getToken();
-      if (!token) return;
-      try {
-        this.myChats = await api.getMyChats(token);
-      } catch (error) {
-        console.error("Failed to fetch chats:", error);
-      }
-    },
+    // 聊天功能已隐藏
+    // async fetchMyChats() {
+    //   const token = storage.getToken();
+    //   if (!token) return;
+    //   try {
+    //     this.myChats = await api.getMyChats(token);
+    //   } catch (error) {
+    //     console.error("Failed to fetch chats:", error);
+    //   }
+    // },
     showCalendar() {
       this.calendarVisible = true;
     },
@@ -405,9 +408,11 @@ export default {
         content = "删除这个悄悄话会一并删除所有相关的聊天，确定吗？";
       } else if (type === "interaction") {
         content = "确定要移除这个互动记录吗？";
-      } else {
-        content = "确定要离开这个聊天吗？";
-      }
+      } 
+      // 聊天功能已隐藏
+      // else {
+      //   content = "确定要离开这个聊天吗？";
+      // }
 
       uni.showModal({
         title: "确认操作",
@@ -418,9 +423,11 @@ export default {
               this.deleteWhisper(item.whisper_id);
             } else if (type === "interaction") {
               this.removeInteraction(item.whisper_id);
-            } else {
-              this.leaveChat(item.whisper_id);
-            }
+            } 
+            // 聊天功能已隐藏
+            // else {
+            //   this.leaveChat(item.whisper_id);
+            // }
           }
         },
       });
@@ -432,7 +439,7 @@ export default {
         this.myPostedWhispers = this.myPostedWhispers.filter(
           (w) => w.whisper_id !== whisperId
         );
-        this.myChats = this.myChats.filter((c) => c.whisper_id !== whisperId);
+        // this.myChats = this.myChats.filter((c) => c.whisper_id !== whisperId); // 聊天功能已隐藏
         uni.showToast({ title: "删除成功", icon: "success" });
       } catch (error) {
         console.error("Failed to delete whisper:", error);
@@ -452,22 +459,23 @@ export default {
         uni.showToast({ title: "操作失败", icon: "none" });
       }
     },
-    async leaveChat(whisperId) {
-      const token = storage.getToken();
-      try {
-        await api.leaveWhisperChat(token, whisperId);
-        this.myChats = this.myChats.filter((c) => c.whisper_id !== whisperId);
-        uni.showToast({ title: "已离开聊天", icon: "success" });
-      } catch (error) {
-        console.error("Failed to leave chat:", error);
-        uni.showToast({ title: "操作失败", icon: "none" });
-      }
-    },
-    goToChat(whisperId) {
-      uni.navigateTo({
-        url: `/pages/tree-hole/whisper-chat?whisper_id=${whisperId}`,
-      });
-    },
+    // 聊天功能已隐藏
+    // async leaveChat(whisperId) {
+    //   const token = storage.getToken();
+    //   try {
+    //     await api.leaveWhisperChat(token, whisperId);
+    //     this.myChats = this.myChats.filter((c) => c.whisper_id !== whisperId);
+    //     uni.showToast({ title: "已离开聊天", icon: "success" });
+    //   } catch (error) {
+    //     console.error("Failed to leave chat:", error);
+    //     uni.showToast({ title: "操作失败", icon: "none" });
+    //   }
+    // },
+    // goToChat(whisperId) {
+    //   uni.navigateTo({
+    //     url: `/pages/tree-hole/whisper-chat?whisper_id=${whisperId}`,
+    //   });
+    // },
     scrollToTop() {
       uni.pageScrollTo({
         scrollTop: 0,

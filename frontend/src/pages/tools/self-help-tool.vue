@@ -27,7 +27,8 @@
       <text class="tool-name">{{ toolData.name }}</text>
       <text class="tool-description">{{ toolData.description }}</text>
       <view class="tool-meta">
-        <view class="meta-item">
+        <!-- 难度显示已隐藏 -->
+        <!-- <view class="meta-item">
           <text class="meta-label">难度</text>
           <view class="difficulty-stars">
             <text
@@ -39,7 +40,7 @@
               ★
             </text>
           </view>
-        </view>
+        </view> -->
         <view class="meta-item">
           <text class="meta-label">时长</text>
           <text class="meta-value">{{ toolData.duration }}</text>
@@ -662,6 +663,18 @@ export default {
     },
 
     startPractice() {
+      // 检查是否为开发中的功能
+      if (this.toolId == 3 || this.toolId == 6) {
+        // 冥想指导(3) 和 压力测试(6) 功能开发中
+        uni.showModal({
+          title: "功能开发中",
+          content: this.toolId == 3 ? "冥想指导功能正在开发中，敬请期待！" : "压力测试功能正在开发中，敬请期待！",
+          showCancel: false,
+          confirmText: "知道了",
+        });
+        return;
+      }
+
       // 根据不同工具跳转到相应的实践页面
       let route = null;
       if (this.toolId == 2) {
@@ -670,10 +683,8 @@ export default {
       } else {
         const practiceRoutes = {
           1: "/pages/tools/breathing-practice",
-          3: "/pages/tools/meditation-practice",
           4: "/pages/tools/positive-thinking-practice",
           5: "/pages/tools/sleep-guide",
-          6: "/pages/tools/stress-assessment",
         };
         route = practiceRoutes[this.toolId];
       }
@@ -735,7 +746,7 @@ export default {
 
 <style scoped>
 .tool-container {
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #fff8f0 0%, #ffeee6 50%, #ffede0 100%);
   min-height: 100vh;
   padding-bottom: 120rpx;
 }
@@ -745,7 +756,7 @@ export default {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e6a143 0%, #d67723 100%);
   padding-top: env(safe-area-inset-top);
 }
 
@@ -799,7 +810,7 @@ export default {
 
 /* 工具介绍 */
 .tool-intro {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e6a143 0%, #d67723 100%);
   padding: 40rpx;
   text-align: center;
   color: white;
@@ -885,11 +896,13 @@ export default {
 }
 
 .content-section {
-  background-color: white;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
   border-radius: 16rpx;
   padding: 32rpx;
   margin-bottom: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4rpx 12rpx rgba(255, 165, 0, 0.1);
+  border: 1rpx solid rgba(255, 165, 0, 0.1);
 }
 
 .section-header {
@@ -931,7 +944,7 @@ export default {
 
 .bullet {
   font-size: 24rpx;
-  color: #667eea;
+  color: #e6a143;
   margin-right: 12rpx;
   margin-top: 4rpx;
 }
@@ -962,7 +975,7 @@ export default {
   width: 48rpx;
   height: 48rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #e6a143, #d67723);
   color: white;
   font-size: 24rpx;
   font-weight: bold;
@@ -994,16 +1007,16 @@ export default {
 }
 
 .step-tips {
-  background-color: #f8f9fa;
+  background-color: #fff8f0;
   padding: 16rpx;
   border-radius: 8rpx;
-  border-left: 4rpx solid #667eea;
+  border-left: 4rpx solid #e6a143;
 }
 
 .tips-label {
   font-size: 24rpx;
   font-weight: bold;
-  color: #667eea;
+  color: #d67723;
   margin-bottom: 4rpx;
   display: block;
 }
@@ -1097,12 +1110,14 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: white;
+  background: linear-gradient(135deg, #fff8f0 0%, #ffeee6 100%);
+  backdrop-filter: blur(10rpx);
   padding: 24rpx 40rpx;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
   display: flex;
   gap: 20rpx;
-  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4rpx 12rpx rgba(255, 165, 0, 0.15);
+  border-top: 1rpx solid rgba(255, 165, 0, 0.1);
 }
 
 .action-btn {
@@ -1119,12 +1134,13 @@ export default {
 }
 
 .action-btn.secondary {
-  background-color: #f0f0f0;
-  color: #666;
+  background: linear-gradient(135deg, #ffeee6 0%, #ffede0 100%);
+  color: #d67723;
+  border: 1rpx solid rgba(255, 165, 0, 0.2);
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #e6a143, #d67723);
   color: white;
 }
 
@@ -1151,7 +1167,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.8);
+  background: linear-gradient(135deg, #d67723 0%, #e6a143 100%);
   color: white;
   padding: 20rpx 32rpx;
   border-radius: 16rpx;
@@ -1160,6 +1176,7 @@ export default {
   transition: opacity 0.3s ease;
   z-index: 1000;
   pointer-events: none;
+  box-shadow: 0 4rpx 12rpx rgba(214, 119, 35, 0.3);
 }
 
 .collect-tip.show {
