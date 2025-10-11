@@ -835,6 +835,28 @@ CREATE TABLE `tree_hole_whispers`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 219 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for user_whisper_interactions
+-- ----------------------------
+DROP TABLE IF EXISTS `user_whisper_interactions`;
+CREATE TABLE `user_whisper_interactions`  (
+  `interaction_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `whisper_id` int NOT NULL,
+  `is_active` tinyint(1) NULL DEFAULT 1 COMMENT '互动链接是否有效（用户可删除）',
+  `has_liked` tinyint(1) NULL DEFAULT 0 COMMENT '是否点赞过',
+  `has_commented` tinyint(1) NULL DEFAULT 0 COMMENT '是否评论过',
+  `first_interaction_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '首次互动时间',
+  `last_interaction_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后互动时间',
+  PRIMARY KEY (`interaction_id`) USING BTREE,
+  INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
+  INDEX `idx_whisper_id`(`whisper_id` ASC) USING BTREE,
+  INDEX `idx_user_whisper`(`user_id` ASC, `whisper_id` ASC) USING BTREE,
+  INDEX `idx_is_active`(`is_active` ASC) USING BTREE,
+  CONSTRAINT `user_whisper_interactions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `user_whisper_interactions_ibfk_2` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户悄悄话互动关系表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
 -- Table structure for user_achievements
 -- ----------------------------
 DROP TABLE IF EXISTS `user_achievements`;
