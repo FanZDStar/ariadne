@@ -489,6 +489,14 @@ export default {
     position: relative;
 }
 
+/* 移动端防止页面整体滚动 */
+@media (max-width: 750px) {
+    .dress-up-container {
+        height: 100vh;
+        overflow: hidden;
+    }
+}
+
 /* 自定义导航栏 */
 .custom-navbar {
     position: fixed;
@@ -547,6 +555,21 @@ export default {
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+/* 移动端星星区域固定 */
+@media (max-width: 750px) {
+    .star-section {
+        position: fixed;
+        top: 88rpx;
+        left: 0;
+        right: 0;
+        z-index: 101;
+        margin-top: 0;
+        padding: 20rpx 30rpx;
+        background: rgba(250, 248, 243, 0.95);
+        backdrop-filter: blur(10px);
+    }
+}
+
 .star-points-container {
     display: flex;
     align-items: center;
@@ -560,6 +583,22 @@ export default {
     max-width: 200rpx;
     box-shadow: 0 4rpx 12rpx rgba(255, 215, 0, 0.3);
     transition: all 0.3s ease;
+}
+
+/* 移动端星星容器尺寸优化 */
+@media (max-width: 750px) {
+    .star-points-container {
+        padding: 10rpx 20rpx;
+        max-width: 180rpx;
+    }
+
+    .star-icon {
+        font-size: 28rpx;
+    }
+
+    .star-count {
+        font-size: 26rpx;
+    }
 }
 
 .star-points-container:active {
@@ -595,6 +634,20 @@ export default {
     padding: 20rpx 20rpx 20rpx;
 }
 
+/* 移动端优化：固定上半部分（2/5 屏幕高度） */
+@media (max-width: 750px) {
+    .mascot-preview-section {
+        position: fixed;
+        top: 108rpx; /* 导航栏 88rpx + 星星区域约 20rpx */
+        left: 0;
+        right: 0;
+        height: 45vh;
+        z-index: 100;
+        background: #faf8f3;
+        padding: 10rpx 20rpx 20rpx;
+    }
+}
+
 .mascot-preview {
     width: 300rpx;
     height: 300rpx;
@@ -627,6 +680,14 @@ export default {
     border-radius: 0;
 }
 
+/* 移动端人物图片尺寸优化 */
+@media (max-width: 750px) {
+    .mascot-image {
+        width: 400rpx;
+        height: 400rpx;
+    }
+}
+
 .current-outfit-name {
     margin-top: 30rpx;
     font-size: 28rpx;
@@ -637,11 +698,20 @@ export default {
 
 /* 服装信息和操作区域 */
 .outfit-info {
-    margin-top: 20rpx;
+    margin-top: 30rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15rpx;
+}
+
+/* 移动端调整按钮位置 - 固定在底部 */
+@media (max-width: 750px) {
+    .outfit-info {
+        margin-top: 0;
+        margin-bottom: 10rpx;
+        gap: 15rpx;
+    }
 }
 
 .cost-info {
@@ -709,10 +779,27 @@ export default {
 /* 服装选择区域 */
 .outfits-section {
     flex: 1;
-    background: rgba(255, 255, 255, 0.95);
+    background: #faf8f3;
     border-radius: 40rpx 40rpx 0 0;
     padding: 40rpx 30rpx;
     min-height: 10vh;
+}
+
+/* 移动端优化：下半部分可滚动区域（3/5 屏幕高度） */
+@media (max-width: 750px) {
+    .outfits-section {
+        position: fixed;
+        top: calc(108rpx + 40vh); /* 导航栏 + 星星 + 人物区域高度 */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: auto;
+        overflow-y: auto;
+        border-radius: 40rpx 40rpx 0 0;
+        padding: 30rpx 20rpx 40rpx;
+        box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+        background: #faf8f3;
+    }
 }
 
 .section-title {
@@ -721,6 +808,7 @@ export default {
     color: #333;
     margin-bottom: 30rpx;
     text-align: center;
+    background: transparent;
 }
 
 .outfits-grid {
@@ -734,6 +822,7 @@ export default {
 @media (max-width: 750px) {
     .outfits-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 20rpx;
     }
 }
 
@@ -768,9 +857,10 @@ export default {
 }
 
 .outfit-item.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    box-shadow: 0 12rpx 24rpx rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #ffc3c6, #ffeef1);
+    color: #666;
+    box-shadow: 0 12rpx 24rpx rgba(255, 195, 198, 0.3);
+    border: 2rpx solid rgba(255, 195, 198, 0.6);
 }
 
 .outfit-image-wrapper {
@@ -797,8 +887,26 @@ export default {
 }
 
 .outfit-item.active .outfit-name {
-    color: #fff;
+    color: #555;
     font-weight: bold;
+}
+
+/* 移动端进一步优化服装名称 */
+@media (max-width: 750px) {
+    .current-outfit-name {
+        margin-top: 15rpx;
+        font-size: 26rpx;
+    }
+
+    .outfit-info {
+        margin-top: 15rpx;
+        gap: 10rpx;
+    }
+
+    .section-title {
+        font-size: 28rpx;
+        margin-bottom: 20rpx;
+    }
 }
 
 /* 响应式调整 */
@@ -809,8 +917,8 @@ export default {
     }
 
     .mascot-image {
-        width: 380rpx;
-        height: 380rpx;
+        width: 350rpx;
+        height: 350rpx;
     }
 
     .outfits-grid {
