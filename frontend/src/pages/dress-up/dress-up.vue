@@ -645,6 +645,7 @@ export default {
         z-index: 100;
         background: #faf8f3;
         padding: 10rpx 20rpx 20rpx;
+        
     }
 }
 
@@ -789,7 +790,7 @@ export default {
 @media (max-width: 750px) {
     .outfits-section {
         position: fixed;
-        top: calc(108rpx + 40vh); /* 导航栏 + 星星 + 人物区域高度 */
+        top: calc(108rpx + 45vh); /* 导航栏 + 星星 + 人物区域高度（45vh） */
         left: 0;
         right: 0;
         bottom: 0;
