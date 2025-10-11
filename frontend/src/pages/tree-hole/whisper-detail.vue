@@ -11,10 +11,6 @@
             formatTimestamp(whisper.created_at)
           }}</text>
         </view>
-        <!-- 右上角分享按钮 -->
-        <view class="share-button" @click="shareWhisper">
-          <text class="share-icon">📤</text>
-        </view>
       </view>
 
       <!-- 悄悄话内容 -->
@@ -567,24 +563,6 @@ export default {
       });
     },
 
-    shareWhisper() {
-      uni.showActionSheet({
-        itemList: ["复制链接", "保存图片"],
-        success: (res) => {
-          if (res.tapIndex === 0) {
-            // 复制链接逻辑
-            uni.setClipboardData({
-              data: `分享一个有趣的悄悄话：${
-                this.whisper.title || this.whisper.content
-              }`,
-              success: () => {
-                uni.showToast({ title: "已复制到剪贴板", icon: "success" });
-              },
-            });
-          }
-        },
-      });
-    },
 
     formatTimestamp(dateString) {
       const date = new Date(dateString);

@@ -117,7 +117,7 @@
         :disabled="loading"
         @click="fetchRandomWhisper"
       >
-        {{ loading ? "加载中..." : "换一个" }}
+        {{ loading ? "加载中..." : "抽一条" }}
       </button>
     </view>
   </view>
@@ -427,6 +427,8 @@ export default {
   justify-content: center;
   align-items: flex-start;
   padding: 60rpx 40rpx 40rpx 40rpx;
+  padding-top: 100rpx;
+  padding-right: 100rpx;
   padding-bottom: 200rpx;
   overflow: hidden;
   /* 禁止滚动 */
@@ -740,7 +742,7 @@ export default {
 }
 
 .next-button {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #99a8eb, #b99ed4);
   color: white;
   border-radius: 50rpx;
   font-size: 32rpx;
@@ -748,14 +750,14 @@ export default {
   padding: 0 80rpx;
   height: 90rpx;
   line-height: 90rpx;
-  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8rpx 24rpx rgba(105, 111, 138, 0.4);
   transition: all 0.3s ease;
   min-width: 280rpx;
 }
 
 .next-button:active {
   transform: scale(0.95);
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(50, 58, 97, 0.3);
 }
 
 .next-button[disabled] {
