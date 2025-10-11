@@ -27,7 +27,8 @@
       <text class="tool-name">{{ toolData.name }}</text>
       <text class="tool-description">{{ toolData.description }}</text>
       <view class="tool-meta">
-        <view class="meta-item">
+        <!-- 难度显示已隐藏 -->
+        <!-- <view class="meta-item">
           <text class="meta-label">难度</text>
           <view class="difficulty-stars">
             <text
@@ -39,7 +40,7 @@
               ★
             </text>
           </view>
-        </view>
+        </view> -->
         <view class="meta-item">
           <text class="meta-label">时长</text>
           <text class="meta-value">{{ toolData.duration }}</text>
