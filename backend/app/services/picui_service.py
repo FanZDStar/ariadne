@@ -53,20 +53,32 @@ class PICUIService:
             上传结果
         """
         try:
+            print(f"[PICUI诊断] 🔍 开始PICUI上传流程")
+            print(f"[PICUI诊断] API URL: {self.api_url}")
+            print(f"[PICUI诊断] 文件名: {filename}")
+            print(f"[PICUI诊断] 文件大小: {len(file_content)} bytes")
+            print(f"[PICUI诊断] 权限设置: {permission}")
+            
             # 检查token是否配置
             if not self.token or self.token == "your_picui_token_here":
+                print(f"[PICUI诊断] ❌ PICUI_TOKEN未配置或使用默认值")
                 logger.error("PICUI_TOKEN not configured or using default value")
                 return {
                     "success": False,
                     "message": "PICUI_TOKEN not configured"
                 }
             
+            print(f"[PICUI诊断] ✅ Token已配置: {self.token[:10]}...")
+            
             url = f"{self.api_url}/upload"
+            print(f"[PICUI诊断] 上传URL: {url}")
             
             # 准备文件数据
+            content_type = self._get_content_type(filename)
             files = {
-                'file': (filename, file_content, self._get_content_type(filename))
+                'file': (filename, file_content, content_type)
             }
+            print(f"[PICUI诊断] 文件MIME类型: {content_type}")
             
             # 准备表单数据
             data = {
@@ -76,29 +88,70 @@ class PICUIService:
             # 添加相册ID（strategy_id不是必须的，先不传）
             if album_id:
                 data['album_id'] = int(album_id)
+                print(f"[PICUI诊断] 使用传入的相册ID: {album_id}")
             elif self.album_id:
                 data['album_id'] = int(self.album_id)
+                print(f"[PICUI诊断] 使用配置的相册ID: {self.album_id}")
+            else:
+                print(f"[PICUI诊断] 未设置相册ID")
             
-            print(f"[PICUI] 开始上传图片到图床: {filename}")
-            print(f"[PICUI] 上传参数: {data}")
+            print(f"[PICUI诊断] 请求数据: {data}")
+            print(f"[PICUI诊断] 开始发送HTTP请求...")
+            
+            # 获取请求头
+            headers = self._get_upload_headers()
+            print(f"[PICUI诊断] 请求头: {headers}")
             
             # 发送请求
-            response = requests.post(
-                url,
-                headers=self._get_upload_headers(),
-                files=files,
-                data=data,
-                timeout=30
-            )
-            
-            print(f"[PICUI] 图床响应状态码: {response.status_code}")
-            print(f"[PICUI] 图床响应内容: {response.text}")
+            try:
+                response = requests.post(
+                    url,
+                    headers=headers,
+                    files=files,
+                    data=data,
+                    timeout=30
+                )
+                
+                print(f"[PICUI诊断] ✅ HTTP请求发送成功")
+                print(f"[PICUI诊断] 响应状态码: {response.status_code}")
+                print(f"[PICUI诊断] 响应头: {dict(response.headers)}")
+                print(f"[PICUI诊断] 响应内容: {response.text}")
+                
+            except requests.exceptions.Timeout:
+                print(f"[PICUI诊断] ❌ 请求超时")
+                return {
+                    "success": False,
+                    "message": "Request timeout"
+                }
+            except requests.exceptions.ConnectionError as e:
+                print(f"[PICUI诊断] ❌ 连接错误: {e}")
+                return {
+                    "success": False,
+                    "message": f"Connection error: {e}"
+                }
+            except requests.exceptions.RequestException as e:
+                print(f"[PICUI诊断] ❌ 请求异常: {e}")
+                return {
+                    "success": False,
+                    "message": f"Request error: {e}"
+                }
             
             if response.status_code == 200:
-                result = response.json()
+                print(f"[PICUI诊断] ✅ HTTP状态码正常，解析响应...")
+                try:
+                    result = response.json()
+                    print(f"[PICUI诊断] 解析后的JSON: {result}")
+                except Exception as json_e:
+                    print(f"[PICUI诊断] ❌ JSON解析失败: {json_e}")
+                    return {
+                        "success": False,
+                        "message": f"JSON parse error: {json_e}"
+                    }
+                
                 if result.get('status'):
-                    print(f"[PICUI] ✅ 图床上传成功!")
+                    print(f"[PICUI诊断] ✅ 图床返回成功状态")
                     data = result.get('data', {})
+                    print(f"[PICUI诊断] 返回数据: {data}")
                     return {
                         "success": True,
                         "data": {
@@ -114,13 +167,15 @@ class PICUIService:
                         }
                     }
                 else:
-                    print(f"[PICUI] ❌ 图床上传失败: {result.get('message', 'Unknown error')}")
+                    print(f"[PICUI诊断] ❌ 图床返回失败状态: {result.get('message', 'Unknown error')}")
+                    print(f"[PICUI诊断] 完整响应: {result}")
                     return {
                         "success": False,
                         "message": result.get('message', 'Upload failed')
                     }
             else:
-                print(f"[PICUI] ❌ 图床HTTP请求失败: {response.status_code}")
+                print(f"[PICUI诊断] ❌ HTTP状态码异常: {response.status_code}")
+                print(f"[PICUI诊断] 响应文本: {response.text}")
                 logger.error(f"PICUI upload failed: {response.status_code} - {response.text}")
                 return {
                     "success": False,
@@ -128,7 +183,10 @@ class PICUIService:
                 }
                 
         except Exception as e:
-            print(f"[PICUI] ❌ 图床上传异常: {str(e)}")
+            print(f"[PICUI诊断] ❌ 图床上传异常: {str(e)}")
+            print(f"[PICUI诊断] ❌ 异常类型: {type(e).__name__}")
+            import traceback
+            print(f"[PICUI诊断] ❌ 异常堆栈: {traceback.format_exc()}")
             logger.error(f"Error uploading to PICUI: {str(e)}")
             return {
                 "success": False,
