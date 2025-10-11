@@ -100,6 +100,41 @@ export default {
           actionCount: 1,
           speeches: ["旺仔牛奶真好喝~", "小乔来啦!", "甜甜的味道!"],
         },
+        6: {
+          // 古风少年
+          name: "古风少年",
+          staticImage: "/static/outfits/Ancient_style_young_man.png",
+          actionCount: 1,
+          speeches: ["翩翩少年郎~", "古韵悠悠!", "诗词歌赋样样精通!"],
+        },
+        7: {
+          // 蓝猫
+          name: "蓝猫",
+          staticImage: "/static/outfits/Bllue_cat.png",
+          actionCount: 1,
+          speeches: ["喵喵~", "蓝色的猫咪最可爱!", "来摸摸我吧~"],
+        },
+        8: {
+          // 妖仙
+          name: "妖仙",
+          staticImage: "/static/outfits/Demon_Immortal.png",
+          actionCount: 1,
+          speeches: ["仙气飘飘~", "妖而不邪，仙而不俗!", "修仙路漫漫~"],
+        },
+        9: {
+          // 北极熊
+          name: "北极熊",
+          staticImage: "/static/outfits/Polar_bear.png",
+          actionCount: 1,
+          speeches: ["北极好冷啊~", "白白胖胖的熊熊!", "给你熊抱~"],
+        },
+        10: {
+          // 蓝衣少年
+          name: "蓝衣少年",
+          staticImage: "/static/outfits/The_boy_in_blue.png",
+          actionCount: 1,
+          speeches: ["蓝色如海~", "少年意气风发!", "青春无敌!"],
+        },
       },
 
       // 对话内容

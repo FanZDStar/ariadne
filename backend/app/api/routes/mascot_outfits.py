@@ -255,17 +255,97 @@ def purchase_outfit(
         
         return {"message": f"Successfully obtained {outfit_name}"}
     
-    # TODO: 这里需要集成星星积分系统来处理付费服装
-    # 暂时允许免费获取
-    purchase_query = text("""
-        INSERT INTO user_mascot_outfits (user_id, outfit_id, is_equipped, purchased_at)
-        VALUES (:user_id, :outfit_id, 0, NOW())
+    # 检查用户星星积分是否足够
+    points_query = text("""
+        SELECT current_points FROM user_star_points 
+        WHERE user_id = :user_id
     """)
     
-    db.execute(purchase_query, {
-        "user_id": current_user.user_id,
-        "outfit_id": outfit_id
-    })
-    db.commit()
+    points_result = db.execute(points_query, {"user_id": current_user.user_id})
+    points_row = points_result.fetchone()
     
-    return {"message": f"Successfully purchased {outfit_name}"}
+    if not points_row:
+        # 如果用户没有积分记录，创建一个初始记录
+        create_points_query = text("""
+            INSERT INTO user_star_points (user_id, current_points, total_earned, total_spent, updated_at)
+            VALUES (:user_id, 0, 0, 0, NOW())
+        """)
+        db.execute(create_points_query, {"user_id": current_user.user_id})
+        current_points = 0
+    else:
+        current_points = points_row[0]
+    
+    # 检查积分是否足够
+    if current_points < star_cost:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Insufficient star points. Required: {star_cost}, Available: {current_points}"
+        )
+    
+    # 开始事务：扣除积分并添加服装
+    try:
+        # 扣除星星积分
+        if star_cost > 0:
+            update_points_query = text("""
+                UPDATE user_star_points 
+                SET current_points = current_points - :cost,
+                    total_spent = total_spent + :cost,
+                    updated_at = NOW()
+                WHERE user_id = :user_id
+            """)
+            
+            db.execute(update_points_query, {
+                "user_id": current_user.user_id,
+                "cost": star_cost
+            })
+            
+            # 记录积分交易
+            transaction_query = text("""
+                INSERT INTO star_point_logs (user_id, action_type, points_change, description, source_type, created_at)
+                VALUES (:user_id, :action_type, :points_change, :description, :source_type, NOW())
+            """)
+            
+            db.execute(transaction_query, {
+                "user_id": current_user.user_id,
+                "action_type": "purchase",
+                "points_change": -star_cost,
+                "description": f"Purchase outfit: {outfit_name}",
+                "source_type": "mascot_outfit"
+            })
+        
+        # 添加服装到用户库存
+        purchase_query = text("""
+            INSERT INTO user_mascot_outfits (user_id, outfit_id, is_equipped, purchased_at)
+            VALUES (:user_id, :outfit_id, 0, NOW())
+        """)
+        
+        db.execute(purchase_query, {
+            "user_id": current_user.user_id,
+            "outfit_id": outfit_id
+        })
+        
+        # 获取更新后的积分
+        updated_points_query = text("""
+            SELECT current_points FROM user_star_points 
+            WHERE user_id = :user_id
+        """)
+        
+        updated_result = db.execute(updated_points_query, {"user_id": current_user.user_id})
+        updated_points = updated_result.fetchone()[0]
+        
+        db.commit()
+        
+        return {
+            "message": f"Successfully purchased {outfit_name}",
+            "outfit_id": outfit_id,
+            "outfit_name": outfit_name,
+            "cost": star_cost,
+            "remaining_points": updated_points
+        }
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to complete purchase"
+        )
