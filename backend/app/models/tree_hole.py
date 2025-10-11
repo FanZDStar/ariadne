@@ -163,3 +163,32 @@ class TreeHoleWhisperImage(Base):
     
     # 反向关系
     whisper = relationship("TreeHoleWhisper", back_populates="images")
+
+
+class UserWhisperInteraction(Base):
+    """用户与悄悄话的互动关系表
+    
+    用于记录用户互动过的悄悄话（点赞或评论），支持链接式管理。
+    - is_active: 互动链接是否有效（用户可删除链接，但不影响原悄悄话）
+    - has_liked: 是否点赞过
+    - has_commented: 是否评论过
+    - last_interaction_at: 最后一次互动时间（用于排序）
+    """
+    __tablename__ = "user_whisper_interactions"
+    
+    interaction_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False, index=True)
+    whisper_id = Column(Integer, ForeignKey("tree_hole_whispers.whisper_id"), nullable=False, index=True)
+    
+    # 互动状态
+    is_active = Column(Boolean, default=True, comment="互动链接是否有效（用户可删除）")
+    has_liked = Column(Boolean, default=False, comment="是否点赞过")
+    has_commented = Column(Boolean, default=False, comment="是否评论过")
+    
+    # 时间戳
+    first_interaction_at = Column(DateTime, server_default=func.now(), comment="首次互动时间")
+    last_interaction_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), comment="最后互动时间")
+    
+    # 关系
+    user = relationship("User")
+    whisper = relationship("TreeHoleWhisper")

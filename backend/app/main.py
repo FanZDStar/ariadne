@@ -8,7 +8,9 @@ from app.database.session import Base, engine
 from app.core.config import settings
 from app.middleware.crisis_monitoring import CrisisMonitoringMiddleware
 from app.services.crisis_monitoring_task import crisis_monitor
-
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 
@@ -78,3 +80,11 @@ def test_upload():
     if os.path.exists("uploads"):
         files = os.listdir("uploads")
     return {"upload_dir_exists": os.path.exists("uploads"), "files": files}
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    # 打印详细定位信息
+    print("❗RequestValidationError", exc.errors())
+    body = await request.body()
+    print("❗Request body bytes:", body)
+    return JSONResponse(status_code=422, content={"detail": exc.errors()})

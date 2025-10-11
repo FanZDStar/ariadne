@@ -1,12 +1,14 @@
 # file:ariadne/backend/app/api/routes/tree_hole.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
+from pydantic import ValidationError
 from sqlalchemy import and_, func
 from typing import List
+import json
 from app.database.session import get_db
 from app.models.user import User
 from app.models.tree_hole_chat import TreeHoleChatParticipant
-from app.models.tree_hole import TreeHoleWhisper, TreeHoleComment, TreeHoleLike
+from app.models.tree_hole import TreeHoleWhisper, TreeHoleComment, TreeHoleLike, UserWhisperInteraction
 from app.schemas.tree_hole import (
     WhisperCreate,
     WhisperUpdate,
@@ -238,6 +240,117 @@ def get_public_whispers(
     return whispers
 
 
+@router.get("/my-interactions", response_model=List[WhisperResponse])
+def get_user_interactions(
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
+    """
+    获取用户参与互动的悄悄话（点赞或评论过的）
+    基于 user_whisper_interactions 表，只返回 is_active=True 的互动记录
+    排除自己的悄悄话，按最后互动时间倒序
+    """
+
+    # 1) 先把候选 whisper 批量查出（带必要的关系）
+    whispers: list[TreeHoleWhisper] = (
+        db.query(TreeHoleWhisper)
+        .options(
+            joinedload(TreeHoleWhisper.user),
+            joinedload(TreeHoleWhisper.images),
+        )
+        .join(
+            UserWhisperInteraction,
+            TreeHoleWhisper.whisper_id == UserWhisperInteraction.whisper_id,
+        )
+        .filter(UserWhisperInteraction.user_id == current_user.user_id)
+        .filter(UserWhisperInteraction.is_active.is_(True))
+        .filter(TreeHoleWhisper.user_id != current_user.user_id)
+        .order_by(UserWhisperInteraction.last_interaction_at.desc())
+        .all()
+    )
+
+    if not whispers:
+        return []
+
+    whisper_ids = [w.whisper_id for w in whispers]
+
+    # 2) 批量查点赞（当前用户是否点过赞）
+    liked_id_set: set[int] = {
+        wid
+        for (wid,) in (
+            db.query(TreeHoleLike.whisper_id)
+            .filter(TreeHoleLike.user_id == current_user.user_id)
+            .filter(TreeHoleLike.whisper_id.in_(whisper_ids))
+            .all()
+        )
+    }
+
+    # 3) 批量查评论数
+    comment_count_map: dict[int, int] = {
+        wid: cnt
+        for wid, cnt in (
+            db.query(TreeHoleComment.whisper_id, func.count(TreeHoleComment.comment_id))
+            .filter(TreeHoleComment.whisper_id.in_(whisper_ids))
+            .group_by(TreeHoleComment.whisper_id)
+            .all()
+        )
+    }
+
+    # 4) 批量查互动记录（决定 interaction_type）
+    #    注意：同一个 user_id + whisper_id 唯一
+    interaction_map: dict[int, str] = {}
+    interactions: list[UserWhisperInteraction] = (
+        db.query(UserWhisperInteraction)
+        .filter(UserWhisperInteraction.user_id == current_user.user_id)
+        .filter(UserWhisperInteraction.whisper_id.in_(whisper_ids))
+        .filter(UserWhisperInteraction.is_active.is_(True))
+        .all()
+    )
+
+    for it in interactions:
+        if it.has_liked and it.has_commented:
+            interaction_map[it.whisper_id] = "both"
+        elif it.has_liked:
+            interaction_map[it.whisper_id] = "like"
+        elif it.has_commented:
+            interaction_map[it.whisper_id] = "comment"
+        else:
+            # 没有任何有效互动就不放（等价于 None）
+            pass
+
+    # 5) 逐条构造 WhisperResponse（而不是返回 ORM 实例）
+    items: list[WhisperResponse] = []
+    for idx, w in enumerate(whispers):
+        has_like = w.whisper_id in liked_id_set
+        actual_comment_count = comment_count_map.get(w.whisper_id, 0)
+        interaction_type = interaction_map.get(w.whisper_id)
+
+        # 这里直接用 dict + model_validate，from_attributes=True 允许子对象仍用 ORM
+        payload = {
+             # —— WhisperBase 必需/常用字段 ——
+            "title": w.title,
+            "content": w.decrypted_content,        # ⭐ 必填 + 解密
+            "mood": (w.mood.value if w.mood else None),  # 跨枚举，传字符串更稳
+            "tags": w.tags,
+            "is_anonymous": w.is_anonymous,
+            "anonymous_name": w.anonymous_name,
+            "anonymous_avatar": w.anonymous_avatar,
+            
+            "whisper_id": w.whisper_id,
+            "user_id": w.user_id,
+            "like_count": w.like_count,           # 假设表里有 like_count 聚合列
+            "comment_count": actual_comment_count, # 用我们批量统计的真实评论数
+            "created_at": w.created_at,
+            "updated_at": w.updated_at,
+            "user": w.user,                        # ORM：交给 from_attributes 处理
+            "images": w.images,                    # ORM 列表：同上
+            "liked": has_like,
+            "interaction_type": interaction_type,
+        }
+        item = WhisperResponse.model_validate(payload, from_attributes=True)
+        items.append(item)
+
+    return items
+
 @router.get("/{whisper_id}", response_model=WhisperResponse)
 def get_whisper(
     whisper_id: int,
@@ -404,12 +517,44 @@ def like_whisper(
         # 取消点赞
         db.delete(like)
         db_whisper.like_count -= 1
+        
+        # 更新互动记录：取消点赞状态（但不删除互动记录）
+        if db_whisper.user_id != current_user.user_id:  # 不记录自己的悄悄话
+            interaction = db.query(UserWhisperInteraction).filter(
+                UserWhisperInteraction.user_id == current_user.user_id,
+                UserWhisperInteraction.whisper_id == whisper_id
+            ).first()
+            if interaction:
+                interaction.has_liked = False
+                interaction.last_interaction_at = func.now()
     else:
         # 点赞
         new_like = TreeHoleLike(whisper_id=whisper_id, user_id=current_user.user_id)
         db.add(new_like)
         db_whisper.like_count += 1
         is_liked = True
+        
+        # 创建或更新互动记录（不记录自己对自己悄悄话的互动）
+        if db_whisper.user_id != current_user.user_id:
+            interaction = db.query(UserWhisperInteraction).filter(
+                UserWhisperInteraction.user_id == current_user.user_id,
+                UserWhisperInteraction.whisper_id == whisper_id
+            ).first()
+            
+            if interaction:
+                # 更新已有互动记录
+                interaction.has_liked = True
+                interaction.is_active = True  # 重新激活
+                interaction.last_interaction_at = func.now()
+            else:
+                # 创建新互动记录
+                new_interaction = UserWhisperInteraction(
+                    user_id=current_user.user_id,
+                    whisper_id=whisper_id,
+                    has_liked=True,
+                    has_commented=False
+                )
+                db.add(new_interaction)
 
     db.commit()
 
@@ -443,103 +588,36 @@ def like_whisper(
     )
 
 
-@router.get("/my-interactions", response_model=List[WhisperResponse])
-def get_user_interactions(
-    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+
+
+
+@router.delete("/my-interactions/{whisper_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_interaction_link(
+    whisper_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
-    """获取用户参与互动的悄悄话（点赞或评论过的）"""
-    # 获取用户点赞过的悄悄话
-    liked_whispers = (
-        db.query(TreeHoleWhisper)
-        .options(joinedload(TreeHoleWhisper.user), joinedload(TreeHoleWhisper.images))
-        .join(TreeHoleLike, TreeHoleWhisper.whisper_id == TreeHoleLike.whisper_id)
-        .filter(TreeHoleLike.user_id == current_user.user_id)
-        .filter(TreeHoleWhisper.user_id != current_user.user_id)
-    )  # 排除自己的悄悄话
-
-    # 获取用户参与聊天的悄悄话
-    chatted_whispers = (
-        db.query(TreeHoleWhisper)
-        .options(joinedload(TreeHoleWhisper.user), joinedload(TreeHoleWhisper.images))
-        .join(
-            TreeHoleChatParticipant,
-            TreeHoleWhisper.whisper_id == TreeHoleChatParticipant.whisper_id,
+    """移除互动链接（仅标记为无效，不删除原悄悄话和点赞/评论记录）
+    
+    类似Windows快捷方式，删除的只是指向悄悄话的链接，不影响原悄悄话本身
+    """
+    # 查找互动记录
+    interaction = db.query(UserWhisperInteraction).filter(
+        UserWhisperInteraction.user_id == current_user.user_id,
+        UserWhisperInteraction.whisper_id == whisper_id
+    ).first()
+    
+    if not interaction:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Interaction not found"
         )
-        .filter(TreeHoleChatParticipant.user_id == current_user.user_id)
-        .filter(TreeHoleWhisper.user_id != current_user.user_id)
-    )  # 排除自己的悄悄话
-
-    # 合并并去重
-    all_whispers = (
-        liked_whispers.union(chatted_whispers)
-        .order_by(TreeHoleWhisper.created_at.desc())
-        .all()
-    )
-
-    # 构造响应数据
-    result = []
-    for whisper in all_whispers:
-        # 检查是否点赞
-        like = (
-            db.query(TreeHoleLike)
-            .filter(
-                TreeHoleLike.whisper_id == whisper.whisper_id,
-                TreeHoleLike.user_id == current_user.user_id,
-            )
-            .first()
-        )
-
-        # 检查互动类型
-        has_like = like is not None
-        has_chat = (
-            db.query(TreeHoleChatParticipant)
-            .filter(
-                TreeHoleChatParticipant.whisper_id == whisper.whisper_id,
-                TreeHoleChatParticipant.user_id == current_user.user_id,
-            )
-            .first()
-            is not None
-        )
-
-        # 设置互动类型标识
-        interaction_type = None
-        if has_like and has_chat:
-            interaction_type = "both"
-        elif has_like:
-            interaction_type = "like"
-        else:
-            interaction_type = "chat"
-
-        # 计算该悄悄话的实际评论数（从 TreeHoleComment 表）
-        actual_comment_count = (
-            db.query(TreeHoleComment)
-            .filter(TreeHoleComment.whisper_id == whisper.whisper_id)
-            .count()
-        )
-
-        # 创建响应对象
-        whisper_dict = {
-            "whisper_id": whisper.whisper_id,
-            "user_id": whisper.user_id,
-            "title": whisper.title,
-            "content": whisper.decrypted_content,
-            "mood": whisper.mood,
-            "tags": whisper.tags,
-            "is_anonymous": whisper.is_anonymous,
-            "anonymous_name": whisper.anonymous_name,
-            "anonymous_avatar": whisper.anonymous_avatar,
-            "like_count": whisper.like_count,
-            "comment_count": actual_comment_count,
-            "created_at": whisper.created_at,
-            "updated_at": whisper.updated_at,
-            "user": whisper.user,
-            "images": whisper.images,
-            "liked": has_like,
-            "interaction_type": interaction_type,
-        }
-        result.append(whisper_dict)
-
-    return result
+    
+    # 标记为无效（软删除）
+    interaction.is_active = False
+    db.commit()
+    
+    return
 
 
 @router.get("/{whisper_id}/comments", response_model=List[CommentResponse])
@@ -615,6 +693,28 @@ def create_whisper_comment(
 
     # 更新悄悄话的评论数
     whisper.comment_count += 1
+    
+    # 创建或更新互动记录（不记录自己对自己悄悄话的互动）
+    if whisper.user_id != current_user.user_id:
+        interaction = db.query(UserWhisperInteraction).filter(
+            UserWhisperInteraction.user_id == current_user.user_id,
+            UserWhisperInteraction.whisper_id == whisper_id
+        ).first()
+        
+        if interaction:
+            # 更新已有互动记录
+            interaction.has_commented = True
+            interaction.is_active = True  # 重新激活
+            interaction.last_interaction_at = func.now()
+        else:
+            # 创建新互动记录
+            new_interaction = UserWhisperInteraction(
+                user_id=current_user.user_id,
+                whisper_id=whisper_id,
+                has_liked=False,
+                has_commented=True
+            )
+            db.add(new_interaction)
 
     db.commit()
     db.refresh(db_comment)

@@ -150,6 +150,11 @@ export default {
         });
     },
 
+    onShow() {
+        // 每次显示页面时刷新星星积分，确保显示最新数据
+        this.loadStarPoints();
+    },
+
     methods: {
         // 返回Profile页面
         goBack() {
@@ -435,10 +440,10 @@ export default {
                     // 使用服务器返回的最新积分
                     if (response.data && response.data.remaining_points !== undefined) {
                         this.starPoints = response.data.remaining_points;
-                    } else {
-                        // 如果服务器没有返回积分信息，重新加载
-                        this.loadStarPoints();
                     }
+                    
+                    // 无论服务器是否返回积分，都重新加载一次以确保数据同步
+                    await this.loadStarPoints();
 
                     uni.showToast({
                         title: `${outfit.name} 兑换成功！`,

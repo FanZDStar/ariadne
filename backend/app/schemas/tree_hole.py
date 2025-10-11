@@ -1,5 +1,5 @@
 #file:ariadne/backend/app/schemas/tree_hole.py
-from pydantic import BaseModel
+from pydantic import BaseModel,ConfigDict
 from typing import List, Optional
 from datetime import datetime
 from enum import Enum
@@ -61,13 +61,9 @@ class WhisperResponse(WhisperBase):
     images: List[WhisperImageResponse] = []
     liked: bool = False  # 添加 liked 字段
     interaction_type: Optional[str] = None  # 添加互动类型字段
-
-    class Config:
-        from_attributes = True
-        # 设置字段别名，让content字段从decrypted_content属性读取
-        fields = {
-            'content': {'alias': 'decrypted_content'}
-        }
+    
+    model_config = ConfigDict(from_attributes=True)
+    
 
 # 评论模型
 class CommentBase(BaseModel):

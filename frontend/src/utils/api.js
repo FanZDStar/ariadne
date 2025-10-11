@@ -345,6 +345,16 @@ export const api = {
     });
   },
 
+  // 移除互动链接
+  removeInteractionLink: (token, whisperId) => {
+    return request(`/tree-hole/my-interactions/${whisperId}`, {
+      method: "DELETE",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   // 获取悄悄话详情
   getWhisperDetail: (token, whisperId) => {
     return request(`/tree-hole/${whisperId}`, {
