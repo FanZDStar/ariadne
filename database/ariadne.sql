@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 11/10/2025 00:03:39
+ Date: 11/10/2025 16:13:03
 */
 
 SET NAMES utf8mb4;
@@ -370,7 +370,7 @@ CREATE TABLE `daily_star_limits`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_user_date`(`user_id` ASC, `date` ASC) USING BTREE,
   CONSTRAINT `fk_daily_star_limits_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日星星积分限制表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of daily_star_limits
@@ -384,6 +384,7 @@ INSERT INTO `daily_star_limits` VALUES (7, 19, '2025-10-09', 1, 0, 0, 0, 3, 6, 0
 INSERT INTO `daily_star_limits` VALUES (8, 20, '2025-10-09', 1, 0, 0, 0, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, '2025-10-09 19:36:21', '2025-10-09 19:36:57');
 INSERT INTO `daily_star_limits` VALUES (14, 6, '2025-10-09', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, '2025-10-09 21:05:08', '2025-10-09 21:06:05');
 INSERT INTO `daily_star_limits` VALUES (35, 6, '2025-10-10', 1, 0, 0, 0, 7, 10, 1, 0, 0, 0, 1, 0, 0, 0, '2025-10-10 16:06:20', '2025-10-10 23:35:06');
+INSERT INTO `daily_star_limits` VALUES (36, 6, '2025-10-11', 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, '2025-10-11 00:21:58', '2025-10-11 15:26:45');
 
 -- ----------------------------
 -- Table structure for diary_backgrounds
@@ -717,16 +718,21 @@ CREATE TABLE `mascot_outfits`  (
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `ix_mascot_outfits_id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mascot_outfits
 -- ----------------------------
-INSERT INTO `mascot_outfits` VALUES (1, '默认装', '经典的默认造型，简约而不失可爱', '/static/outfits/default-preview.png', '/static/outfits/default-full.png', 0, 1, NULL, 1, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
-INSERT INTO `mascot_outfits` VALUES (2, '红色裙装', '优雅的红色裙装，展现温柔气质', '/static/outfits/red-dress-preview.png', '/static/outfits/red-dress.png', 100, 0, NULL, 2, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
-INSERT INTO `mascot_outfits` VALUES (3, '恐龙装', '可爱的恐龙造型，充满趣味性', '/static/outfits/dinosaur-preview.png', '/static/outfits/dinosaur.png', 150, 0, NULL, 3, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
-INSERT INTO `mascot_outfits` VALUES (4, '鲨鱼装', '帅气的鲨鱼造型，个性十足', '/static/outfits/shark-preview.png', '/static/outfits/shark.png', 200, 0, NULL, 4, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
-INSERT INTO `mascot_outfits` VALUES (5, '旺仔小乔', '经典的旺仔造型，怀旧可爱', '/static/outfits/wangzaixiaoqiao-preview.png', '/static/outfits/wangzaixiaoqiao.png', 250, 0, NULL, 5, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
+INSERT INTO `mascot_outfits` VALUES (1, '默认装', '经典的默认造型，简约而不失可爱', '/static/outfits/default-preview.png', '/static/outfits/default-full.png', 0, 1, 1, 1, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
+INSERT INTO `mascot_outfits` VALUES (2, '红色裙装', '优雅的红色裙装，展现温柔气质', '/static/outfits/red-dress-preview.png', '/static/outfits/red-dress.png', 100, 0, 1, 2, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
+INSERT INTO `mascot_outfits` VALUES (3, '恐龙装', '可爱的恐龙造型，充满趣味性', '/static/outfits/dinosaur-preview.png', '/static/outfits/dinosaur.png', 150, 0, 1, 3, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
+INSERT INTO `mascot_outfits` VALUES (4, '鲨鱼装', '帅气的鲨鱼造型，个性十足', '/static/outfits/shark-preview.png', '/static/outfits/shark.png', 200, 0, 1, 4, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
+INSERT INTO `mascot_outfits` VALUES (5, '旺仔小乔', '经典的旺仔造型，怀旧可爱', '/static/outfits/wangzaixiaoqiao-preview.png', '/static/outfits/wangzaixiaoqiao.png', 250, 0, 1, 5, '2025-10-05 19:05:08', '2025-10-05 19:05:08');
+INSERT INTO `mascot_outfits` VALUES (6, '古风少年', '翩翩少年郎，古韵十足', '/static/outfits/Ancient_style_young_man.png', '/static/outfits/Ancient_style_young_man.png', 300, 0, 1, 6, '2025-10-11 10:31:07', '2025-10-11 10:31:07');
+INSERT INTO `mascot_outfits` VALUES (7, '蓝猫', '呆萌蓝猫咪，治愈系满分', '/static/outfits/Bllue_cat.png', '/static/outfits/Bllue_cat.png', 280, 0, 1, 7, '2025-10-11 10:31:07', '2025-10-11 10:31:07');
+INSERT INTO `mascot_outfits` VALUES (8, '妖仙', '神秘魔仙造型，魅力无穷', '/static/outfits/Demon_Immortal.png', '/static/outfits/Demon_Immortal.png', 400, 0, 1, 8, '2025-10-11 10:31:07', '2025-10-11 10:31:07');
+INSERT INTO `mascot_outfits` VALUES (9, '北极熊', '憨态可掬的北极熊，暖心陪伴', '/static/outfits/Polar_bear.png', '/static/outfits/Polar_bear.png', 350, 0, 1, 9, '2025-10-11 10:31:07', '2025-10-11 10:31:07');
+INSERT INTO `mascot_outfits` VALUES (10, '蓝衣少年', '清新蓝衣少年，青春洋溢', '/static/outfits/The_boy_in_blue.png', '/static/outfits/The_boy_in_blue.png', 320, 0, 1, 10, '2025-10-11 10:31:07', '2025-10-11 10:31:07');
 
 -- ----------------------------
 -- Table structure for mood_tracker
@@ -744,7 +750,7 @@ CREATE TABLE `mood_tracker`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_mood_date`(`mood_date` ASC) USING BTREE,
   CONSTRAINT `mood_tracker_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '心情晴雨表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '心情晴雨表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mood_tracker
@@ -760,6 +766,7 @@ INSERT INTO `mood_tracker` VALUES (8, 6, '2025-09-17', 2, '2025-09-17 12:11:31',
 INSERT INTO `mood_tracker` VALUES (9, 6, '2025-09-19', 4, '2025-09-19 21:04:11', '2025-09-19 21:04:11');
 INSERT INTO `mood_tracker` VALUES (10, 6, '2025-10-09', 3, '2025-10-09 14:32:48', '2025-10-09 17:02:20');
 INSERT INTO `mood_tracker` VALUES (11, 18, '2025-10-09', 5, '2025-10-09 17:02:41', '2025-10-09 17:02:41');
+INSERT INTO `mood_tracker` VALUES (12, 6, '2025-10-11', 5, '2025-10-11 15:20:23', '2025-10-11 15:20:23');
 
 -- ----------------------------
 -- Table structure for mood_trend_analyses
@@ -1427,7 +1434,7 @@ CREATE TABLE `star_point_logs`  (
   INDEX `idx_star_logs_action`(`action_type` ASC) USING BTREE,
   INDEX `idx_star_logs_date`(`created_at` ASC) USING BTREE,
   CONSTRAINT `fk_star_point_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 161 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 170 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of star_point_logs
@@ -1587,6 +1594,15 @@ INSERT INTO `star_point_logs` VALUES (157, 6, 'emotion_chat_normal', 1, '情感�
 INSERT INTO `star_point_logs` VALUES (158, 6, 'emotion_chat_normal', 1, '情感对话(第4-10次)', '52', 'chat', '2025-10-10 22:59:29');
 INSERT INTO `star_point_logs` VALUES (159, 6, 'protection_training', 1, '防护技能训练完成', '27', 'skill', '2025-10-10 23:29:51');
 INSERT INTO `star_point_logs` VALUES (160, 6, 'protection_training', 1, '防护技能训练完成', '29', 'skill', '2025-10-10 23:35:06');
+INSERT INTO `star_point_logs` VALUES (161, 6, 'daily_login', 1, '每日首次登录奖励', NULL, 'login', '2025-10-11 00:21:58');
+INSERT INTO `star_point_logs` VALUES (162, 6, 'purchase', -200, 'Purchase outfit: 鲨鱼装', NULL, 'mascot_outfit', '2025-10-11 11:43:20');
+INSERT INTO `star_point_logs` VALUES (163, 6, 'purchase', -250, 'Purchase outfit: 旺仔小乔', NULL, 'mascot_outfit', '2025-10-11 11:44:04');
+INSERT INTO `star_point_logs` VALUES (164, 6, 'purchase', -300, 'Purchase outfit: 古风少年', NULL, 'mascot_outfit', '2025-10-11 11:44:09');
+INSERT INTO `star_point_logs` VALUES (165, 6, 'purchase', -280, 'Purchase outfit: 蓝猫', NULL, 'mascot_outfit', '2025-10-11 11:45:33');
+INSERT INTO `star_point_logs` VALUES (166, 6, 'mood_tracking', 1, '每日首次心情记录', '12', 'mood', '2025-10-11 15:20:23');
+INSERT INTO `star_point_logs` VALUES (167, 6, 'tree_hole_interaction', 1, '树洞互动', '184', 'tree_hole', '2025-10-11 15:21:38');
+INSERT INTO `star_point_logs` VALUES (168, 6, 'tree_hole_interaction', 1, '树洞互动', '199', 'tree_hole', '2025-10-11 15:23:11');
+INSERT INTO `star_point_logs` VALUES (169, 6, 'background_change', 1, '修改日记背景', '6', 'diary', '2025-10-11 15:26:45');
 
 -- ----------------------------
 -- Table structure for system_configs
@@ -1710,7 +1726,7 @@ CREATE TABLE `tree_hole_likes`  (
   INDEX `idx_tree_hole_likes_user`(`user_id` ASC) USING BTREE,
   CONSTRAINT `fk_tree_hole_likes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_tree_hole_likes_whisper` FOREIGN KEY (`whisper_id`) REFERENCES `tree_hole_whispers` (`whisper_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tree_hole_likes
@@ -1724,6 +1740,8 @@ INSERT INTO `tree_hole_likes` VALUES (63, 204, 6, '2025-10-09 21:05:22');
 INSERT INTO `tree_hole_likes` VALUES (64, 198, 6, '2025-10-09 21:05:31');
 INSERT INTO `tree_hole_likes` VALUES (65, 185, 6, '2025-10-09 21:05:35');
 INSERT INTO `tree_hole_likes` VALUES (66, 191, 6, '2025-10-09 21:05:37');
+INSERT INTO `tree_hole_likes` VALUES (70, 184, 6, '2025-10-11 15:22:25');
+INSERT INTO `tree_hole_likes` VALUES (72, 199, 6, '2025-10-11 15:23:18');
 
 -- ----------------------------
 -- Table structure for tree_hole_whisper_images
@@ -1778,7 +1796,7 @@ INSERT INTO `tree_hole_whispers` VALUES (180, 1, '梦想与现实', '有时候�
 INSERT INTO `tree_hole_whispers` VALUES (181, 4, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_1rb2h', '/src/static/avatar/头像 (4).png', 15, 4, '2025-09-07 12:26:57', '2025-10-10 13:49:27', 0);
 INSERT INTO `tree_hole_whispers` VALUES (182, 2, '雨天随想', '下雨了，坐在教室里听着雨声打在窗户上的声音。有种莫名的安静感，让人想要静静地思考一些事情。', 'neutral', '[\"雨天\", \"安静\", \"思考\"]', 1, 'ariadne_7shju', '/src/static/avatar/头像 (3).png', 18, 1, '2025-10-02 12:26:57', '2025-10-03 12:45:25', 0);
 INSERT INTO `tree_hole_whispers` VALUES (183, 4, '孤独的夜晚', '一个人在宿舍里，室友都回家了。看着空荡荡的房间，突然感到很孤独。好想有个人陪我说说话。', 'sad', '[\"孤独\", \"想家\", \"陪伴\"]', 0, NULL, NULL, 17, 4, '2025-09-27 12:26:57', '2025-09-27 12:26:57', 0);
-INSERT INTO `tree_hole_whispers` VALUES (184, 1, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_8jay5', '/src/static/avatar/头像 (9).png', 3, 2, '2025-09-06 12:26:57', '2025-09-06 12:26:57', 0);
+INSERT INTO `tree_hole_whispers` VALUES (184, 1, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_8jay5', '/src/static/avatar/头像 (9).png', 4, 2, '2025-09-06 12:26:57', '2025-10-11 15:22:25', 0);
 INSERT INTO `tree_hole_whispers` VALUES (185, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_qe6gt', '/src/static/avatar/头像 (8).png', 15, 1, '2025-09-11 12:26:57', '2025-10-09 21:05:35', 0);
 INSERT INTO `tree_hole_whispers` VALUES (186, 5, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 1, 'ariadne_7to9o', '/src/static/avatar/头像 (3).png', 4, 1, '2025-09-05 12:26:57', '2025-10-09 14:57:06', 0);
 INSERT INTO `tree_hole_whispers` VALUES (187, 6, '阳光明媚', '今天的阳光特别好，决定出去走走。看到路边开着的小花，心情也跟着明媚起来了。', 'very_happy', '[\"阳光\", \"散步\", \"花朵\"]', 0, NULL, NULL, 8, 0, '2025-10-01 12:26:57', '2025-10-03 12:39:00', 0);
@@ -1793,7 +1811,7 @@ INSERT INTO `tree_hole_whispers` VALUES (195, 5, '梦想与现实', '有时候�
 INSERT INTO `tree_hole_whispers` VALUES (196, 1, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 1, 'ariadne_qwd1f', '/src/static/avatar/头像 (7).png', 20, 3, '2025-09-11 12:26:57', '2025-10-03 12:39:11', 0);
 INSERT INTO `tree_hole_whispers` VALUES (197, 3, '压力山大', '最近工作压力好大，每天都有做不完的事情。有时候真想逃到一个没有人认识我的地方，重新开始。', 'very_sad', '[\"压力\", \"工作\", \"逃避\"]', 1, 'ariadne_h2xav', '/src/static/avatar/头像 (2).png', 12, 1, '2025-09-17 12:26:57', '2025-09-17 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (198, 5, '深夜的思考', '又是一个失眠的夜晚，脑子里想着白天发生的事情。有时候觉得生活就像一团乱麻，不知道该从哪里开始整理。', 'sad', '[\"失眠\", \"思考\", \"迷茫\"]', 0, NULL, NULL, 6, 4, '2025-10-03 12:26:57', '2025-10-09 21:05:31', 0);
-INSERT INTO `tree_hole_whispers` VALUES (199, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 5, 3, '2025-09-08 12:26:57', '2025-10-10 13:49:15', 0);
+INSERT INTO `tree_hole_whispers` VALUES (199, 4, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 6, 3, '2025-09-08 12:26:57', '2025-10-11 15:23:18', 0);
 INSERT INTO `tree_hole_whispers` VALUES (200, 2, '意外的惊喜', '今天收到了朋友寄来的明信片，上面写着\"想你了\"。虽然只是简单的三个字，但让我开心了一整天。', 'very_happy', '[\"友情\", \"惊喜\", \"感动\"]', 0, NULL, NULL, 8, 3, '2025-09-18 12:26:57', '2025-10-03 12:34:55', 0);
 INSERT INTO `tree_hole_whispers` VALUES (201, 2, '美食治愈', '心情不好的时候就想吃甜食。今天买了最爱的草莓蛋糕，甜甜的味道瞬间治愈了我的心情。', 'happy', '[\"美食\", \"治愈\", \"甜品\"]', 0, NULL, NULL, 11, 2, '2025-09-20 12:26:57', '2025-09-20 12:26:57', 0);
 INSERT INTO `tree_hole_whispers` VALUES (202, 5, '梦想与现实', '有时候会想，我的梦想还能实现吗？现实总是那么残酷，但我还是想要继续努力，不想放弃。', 'neutral', '[\"梦想\", \"现实\", \"坚持\"]', 1, 'ariadne_8fosk', '/src/static/avatar/头像.png', 14, 2, '2025-09-05 12:26:57', '2025-10-09 21:05:15', 0);
@@ -1856,12 +1874,13 @@ CREATE TABLE `user_diary_backgrounds`  (
   INDEX `ix_user_diary_backgrounds_id`(`id` ASC) USING BTREE,
   INDEX `ix_user_diary_backgrounds_user_id`(`user_id` ASC) USING BTREE,
   CONSTRAINT `user_diary_backgrounds_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_diary_backgrounds
 -- ----------------------------
-INSERT INTO `user_diary_backgrounds` VALUES (5, 6, '410abab5b7a54673bf8d5cad846d791a.jpg', '微信图片_20250211220957.jpg', 'uploads/diary-backgrounds\\410abab5b7a54673bf8d5cad846d791a.jpg', 87518, '2025-10-09 18:27:58', 1);
+INSERT INTO `user_diary_backgrounds` VALUES (6, 6, '68ea06b637963.png', 'dinosaur.png', 'https://free.picui.cn/free/2025/10/11/68ea06b637963.png', 425831, '2025-10-11 15:26:46', 1);
+INSERT INTO `user_diary_backgrounds` VALUES (7, 6, '68ea06e248985.png', 'Polar_bear.png', 'https://free.picui.cn/free/2025/10/11/68ea06e248985.png', 743603, '2025-10-11 15:27:32', 1);
 
 -- ----------------------------
 -- Table structure for user_feedbacks
@@ -1930,15 +1949,14 @@ CREATE TABLE `user_mascot_outfits`  (
   UNIQUE INDEX `unique_user_outfit`(`user_id` ASC, `outfit_id` ASC) USING BTREE,
   INDEX `outfit_id`(`outfit_id` ASC) USING BTREE,
   INDEX `ix_user_mascot_outfits_id`(`id` ASC) USING BTREE,
-  UNIQUE INDEX `unique_user_equipped_outfit`(`user_id` ASC, `is_equipped` ASC) USING BTREE,
   CONSTRAINT `user_mascot_outfits_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_mascot_outfits_ibfk_2` FOREIGN KEY (`outfit_id`) REFERENCES `mascot_outfits` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_mascot_outfits
 -- ----------------------------
-INSERT INTO `user_mascot_outfits` VALUES (1, 6, 1, '2025-10-05 19:17:05', 1);
+INSERT INTO `user_mascot_outfits` VALUES (1, 6, 1, '2025-10-05 19:17:05', 0);
 INSERT INTO `user_mascot_outfits` VALUES (2, 12, 1, '2025-10-05 20:12:42', 1);
 INSERT INTO `user_mascot_outfits` VALUES (3, 13, 1, '2025-10-05 20:12:42', 1);
 INSERT INTO `user_mascot_outfits` VALUES (4, 5, 1, '2025-10-05 20:12:42', 1);
@@ -1954,6 +1972,12 @@ INSERT INTO `user_mascot_outfits` VALUES (13, 18, 1, '2025-10-10 23:55:24', 1);
 INSERT INTO `user_mascot_outfits` VALUES (14, 19, 1, '2025-10-10 23:55:24', 1);
 INSERT INTO `user_mascot_outfits` VALUES (15, 20, 1, '2025-10-10 23:55:24', 1);
 INSERT INTO `user_mascot_outfits` VALUES (16, 16, 1, '2025-10-10 23:55:24', 1);
+INSERT INTO `user_mascot_outfits` VALUES (19, 6, 2, '2025-10-11 00:24:48', 0);
+INSERT INTO `user_mascot_outfits` VALUES (20, 6, 3, '2025-10-11 11:22:10', 0);
+INSERT INTO `user_mascot_outfits` VALUES (21, 6, 4, '2025-10-11 11:43:20', 0);
+INSERT INTO `user_mascot_outfits` VALUES (22, 6, 5, '2025-10-11 11:44:04', 0);
+INSERT INTO `user_mascot_outfits` VALUES (23, 6, 6, '2025-10-11 11:44:09', 0);
+INSERT INTO `user_mascot_outfits` VALUES (24, 6, 7, '2025-10-11 11:45:33', 1);
 
 -- ----------------------------
 -- Table structure for user_sessions
@@ -2028,7 +2052,7 @@ INSERT INTO `user_star_points` VALUES (2, 13, 10, 10, 0, '2025-10-09 15:10:11', 
 INSERT INTO `user_star_points` VALUES (3, 5, 11, 11, 0, '2025-10-09 15:10:11', '2025-10-09 15:54:45');
 INSERT INTO `user_star_points` VALUES (4, 3, 11, 11, 0, '2025-10-09 15:10:11', '2025-10-09 15:59:39');
 INSERT INTO `user_star_points` VALUES (5, 7, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
-INSERT INTO `user_star_points` VALUES (6, 6, 167, 167, 0, '2025-10-09 15:10:11', '2025-10-10 23:35:06');
+INSERT INTO `user_star_points` VALUES (6, 6, 724, 172, 1030, '2025-10-09 15:10:11', '2025-10-11 15:26:45');
 INSERT INTO `user_star_points` VALUES (7, 4, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
 INSERT INTO `user_star_points` VALUES (8, 1, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
 INSERT INTO `user_star_points` VALUES (9, 9, 10, 10, 0, '2025-10-09 15:10:11', '2025-10-09 15:10:11');
@@ -2073,7 +2097,7 @@ INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTt
 INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-10-09 16:09:15', '2025-10-09 16:09:15', 1, NULL, 0);
 INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0);
 INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-10-09 15:54:45', '2025-10-09 15:54:45', 1, NULL, 0);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-10 23:47:24', '2025-10-10 23:47:24', 1, '2025-10-02 04:32:45', 12);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$2eowvzyy9nkLrtN7CqadbOiGFeQMhAQYuR1Ql5BX4snFJ5xQfZxJ.', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-11 15:13:42', '2025-10-11 15:08:47', 1, '2025-10-02 04:32:45', 12);
 INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0);
 INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0);
 INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0);
