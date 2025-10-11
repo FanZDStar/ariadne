@@ -5,25 +5,6 @@
       <text class="subtitle">查看你的情感变化趋势</text>
     </view>
 
-    <view class="period-selector">
-      <scroll-view class="period-scroll" scroll-x>
-        <view class="period-list">
-          <view class="period-item" v-for="period in periods" :key="period.value"
-            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
-            <text class="period-text">{{ period.label }}</text>
-          </view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <!-- 情感趋势图表组件 -->
-    <EmotionalTrendChart :currentPeriod="currentPeriod" :periods="periods" :isLoggedIn="isLoggedIn" ref="trendChart" />
-
-    <!-- 心情晴雨表组件 -->
-    <view class="mood-tracker-section">
-      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" @mood-saved="handleMoodSaved" />
-    </view>
-
     <!-- 心理测评栏目 -->
     <view class="psychological-assessment-section">
       <view class="assessment-card" @click="goToPsychologicalAssessment">
@@ -37,6 +18,25 @@
         </view>
       </view>
     </view>
+
+    <!-- 心情晴雨表组件 -->
+    <view class="mood-tracker-section">
+      <MoodTracker :isLoggedIn="isLoggedIn" ref="moodTracker" @mood-saved="handleMoodSaved" />
+    </view>
+
+    <view class="period-selector">
+      <scroll-view class="period-scroll" scroll-x>
+        <view class="period-list">
+          <view class="period-item" v-for="period in periods" :key="period.value"
+            :class="{ active: currentPeriod === period.value }" @click="selectPeriod(period.value)">
+            <text class="period-text">{{ period.label }}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 情感趋势图表组件 -->
+    <EmotionalTrendChart :currentPeriod="currentPeriod" :periods="periods" :isLoggedIn="isLoggedIn" ref="trendChart" />
   </view>
 </template>
 
