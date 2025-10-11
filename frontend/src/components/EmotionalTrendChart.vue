@@ -3,6 +3,22 @@
     <view class="chart-header">
       <text class="chart-title">{{ getCurrentPeriodLabel() }}情感变化趋势</text>
       <view class="chart-controls">
+        <view class="chart-mode-toggle">
+          <view
+            class="mode-btn"
+            :class="{ active: chartMode === 'single' }"
+            @click="setChartMode('single')"
+          >
+            <text class="mode-text">单项</text>
+          </view>
+          <view
+            class="mode-btn"
+            :class="{ active: chartMode === 'combined' }"
+            @click="setChartMode('combined')"
+          >
+            <text class="mode-text">综合</text>
+          </view>
+        </view>
         <!-- 单项模式才显示数据源选择器 -->
         <view class="data-source-selector" v-if="chartMode === 'single'">
           <scroll-view class="source-scroll" scroll-x>
@@ -40,22 +56,6 @@
         <view class="combined-mode-info" v-if="chartMode === 'combined'">
           <text class="info-text">🧠 综合分析三个维度的心理状态</text>
       </view>
-        <view class="chart-mode-toggle">
-          <view
-            class="mode-btn"
-            :class="{ active: chartMode === 'single' }"
-            @click="setChartMode('single')"
-          >
-            <text class="mode-text">单项</text>
-          </view>
-          <view
-            class="mode-btn"
-            :class="{ active: chartMode === 'combined' }"
-            @click="setChartMode('combined')"
-          >
-            <text class="mode-text">综合</text>
-          </view>
-        </view>
       </view>
     </view>
 
