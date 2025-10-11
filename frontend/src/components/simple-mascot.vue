@@ -170,7 +170,7 @@ export default {
     // 监听服装变化
     this.outfitCheckTimer = setInterval(() => {
       this.checkOutfitStorage();
-    }, 600000);
+    }, 2000);
   },
 
   onLoad() {
