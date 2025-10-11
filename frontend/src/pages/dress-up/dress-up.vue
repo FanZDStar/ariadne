@@ -75,23 +75,8 @@ export default {
     },
 
     onLoad() {
-        // 从本地存储恢复上次选择的服装
-        const savedOutfit = uni.getStorageSync('selectedOutfit');
-        if (savedOutfit && savedOutfit.id) {
-            const outfit = this.outfits.find(o => o.id === savedOutfit.id);
-            if (outfit) {
-                this.currentOutfit = outfit;
-                this.currentMascotImage = outfit.mascotImage;
-            } else {
-                // 如果保存的服装不存在，使用默认服装
-                this.currentOutfit = this.outfits[0];
-                this.currentMascotImage = this.currentOutfit.mascotImage;
-            }
-        } else {
-            // 设置默认服装
-            this.currentOutfit = this.outfits[0];
-            this.currentMascotImage = this.currentOutfit.mascotImage;
-        }
+        // 加载用户当前服装
+        this.loadCurrentOutfit();
 
         // 设置状态栏样式
         uni.setNavigationBarColor({
@@ -106,15 +91,114 @@ export default {
             uni.navigateBack();
         },
 
+        // 加载用户当前服装
+        async loadCurrentOutfit() {
+            try {
+                const token = uni.getStorageSync('access_token');
+
+                if (!token) {
+                    // 未登录时使用本地存储
+                    this.loadFromLocalStorage();
+                    return;
+                }
+
+                // 已登录时从服务器获取
+                const response = await uni.request({
+                    url: `${process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000'}/mascot-outfits/current`,
+                    method: 'GET',
+                    header: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.statusCode === 200 && response.data) {
+                    const serverOutfit = response.data;
+                    // 在本地服装列表中找到对应的服装
+                    const outfit = this.outfits.find(o => o.id === serverOutfit.id);
+                    if (outfit) {
+                        this.currentOutfit = outfit;
+                        this.currentMascotImage = outfit.mascotImage;
+
+                        // 同步到本地存储
+                        uni.setStorageSync('selectedOutfit', outfit);
+                    } else {
+                        // 如果本地没有对应服装，使用默认
+                        this.useDefaultOutfit();
+                    }
+                } else {
+                    // 服务器请求失败，使用本地存储
+                    this.loadFromLocalStorage();
+                }
+            } catch (error) {
+                console.error('加载当前服装失败:', error);
+                // 出错时使用本地存储
+                this.loadFromLocalStorage();
+            }
+        },
+
+        // 从本地存储加载服装
+        loadFromLocalStorage() {
+            const savedOutfit = uni.getStorageSync('selectedOutfit');
+            if (savedOutfit && savedOutfit.id) {
+                const outfit = this.outfits.find(o => o.id === savedOutfit.id);
+                if (outfit) {
+                    this.currentOutfit = outfit;
+                    this.currentMascotImage = outfit.mascotImage;
+                } else {
+                    this.useDefaultOutfit();
+                }
+            } else {
+                this.useDefaultOutfit();
+            }
+        },
+
+        // 使用默认服装
+        useDefaultOutfit() {
+            this.currentOutfit = this.outfits[0];
+            this.currentMascotImage = this.currentOutfit.mascotImage;
+        },
+
         // 选择服装
-        selectOutfit(outfit) {
+        async selectOutfit(outfit) {
             if (this.currentOutfit.id === outfit.id) return; // 避免重复选择
 
+            const oldOutfit = this.currentOutfit;
+
+            // 立即更新UI
             this.currentOutfit = outfit;
             this.currentMascotImage = outfit.mascotImage;
 
-            // 保存选择的服装到本地存储
+            // 保存到本地存储
             uni.setStorageSync('selectedOutfit', outfit);
+
+            // 尝试同步到服务器
+            const token = uni.getStorageSync('access_token');
+            if (token) {
+                try {
+                    const response = await uni.request({
+                        url: `${process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000'}/mascot-outfits/set-current`,
+                        method: 'POST',
+                        header: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                            outfit_id: outfit.id
+                        }
+                    });
+
+                    if (response.statusCode === 200) {
+                        console.log('服装选择已同步到服务器');
+                    } else {
+                        console.warn('服装同步失败:', response);
+                        // 同步失败不影响本地使用
+                    }
+                } catch (error) {
+                    console.error('同步服装到服务器失败:', error);
+                    // 同步失败不影响本地使用
+                }
+            }
 
             // 添加选择效果
             uni.vibrateShort();

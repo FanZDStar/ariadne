@@ -2,28 +2,12 @@
 <template>
   <view class="mascot-container">
     <!-- 看板娘主体 -->
-    <view
-      class="mascot"
-      :class="currentAction"
-      :style="{ left: position.x + 'px', top: position.y + 'px' }"
-      @touchstart="handleTouchStart"
-      @touchmove="handleTouchMove"
-      @touchend="handleTouchEnd"
-      @tap="handleTap"
-    >
+    <view class="mascot" :class="currentAction" :style="{ left: position.x + 'px', top: position.y + 'px' }"
+      @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" @tap="handleTap">
       <!-- 静态小人图片 -->
-      <image
-        v-if="!isPlayingAnimation"
-        class="mascot-image"
-        :src="currentImage"
-        mode="aspectFit"
-      ></image>
+      <image v-if="!isPlayingAnimation" class="mascot-image" :src="currentImage" mode="aspectFit"></image>
       <!-- Lottie动画容器 -->
-      <view
-        v-if="isPlayingAnimation"
-        class="lottie-container"
-        :id="lottieContainerId"
-      ></view>
+      <view v-if="isPlayingAnimation" class="lottie-container" :id="lottieContainerId"></view>
     </view>
 
     <!-- 对话气泡 -->
@@ -36,12 +20,7 @@
       <view class="dress-content" @tap.stop>
         <view class="dress-title">换装</view>
         <view class="outfit-list">
-          <view
-            v-for="outfit in outfits"
-            :key="outfit.id"
-            class="outfit-item"
-            @tap="changeOutfit(outfit)"
-          >
+          <view v-for="outfit in outfits" :key="outfit.id" class="outfit-item" @tap="changeOutfit(outfit)">
             <image :src="outfit.preview" mode="aspectFit"></image>
             <text>{{ outfit.name }}</text>
           </view>
@@ -195,7 +174,10 @@ export default {
     },
 
     // 检查服装存储
-    checkOutfitStorage() {
+    async checkOutfitStorage() {
+      // 先尝试从服务器同步
+      await this.syncOutfitFromServer();
+
       const savedOutfit = uni.getStorageSync("selectedOutfit");
 
       if (savedOutfit && savedOutfit.mascotImage) {
@@ -441,8 +423,44 @@ export default {
       }
     },
 
+    // 从服务器同步服装设置
+    async syncOutfitFromServer() {
+      const token = uni.getStorageSync('access_token');
+      if (!token) return; // 未登录时不同步
+
+      try {
+        const response = await uni.request({
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000'}/mascot-outfits/current`,
+          method: 'GET',
+          header: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.statusCode === 200 && response.data) {
+          const serverOutfit = response.data;
+          const localOutfit = {
+            id: serverOutfit.id,
+            name: serverOutfit.name,
+            mascotImage: serverOutfit.mascot_image
+          };
+
+          // 更新本地存储
+          uni.setStorageSync('selectedOutfit', localOutfit);
+
+          console.log('从服务器同步服装设置:', localOutfit);
+        }
+      } catch (error) {
+        console.error('从服务器同步服装失败:', error);
+      }
+    },
+
     // 加载保存的服装设置
-    loadSavedOutfit() {
+    async loadSavedOutfit() {
+      // 先尝试从服务器同步
+      await this.syncOutfitFromServer();
+
       const savedOutfit = uni.getStorageSync("selectedOutfit");
       if (savedOutfit && savedOutfit.mascotImage) {
         // 检查是否有服装变化
@@ -652,6 +670,7 @@ export default {
   height: 100%;
   pointer-events: none;
 }
+
 .speech-bubble {
   position: absolute;
   background: #fff;
@@ -731,6 +750,7 @@ export default {
 }
 
 @keyframes wave {
+
   0%,
   100% {
     transform: rotate(0deg);
@@ -746,6 +766,7 @@ export default {
 }
 
 @keyframes bounce {
+
   0%,
   100% {
     transform: translateY(0);
@@ -757,6 +778,7 @@ export default {
 }
 
 @keyframes fadeInOut {
+
   0%,
   100% {
     opacity: 0;

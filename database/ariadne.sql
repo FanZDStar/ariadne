@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 10/10/2025 23:40:11
+ Date: 11/10/2025 00:03:39
 */
 
 SET NAMES utf8mb4;
@@ -1930,9 +1930,10 @@ CREATE TABLE `user_mascot_outfits`  (
   UNIQUE INDEX `unique_user_outfit`(`user_id` ASC, `outfit_id` ASC) USING BTREE,
   INDEX `outfit_id`(`outfit_id` ASC) USING BTREE,
   INDEX `ix_user_mascot_outfits_id`(`id` ASC) USING BTREE,
+  UNIQUE INDEX `unique_user_equipped_outfit`(`user_id` ASC, `is_equipped` ASC) USING BTREE,
   CONSTRAINT `user_mascot_outfits_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_mascot_outfits_ibfk_2` FOREIGN KEY (`outfit_id`) REFERENCES `mascot_outfits` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_mascot_outfits
@@ -1948,6 +1949,11 @@ INSERT INTO `user_mascot_outfits` VALUES (8, 1, 1, '2025-10-05 20:12:42', 1);
 INSERT INTO `user_mascot_outfits` VALUES (9, 9, 1, '2025-10-05 20:12:42', 1);
 INSERT INTO `user_mascot_outfits` VALUES (10, 2, 1, '2025-10-05 20:12:42', 1);
 INSERT INTO `user_mascot_outfits` VALUES (11, 15, 1, '2025-10-05 20:12:42', 1);
+INSERT INTO `user_mascot_outfits` VALUES (12, 17, 1, '2025-10-10 23:55:24', 1);
+INSERT INTO `user_mascot_outfits` VALUES (13, 18, 1, '2025-10-10 23:55:24', 1);
+INSERT INTO `user_mascot_outfits` VALUES (14, 19, 1, '2025-10-10 23:55:24', 1);
+INSERT INTO `user_mascot_outfits` VALUES (15, 20, 1, '2025-10-10 23:55:24', 1);
+INSERT INTO `user_mascot_outfits` VALUES (16, 16, 1, '2025-10-10 23:55:24', 1);
 
 -- ----------------------------
 -- Table structure for user_sessions
@@ -2067,7 +2073,7 @@ INSERT INTO `users` VALUES (2, 'testuser', '$2b$12$FYDMwXzKwgleEL8h9e3j4OVB8XoTt
 INSERT INTO `users` VALUES (3, 'hello', '$2b$12$DdBrrRwq6RNbRHikpHdj5.SYNJ/LFHtPYZacAkFjqUiMNuDK1kH4m', NULL, NULL, NULL, '佩奇', '2025-08-14 17:44:46', '2025-10-09 16:09:15', '2025-10-09 16:09:15', 1, NULL, 0);
 INSERT INTO `users` VALUES (4, 'pig', '$2b$12$M5CYvMhbaxllGS68J2Fjo.ywj.SQL4HT/H/hnV9SwrQ.P2U4Fh00S', NULL, NULL, NULL, NULL, '2025-08-14 21:41:18', '2025-08-15 17:14:12', '2025-08-15 17:14:12', 1, NULL, 0);
 INSERT INTO `users` VALUES (5, 'haha', '$2b$12$yXEj18aiN0wZeQBup.CpceiOK5PUh0.xZTRrk758bWdvfxBNufikG', NULL, NULL, NULL, NULL, '2025-08-14 21:41:38', '2025-10-09 15:54:45', '2025-10-09 15:54:45', 1, NULL, 0);
-INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-10 23:21:57', '2025-10-10 23:21:57', 1, '2025-10-02 04:32:45', 12);
+INSERT INTO `users` VALUES (6, 'peppa', '$2b$12$5h9h9saW.jXFUFob6s5pW.acUzKRSGdJlpEossjY3WMn322eZChiS', NULL, '/uploads/e3be95f2-5bd2-46a1-b876-cedb28121f0c.jpg', '小猪', '是佩奇鸭', '2025-08-14 22:29:17', '2025-10-10 23:47:24', '2025-10-10 23:47:24', 1, '2025-10-02 04:32:45', 12);
 INSERT INTO `users` VALUES (7, 'hello2', '$2b$12$GPR4RtTp17hfIXj2TAReYuIPumFYYGqKP.qpPapkFJ2U6Oe4D4waW', NULL, NULL, '情感小白', NULL, '2025-09-04 17:26:23', '2025-09-04 17:26:27', '2025-09-04 17:26:27', 1, NULL, 0);
 INSERT INTO `users` VALUES (9, 'test_user_ae92b0e5', '$2b$12$qHOf1GEBjBCh2zCVQGbv5uLmJ7JqM.FFWPvgzyzHfBpxIktzyToH6', 'test_c02d8cb5@example.com', NULL, '测试用户', NULL, '2025-09-06 14:03:51', '2025-09-06 14:03:51', NULL, 1, NULL, 0);
 INSERT INTO `users` VALUES (12, 'apitest', '$2b$12$VxObDXXe/ksnhuz1YQvojOp6wmBmJRybQAIkKXCYd5G2G87AuDh8e', 'apitest@example.com', NULL, 'API测试', NULL, '2025-09-06 14:12:15', '2025-09-06 14:15:25', '2025-09-06 14:15:25', 1, NULL, 0);
@@ -2078,6 +2084,12 @@ INSERT INTO `users` VALUES (17, 'bala123', '$2b$12$EekW9l0Ty35F6rLznw8jA.SQDZrjH
 INSERT INTO `users` VALUES (18, 'peppa1', '$2b$12$CZbRk6bvgnIMMv.PinMKSe5Vmy3xCSX9w4SFoT6aMJkyf4DdS6o06', NULL, NULL, '情感小白', NULL, '2025-10-09 16:33:52', '2025-10-09 19:18:13', '2025-10-09 19:18:13', 1, NULL, 0);
 INSERT INTO `users` VALUES (19, 'peppa2', '$2b$12$lLr.blDBQfPLLVGl6sMzmuIv4w08DOVTYLZDvKNJGP/bJYvNTRl4S', NULL, NULL, '情感小白', NULL, '2025-10-09 19:30:55', '2025-10-09 19:31:00', '2025-10-09 19:31:00', 1, NULL, 0);
 INSERT INTO `users` VALUES (20, 'peppa3', '$2b$12$pEPPmOjttVtfL5Kdsr2PhuKFduDsXPQt8Y1Yd/s2O748y4TB4Eo.m', NULL, NULL, '情感小白', NULL, '2025-10-09 19:36:15', '2025-10-09 19:36:21', '2025-10-09 19:36:21', 1, NULL, 0);
+
+-- ----------------------------
+-- View structure for user_current_outfit
+-- ----------------------------
+DROP VIEW IF EXISTS `user_current_outfit`;
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `user_current_outfit` AS select `u`.`user_id` AS `user_id`,`u`.`username` AS `username`,`mo`.`id` AS `outfit_id`,`mo`.`name` AS `outfit_name`,`mo`.`mascot_image` AS `mascot_image`,`umo`.`purchased_at` AS `purchased_at`,`umo`.`is_equipped` AS `is_equipped` from ((`users` `u` left join `user_mascot_outfits` `umo` on(((`u`.`user_id` = `umo`.`user_id`) and (`umo`.`is_equipped` = 1)))) left join `mascot_outfits` `mo` on((`umo`.`outfit_id` = `mo`.`id`)));
 
 -- ----------------------------
 -- Triggers structure for table risk_assessment_reports

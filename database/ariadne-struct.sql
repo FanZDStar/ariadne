@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 10/10/2025 23:40:25
+ Date: 11/10/2025 00:03:47
 */
 
 SET NAMES utf8mb4;
@@ -932,9 +932,10 @@ CREATE TABLE `user_mascot_outfits`  (
   UNIQUE INDEX `unique_user_outfit`(`user_id` ASC, `outfit_id` ASC) USING BTREE,
   INDEX `outfit_id`(`outfit_id` ASC) USING BTREE,
   INDEX `ix_user_mascot_outfits_id`(`id` ASC) USING BTREE,
+  UNIQUE INDEX `unique_user_equipped_outfit`(`user_id` ASC, `is_equipped` ASC) USING BTREE,
   CONSTRAINT `user_mascot_outfits_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_mascot_outfits_ibfk_2` FOREIGN KEY (`outfit_id`) REFERENCES `mascot_outfits` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_sessions
@@ -1017,6 +1018,12 @@ CREATE TABLE `users`  (
   INDEX `idx_users_username`(`username` ASC) USING BTREE,
   INDEX `idx_users_email`(`email` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- View structure for user_current_outfit
+-- ----------------------------
+DROP VIEW IF EXISTS `user_current_outfit`;
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `user_current_outfit` AS select `u`.`user_id` AS `user_id`,`u`.`username` AS `username`,`mo`.`id` AS `outfit_id`,`mo`.`name` AS `outfit_name`,`mo`.`mascot_image` AS `mascot_image`,`umo`.`purchased_at` AS `purchased_at`,`umo`.`is_equipped` AS `is_equipped` from ((`users` `u` left join `user_mascot_outfits` `umo` on(((`u`.`user_id` = `umo`.`user_id`) and (`umo`.`is_equipped` = 1)))) left join `mascot_outfits` `mo` on((`umo`.`outfit_id` = `mo`.`id`)));
 
 -- ----------------------------
 -- Triggers structure for table risk_assessment_reports
