@@ -120,7 +120,16 @@ def create_whisper(
             else None
         ),
         "images": (
-            [{"image_url": img.image_url} for img in db_whisper.images]
+            [
+                {
+                    "image_url": img.image_url,
+                    "image_order": img.image_order,
+                    "image_id": img.image_id,
+                    "whisper_id": img.whisper_id,
+                    "created_at": img.created_at,
+                }
+                for img in db_whisper.images
+            ]
             if db_whisper.images
             else []
         ),
