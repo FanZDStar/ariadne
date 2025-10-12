@@ -1055,3 +1055,25 @@ CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `user_current_outfit` AS 
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+   CREATE TABLE IF NOT EXISTS user_watering_cooldown (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                last_watering_time DATETIME NOT NULL COMMENT '最后一次浇水时间',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user (user_id),
+                INDEX idx_user_id (user_id),
+                INDEX idx_last_watering_time (last_watering_time)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户浇水冷却记录表';
+
+              CREATE TABLE IF NOT EXISTS user_tree_energy (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                user_id INT NOT NULL UNIQUE,
+                energy INT NOT NULL DEFAULT 0 COMMENT '当前能量值',
+                level INT NOT NULL DEFAULT 1 COMMENT '浇水等级',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                CONSTRAINT fk_tree_energy_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户树洞能量表';

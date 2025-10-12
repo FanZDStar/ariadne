@@ -44,7 +44,11 @@
           @click="waterTree"
         />
         <!-- 倒计时提示 -->
-        <view class="cooldown-timer" v-if="!canWater && remainingSeconds > 0" :key="remainingSeconds">
+        <view
+          class="cooldown-timer"
+          v-if="!canWater && remainingSeconds > 0"
+          :key="remainingSeconds"
+        >
           <text class="timer-text">{{ cooldownDisplay }}</text>
         </view>
         <view class="cooldown-timer ready" v-else-if="canWater">
@@ -131,8 +135,8 @@ export default {
     cooldownDisplay() {
       const minutes = Math.floor(this.remainingSeconds / 60);
       const secs = this.remainingSeconds % 60;
-      return `${minutes}:${secs.toString().padStart(2, '0')}`;
-    }
+      return `${minutes}:${secs.toString().padStart(2, "0")}`;
+    },
   },
   watch: {
     level(newLevel, oldLevel) {
@@ -209,7 +213,8 @@ export default {
           this.energy = parseInt(response.data.energy) || 0;
           this.level = parseInt(response.data.level) || 1;
           this.canWater = response.data.can_water !== false; // 默认true，只有明确false才是false
-          this.remainingSeconds = parseInt(response.data.remaining_seconds) || 0;
+          this.remainingSeconds =
+            parseInt(response.data.remaining_seconds) || 0;
 
           console.log("✅ 能量状态:", {
             energy: this.energy,
@@ -222,7 +227,7 @@ export default {
 
           // 清除旧的倒计时
           this.clearCountdown();
-          
+
           // 如果有剩余时间且不能浇水，启动倒计时
           if (this.remainingSeconds > 0 && !this.canWater) {
             console.log("🔄 启动倒计时:", this.remainingSeconds, "秒");
@@ -303,7 +308,7 @@ export default {
 
           // 清除旧的倒计时
           this.clearCountdown();
-          
+
           // 启动新的倒计时
           if (this.remainingSeconds > 0 && !this.canWater) {
             console.log("🔄 浇水后启动倒计时:", this.remainingSeconds, "秒");
