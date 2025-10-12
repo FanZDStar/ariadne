@@ -38,6 +38,7 @@ from app.api.routes import (
     protection_drill_reports,
     star_points,
     mascot_outfits,
+    tree_energy,
 )
 from app.api import protection_drill
 
@@ -96,4 +97,8 @@ api_router.include_router(
 api_router.include_router(
     mascot_outfits.router,
     tags=["看板娘服装"]
+)
+api_router.include_router(
+    tree_energy.router,
+    tags=["树洞能量系统"]
 )

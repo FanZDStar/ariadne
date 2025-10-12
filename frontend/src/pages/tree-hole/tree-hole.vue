@@ -3,16 +3,42 @@
     class="tree-hole-container"
     :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }"
   >
+    <!-- 全屏背景图片 - 添加key强制更新 -->
+    <image
+      class="background-image"
+      :src="backgroundImage"
+      :key="'bg-' + theme + '-' + level"
+      mode="aspectFill"
+    />
+
+    <!-- 能量条 - 添加key强制重新渲染 -->
+    <view
+      class="energy-bar-container"
+      :key="'energy-' + energy + '-level-' + level"
+    >
+      <view class="energy-bar-bg">
+        <view
+          class="energy-bar-fill"
+          :style="{ width: energyProgress + '%' }"
+        ></view>
+      </view>
+      <text class="energy-bar-text"
+        >能量：{{ energyProgress }}/100　等级：Lv.{{ level }}</text
+      >
+    </view>
+
+    <!-- 主题切换按钮 -->
     <view class="theme-switch" @click="toggleTheme">
       <text class="theme-icon">{{ theme === "day" ? "🌙" : "☀️" }}</text>
     </view>
 
     <view class="tree-area">
-      <image class="tree-image" :src="treeImage" mode="aspectFit" />
+      <!-- 水壶图片 - 点击浇水 -->
       <image
         class="kettle-image"
         src="../../static/kettle.png"
         mode="aspectFit"
+        @click="waterTree"
       />
     </view>
 
@@ -35,26 +61,184 @@ export default {
   data() {
     return {
       theme: "day", // 'day' or 'night'
+      energy: 0, // 当前能量
+      level: 1, // 当前等级
+      isWatering: false, // 是否正在浇水
     };
   },
   computed: {
-    treeImage() {
-      // 确保你的 static 目录下有 tree-day.png 和 tree-night.png
-      if (this.theme === "day") {
-        return "/static/tree-day.png";
+    backgroundImage() {
+      // 强制依赖 level 和 theme，确保响应式更新
+      const currentLevel = Number(this.level);
+      const currentTheme = this.theme;
+
+      console.log("🎨 计算背景图片:", {
+        level: currentLevel,
+        theme: currentTheme,
+        "level >= 20": currentLevel >= 20,
+        "level >= 10": currentLevel >= 10,
+      });
+
+      let imagePath = "";
+
+      if (currentTheme === "day") {
+        if (currentLevel >= 20) {
+          imagePath = "/static/sun3.png";
+          console.log("✅ 白天 - 选择 sun3（>=20级）");
+        } else if (currentLevel >= 10) {
+          imagePath = "/static/sun2.png";
+          console.log("✅ 白天 - 选择 sun2（>=10级）");
+        } else {
+          imagePath = "/static/sun1.png";
+          console.log("✅ 白天 - 选择 sun1（<10级）");
+        }
       } else {
-        return "/static/tree-night.png";
+        if (currentLevel >= 20) {
+          imagePath = "/static/moon3.png";
+          console.log("✅ 夜晚 - 选择 moon3（>=20级）");
+        } else if (currentLevel >= 10) {
+          imagePath = "/static/moon2.png";
+          console.log("✅ 夜晚 - 选择 moon2（>=10级）");
+        } else {
+          imagePath = "/static/moon1.png";
+          console.log("✅ 夜晚 - 选择 moon1（<10级）");
+        }
       }
+
+      console.log("🖼️ 最终背景路径:", imagePath);
+      return imagePath;
+    },
+    // 计算能量进度（用于能量条显示）
+    energyProgress() {
+      const progress = this.energy % 100;
+      return progress;
+    },
+  },
+  watch: {
+    level(newLevel, oldLevel) {
+      console.log("📊 等级变化:", oldLevel, "→", newLevel);
+      this.$forceUpdate(); // 强制更新组件
+    },
+    theme(newTheme, oldTheme) {
+      console.log("🌓 主题切换:", oldTheme, "→", newTheme);
     },
   },
   onLoad() {
     this.setInitialTheme();
+    this.fetchTreeEnergy();
   },
   onShow() {
     // 每次页面显示时都更新导航栏样式，防止从其他页面返回时样式被重置
     this.updateNavBar();
+    // 刷新能量数据
+    this.fetchTreeEnergy();
   },
   methods: {
+    async fetchTreeEnergy() {
+      // 获取用户能量和等级
+      const token = uni.getStorageSync("access_token");
+      if (!token) {
+        console.log("❌ 未登录，使用默认能量和等级");
+        return;
+      }
+
+      try {
+        const response = await uni.request({
+          url: "http://127.0.0.1:8000/tree-energy/status",
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.statusCode === 200) {
+          this.energy = parseInt(response.data.energy) || 0;
+          this.level = parseInt(response.data.level) || 1;
+
+          console.log("✅ 能量状态:", {
+            energy: this.energy,
+            level: this.level,
+            background: this.backgroundImage,
+          });
+        }
+      } catch (error) {
+        console.error("❌ 获取能量状态异常:", error);
+      }
+    },
+    async waterTree() {
+      // 浇水增加能量
+      if (this.isWatering) {
+        return;
+      }
+
+      const token = uni.getStorageSync("access_token");
+      if (!token) {
+        uni.showToast({
+          title: "请先登录",
+          icon: "none",
+        });
+        return;
+      }
+
+      // 检查是否已达到30级且能量已满
+      if (this.level >= 30 && this.energy >= 100) {
+        uni.showToast({
+          title: "能量已满，无需浇水",
+          icon: "none",
+          duration: 2000,
+        });
+        console.log("⚠️ 已达满级且能量已满");
+        return;
+      }
+
+      this.isWatering = true;
+
+      try {
+        const response = await uni.request({
+          url: "http://127.0.0.1:8000/tree-energy/water",
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.statusCode === 200) {
+          const data = response.data;
+
+          this.energy = parseInt(data.energy) || 0;
+          this.level = parseInt(data.level) || 1;
+
+          console.log("💧 浇水成功:", {
+            energy: this.energy,
+            level: this.level,
+            leveledUp: data.leveled_up,
+            background: this.backgroundImage,
+          });
+
+          // 显示提示信息
+          uni.showToast({
+            title: data.message,
+            icon: data.leveled_up ? "success" : "none",
+            duration: 2000,
+          });
+
+          // 如果升级了，添加震动反馈
+          if (data.leveled_up) {
+            uni.vibrateShort();
+          }
+        }
+      } catch (error) {
+        console.error("❌ 浇水异常:", error);
+        uni.showToast({
+          title: "浇水失败，请重试",
+          icon: "none",
+        });
+      } finally {
+        this.isWatering = false;
+      }
+    },
     setInitialTheme() {
       const hour = new Date().getHours();
       // 晚上6点到早上6点之间为夜晚
@@ -96,21 +280,77 @@ export default {
   flex-direction: column;
   padding: 40rpx;
   box-sizing: border-box;
-  transition: background-color 0.5s;
+  position: relative;
+  overflow: hidden;
 }
 
-.day-theme {
-  background: linear-gradient(to bottom, #87ceeb, #e0f6ff);
+/* 全屏背景图片 */
+.background-image {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-.night-theme {
-  background: linear-gradient(to bottom, #2c3e50, #34495e);
+/* 能量条容器 */
+.energy-bar-container {
+  position: fixed;
+  top: 120rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  width: 70vw;
+  max-width: 600rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.night-theme .energy-bar-container {
+  background: rgba(44, 62, 80, 0.9);
+}
+
+.energy-bar-bg {
+  width: 100%;
+  height: 30rpx;
+  background: rgba(200, 200, 200, 0.3);
+  border-radius: 15rpx;
+  overflow: hidden;
+  margin-bottom: 10rpx;
+  border: 2rpx solid rgba(255, 215, 0, 0.5);
+}
+
+.energy-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ffed4e);
+  border-radius: 15rpx;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10rpx rgba(255, 215, 0, 0.5);
+}
+
+.energy-bar-text {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: bold;
+  text-shadow: 0 1rpx 2rpx rgba(255, 255, 255, 0.8);
+}
+
+.night-theme .energy-bar-text {
+  color: #ecf0f1;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.5);
 }
 
 .theme-switch {
   position: fixed;
   top: 100rpx;
-  /* 调整位置以避开导航栏 */
   right: 40rpx;
   z-index: 999;
   width: 80rpx;
@@ -137,29 +377,24 @@ export default {
   align-items: center;
   justify-content: center;
   position: relative;
-}
-
-.tree-image {
-  width: 100%;
-  height: 100%;
-  max-width: 600rpx;
-  max-height: 600rpx;
+  z-index: 1;
 }
 
 .kettle-image {
-  position: absolute;
-  right: 5rpx;
-  top: 60%;
-  transform: translateY(-50%);
-  width: 180rpx;
-  height: 180rpx;
-  opacity: 0.9;
+  position: fixed;
+  right: 20rpx;
+  bottom: 550rpx;
+  width: 200rpx;
+  height: 200rpx;
+  opacity: 0.95;
   transition: opacity 0.3s, transform 0.3s;
+  cursor: pointer;
+  z-index: 10;
 }
 
 .kettle-image:active {
   opacity: 1;
-  transform: translateY(-50%) scale(1.05);
+  transform: scale(1.15);
 }
 
 .options-container {
@@ -171,6 +406,8 @@ export default {
   margin-top: 40rpx;
   margin-bottom: 80rpx;
   transition: background-color 0.5s;
+  z-index: 1;
+  position: relative;
 }
 
 .night-theme .options-container {
