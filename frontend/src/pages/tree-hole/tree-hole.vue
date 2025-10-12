@@ -25,6 +25,7 @@
       <text class="energy-bar-text"
         >能量：{{ energyProgress }}/100　等级：Lv.{{ level }}</text
       >
+      <text class="energy-tip">每升10级可以让树木成长哦</text>
     </view>
 
     <!-- 主题切换按钮 -->
@@ -34,12 +35,22 @@
 
     <view class="tree-area">
       <!-- 水壶图片 - 点击浇水 -->
-      <image
-        class="kettle-image"
-        src="../../static/kettle.png"
-        mode="aspectFit"
-        @click="waterTree"
-      />
+      <view class="kettle-container">
+        <image
+          class="kettle-image"
+          :class="{ 'kettle-disabled': !canWater }"
+          src="../../static/kettle.png"
+          mode="aspectFit"
+          @click="waterTree"
+        />
+        <!-- 倒计时提示 -->
+        <view class="cooldown-timer" v-if="!canWater && remainingSeconds > 0" :key="remainingSeconds">
+          <text class="timer-text">{{ cooldownDisplay }}</text>
+        </view>
+        <view class="cooldown-timer ready" v-else-if="canWater">
+          <text class="timer-text">可以浇水</text>
+        </view>
+      </view>
     </view>
 
     <view class="options-container">
@@ -64,6 +75,9 @@ export default {
       energy: 0, // 当前能量
       level: 1, // 当前等级
       isWatering: false, // 是否正在浇水
+      canWater: true, // 是否可以浇水
+      remainingSeconds: 0, // 剩余冷却秒数
+      countdownTimer: null, // 倒计时定时器
     };
   },
   computed: {
@@ -113,6 +127,12 @@ export default {
       const progress = this.energy % 100;
       return progress;
     },
+    // 倒计时显示文本（计算属性）
+    cooldownDisplay() {
+      const minutes = Math.floor(this.remainingSeconds / 60);
+      const secs = this.remainingSeconds % 60;
+      return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    }
   },
   watch: {
     level(newLevel, oldLevel) {
@@ -133,7 +153,40 @@ export default {
     // 刷新能量数据
     this.fetchTreeEnergy();
   },
+  onUnload() {
+    // 页面卸载时清除定时器
+    this.clearCountdown();
+  },
   methods: {
+    formatTime(seconds) {
+      // 格式化倒计时显示
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${minutes}:${secs.toString().padStart(2, "0")}`;
+    },
+    startCountdown() {
+      // 启动倒计时
+      this.clearCountdown();
+      console.log("⏰ 启动倒计时定时器，初始秒数:", this.remainingSeconds);
+      this.countdownTimer = setInterval(() => {
+        if (this.remainingSeconds > 0) {
+          this.remainingSeconds--;
+          console.log("⏱️ 倒计时更新:", this.remainingSeconds, "秒");
+        } else {
+          console.log("✅ 倒计时结束，可以浇水了");
+          this.canWater = true;
+          this.clearCountdown();
+        }
+      }, 1000);
+    },
+    clearCountdown() {
+      // 清除倒计时
+      if (this.countdownTimer) {
+        console.log("🛑 清除倒计时定时器");
+        clearInterval(this.countdownTimer);
+        this.countdownTimer = null;
+      }
+    },
     async fetchTreeEnergy() {
       // 获取用户能量和等级
       const token = uni.getStorageSync("access_token");
@@ -155,12 +208,28 @@ export default {
         if (response.statusCode === 200) {
           this.energy = parseInt(response.data.energy) || 0;
           this.level = parseInt(response.data.level) || 1;
+          this.canWater = response.data.can_water !== false; // 默认true，只有明确false才是false
+          this.remainingSeconds = parseInt(response.data.remaining_seconds) || 0;
 
           console.log("✅ 能量状态:", {
             energy: this.energy,
             level: this.level,
+            canWater: this.canWater,
+            remainingSeconds: this.remainingSeconds,
+            rawData: response.data,
             background: this.backgroundImage,
           });
+
+          // 清除旧的倒计时
+          this.clearCountdown();
+          
+          // 如果有剩余时间且不能浇水，启动倒计时
+          if (this.remainingSeconds > 0 && !this.canWater) {
+            console.log("🔄 启动倒计时:", this.remainingSeconds, "秒");
+            this.startCountdown();
+          } else if (this.canWater) {
+            console.log("✅ 可以浇水，无需倒计时");
+          }
         }
       } catch (error) {
         console.error("❌ 获取能量状态异常:", error);
@@ -169,6 +238,16 @@ export default {
     async waterTree() {
       // 浇水增加能量
       if (this.isWatering) {
+        return;
+      }
+
+      // 检查是否可以浇水
+      if (!this.canWater) {
+        uni.showToast({
+          title: `冷却中，还需${this.formatTime(this.remainingSeconds)}`,
+          icon: "none",
+          duration: 2000,
+        });
         return;
       }
 
@@ -209,13 +288,27 @@ export default {
 
           this.energy = parseInt(data.energy) || 0;
           this.level = parseInt(data.level) || 1;
+          this.canWater = data.can_water !== false;
+          this.remainingSeconds = parseInt(data.remaining_seconds) || 0;
 
           console.log("💧 浇水成功:", {
             energy: this.energy,
             level: this.level,
             leveledUp: data.leveled_up,
+            canWater: this.canWater,
+            remainingSeconds: this.remainingSeconds,
+            rawData: data,
             background: this.backgroundImage,
           });
+
+          // 清除旧的倒计时
+          this.clearCountdown();
+          
+          // 启动新的倒计时
+          if (this.remainingSeconds > 0 && !this.canWater) {
+            console.log("🔄 浇水后启动倒计时:", this.remainingSeconds, "秒");
+            this.startCountdown();
+          }
 
           // 显示提示信息
           uni.showToast({
@@ -231,10 +324,20 @@ export default {
         }
       } catch (error) {
         console.error("❌ 浇水异常:", error);
-        uni.showToast({
-          title: "浇水失败，请重试",
-          icon: "none",
-        });
+
+        // 处理冷却时间错误
+        if (error.statusCode === 400) {
+          uni.showToast({
+            title: error.data?.detail || "浇水冷却中",
+            icon: "none",
+            duration: 2000,
+          });
+        } else {
+          uni.showToast({
+            title: "浇水失败，请重试",
+            icon: "none",
+          });
+        }
       } finally {
         this.isWatering = false;
       }
@@ -348,6 +451,17 @@ export default {
   text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.5);
 }
 
+.energy-tip {
+  font-size: 20rpx;
+  color: rgba(100, 100, 100, 0.7);
+  margin-top: 8rpx;
+  text-align: center;
+}
+
+.night-theme .energy-tip {
+  color: rgba(236, 240, 241, 0.6);
+}
+
 .theme-switch {
   position: fixed;
   top: 100rpx;
@@ -380,21 +494,51 @@ export default {
   z-index: 1;
 }
 
-.kettle-image {
+.kettle-container {
   position: fixed;
   right: 20rpx;
   bottom: 550rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.kettle-image {
   width: 200rpx;
   height: 200rpx;
   opacity: 0.95;
-  transition: opacity 0.3s, transform 0.3s;
+  transition: opacity 0.3s, transform 0.3s, filter 0.3s;
   cursor: pointer;
-  z-index: 10;
 }
 
 .kettle-image:active {
   opacity: 1;
   transform: scale(1.15);
+}
+
+.kettle-disabled {
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+.cooldown-timer {
+  margin-top: 10rpx;
+  padding: 10rpx 20rpx;
+  background: rgba(255, 99, 71, 0.9);
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+}
+
+.cooldown-timer.ready {
+  background: rgba(76, 175, 80, 0.9);
+}
+
+.timer-text {
+  font-size: 24rpx;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
 .options-container {
