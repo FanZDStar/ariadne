@@ -171,7 +171,7 @@ export default {
         }
 
         const response = await uni.request({
-          url: "http://127.0.0.1:8000/protection-drill/reports",
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/reports`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -209,7 +209,7 @@ export default {
         const skip = (this.currentPage + 1) * this.pageSize;
 
         const response = await uni.request({
-          url: "http://127.0.0.1:8000/protection-drill/reports",
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/reports`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -250,7 +250,7 @@ export default {
         }
 
         const response = await uni.request({
-          url: "http://127.0.0.1:8000/protection-drill/statistics",
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/statistics`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,

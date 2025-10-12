@@ -208,7 +208,7 @@ export default {
         // 已登录时从服务器获取
         const response = await uni.request({
           url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://127.0.0.1:8000"
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
           }/mascot-outfits/current`,
           method: "GET",
           header: {
@@ -299,7 +299,7 @@ export default {
       try {
         const response = await uni.request({
           url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://127.0.0.1:8000"
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
           }/star-points/balance`,
           method: "GET",
           header: {
@@ -331,7 +331,7 @@ export default {
       try {
         const response = await uni.request({
           url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://127.0.0.1:8000"
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
           }/mascot-outfits/user-outfits`,
           method: "GET",
           header: {
@@ -406,7 +406,7 @@ export default {
         try {
           await uni.request({
             url: `${
-              process.env.VUE_APP_API_BASE_URL || "http://127.0.0.1:8000"
+              process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
             }/mascot-outfits/set-current`,
             method: "POST",
             header: {
@@ -467,7 +467,7 @@ export default {
       try {
         const response = await uni.request({
           url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://127.0.0.1:8000"
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
           }/mascot-outfits/purchase/${outfit.id}`,
           method: "POST",
           header: {

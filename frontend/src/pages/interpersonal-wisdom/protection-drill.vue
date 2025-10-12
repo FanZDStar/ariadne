@@ -337,7 +337,7 @@ export default {
     async loadTrainingTypes() {
       try {
         const response = await uni.request({
-          url: "http://127.0.0.1:8000/api/protection-drill/training-types",
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/api/protection-drill/training-types`,
           method: "GET",
         });
 
@@ -436,7 +436,7 @@ export default {
 
         // 创建训练会话
         const sessionResponse = await uni.request({
-          url: "http://127.0.0.1:8000/api/protection-drill/session/start",
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/api/protection-drill/session/start`,
           method: "POST",
           data: {
             training_type_id: this.selectedMode.id,
@@ -454,7 +454,7 @@ export default {
 
         // 获取训练题目
         const questionsResponse = await uni.request({
-          url: `http://127.0.0.1:8000/api/protection-drill/questions/${this.selectedMode.id}`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/api/protection-drill/questions/${this.selectedMode.id}`,
           method: "GET",
           data: { count: 8 },
         });
@@ -741,7 +741,7 @@ export default {
         console.log("当前题目:", currentQuestion);
 
         const response = await uni.request({
-          url: `http://127.0.0.1:8000/api/protection-drill/session/${this.currentSessionId}/answer`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/api/protection-drill/session/${this.currentSessionId}/answer`,
           method: "POST",
           data: {
             question_id: currentQuestion.id,
@@ -919,7 +919,7 @@ export default {
           console.log("使用会话ID完成训练:", this.currentSessionId);
 
           const response = await uni.request({
-            url: `http://127.0.0.1:8000/api/protection-drill/session/${this.currentSessionId}/complete`,
+            url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/api/protection-drill/session/${this.currentSessionId}/complete`,
             method: "POST",
             header: {
               Authorization: "Bearer " + uni.getStorageSync("access_token"),
@@ -1064,11 +1064,11 @@ export default {
         console.log("准备保存训练报告:", reportData);
         console.log(
           "API请求URL:",
-          "http://127.0.0.1:8000/protection-drill/reports"
+          `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/reports`
         );
 
         const saveResponse = await uni.request({
-          url: "http://127.0.0.1:8000/protection-drill/reports",
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/reports`,
           method: "POST",
           header: {
             Authorization: `Bearer ${token}`,

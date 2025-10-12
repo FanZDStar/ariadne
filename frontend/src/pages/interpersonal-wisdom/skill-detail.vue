@@ -290,7 +290,7 @@ export default {
         if (!token) return;
 
         const response = await uni.request({
-          url: 'http://localhost:8000/skill-favorites/check',
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/skill-favorites/check`,
           method: 'GET',
           header: {
             'Authorization': `Bearer ${token}`
@@ -323,8 +323,8 @@ export default {
         uni.showLoading({ title: this.isFavorited ? '取消收藏中...' : '收藏中...' });
 
         const url = this.isFavorited
-          ? 'http://localhost:8000/skill-favorites/remove'
-          : 'http://localhost:8000/skill-favorites/add';
+          ? `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/skill-favorites/remove`
+          : `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/skill-favorites/add`;
 
         const requestData = {
           skill_id: String(this.skillId), // 确保是字符串类型

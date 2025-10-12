@@ -584,7 +584,7 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000'}/mascot-outfits/current`,
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/mascot-outfits/current`,
           method: 'GET',
           header: {
             'Authorization': `Bearer ${token}`,
@@ -674,7 +674,7 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000'}/mascot-outfits/current`,
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/mascot-outfits/current`,
           method: 'GET',
           header: {
             'Authorization': `Bearer ${token}`,

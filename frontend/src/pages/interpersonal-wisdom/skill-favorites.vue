@@ -121,7 +121,7 @@ export default {
                 }
 
                 const response = await uni.request({
-                    url: 'http://localhost:8000/skill-favorites/list',
+                    url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/skill-favorites/list`,
                     method: 'GET',
                     header: {
                         'Authorization': `Bearer ${token}`
@@ -202,7 +202,7 @@ export default {
 
                 const token = uni.getStorageSync('access_token');
                 const response = await uni.request({
-                    url: 'http://localhost:8000/skill-favorites/remove',
+                    url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/skill-favorites/remove`,
                     method: 'POST',
                     header: {
                         'Authorization': `Bearer ${token}`,

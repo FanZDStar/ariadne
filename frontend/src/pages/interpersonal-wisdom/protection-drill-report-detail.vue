@@ -307,7 +307,7 @@ export default {
 
         // 首先尝试获取详细报告
         const detailResponse = await uni.request({
-          url: `http://127.0.0.1:8000/protection-drill/reports/${this.reportId}/details`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/reports/${this.reportId}/details`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -339,7 +339,7 @@ export default {
         } else {
           // 回退到基础API
           const response = await uni.request({
-            url: `http://127.0.0.1:8000/protection-drill/reports/${this.reportId}`,
+            url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"}/protection-drill/reports/${this.reportId}`,
             method: "GET",
             header: {
               Authorization: `Bearer ${token}`,
