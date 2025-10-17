@@ -201,7 +201,7 @@ export default {
 
       try {
         const response = await uni.request({
-          url: "http://127.0.0.1:8000/tree-energy/status",
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/tree-energy/status`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -280,7 +280,7 @@ export default {
 
       try {
         const response = await uni.request({
-          url: "http://127.0.0.1:8000/tree-energy/water",
+          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/tree-energy/water`,
           method: "POST",
           header: {
             Authorization: `Bearer ${token}`,
