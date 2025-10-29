@@ -1,6 +1,5 @@
 <template>
-  <view class="report-detail-container">
-    <!-- 头部标题 -->
+  <view class="report-detail-container">    <!-- 头部标题 -->
     <view class="header">
       <text class="title">训练报告详情</text>
       <text class="subtitle">{{ report.drill_type }}训练报告</text>

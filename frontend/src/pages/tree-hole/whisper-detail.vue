@@ -1,6 +1,5 @@
 <template>
-  <view class="whisper-detail-container">
-    <!-- 悄悄话详情卡片 -->
+  <view class="whisper-detail-container">    <!-- 悄悄话详情卡片 -->
     <view class="whisper-card">
       <!-- 用户信息行 -->
       <view class="user-info">

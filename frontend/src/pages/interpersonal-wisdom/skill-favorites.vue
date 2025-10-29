@@ -1,6 +1,5 @@
 <template>
-    <view class="skill-favorites-container">
-        <!-- 分类筛选 -->
+    <view class="skill-favorites-container">        <!-- 分类筛选 -->
         <view class="category-filter">
             <scroll-view scroll-x="true" class="category-scroll">
                 <view class="category-tabs">

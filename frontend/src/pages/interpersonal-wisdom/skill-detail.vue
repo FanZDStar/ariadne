@@ -1,6 +1,5 @@
 <template>
-  <view class="skill-detail-container">
-    <view class="content">
+  <view class="skill-detail-container">    <view class="content">
       <!-- 技能信息卡片 -->
       <view class="skill-info-card">
         <view class="skill-header">

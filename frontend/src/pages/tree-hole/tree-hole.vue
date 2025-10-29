@@ -1,30 +1,13 @@
 <template>
-  <view
-    class="tree-hole-container"
-    :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }"
-  >
-    <!-- 全屏背景图片 - 添加key强制更新 -->
-    <image
-      class="background-image"
-      :src="backgroundImage"
-      :key="'bg-' + theme + '-' + level"
-      mode="aspectFill"
-    />
+  <view class="tree-hole-container" :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }">    <!-- 全屏背景图片 - 添加key强制更新 -->
+    <image class="background-image" :src="backgroundImage" :key="'bg-' + theme + '-' + level" mode="aspectFill" />
 
     <!-- 能量条 - 添加key强制重新渲染 -->
-    <view
-      class="energy-bar-container"
-      :key="'energy-' + energy + '-level-' + level"
-    >
+    <view class="energy-bar-container" :key="'energy-' + energy + '-level-' + level">
       <view class="energy-bar-bg">
-        <view
-          class="energy-bar-fill"
-          :style="{ width: energyProgress + '%' }"
-        ></view>
+        <view class="energy-bar-fill" :style="{ width: energyProgress + '%' }"></view>
       </view>
-      <text class="energy-bar-text"
-        >能量：{{ energyProgress }}/100　等级：Lv.{{ level }}</text
-      >
+      <text class="energy-bar-text">能量：{{ energyProgress }}/100　等级：Lv.{{ level }}</text>
       <text class="energy-tip">每升10级可以让树木成长哦</text>
     </view>
 
@@ -36,19 +19,10 @@
     <view class="tree-area">
       <!-- 水壶图片 - 点击浇水 -->
       <view class="kettle-container">
-        <image
-          class="kettle-image"
-          :class="{ 'kettle-disabled': !canWater }"
-          src="../../static/kettle.png"
-          mode="aspectFit"
-          @click="waterTree"
-        />
+        <image class="kettle-image" :class="{ 'kettle-disabled': !canWater }" src="../../static/kettle.png"
+          mode="aspectFit" @click="waterTree" />
         <!-- 倒计时提示 -->
-        <view
-          class="cooldown-timer"
-          v-if="!canWater && remainingSeconds > 0"
-          :key="remainingSeconds"
-        >
+        <view class="cooldown-timer" v-if="!canWater && remainingSeconds > 0" :key="remainingSeconds">
           <text class="timer-text">{{ cooldownDisplay }}</text>
         </view>
         <view class="cooldown-timer ready" v-else-if="canWater">

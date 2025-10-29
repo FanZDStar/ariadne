@@ -1,6 +1,5 @@
 <template>
-  <view class="dialog-container">
-    <!-- AI助手介绍 -->
+  <view class="dialog-container">    <!-- AI助手介绍 -->
     <view class="assistant-intro">
       <view class="intro-card">
         <view class="assistant-avatar">

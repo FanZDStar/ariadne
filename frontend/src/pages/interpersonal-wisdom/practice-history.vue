@@ -1,6 +1,5 @@
 <template>
-  <view class="practice-history-container">
-    <view class="header">
+  <view class="practice-history-container">    <view class="header">
       <text class="title">对话练习记录</text>
       <text class="subtitle">回顾学习成果，持续提升沟通技能</text>
     </view>

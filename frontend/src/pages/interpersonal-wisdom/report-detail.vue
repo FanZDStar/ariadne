@@ -1,6 +1,5 @@
 <template>
-  <view class="report-detail-container">
-    <!-- 加载状态 -->
+  <view class="report-detail-container">    <!-- 加载状态 -->
     <view v-if="isLoading" class="loading-container">
       <text class="loading-text">正在加载报告详情...</text>
     </view>

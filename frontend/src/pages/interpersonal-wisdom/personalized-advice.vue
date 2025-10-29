@@ -1,6 +1,5 @@
 <template>
-    <view class="advice-container">
-        <!-- 用户情况收集 -->
+    <view class="advice-container">        <!-- 用户情况收集 -->
         <view v-if="currentStep === 'input'" class="input-section">
             <view class="form-card">
                 <text class="form-title">请描述你的情况</text>

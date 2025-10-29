@@ -1,6 +1,6 @@
 <!-- filepath: pages/components/simple-mascot.vue -->
 <template>
-  <view class="mascot-container">
+  <view v-show="shouldShowMascot" class="mascot-container">
     <!-- 看板娘主体 -->
     <view class="mascot" :class="currentAction" :style="{ left: position.x + 'px', top: position.y + 'px' }"
       @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
@@ -39,6 +39,8 @@
 <script>
 // 引入lottie-web
 import lottie from "lottie-web";
+// 引入看板娘配置
+import { shouldShowMascot } from '../utils/mascot-config.js';
 
 export default {
   data() {
@@ -54,6 +56,10 @@ export default {
       currentSpeech: "",
       showDressUp: false,
 
+      // 看板娘显示控制
+      shouldShowMascot: true, // 初始为true，会在mounted时根据页面路由更新
+      currentPagePath: '', // 当前页面路径
+
       // Lottie动画相关
       isPlayingAnimation: false,
       lottieInstance: null,
@@ -65,6 +71,7 @@ export default {
 
       outfitCheckTimer: null,
       serverSyncTimer: null,
+      pageVisibilityCheckTimer: null, // 路由检测定时器
       lastServerSyncTime: 0, // 上次服务器同步时间
       lastOutfitId: null, // 记录上次的服装ID，用于检测变化
       currentOutfitId: 1, // 当前小人ID
@@ -172,8 +179,26 @@ export default {
   },
 
   mounted() {
+    console.log('🎭 看板娘组件已挂载');
+
     this.checkPosition();
     this.checkOutfitStorage();
+
+    // 立即检查当前页面是否应该显示看板娘
+    console.log('🎭 开始检查看板娘可见性...');
+    this.updateMascotVisibility();
+
+    // 延迟再检查一次，确保页面信息已加载
+    setTimeout(() => {
+      console.log('🎭 延迟100ms后再次检查可见性');
+      this.updateMascotVisibility();
+    }, 100);
+
+    // 再延迟检查一次
+    setTimeout(() => {
+      console.log('🎭 延迟500ms后最后检查可见性');
+      this.updateMascotVisibility();
+    }, 500);
 
     // 强制清除所有动画缓存
     this.animationCache = {};
@@ -191,11 +216,19 @@ export default {
       this.syncFromServerIfNeeded();
     }, 120000);
 
+    // 添加页面可见性定期检测 (每1秒检查一次)，确保跨页面时能正确显示/隐藏
+    this.pageVisibilityCheckTimer = setInterval(() => {
+      this.updateMascotVisibility();
+    }, 1000);
+
     // 监听全局服装切换事件
     uni.$on('outfitChanged', this.handleOutfitChanged);
 
     // 监听页面焦点变化，实现跨标签页同步
     this.setupFocusSync();
+
+    // 监听页面路由变化
+    uni.$on('pageChange', this.handlePageChange);
 
     // 添加全局鼠标事件监听，支持电脑端拖动
     // 使用箭头函数确保 this 指向 Vue 实例
@@ -207,15 +240,21 @@ export default {
   },
 
   onLoad() {
-    // 页面加载时加载服装设置
+    // 页面加载时加载服装设置和检查可见性
     this.loadSavedOutfit();
+    // 在onLoad时也检查一次看板娘可见性
+    setTimeout(() => {
+      this.updateMascotVisibility();
+    }, 50);
   },
 
   onShow() {
-    // 页面显示时立即检查服装变化（可能刚从换装页面返回）
+    // 页面显示时立即检查服装变化和可见性
     this.checkOutfitStorage();
     // 重置定时器，确保及时检测变化
     this.resetOutfitCheckTimer();
+    // 页面显示时检查看板娘可见性
+    this.updateMascotVisibility();
   },
 
   onReady() {
@@ -230,6 +269,7 @@ export default {
 
     // 取消全局事件监听
     uni.$off('outfitChanged', this.handleOutfitChanged);
+    uni.$off('pageChange', this.handlePageChange);
 
     // 清理焦点事件监听
     if (this.focusCleanup) {
@@ -257,6 +297,45 @@ export default {
       if (this.position.y > maxY) this.position.y = maxY;
       if (this.position.x < 0) this.position.x = 0;
       if (this.position.y < 0) this.position.y = 0;
+    },
+
+    /**
+     * 更新看板娘显示状态
+     * 根据当前页面路由判断是否应该显示看板娘
+     */
+    updateMascotVisibility() {
+      try {
+        // 获取当前页面路径
+        const pages = getCurrentPages();
+        if (!pages || pages.length === 0) {
+          // 如果获取不到页面，默认显示（比如首次加载）
+          this.shouldShowMascot = true;
+          console.log(`🎭 看板娘可见性检测: 未能获取页面信息，默认显示`);
+          return;
+        }
+
+        const currentPage = pages[pages.length - 1];
+        const route = currentPage.route || currentPage.$vm?.$route?.path || '';
+        this.currentPagePath = route;
+
+        // 规范化路由：确保以/开头
+        const normalizedRoute = route.startsWith('/') ? route : '/' + route;
+
+        // 检查是否在配置的页面中
+        this.shouldShowMascot = shouldShowMascot(normalizedRoute);
+
+        console.log(`🎭 看板娘可见性检测: 原始路由="${route}", 规范化="${normalizedRoute}", 显示=${this.shouldShowMascot}`);
+      } catch (error) {
+        console.error('🎭 看板娘可见性检测出错:', error);
+        this.shouldShowMascot = true; // 出错时默认显示
+      }
+    },
+
+    /**
+     * 处理页面变化
+     */
+    handlePageChange() {
+      this.updateMascotVisibility();
     },
 
     // 检查服装存储
@@ -509,6 +588,10 @@ export default {
       if (this.serverSyncTimer) {
         clearInterval(this.serverSyncTimer);
         this.serverSyncTimer = null;
+      }
+      if (this.pageVisibilityCheckTimer) {
+        clearInterval(this.pageVisibilityCheckTimer);
+        this.pageVisibilityCheckTimer = null;
       }
     },
 

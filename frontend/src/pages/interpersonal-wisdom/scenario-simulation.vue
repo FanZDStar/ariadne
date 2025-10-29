@@ -1,6 +1,5 @@
 <template>
-    <view class="simulation-container">
-        <view class="header">
+    <view class="simulation-container">        <view class="header">
             <text class="title">情景模拟训练</text>
             <text class="subtitle">在真实场景中练习人际交往技能</text>
         </view>

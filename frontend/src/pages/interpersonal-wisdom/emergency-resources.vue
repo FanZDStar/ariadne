@@ -1,6 +1,5 @@
 <template>
-  <view class="emergency-container">
-    <!-- 专业热线 -->
+  <view class="emergency-container">    <!-- 专业热线 -->
     <view class="hotline-section">
       <text class="section-title">专业求助热线</text>
       <view

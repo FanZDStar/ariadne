@@ -1,6 +1,5 @@
 <template>
-  <view class="reports-container">
-    <view class="header">
+  <view class="reports-container">    <view class="header">
       <text class="title">关系健康测试报告解读</text>
       <text class="subtitle">深度分析你的人际关系健康状况</text>
     </view>

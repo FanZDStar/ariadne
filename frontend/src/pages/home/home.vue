@@ -1,6 +1,5 @@
 <template>
-    <view class="home-container">
-        <!-- 顶部装饰背景 -->
+    <view class="home-container">        <!-- 顶部装饰背景 -->
         <view class="top-decoration"></view>
 
         <!-- 头部区域 -->
@@ -77,17 +76,13 @@
                 <view class="dot dot-4"></view>
             </view>
         </view>
-        <simple-mascot></simple-mascot>
     </view>
 </template>
 
 <script>
 import { api, storage } from '../../utils/api.js';
-import SimpleMascot from '@/components/simple-mascot.vue'
+
 export default {
-    components: {
-        SimpleMascot
-    },
     data() {
         return {
             userInfo: null,

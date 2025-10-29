@@ -1,6 +1,5 @@
 <template>
-  <view class="edit-whisper-container">
-    <!-- 美化的头部导航 -->
+  <view class="edit-whisper-container">    <!-- 美化的头部导航 -->
     <view class="header">
       <view class="header-content">
         <view class="header-right" @click="saveChanges">

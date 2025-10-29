@@ -1,6 +1,5 @@
 <template>
-  <view class="write-whisper-container">
-    <view class="header">
+  <view class="write-whisper-container">    <view class="header">
       <view class="header-left" @click="cancel">
         <text class="cancel-btn">取消</text>
       </view>

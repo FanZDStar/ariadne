@@ -1,6 +1,5 @@
 <template>
-  <view class="listen-container">
-    <!-- 卡片翻动容器 -->
+  <view class="listen-container">    <!-- 卡片翻动容器 -->
     <view class="content-wrapper">
       <view class="whisper-card-stack">
         <!-- 主卡片 -->

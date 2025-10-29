@@ -1,6 +1,5 @@
 <template>
-  <view class="protection-container">
-    <!-- 训练模式选择 -->
+  <view class="protection-container">    <!-- 训练模式选择 -->
     <view v-if="currentStage === 'selection'" class="mode-selection">
       <view class="risk-alert">
         <text class="alert-text">学习识别和应对人际关系中的潜在风险</text>

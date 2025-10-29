@@ -1,6 +1,5 @@
 <template>
-    <view class="category-detail-container">
-        <view class="content">
+    <view class="category-detail-container">        <view class="content">
             <!-- 推荐技能卡片 -->
             <view v-if="recommendedSkills.length > 0" class="section">
                 <view class="section-header">

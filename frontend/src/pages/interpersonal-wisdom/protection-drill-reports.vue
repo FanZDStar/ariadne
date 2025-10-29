@@ -1,6 +1,5 @@
 <template>
-  <view class="reports-container">
-    <!-- 快捷操作区 -->
+  <view class="reports-container">    <!-- 快捷操作区 -->
     <view class="quick-actions">
       <view class="action-card" @click="startNewDrill">
         <text class="action-title">开始新训练</text>

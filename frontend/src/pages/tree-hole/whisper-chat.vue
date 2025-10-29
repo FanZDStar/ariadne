@@ -1,6 +1,5 @@
 <template>
-    <view class="chat-container">
-        <view class="whisper-header-note">
+    <view class="chat-container">        <view class="whisper-header-note">
             <scroll-view scroll-y="true" class="header-scroll">
                 <text class="header-content">{{ originalWhisper.content }}</text>
             </scroll-view>

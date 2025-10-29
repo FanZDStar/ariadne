@@ -1,6 +1,5 @@
 <template>
-    <view class="assessment-container">
-        <view class="header">
+    <view class="assessment-container">        <view class="header">
             <view class="header-content">
                 <view class="header-icon">
                     <text class="icon-text">📊</text>

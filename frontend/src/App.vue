@@ -1,19 +1,32 @@
+<template>
+  <view class="app-wrapper">
+    <!-- 看板娘由插件全局管理，无需在这里添加 -->
+  </view>
+</template>
+
 <script>
 export default {
   onLaunch: function () {
-    console.log('App Launch')
-    // 启动时不再自动跳转，交由 index.vue 处理
+    console.log('🚀 App Launch')
   },
+
   onShow: function () {
-    console.log('App Show')
+    console.log('📱 App Show')
   },
+
   onHide: function () {
-    console.log('App Hide')
-  },
+    console.log('💤 App Hide')
+  }
 }
 </script>
 
 <style>
+/* 应用容器样式 */
+.app-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
 /* 每个页面公共css */
 
 /* 限制整体应用容器宽度 */

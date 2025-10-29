@@ -1,6 +1,5 @@
 <template>
-  <view class="practice-detail-container">
-    <!-- 顶部导航 -->
+  <view class="practice-detail-container">    <!-- 顶部导航 -->
     <view class="custom-navbar">
       <view class="nav-left" @click="goBack">
         <text class="nav-icon">←</text>

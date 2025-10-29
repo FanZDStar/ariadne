@@ -1,6 +1,5 @@
 <template>
-  <view class="practice-container">
-    <!-- 技能信息展示 -->
+  <view class="practice-container">    <!-- 技能信息展示 -->
     <view v-if="skillInfo" class="skill-info">
       <view class="skill-card">
         <view class="skill-header">

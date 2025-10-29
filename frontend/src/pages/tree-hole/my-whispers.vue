@@ -1,6 +1,5 @@
 <template>
-  <view class="my-whispers-container">
-    <view class="header">
+  <view class="my-whispers-container">    <view class="header">
       <text class="title">此情此语</text>
       <text class="subtitle">记录你的情感轨迹与心灵互动</text>
       <view class="manage-btn" @click="toggleManagementMode">

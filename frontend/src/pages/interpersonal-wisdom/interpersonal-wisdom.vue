@@ -1,40 +1,23 @@
 <template>
-  <view class="wisdom-container">
-    <view class="header">
+  <view class="wisdom-container">    <view class="header">
       <text class="title">人际智慧</text>
       <text class="subtitle">提升交往技能，保护情感安全</text>
     </view>
 
     <view class="nav-tabs">
-      <view
-        class="tab-item"
-        :class="{ active: activeTab === 'skills' }"
-        @click="activeTab = 'skills'"
-      >
+      <view class="tab-item" :class="{ active: activeTab === 'skills' }" @click="activeTab = 'skills'">
         <text class="tab-icon">🤝</text>
         <text class="tab-text">技能学习</text>
       </view>
-      <view
-        class="tab-item"
-        :class="{ active: activeTab === 'protection' }"
-        @click="activeTab = 'protection'"
-      >
+      <view class="tab-item" :class="{ active: activeTab === 'protection' }" @click="activeTab = 'protection'">
         <text class="tab-icon">🛡️</text>
         <text class="tab-text">防护指南</text>
       </view>
-      <view
-        class="tab-item"
-        :class="{ active: activeTab === 'practice' }"
-        @click="activeTab = 'practice'"
-      >
+      <view class="tab-item" :class="{ active: activeTab === 'practice' }" @click="activeTab = 'practice'">
         <text class="tab-icon">🎭</text>
         <text class="tab-text">实战练习</text>
       </view>
-      <view
-        class="tab-item"
-        :class="{ active: activeTab === 'growth' }"
-        @click="activeTab = 'growth'"
-      >
+      <view class="tab-item" :class="{ active: activeTab === 'growth' }" @click="activeTab = 'growth'">
         <text class="tab-icon">📈</text>
         <text class="tab-text">成长档案</text>
       </view>
@@ -51,12 +34,8 @@
       </view>
 
       <view v-if="recommendedSkills.length > 0" class="recommended-skills">
-        <view
-          v-for="skill in recommendedSkills"
-          :key="skill.id"
-          class="skill-card recommended"
-          @click="selectSkill(skill)"
-        >
+        <view v-for="skill in recommendedSkills" :key="skill.id" class="skill-card recommended"
+          @click="selectSkill(skill)">
           <view class="skill-header">
             <text class="skill-title">{{ skill.title }}</text>
           </view>
@@ -77,12 +56,8 @@
       <view class="categories-section">
         <text class="section-title">技能分类</text>
         <view class="categories-grid">
-          <view
-            v-for="category in skillCategories"
-            :key="category.id"
-            class="category-card"
-            @click="viewCategorySkills(category)"
-          >
+          <view v-for="category in skillCategories" :key="category.id" class="category-card"
+            @click="viewCategorySkills(category)">
             <text class="category-icon">{{
               getCategoryIcon(category.id)
             }}</text>
@@ -99,9 +74,7 @@
           <view class="skill-header">
             <text class="skill-title">关系健康评估</text>
           </view>
-          <text class="skill-content"
-            >评估你当前关系的健康状况，识别潜在风险</text
-          >
+          <text class="skill-content">评估你当前关系的健康状况，识别潜在风险</text>
           <view class="skill-tags">
             <text class="skill-tag">评估</text>
             <text class="skill-tag">健康</text>
@@ -118,19 +91,14 @@
           <view class="skill-header">
             <text class="skill-title">个性化建议</text>
           </view>
-          <text class="skill-content"
-            >获取针对你情况的专属防护建议，提升安全意识</text
-          >
+          <text class="skill-content">获取针对你情况的专属防护建议，提升安全意识</text>
           <view class="skill-tags">
             <text class="skill-tag">建议</text>
             <text class="skill-tag">个性化</text>
             <text class="skill-tag">防护</text>
           </view>
           <view class="skill-actions">
-            <view
-              class="action-btn primary"
-              @click.stop="getPersonalizedAdvice"
-            >
+            <view class="action-btn primary" @click.stop="getPersonalizedAdvice">
               <text class="action-text">获取建议</text>
             </view>
           </view>
@@ -140,19 +108,14 @@
           <view class="skill-header">
             <text class="skill-title">应急资源</text>
           </view>
-          <text class="skill-content"
-            >查看专业求助渠道和应急联系方式，关键时刻获得帮助</text
-          >
+          <text class="skill-content">查看专业求助渠道和应急联系方式，关键时刻获得帮助</text>
           <view class="skill-tags">
             <text class="skill-tag">应急</text>
             <text class="skill-tag">求助</text>
             <text class="skill-tag">资源</text>
           </view>
           <view class="skill-actions">
-            <view
-              class="action-btn primary"
-              @click.stop="viewEmergencyResources"
-            >
+            <view class="action-btn primary" @click.stop="viewEmergencyResources">
               <text class="action-text">查看资源</text>
             </view>
           </view>
@@ -207,9 +170,7 @@
           <view class="skill-header">
             <text class="skill-title">技能收藏</text>
           </view>
-          <text class="skill-content"
-            >查看和管理你收藏的所有技能，随时回顾学习进度</text
-          >
+          <text class="skill-content">查看和管理你收藏的所有技能，随时回顾学习进度</text>
           <view class="skill-tags">
             <text class="skill-tag">收藏</text>
             <text class="skill-tag">管理</text>
@@ -226,44 +187,31 @@
           <view class="skill-header">
             <text class="skill-title">测试报告解读</text>
           </view>
-          <text class="skill-content"
-            >查看历史评估报告和AI分析建议，了解关系健康状况</text
-          >
+          <text class="skill-content">查看历史评估报告和AI分析建议，了解关系健康状况</text>
           <view class="skill-tags">
             <text class="skill-tag">报告</text>
             <text class="skill-tag">分析</text>
             <text class="skill-tag">建议</text>
           </view>
           <view class="skill-actions">
-            <view
-              class="action-btn primary"
-              @click.stop="goToAssessmentReports"
-            >
+            <view class="action-btn primary" @click.stop="goToAssessmentReports">
               <text class="action-text">查看报告</text>
             </view>
           </view>
         </view>
 
-        <view
-          class="skill-card recommended"
-          @click="goToProtectionDrillReports"
-        >
+        <view class="skill-card recommended" @click="goToProtectionDrillReports">
           <view class="skill-header">
             <text class="skill-title">防护技能训练报告</text>
           </view>
-          <text class="skill-content"
-            >查看防护技能训练记录和评估报告，追踪防护能力提升</text
-          >
+          <text class="skill-content">查看防护技能训练记录和评估报告，追踪防护能力提升</text>
           <view class="skill-tags">
             <text class="skill-tag">防护</text>
             <text class="skill-tag">训练</text>
             <text class="skill-tag">报告</text>
           </view>
           <view class="skill-actions">
-            <view
-              class="action-btn primary"
-              @click.stop="goToProtectionDrillReports"
-            >
+            <view class="action-btn primary" @click.stop="goToProtectionDrillReports">
               <text class="action-text">查看训练</text>
             </view>
           </view>
@@ -273,9 +221,7 @@
           <view class="skill-header">
             <text class="skill-title">历史对话记录</text>
           </view>
-          <text class="skill-content"
-            >查看所有AI对话练习记录，回顾学习成果和改进建议</text
-          >
+          <text class="skill-content">查看所有AI对话练习记录，回顾学习成果和改进建议</text>
           <view class="skill-tags">
             <text class="skill-tag">对话</text>
             <text class="skill-tag">练习</text>
@@ -291,15 +237,8 @@
     </view>
 
     <!-- 回到顶部按钮 -->
-    <BackToTop
-      ref="backToTop"
-      :threshold="100"
-      :bottom="100"
-      :right="30"
-      @start-scroll-listener="onStartScrollListener"
-      @remove-scroll-listener="onRemoveScrollListener"
-      @scroll-to-top-success="onScrollToTopSuccess"
-    />
+    <BackToTop ref="backToTop" :threshold="100" :bottom="100" :right="30" @start-scroll-listener="onStartScrollListener"
+      @remove-scroll-listener="onRemoveScrollListener" @scroll-to-top-success="onScrollToTopSuccess" />
   </view>
 </template>
 
@@ -472,17 +411,16 @@ export default {
 
     async practiceSkill(skill) {
       uni.navigateTo({
-        url: `/pages/interpersonal-wisdom/skill-practice?skillId=${
-          skill.id
-        }&type=practice&skillTitle=${encodeURIComponent(
-          skill.title
-        )}&skillContent=${encodeURIComponent(
-          skill.content
-        )}&skillTags=${encodeURIComponent(
-          JSON.stringify(skill.tags)
-        )}&skillScenarios=${encodeURIComponent(
-          JSON.stringify(skill.scenarios || [])
-        )}`,
+        url: `/pages/interpersonal-wisdom/skill-practice?skillId=${skill.id
+          }&type=practice&skillTitle=${encodeURIComponent(
+            skill.title
+          )}&skillContent=${encodeURIComponent(
+            skill.content
+          )}&skillTags=${encodeURIComponent(
+            JSON.stringify(skill.tags)
+          )}&skillScenarios=${encodeURIComponent(
+            JSON.stringify(skill.scenarios || [])
+          )}`,
       });
     },
 
@@ -532,9 +470,8 @@ export default {
 
     viewCategorySkills(category) {
       uni.navigateTo({
-        url: `/pages/interpersonal-wisdom/category-detail?categoryId=${
-          category.id
-        }&name=${encodeURIComponent(category.name)}`,
+        url: `/pages/interpersonal-wisdom/category-detail?categoryId=${category.id
+          }&name=${encodeURIComponent(category.name)}`,
       });
     },
 
@@ -879,12 +816,10 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(248, 251, 255, 0.4) 0%,
-    rgba(227, 242, 253, 0.2) 50%,
-    rgba(243, 248, 255, 0.4) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(248, 251, 255, 0.4) 0%,
+      rgba(227, 242, 253, 0.2) 50%,
+      rgba(243, 248, 255, 0.4) 100%);
   border-radius: 32rpx;
   z-index: 0;
 }
@@ -901,12 +836,10 @@ export default {
 }
 
 .skill-card.recommended::before {
-  background: linear-gradient(
-    135deg,
-    rgba(232, 244, 253, 0.5) 0%,
-    rgba(227, 242, 253, 0.3) 50%,
-    rgba(248, 251, 255, 0.5) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(232, 244, 253, 0.5) 0%,
+      rgba(227, 242, 253, 0.3) 50%,
+      rgba(248, 251, 255, 0.5) 100%);
 }
 
 .skill-header,
@@ -1049,11 +982,9 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(248, 251, 255, 0.4) 0%,
-    rgba(227, 242, 253, 0.2) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(248, 251, 255, 0.4) 0%,
+      rgba(227, 242, 253, 0.2) 100%);
   border-radius: 28rpx;
   z-index: 0;
 }
@@ -1112,12 +1043,10 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(248, 251, 255, 0.4) 0%,
-    rgba(227, 242, 253, 0.2) 50%,
-    rgba(243, 248, 255, 0.4) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(248, 251, 255, 0.4) 0%,
+      rgba(227, 242, 253, 0.2) 50%,
+      rgba(243, 248, 255, 0.4) 100%);
   border-radius: 32rpx;
   z-index: 0;
 }
@@ -1154,11 +1083,9 @@ export default {
   left: 0;
   right: 0;
   height: 200rpx;
-  background: linear-gradient(
-    135deg,
-    rgba(227, 242, 253, 0.1) 0%,
-    rgba(248, 251, 255, 0.1) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(227, 242, 253, 0.1) 0%,
+      rgba(248, 251, 255, 0.1) 100%);
   border-radius: 50% 50% 0 0;
   pointer-events: none;
   z-index: 0;
