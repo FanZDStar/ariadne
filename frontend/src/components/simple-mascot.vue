@@ -3,7 +3,8 @@
   <view class="mascot-container">
     <!-- 看板娘主体 -->
     <view class="mascot" :class="currentAction" :style="{ left: position.x + 'px', top: position.y + 'px' }"
-      @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" @tap="handleTap">
+      @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
+      @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseEnd" @tap="handleTap">
       <!-- 静态小人图片 -->
       <image v-if="!isPlayingAnimation" class="mascot-image" :src="currentImage" mode="aspectFit" @load="onImageLoad"
         @error="onImageError"></image>
@@ -154,6 +155,10 @@ export default {
         "点击我换装哦~",
         "我在这里陪你呢!",
       ],
+
+      // 绑定的鼠标事件处理函数，用于全局事件监听
+      boundMouseMove: null,
+      boundMouseEnd: null,
     };
   },
 
@@ -191,6 +196,14 @@ export default {
 
     // 监听页面焦点变化，实现跨标签页同步
     this.setupFocusSync();
+
+    // 添加全局鼠标事件监听，支持电脑端拖动
+    // 使用箭头函数确保 this 指向 Vue 实例
+    this.boundMouseMove = (e) => this.handleMouseMove(e);
+    this.boundMouseEnd = (e) => this.handleMouseEnd(e);
+
+    document.addEventListener('mousemove', this.boundMouseMove);
+    document.addEventListener('mouseup', this.boundMouseEnd);
   },
 
   onLoad() {
@@ -221,6 +234,14 @@ export default {
     // 清理焦点事件监听
     if (this.focusCleanup) {
       this.focusCleanup();
+    }
+
+    // 清理全局鼠标事件监听
+    if (this.boundMouseMove) {
+      document.removeEventListener('mousemove', this.boundMouseMove);
+    }
+    if (this.boundMouseEnd) {
+      document.removeEventListener('mouseup', this.boundMouseEnd);
     }
   },
 
@@ -760,6 +781,38 @@ export default {
       this.isDragging = false;
     },
 
+    // 鼠标拖拽处理 - 支持电脑端
+    handleMouseDown(e) {
+      this.isDragging = true;
+      this.startTouch.x = e.clientX - this.position.x;
+      this.startTouch.y = e.clientY - this.position.y;
+      // 防止文本选择
+      e.preventDefault();
+    },
+
+    handleMouseMove(e) {
+      if (!this.isDragging) return;
+      e.preventDefault();
+
+      this.position.x = e.clientX - this.startTouch.x;
+      this.position.y = e.clientY - this.startTouch.y;
+
+      // 边界检查
+      const systemInfo = uni.getSystemInfoSync();
+      this.position.x = Math.max(
+        0,
+        Math.min(this.position.x, systemInfo.windowWidth - 130)
+      );
+      this.position.y = Math.max(
+        0,
+        Math.min(this.position.y, systemInfo.windowHeight - 156)
+      );
+    },
+
+    handleMouseEnd() {
+      this.isDragging = false;
+    },
+
     // 点击交互
     handleTap() {
       if (this.isDragging) return;
@@ -887,7 +940,9 @@ export default {
   top: 0;
   left: 0;
   width: 100vw;
+  /* 使用 100vw 覆盖整个视口宽度 */
   height: 100vh;
+  /* 使用 100vh 覆盖整个视口高度 */
   pointer-events: none;
   z-index: 9999;
 }
@@ -898,6 +953,10 @@ export default {
   height: 156px;
   pointer-events: auto;
   transition: transform 0.3s ease;
+  cursor: move;
+  /* 添加鼠标指针样式 */
+  user-select: none;
+  /* 防止拖动时选中文本 */
 }
 
 .mascot-image {
@@ -964,7 +1023,9 @@ export default {
   top: 0;
   left: 0;
   width: 100vw;
+  /* 使用 100vw 覆盖整个视口宽度 */
   height: 100vh;
+  /* 使用 100vh 覆盖整个视口高度 */
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
