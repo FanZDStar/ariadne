@@ -1,5 +1,6 @@
 <template>
-  <view class="tree-hole-container" :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }">    <!-- 全屏背景图片 - 添加key强制更新 -->
+  <view class="tree-hole-container" :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }">
+    <!-- 全屏背景图片 - 添加key强制更新 -->
     <image class="background-image" :src="backgroundImage" :key="'bg-' + theme + '-' + level" mode="aspectFill" />
 
     <!-- 能量条 - 添加key强制重新渲染 -->
@@ -369,9 +370,11 @@ export default {
 /* 全屏背景图片 */
 .background-image {
   position: fixed;
-  left: 0;
+  left: 50%;
   top: 0;
-  width: 100vw;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
   height: 100vh;
   z-index: 0;
   pointer-events: none;

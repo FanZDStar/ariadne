@@ -42,6 +42,25 @@ body {
 page {
   max-width: 750rpx;
   margin: 0 auto;
+  overflow-x: hidden;
+  /* 防止横向滚动 */
+}
+
+/* 全局限制所有图片宽度 */
+image,
+img {
+  max-width: 100% !important;
+  height: auto;
+  display: block;
+}
+
+/* 限制所有使用100vw的元素 */
+.mascot-container,
+.tree-hole-container,
+.dress-modal {
+  max-width: 750rpx !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
 }
 
 /* 修复底部 tabBar - 使用正确的选择器 */

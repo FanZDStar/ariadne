@@ -1,20 +1,11 @@
 <template>
   <view class="login-container">
     <!-- 背景图片 -->
-    <image
-      class="background-image"
-      src="/src/static/loginbg.jpg"
-      mode="aspectFill"
-    ></image>
+    <image class="background-image" src="/src/static/loginbg.jpg" mode="aspectFill"></image>
 
     <!-- 粒子动效层 -->
     <view class="particles-container">
-      <view
-        v-for="(particle, index) in particles"
-        :key="index"
-        class="particle"
-        :style="particle.style"
-      ></view>
+      <view v-for="(particle, index) in particles" :key="index" class="particle" :style="particle.style"></view>
     </view>
 
     <view class="login-header">
@@ -25,11 +16,7 @@
 
     <view class="login-form">
       <view class="input-group">
-        <input
-          class="input"
-          placeholder="请输入账号或邮箱"
-          v-model="username"
-        />
+        <input class="input" placeholder="请输入账号或邮箱" v-model="username" />
       </view>
 
       <!-- <view class="input-group">
@@ -37,12 +24,7 @@
             </view> -->
       <view class="input-group">
         <view class="password-input-container">
-          <input
-            class="input"
-            placeholder="请输入密码"
-            :password="!showPassword"
-            v-model="password"
-          />
+          <input class="input" placeholder="请输入密码" :password="!showPassword" v-model="password" />
           <text class="eye-icon" @click="showPassword = !showPassword">{{
             showPassword ? "👁️" : "👁️‍🗨️"
           }}</text>
@@ -136,9 +118,8 @@ export default {
           animationDelay: delay + "s",
           animationDuration: duration + "s",
           opacity: opacity,
-          boxShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, ${
-            opacity * 0.8
-          })`,
+          boxShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, ${opacity * 0.8
+            })`,
           background: `rgba(255, 255, 255, ${opacity})`,
         },
       };
@@ -239,19 +220,24 @@ export default {
 .background-image {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
   height: 100vh;
   z-index: -2;
-  object-fit: cover;
+  object-fit: contain;
+  /* 保持比例，不拉伸变形 */
 }
 
 /* 粒子容器 */
 .particles-container {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
   height: 100vh;
   z-index: -1;
   pointer-events: none;
@@ -281,24 +267,28 @@ export default {
     transform: translate(-100px, -100px) rotate(0deg);
     opacity: 0;
   }
+
   10% {
     opacity: 1;
   }
+
   90% {
     opacity: 1;
   }
+
   100% {
-    transform: translate(calc(100vw + 100px), calc(100vh + 100px))
-      rotate(360deg);
+    transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(360deg);
     opacity: 0;
   }
 }
 
 @keyframes wobble {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -309,8 +299,10 @@ export default {
 .background-image {
   width: 100vw;
   height: 100vh;
-  object-fit: fill; /* 拉伸填满整个容器 */
+  object-fit: fill;
+  /* 拉伸填满整个容器 */
 }
+
 /* #endif */
 
 .login-header {
@@ -391,11 +383,9 @@ export default {
 }
 
 .login-btn {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 122, 255, 0.8),
-    rgba(0, 122, 255, 1)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 122, 255, 0.8),
+      rgba(0, 122, 255, 1));
   color: white;
   border-radius: 10rpx;
   height: 80rpx;

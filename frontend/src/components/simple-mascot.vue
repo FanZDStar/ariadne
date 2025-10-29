@@ -1021,11 +1021,11 @@ export default {
 .mascot-container {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100vw;
-  /* 使用 100vw 覆盖整个视口宽度 */
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
   height: 100vh;
-  /* 使用 100vh 覆盖整个视口高度 */
   pointer-events: none;
   z-index: 9999;
 }
@@ -1104,11 +1104,11 @@ export default {
 .dress-modal {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100vw;
-  /* 使用 100vw 覆盖整个视口宽度 */
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
   height: 100vh;
-  /* 使用 100vh 覆盖整个视口高度 */
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;

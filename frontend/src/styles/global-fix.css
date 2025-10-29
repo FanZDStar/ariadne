@@ -1,0 +1,62 @@
+/**
+ * 全局样式修复：确保所有元素在750rpx限制内
+ * 
+ * 使用说明：
+ * 1. 已在 App.vue 中引入全局样式
+ * 2. 所有图片自动限制在容器宽度内
+ * 3. 所有固定定位元素（看板娘、模态框等）都限制在750rpx内
+ */
+
+/* 通用修复规则 */
+
+/* 1. 限制所有图片 */
+image,
+img,
+.image {
+  max-width: 100% !important;
+  height: auto;
+}
+
+/* 2. 限制所有使用100vw的容器 */
+[class*="container"],
+[class*="wrapper"],
+[class*="modal"] {
+  max-width: 750rpx;
+}
+
+/* 3. 固定定位元素居中限制 */
+.fixed-full-width {
+  position: fixed;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  max-width: 750rpx !important;
+  width: 100% !important;
+}
+
+/* 4. 背景图片容器 */
+.background-image,
+.bg-image {
+  position: fixed;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  max-width: 750rpx !important;
+  width: 100% !important;
+}
+
+/* 5. 模态框/弹窗 */
+.modal,
+.popup,
+.overlay {
+  position: fixed;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  max-width: 750rpx !important;
+  width: 100% !important;
+}
+
+/* 6. 防止横向滚动 */
+page,
+body,
+#app {
+  overflow-x: hidden !important;
+}

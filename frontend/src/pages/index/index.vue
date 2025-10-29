@@ -1,10 +1,6 @@
 <template>
   <view class="splash-container">
-    <image
-      class="splash-image"
-      src="/src/static/beforelogin.png"
-      mode="aspectFill"
-    ></image>
+    <image class="splash-image" src="/src/static/beforelogin.png" mode="aspectFill"></image>
   </view>
 </template>
 
@@ -22,11 +18,13 @@ export default {
 
 <style scoped>
 .splash-container {
-  width: 100vw;
-  height: 100vh;
   position: fixed;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
+  height: 100vh;
   z-index: 9999;
   background: #ffffff;
 }
@@ -40,24 +38,33 @@ export default {
 /* uniapp 端样式 - 图片宽度等于屏幕宽，拉升全屏 */
 /* #ifdef APP-PLUS || MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ */
 .splash-image {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  object-fit: fill; /* 拉升填满整个容器 */
+  object-fit: fill;
+  /* 拉升填满整个容器 */
 }
+
 /* #endif */
 
 /* web 端样式 - 高度是网页高度，不全屏拉伸 */
 /* #ifdef H5 */
 .splash-container {
-  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750rpx;
+  width: 100%;
   height: 100vh;
-  position: relative; /* web端使用相对定位 */
 }
 
 .splash-image {
   width: 100%;
-  height: 100vh; /* 高度等于视口高度 */
-  object-fit: contain; /* 保持比例，不拉伸变形 */
+  height: 100vh;
+  /* 高度等于视口高度 */
+  object-fit: contain;
+  /* 保持比例，不拉伸变形 */
 }
+
 /* #endif */
 </style>
