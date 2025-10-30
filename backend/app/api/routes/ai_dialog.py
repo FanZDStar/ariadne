@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 import httpx
 import logging
+import json
 from app.core.config import settings
 from app.core.prompts import PROMPTS
 from typing import Optional, List
@@ -181,6 +183,108 @@ class AIConfig:
         return enhanced_prompt
 
 ai_config = AIConfig()
+
+@router.post("/ai-dialog-stream")
+async def ai_dialog_stream(data: DialogRequest, request: Request):
+    """AI 对话流式接口 - 实时流式输出"""
+    
+    async def generate():
+        """流式生成响应"""
+        try:
+            logger.info("=" * 80)
+            logger.info("🚀 收到 AI 流式对话请求")
+            logger.info("=" * 80)
+            logger.info(f"📌 场景: {data.scene}")
+            logger.info(f"📌 消息总数: {len(data.messages)}")
+            logger.info(f"📌 用户模板信息提供: {'是' if data.user_profile else '否'}")
+            
+            # 构造请求负载，启用流式
+            payload = ai_config.build_payload(
+                data.messages,
+                data.scene,
+                user_profile=data.user_profile
+            )
+            payload["stream"] = True  # ← 启用流式
+            
+            headers = ai_config.get_headers()
+            
+            # 检查 API Key
+            if not ai_config.api_key:
+                logger.error("AI API Key 未配置")
+                yield f"data: {json.dumps({'error': 'AI 服务配置错误'})}\n\n"
+                return
+            
+            logger.info("💬 开始流式获取 AI 响应...")
+            
+            # 使用流式 API 调用
+            async with httpx.AsyncClient(timeout=ai_config.timeout) as client:
+                try:
+                    async with client.stream(
+                        "POST",
+                        ai_config.api_url,
+                        json=payload,
+                        headers=headers
+                    ) as response:
+                        response.raise_for_status()
+                        
+                        full_content = ""
+                        chunk_count = 0
+                        
+                        # 逐行处理流式响应
+                        async for line in response.aiter_lines():
+                            if line.startswith("data:"):
+                                data_str = line[5:].strip()  # 去掉 "data:" 前缀
+                                
+                                # 检查是否完成
+                                if data_str == "[DONE]":
+                                    logger.info(f"✅ 流式响应完成，共 {chunk_count} 个数据块")
+                                    logger.info(f"📝 最终响应长度: {len(full_content)} 字符")
+                                    yield "data: [DONE]\n\n"
+                                    break
+                                
+                                try:
+                                    chunk = json.loads(data_str)
+                                    if chunk.get("choices") and len(chunk["choices"]) > 0:
+                                        delta = chunk["choices"][0].get("delta", {})
+                                        content = delta.get("content", "")
+                                        
+                                        if content:
+                                            full_content += content
+                                            chunk_count += 1
+                                            
+                                            # 转发给前端（SSE 格式）
+                                            yield f"data: {json.dumps({'content': content})}\n\n"
+                                            
+                                            # 每收到 10 个块记录一次日志
+                                            if chunk_count % 10 == 0:
+                                                logger.info(f"  📦 已处理 {chunk_count} 个数据块，累计 {len(full_content)} 字符")
+                                
+                                except json.JSONDecodeError as e:
+                                    logger.debug(f"无法解析 JSON: {data_str}, 错误: {e}")
+                                    pass
+                
+                except httpx.TimeoutException:
+                    logger.error("AI 服务流式请求超时")
+                    yield f"data: {json.dumps({'error': 'AI 服务响应超时'})}\n\n"
+                except httpx.HTTPStatusError as e:
+                    logger.error(f"AI 服务 HTTP 错误: {e.response.status_code}")
+                    yield f"data: {json.dumps({'error': 'AI 服务错误'})}\n\n"
+                except Exception as e:
+                    logger.error(f"AI 服务流式请求异常: {str(e)}")
+                    yield f"data: {json.dumps({'error': str(e)})}\n\n"
+        
+        except Exception as e:
+            logger.error(f"流式生成异常: {str(e)}")
+            yield f"data: {json.dumps({'error': '系统异常'})}\n\n"
+    
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive"
+        }
+    )
 
 @router.post("/ai-dialog", response_model=DialogResponse)
 async def ai_dialog(data: DialogRequest, request: Request):

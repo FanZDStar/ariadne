@@ -87,6 +87,7 @@ export default {
                     requestData.user_profile = {
                         name: userProfile.name || null,
                         star_sign: userProfile.star_sign || null,
+                        gender: userProfile.gender || null,
                         personality_tags: userProfile.personality_tags || [],
                         hobby_tags: userProfile.hobby_tags || [],
                         personal_motto: userProfile.personal_motto || null
@@ -114,6 +115,131 @@ export default {
                         if (err.errMsg && err.errMsg.includes('timeout')) {
                             errorMsg = 'AI响应超时，请重试';
                         }
+                        reject(new Error(errorMsg));
+                    }
+                });
+            });
+        },
+
+        /**
+         * 流式 AI 调用方法（边生成边显示）
+         */
+        async callAIAPIStream(messages, scene = 'general', userProfile = null) {
+            return new Promise((resolve, reject) => {
+                // 构建请求数据
+                const requestData = {
+                    messages: messages,
+                    scene: scene
+                };
+
+                // 如果提供了用户模板信息，则包含在请求中
+                if (userProfile) {
+                    requestData.user_profile = {
+                        name: userProfile.name || null,
+                        star_sign: userProfile.star_sign || null,
+                        gender: userProfile.gender || null,
+                        personality_tags: userProfile.personality_tags || [],
+                        hobby_tags: userProfile.hobby_tags || [],
+                        personal_motto: userProfile.personal_motto || null
+                    };
+                    console.log('📋 流式模式 - 已包含用户模板信息:', requestData.user_profile);
+                }
+
+                let fullContent = '';
+                let chunkCount = 0;
+                let lastUpdateTime = Date.now();
+                const updateInterval = 100; // 最小更新间隔（毫秒）
+
+                // 获取监听回调函数
+                const streamCallback = this._currentStreamListener;
+
+                uni.request({
+                    url: `${BASE_URL}/ai-dialog-stream?t=${Date.now()}`,  // 新增流式端点
+                    method: 'POST',
+                    header: {
+                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: requestData,
+                    responseType: 'text',
+                    success: (res) => {
+                        if (res.statusCode === 200) {
+                            try {
+                                // 解析 SSE 格式的流式数据
+                                const lines = res.data.split('\n');
+
+                                for (const line of lines) {
+                                    if (line.startsWith('data:')) {
+                                        const dataStr = line.slice(5).trim();
+
+                                        // 检查是否完成
+                                        if (dataStr === '[DONE]') {
+                                            console.log(`✅ 流式响应完成，共 ${chunkCount} 个数据块，总长度 ${fullContent.length} 字符`);
+                                            resolve({ content: fullContent });
+                                            break;
+                                        }
+
+                                        // 解析 JSON 数据
+                                        if (dataStr) {
+                                            try {
+                                                const chunk = JSON.parse(dataStr);
+
+                                                // 检查错误
+                                                if (chunk.error) {
+                                                    console.error('流式响应错误:', chunk.error);
+                                                    reject(new Error(chunk.error));
+                                                    return;
+                                                }
+
+                                                // 提取内容
+                                                if (chunk.content) {
+                                                    fullContent += chunk.content;
+                                                    chunkCount++;
+
+                                                    // 实时更新 UI（节流处理）
+                                                    const now = Date.now();
+                                                    if (now - lastUpdateTime >= updateInterval) {
+                                                        // 使用回调函数而不是事件
+                                                        if (streamCallback && typeof streamCallback === 'function') {
+                                                            try {
+                                                                streamCallback(fullContent);
+                                                            } catch (err) {
+                                                                console.warn('流式更新回调错误:', err);
+                                                            }
+                                                        }
+                                                        lastUpdateTime = now;
+
+                                                        // 每收到 10 个块记录一次
+                                                        if (chunkCount % 10 === 0) {
+                                                            console.log(`  📦 已收到 ${chunkCount} 个数据块，累计 ${fullContent.length} 字符`);
+                                                        }
+                                                    }
+                                                }
+                                            } catch (parseErr) {
+                                                console.debug('无法解析 JSON:', dataStr);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // 确保最后一次更新
+                                if (fullContent.length > 0) {
+                                    this.$emit('ai-streaming', fullContent);
+                                }
+                            } catch (error) {
+                                console.error('流式数据处理错误:', error);
+                                reject(error);
+                            }
+                        } else {
+                            reject(new Error('AI流式请求失败'));
+                        }
+                    },
+                    fail: (err) => {
+                        let errorMsg = '网络连接失败，请检查网络后重试';
+                        if (err.errMsg && err.errMsg.includes('timeout')) {
+                            errorMsg = 'AI响应超时，请重试';
+                        }
+                        console.error('流式请求失败:', err);
                         reject(new Error(errorMsg));
                     }
                 });
@@ -643,14 +769,55 @@ ${report.ai_analysis.substring(0, 100)}...
                     console.log('⚠️ 获取用户模板失败:', e);
                 }
 
-                // 调用AI API，传递用户模板信息
-                const aiResponse = await this.callAIAPI(this.chatHistory, this.scene, userProfile);
-
-                // 添加AI响应到聊天历史
+                // 添加 AI 助手消息占位符到聊天历史（用于实时显示）
+                const aiMessageIndex = this.chatHistory.length;
                 this.chatHistory.push({
                     role: 'assistant',
-                    content: aiResponse.content  // 修改为正确的字段名
+                    content: ''  // 初始为空，会被流式数据填充
                 });
+
+                // 监听流式数据更新事件
+                const streamListener = (fullContent) => {
+                    // 实时更新聊天历史中的 AI 消息内容
+                    if (aiMessageIndex < this.chatHistory.length) {
+                        this.chatHistory[aiMessageIndex].content = fullContent;
+                    }
+                    console.log(`📡 流式更新: ${fullContent.length} 字符`);
+                };
+
+                // 使用流式 API 调用
+                try {
+                    // 监听流式事件（需要在 callAIAPIStream 内部手动触发）
+                    this._currentStreamListener = streamListener;
+
+                    const aiResponse = await this.callAIAPIStream(this.chatHistory.slice(0, -1), this.scene, userProfile);
+
+                    // 流式完成，清除监听
+                    this._currentStreamListener = null;
+
+                    // 确保最终内容是完整的
+                    if (aiMessageIndex < this.chatHistory.length) {
+                        this.chatHistory[aiMessageIndex].content = aiResponse.content;
+                    }
+
+                    console.log('✅ 流式对话完成，长度:', aiResponse.content.length);
+                } catch (streamError) {
+                    console.warn('流式 API 失败，尝试使用非流式 API...', streamError);
+
+                    // 清除监听
+                    this._currentStreamListener = null;
+
+                    // 降级：如果流式失败，使用传统 API
+                    try {
+                        const aiResponse = await this.callAIAPI(this.chatHistory.slice(0, -1), this.scene, userProfile);
+                        this.chatHistory[aiMessageIndex].content = aiResponse.content;
+                        console.log('✅ 使用传统 API 完成对话');
+                    } catch (fallbackError) {
+                        console.error('两种 API 都失败:', fallbackError);
+                        this.chatHistory[aiMessageIndex].content = '抱歉，AI 服务暂时不可用，请稍后重试。';
+                        throw fallbackError;
+                    }
+                }
 
                 this.hasNewMessages = true;
 
