@@ -1,5 +1,6 @@
 <template>
-  <view class="wisdom-container">    <view class="header">
+  <view class="wisdom-container">
+    <view class="header">
       <text class="title">人际智慧</text>
       <text class="subtitle">提升交往技能，保护情感安全</text>
     </view>
@@ -12,10 +13,6 @@
       <view class="tab-item" :class="{ active: activeTab === 'protection' }" @click="activeTab = 'protection'">
         <text class="tab-icon">🛡️</text>
         <text class="tab-text">防护指南</text>
-      </view>
-      <view class="tab-item" :class="{ active: activeTab === 'practice' }" @click="activeTab = 'practice'">
-        <text class="tab-icon">🎭</text>
-        <text class="tab-text">实战练习</text>
       </view>
       <view class="tab-item" :class="{ active: activeTab === 'growth' }" @click="activeTab = 'growth'">
         <text class="tab-icon">📈</text>
@@ -65,6 +62,27 @@
           </view>
         </view>
       </view>
+
+      <!-- AI情景模拟训练 -->
+      <view class="practice-section">
+        <text class="section-title">AI情景模拟训练</text>
+        <view class="skill-card recommended" @click="startInteractivePractice">
+          <view class="skill-header">
+            <text class="skill-title">AI情景模拟训练</text>
+          </view>
+          <text class="skill-content">与AI进行模拟对话，练习交往技巧，在安全的环境中提升沟通能力</text>
+          <view class="skill-tags">
+            <text class="skill-tag">AI对话</text>
+            <text class="skill-tag">情景模拟</text>
+            <text class="skill-tag">技能训练</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="startInteractivePractice">
+              <text class="action-text">开始练习</text>
+            </view>
+          </view>
+        </view>
+      </view>
     </view>
 
     <!-- 防护指南模块 -->
@@ -104,6 +122,23 @@
           </view>
         </view>
 
+        <view class="skill-card recommended" @click="startProtectionDrill">
+          <view class="skill-header">
+            <text class="skill-title">防护技能训练</text>
+          </view>
+          <text class="skill-content">通过练习提升情感风险识别和应对能力，学习保护自己的技巧</text>
+          <view class="skill-tags">
+            <text class="skill-tag">防护</text>
+            <text class="skill-tag">训练</text>
+            <text class="skill-tag">风险应对</text>
+          </view>
+          <view class="skill-actions">
+            <view class="action-btn primary" @click.stop="startProtectionDrill">
+              <text class="action-text">开始训练</text>
+            </view>
+          </view>
+        </view>
+
         <view class="skill-card recommended" @click="viewEmergencyResources">
           <view class="skill-header">
             <text class="skill-title">应急资源</text>
@@ -121,46 +156,6 @@
           </view>
         </view>
       </view>
-    </view>
-
-    <!-- 实战练习模块 -->
-    <view v-if="activeTab === 'practice'" class="content-section">
-      <view class="practice-options">
-        <view class="practice-card" @click="startInteractivePractice">
-          <view class="practice-header">
-            <text class="practice-icon">💬</text>
-            <text class="practice-title">AI情景模拟训练</text>
-          </view>
-          <text class="practice-desc">与AI进行模拟对话，练习交往技巧</text>
-        </view>
-
-        <!-- <view class="practice-card" @click="startScenarioPractice">
-          <view class="practice-header">
-            <text class="practice-icon">🎬</text>
-            <text class="practice-title">情景模拟练习</text>
-          </view>
-          <text class="practice-desc">在模拟情景中练习应对各种社交场合</text>
-        </view> -->
-
-        <view class="practice-card" @click="startProtectionDrill">
-          <view class="practice-header">
-            <text class="practice-icon">🛡️</text>
-            <text class="practice-title">防护技能训练</text>
-          </view>
-          <text class="practice-desc">通过练习提升情感风险识别和应对能力</text>
-        </view>
-      </view>
-
-      <!-- <view v-if="practiceHistory.length > 0" class="practice-history">
-        <text class="section-title">练习记录</text>
-        <view v-for="record in practiceHistory" :key="record.id" class="history-item">
-          <view class="history-header">
-            <text class="history-title">{{ record.title }}</text>
-            <text class="history-date">{{ formatDate(record.date) }}</text>
-          </view>
-          <text class="history-result">{{ record.result }}</text>
-        </view>
-      </view> -->
     </view>
 
     <!-- 成长档案模块 -->
@@ -944,6 +939,25 @@ export default {
 }
 
 .categories-section::before {
+  content: "";
+  position: absolute;
+  top: -20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, #42a5f5, #1976d2);
+  border-radius: 2rpx;
+  opacity: 0.3;
+}
+
+/* 练习区域 */
+.practice-section {
+  margin-top: 40rpx;
+  position: relative;
+}
+
+.practice-section::before {
   content: "";
   position: absolute;
   top: -20rpx;
