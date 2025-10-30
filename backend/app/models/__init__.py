@@ -24,6 +24,10 @@ from .user_diary_backgrounds import UserDiaryBackground
 from .interpersonal_practice_session import InterpersonalPracticeSession
 from .protection_drill_report import ProtectionDrillReport
 from .star_points import UserStarPoints, StarPointLog, DailyStarLimits
+from .mascot_affection import (
+    UserMascotAffection, MascotAffectionLog, MascotAffectionLevel, 
+    DailyAffectionLimits, UserAffectionRewards
+)
 # 导出所有模型
 __all__ = [
     "User",
@@ -50,5 +54,10 @@ __all__ = [
     "ProtectionDrillReport",
     "UserStarPoints",
     "StarPointLog", 
-    "DailyStarLimits"
+    "DailyStarLimits",
+    "UserMascotAffection",
+    "MascotAffectionLog", 
+    "MascotAffectionLevel",
+    "DailyAffectionLimits",
+    "UserAffectionRewards"
 ]

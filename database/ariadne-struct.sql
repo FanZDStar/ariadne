@@ -11,7 +11,7 @@
  Target Server Version : 80038 (8.0.38)
  File Encoding         : 65001
 
- Date: 30/10/2025 19:14:23
+ Date: 30/10/2025 20:23:42
 */
 
 SET NAMES utf8mb4;
@@ -126,6 +126,30 @@ CREATE TABLE `crisis_warnings`  (
   INDEX `idx_is_resolved`(`is_resolved` ASC) USING BTREE,
   CONSTRAINT `crisis_warnings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for daily_affection_limits
+-- ----------------------------
+DROP TABLE IF EXISTS `daily_affection_limits`;
+CREATE TABLE `daily_affection_limits`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `date` date NOT NULL COMMENT '日期',
+  `daily_login` tinyint(1) NULL DEFAULT 0 COMMENT '每日登录好感度',
+  `outfit_purchase_count` int NULL DEFAULT 0 COMMENT '服装购买次数',
+  `outfit_purchase_affection` int NULL DEFAULT 0 COMMENT '服装购买获得好感度',
+  `emotion_chat_count` int NULL DEFAULT 0 COMMENT '情感对话次数',
+  `emotion_chat_affection` int NULL DEFAULT 0 COMMENT '情感对话获得好感度',
+  `diary_complete` tinyint(1) NULL DEFAULT 0 COMMENT '完成日记好感度',
+  `mood_tracking` tinyint(1) NULL DEFAULT 0 COMMENT '心情记录好感度',
+  `total_daily_affection` int NULL DEFAULT 0 COMMENT '当日总获得好感度',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_user_date_affection`(`user_id` ASC, `date` ASC) USING BTREE,
+  INDEX `idx_date`(`date` ASC) USING BTREE,
+  CONSTRAINT `fk_daily_affection_limits_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '每日好感度限制表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for daily_star_limits
@@ -364,6 +388,52 @@ CREATE TABLE `learning_paths`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `ix_learning_paths_id`(`id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for mascot_affection_levels
+-- ----------------------------
+DROP TABLE IF EXISTS `mascot_affection_levels`;
+CREATE TABLE `mascot_affection_levels`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `level` int NOT NULL COMMENT '等级',
+  `level_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '等级名称',
+  `required_affection` int NOT NULL COMMENT '达到该等级所需好感度',
+  `level_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '等级描述',
+  `unlock_rewards` json NULL COMMENT '解锁奖励(动作、道具等)',
+  `special_actions` json NULL COMMENT '特殊动作列表',
+  `random_drop_config` json NULL COMMENT '随机掉落配置',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_level`(`level` ASC) USING BTREE,
+  INDEX `idx_required_affection`(`required_affection` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '好感度等级配置表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for mascot_affection_logs
+-- ----------------------------
+DROP TABLE IF EXISTS `mascot_affection_logs`;
+CREATE TABLE `mascot_affection_logs`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `action_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '行为类型',
+  `affection_change` int NOT NULL COMMENT '好感度变化值(正数为增加，负数为减少)',
+  `before_affection` int NOT NULL COMMENT '变化前好感度',
+  `after_affection` int NOT NULL COMMENT '变化后好感度',
+  `before_level` int NOT NULL COMMENT '变化前等级',
+  `after_level` int NOT NULL COMMENT '变化后等级',
+  `is_level_up` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否升级',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '描述信息',
+  `source_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '来源ID(如订单ID、活动ID等)',
+  `source_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '来源类型',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_user_date`(`user_id` ASC, `created_at` DESC) USING BTREE,
+  INDEX `idx_action_type`(`action_type` ASC) USING BTREE,
+  INDEX `idx_level_up`(`is_level_up` ASC, `created_at` DESC) USING BTREE,
+  CONSTRAINT `fk_mascot_affection_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '好感度变化记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for mascot_outfits
@@ -749,7 +819,7 @@ CREATE TABLE `star_point_logs`  (
   INDEX `idx_star_logs_action`(`action_type` ASC) USING BTREE,
   INDEX `idx_star_logs_date`(`created_at` ASC) USING BTREE,
   CONSTRAINT `fk_star_point_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 178 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 180 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '星星积分变动日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for system_configs
@@ -909,6 +979,30 @@ CREATE TABLE `user_achievements`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for user_affection_rewards
+-- ----------------------------
+DROP TABLE IF EXISTS `user_affection_rewards`;
+CREATE TABLE `user_affection_rewards`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `reward_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '奖励类型(level_reward/random_drop)',
+  `reward_category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '奖励分类(action/points/water_drops/outfit等)',
+  `reward_content` json NOT NULL COMMENT '奖励内容详情',
+  `reward_value` int NULL DEFAULT NULL COMMENT '奖励数值(如积分数、水滴数)',
+  `trigger_level` int NULL DEFAULT NULL COMMENT '触发等级(等级奖励时使用)',
+  `trigger_action` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '触发动作(随机掉落时使用)',
+  `is_claimed` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否已领取',
+  `claimed_at` datetime NULL DEFAULT NULL COMMENT '领取时间',
+  `expires_at` datetime NULL DEFAULT NULL COMMENT '过期时间',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_user_type`(`user_id` ASC, `reward_type` ASC) USING BTREE,
+  INDEX `idx_user_claimed`(`user_id` ASC, `is_claimed` ASC) USING BTREE,
+  INDEX `idx_expires`(`expires_at` ASC) USING BTREE,
+  CONSTRAINT `fk_user_affection_rewards_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户好感度奖励记录表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
 -- Table structure for user_diary_backgrounds
 -- ----------------------------
 DROP TABLE IF EXISTS `user_diary_backgrounds`;
@@ -972,6 +1066,27 @@ CREATE TABLE `user_learning_path_progress`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for user_mascot_affection
+-- ----------------------------
+DROP TABLE IF EXISTS `user_mascot_affection`;
+CREATE TABLE `user_mascot_affection`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `current_affection` int NOT NULL DEFAULT 0 COMMENT '当前好感度值',
+  `total_earned_affection` int NOT NULL DEFAULT 0 COMMENT '累计获得好感度',
+  `current_level` int NOT NULL DEFAULT 1 COMMENT '当前好感度等级',
+  `level_progress` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '当前等级进度百分比',
+  `next_level_required` int NOT NULL DEFAULT 100 COMMENT '升级到下一等级所需好感度',
+  `last_interaction_at` datetime NULL DEFAULT NULL COMMENT '最后互动时间',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_user_affection`(`user_id` ASC) USING BTREE,
+  INDEX `idx_user_level`(`user_id` ASC, `current_level` ASC) USING BTREE,
+  CONSTRAINT `fk_user_mascot_affection_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户看板娘好感度表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
 -- Table structure for user_mascot_outfits
 -- ----------------------------
 DROP TABLE IF EXISTS `user_mascot_outfits`;
@@ -987,7 +1102,7 @@ CREATE TABLE `user_mascot_outfits`  (
   INDEX `ix_user_mascot_outfits_id`(`id` ASC) USING BTREE,
   CONSTRAINT `user_mascot_outfits_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `user_mascot_outfits_ibfk_2` FOREIGN KEY (`outfit_id`) REFERENCES `mascot_outfits` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_profile_templates

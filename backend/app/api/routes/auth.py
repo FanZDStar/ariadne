@@ -114,6 +114,38 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         # 积分奖励失败不影响登录
         print(f"每日登录积分奖励失败: {e}")
     
+    # 尝试奖励每日登录好感度
+    affection_awarded = False
+    affection_points = 0
+    affection_message = ""
+    affection_level_up = False
+    
+    try:
+        from app.services.mascot_affection_service import MascotAffectionService
+        from app.utils.affection_types import MascotAffectionAction, AffectionSourceType
+        
+        affection_service = MascotAffectionService(db)
+        result = affection_service.award_affection(
+            user_id=db_user.user_id,
+            action=MascotAffectionAction.DAILY_LOGIN,
+            source_type=AffectionSourceType.LOGIN
+        )
+        
+        if result.rewarded:
+            affection_awarded = True
+            affection_points = result.affection_awarded
+            affection_message = f"看板娘好感度 +{result.affection_awarded}"
+            affection_level_up = result.level_up
+            print(f"用户 {db_user.username} 登录获得 {result.affection_awarded} 好感度")
+            
+            if result.level_up:
+                affection_message += f"，恭喜升级到{result.new_level}级！"
+        else:
+            print(f"用户 {db_user.username} 今日已获得登录好感度")
+    except Exception as e:
+        # 好感度奖励失败不影响登录
+        print(f"每日登录好感度奖励失败: {e}")
+    
     # 创建访问令牌
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -126,7 +158,11 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "star_awarded": star_awarded,
         "star_points": star_points,
-        "star_message": star_message
+        "star_message": star_message,
+        "affection_awarded": affection_awarded,
+        "affection_points": affection_points,
+        "affection_message": affection_message,
+        "affection_level_up": affection_level_up
     }
 
 @router.get("/users/me", response_model=UserResponse)

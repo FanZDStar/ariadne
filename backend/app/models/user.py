@@ -45,3 +45,9 @@ class User(Base):
     star_points = relationship("UserStarPoints", back_populates="user", uselist=False, cascade="all, delete-orphan")
     star_logs = relationship("StarPointLog", back_populates="user", cascade="all, delete-orphan")
     daily_star_limits = relationship("DailyStarLimits", back_populates="user", cascade="all, delete-orphan")
+    
+    # 添加看板娘好感度系统关联
+    mascot_affection = relationship("UserMascotAffection", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    affection_logs = relationship("MascotAffectionLog", back_populates="user", cascade="all, delete-orphan")
+    daily_affection_limits = relationship("DailyAffectionLimits", back_populates="user", cascade="all, delete-orphan")
+    affection_rewards = relationship("UserAffectionRewards", back_populates="user", cascade="all, delete-orphan")

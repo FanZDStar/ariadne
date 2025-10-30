@@ -28,6 +28,7 @@ class DialogRequest(BaseModel):
     messages: list[Message]
     scene: str = "self-dialog"  # 场景标识，默认自我对话
     user_profile: Optional[UserProfile] = Field(None, description="用户模板信息（可选）")
+    user_id: Optional[int] = Field(None, description="用户ID（用于好感度系统）")
 
 class DialogResponse(BaseModel):
     content: str
@@ -346,6 +347,29 @@ async def ai_dialog(data: DialogRequest, request: Request):
                     optimized = optimize_ai_response(content)
                     logger.info(f"✨ 优化后响应长度: {len(optimized)} 字符")
                     logger.info(f"✨ 优化后响应内容: {optimized}")
+                    
+                    # 尝试奖励情感对话好感度
+                    try:
+                        if data.user_id:  # 确保有用户ID
+                            from app.database.session import get_db
+                            from app.services.mascot_affection_service import MascotAffectionService
+                            from app.utils.affection_types import MascotAffectionAction, AffectionSourceType
+                            
+                            db = next(get_db())
+                            affection_service = MascotAffectionService(db)
+                            result = affection_service.award_affection(
+                                user_id=data.user_id,
+                                action=MascotAffectionAction.EMOTION_CHAT,
+                                source_type=AffectionSourceType.CHAT
+                            )
+                            
+                            if result.rewarded:
+                                logger.info(f"用户 {data.user_id} 情感对话获得 {result.affection_awarded} 好感度")
+                                if result.level_up:
+                                    logger.info(f"用户 {data.user_id} 好感度升级到 {result.new_level} 级")
+                    except Exception as e:
+                        logger.error(f"情感对话好感度奖励失败: {e}")
+                    
                     logger.info("=" * 80)
                     return DialogResponse(content=optimized)
                 else:

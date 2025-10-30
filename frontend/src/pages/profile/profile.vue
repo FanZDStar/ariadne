@@ -11,10 +11,18 @@
             <view class="user-desc-container">
                 <text class="user-desc" @click="editBio">{{ userInfo.bio || '情感探索者' }}</text>
             </view>
-            <!-- 星星积分显示 -->
-            <view class="star-points-container" @click="goToStarPointsDetail">
-                <view class="star-icon">⭐</view>
-                <text class="star-count">{{ starPoints }}</text>
+            <!-- 积分和好感度显示 -->
+            <view class="points-section">
+                <view class="star-points-container" @click="goToStarPointsDetail">
+                    <view class="star-icon">⭐</view>
+                    <text class="star-count">{{ starPoints }}</text>
+                </view>
+                <!-- 好感度显示 -->
+                <view class="affection-points-container" @click="goToAffectionDetail">
+                    <view class="affection-icon">💖</view>
+                    <text class="affection-count">{{ affectionPoints }}</text>
+                    <text class="affection-level">{{ affectionLevelName }}</text>
+                </view>
             </view>
         </view>
 
@@ -126,6 +134,9 @@ export default {
                 avatar_url: null
             },
             starPoints: 0, // 星星积分数量
+            affectionPoints: 0, // 用户好感度
+            affectionLevel: 1, // 好感度等级
+            affectionLevelName: "陌生", // 好感度等级名称
             uploadingAvatar: false,
             showSettingsModal: false,
             modalView: 'main', // 'main', 'email', 'password'
@@ -146,11 +157,13 @@ export default {
     onLoad() {
         this.loadUserInfo();
         this.loadStarPoints();
+        this.loadAffectionPoints();
     },
 
     onShow() {
-        // 每次页面显示时也刷新积分信息
+        // 每次页面显示时也刷新积分和好感度信息
         this.loadStarPoints();
+        this.loadAffectionPoints();
     },
 
     methods: {
@@ -576,6 +589,52 @@ export default {
             // });
         },
 
+        // 加载用户好感度
+        async loadAffectionPoints() {
+            const token = storage.getToken();
+            if (!token) {
+                this.affectionPoints = 0;
+                this.affectionLevel = 1;
+                this.affectionLevelName = "陌生";
+                return;
+            }
+
+            try {
+                const response = await uni.request({
+                    url: `${process.env.VUE_APP_API_BASE_URL}/mascot-affection/affection/summary`,
+                    method: 'GET',
+                    header: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.statusCode === 200) {
+                    const data = response.data;
+                    this.affectionPoints = data.current_affection || 0;
+                    this.affectionLevel = data.current_level || 1;
+                    this.affectionLevelName = data.level_name || "陌生";
+                } else if (response.statusCode === 401) {
+                    // Token过期，清除本地存储
+                    storage.clearToken();
+                    this.affectionPoints = 0;
+                    this.affectionLevel = 1;
+                    this.affectionLevelName = "陌生";
+                }
+            } catch (error) {
+                console.error('获取好感度失败:', error);
+                this.affectionPoints = 0;
+                this.affectionLevel = 1;
+                this.affectionLevelName = "陌生";
+            }
+        },
+
+        // 跳转到好感度详情页面
+        goToAffectionDetail() {
+            uni.navigateTo({
+                url: '/pages/affection/affection-detail'
+            });
+        },
+
         logout() {
             uni.showModal({
                 title: '提示',
@@ -672,6 +731,14 @@ export default {
     background-color: #f0f0f0;
 }
 
+/* 积分和好感度区域 */
+.points-section {
+    display: flex;
+    justify-content: center;
+    gap: 15rpx;
+    margin-top: 20rpx;
+}
+
 /* 星星积分样式 */
 .star-points-container {
     display: flex;
@@ -681,12 +748,11 @@ export default {
     background: linear-gradient(135deg, #ffd700, #ffed4e);
     border: 2rpx solid #f0c400;
     border-radius: 25rpx;
-    padding: 15rpx 25rpx;
-    margin-top: 20rpx;
-    margin: 20rpx auto 0;
-    max-width: 200rpx;
+    padding: 15rpx 20rpx;
+    max-width: 160rpx;
     box-shadow: 0 4rpx 12rpx rgba(255, 215, 0, 0.3);
     transition: all 0.3s ease;
+    flex: 1;
 }
 
 .star-points-container:active {
@@ -694,22 +760,63 @@ export default {
     box-shadow: 0 2rpx 8rpx rgba(255, 215, 0, 0.4);
 }
 
+/* 好感度积分容器 */
+.affection-points-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6rpx;
+    background: linear-gradient(135deg, #ff69b4, #ff91c7);
+    border: 2rpx solid #ff1493;
+    border-radius: 25rpx;
+    padding: 15rpx 15rpx;
+    max-width: 180rpx;
+    box-shadow: 0 4rpx 12rpx rgba(255, 105, 180, 0.3);
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.affection-points-container:active {
+    transform: translateY(1rpx);
+    box-shadow: 0 2rpx 8rpx rgba(255, 105, 180, 0.4);
+}
+
 .star-icon {
-    font-size: 32rpx;
+    font-size: 28rpx;
     line-height: 1;
 }
 
 .star-count {
-    font-size: 30rpx;
+    font-size: 26rpx;
     font-weight: bold;
     color: #b8860b;
     line-height: 1;
 }
 
 .star-label {
-    font-size: 24rpx;
+    font-size: 22rpx;
     color: #b8860b;
     line-height: 1;
+}
+
+/* 好感度图标和数字样式 */
+.affection-icon {
+    font-size: 28rpx;
+    line-height: 1;
+}
+
+.affection-count {
+    font-size: 26rpx;
+    font-weight: bold;
+    color: #c71585;
+    line-height: 1;
+}
+
+.affection-level {
+    font-size: 22rpx;
+    color: #c71585;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .content {

@@ -63,6 +63,10 @@ class TokenWithStarReward(BaseModel):
     star_awarded: bool = False
     star_points: int = 0
     star_message: str = "欢迎回来~ 💫"
+    affection_awarded: bool = False
+    affection_points: int = 0
+    affection_message: str = ""
+    affection_level_up: bool = False
 
 class TokenData(BaseModel):
     username: Optional[str] = None

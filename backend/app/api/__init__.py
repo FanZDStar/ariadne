@@ -114,3 +114,11 @@ api_router.include_router(
     tags=["user-profile-template"]
 )
 
+# 导入并添加看板娘好感度路由
+from app.api.routes import mascot_affection
+api_router.include_router(
+    mascot_affection.router,
+    prefix="/mascot-affection",
+    tags=["看板娘好感度"]
+)
+
