@@ -26,6 +26,7 @@ from app.api.routes import (
     tree_hole_chat,
     crisis_warning,
     risk_assessment,
+    multimodal_chat,
 )
 from app.api.routes import (
     social_skills,
@@ -101,4 +102,9 @@ api_router.include_router(
 api_router.include_router(
     tree_energy.router,
     tags=["树洞能量系统"]
+)
+api_router.include_router(
+    multimodal_chat.router,
+    prefix="/multimodal",
+    tags=["多模态对话"]
 )

@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     ai_top_p: float = 0.9
     ai_timeout: float = 30.0
     
+    # 多模态AI配置
+    ai_vision_model: str = "qwen-vl-max"
+    ai_thinking_model: str = "qwen3-vl-32b-thinking"
+    ai_vision_max_tokens: int = 1500
+    ai_enable_thinking: bool = True
+    
     # 数据加密配置
     encryption_password: str = "ariadne_default_key_2025"
     
