@@ -19,6 +19,10 @@
         </view>
 
         <view class="content">
+            <view class="menu-item" @click="goToProfileTemplate">
+                <text class="menu-text">个人档案</text>
+                <text class="arrow">></text>
+            </view>
             <view class="menu-item" @click="openSettingsModal">
                 <text class="menu-text">信息修改</text>
                 <text class="arrow">></text>
@@ -519,6 +523,12 @@ export default {
         goToFeedback() {
             uni.navigateTo({
                 url: '/pages/feedback/feedback'
+            });
+        },
+
+        goToProfileTemplate() {
+            uni.navigateTo({
+                url: '/pages/profile/user-profile-template'
             });
         },
 

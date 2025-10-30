@@ -72,10 +72,28 @@ export default {
 
     methods: {
         /**
-         * AI 调用方法
+         * AI 调用方法（支持用户模板信息）
          */
-        async callAIAPI(messages, scene = 'general') {
+        async callAIAPI(messages, scene = 'general', userProfile = null) {
             return new Promise((resolve, reject) => {
+                // 构建请求数据
+                const requestData = {
+                    messages: messages,
+                    scene: scene
+                };
+
+                // 如果提供了用户模板信息，则包含在请求中
+                if (userProfile) {
+                    requestData.user_profile = {
+                        name: userProfile.name || null,
+                        star_sign: userProfile.star_sign || null,
+                        personality_tags: userProfile.personality_tags || [],
+                        hobby_tags: userProfile.hobby_tags || [],
+                        personal_motto: userProfile.personal_motto || null
+                    };
+                    console.log('📋 已包含用户模板信息:', requestData.user_profile);
+                }
+
                 uni.request({
                     url: `${BASE_URL}/ai-dialog?t=${Date.now()}`,  // 添加时间戳避免缓存
                     method: 'POST',
@@ -83,10 +101,7 @@ export default {
                         'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
                         'Content-Type': 'application/json'
                     },
-                    data: {
-                        messages: messages,
-                        scene: scene
-                    },
+                    data: requestData,
                     success: (res) => {
                         if (res.statusCode === 200) {
                             resolve(res.data);
@@ -616,8 +631,20 @@ ${report.ai_analysis.substring(0, 100)}...
             this.isAiTyping = true;
 
             try {
-                // 调用AI API
-                const aiResponse = await this.callAIAPI(this.chatHistory, this.scene);
+                // 获取用户模板信息（从本地存储）
+                let userProfile = null;
+                try {
+                    const profileData = uni.getStorageSync('user_profile_template');
+                    if (profileData) {
+                        userProfile = typeof profileData === 'string' ? JSON.parse(profileData) : profileData;
+                        console.log('📋 从本地存储获取用户模板:', userProfile);
+                    }
+                } catch (e) {
+                    console.log('⚠️ 获取用户模板失败:', e);
+                }
+
+                // 调用AI API，传递用户模板信息
+                const aiResponse = await this.callAIAPI(this.chatHistory, this.scene, userProfile);
 
                 // 添加AI响应到聊天历史
                 this.chatHistory.push({
@@ -628,7 +655,7 @@ ${report.ai_analysis.substring(0, 100)}...
                 this.hasNewMessages = true;
 
                 // 每次对话后自动保存以触发星点奖励
-                console.log('� 自动保存对话以获取星点奖励...');
+                console.log('💾 自动保存对话以获取星点奖励...');
                 await this.autoSaveForStarReward();
 
                 // 如果检测到风险或会话已启用自动保存，处理风险相关逻辑

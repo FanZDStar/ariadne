@@ -119,6 +119,13 @@
       }
     },
     {
+      "path": "pages/profile/user-profile-template",
+      "style": {
+        "navigationBarTitleText": "个人档案",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/diary/diary",
       "style": {
         "navigationBarTitleText": "",

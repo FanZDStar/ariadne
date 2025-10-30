@@ -40,6 +40,7 @@ from app.api.routes import (
     star_points,
     mascot_outfits,
     tree_energy,
+    user_profile_template,
 )
 from app.api import protection_drill
 
@@ -108,3 +109,8 @@ api_router.include_router(
     prefix="/multimodal",
     tags=["多模态对话"]
 )
+api_router.include_router(
+    user_profile_template.router,
+    tags=["user-profile-template"]
+)
+

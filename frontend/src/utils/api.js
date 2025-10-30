@@ -551,6 +551,49 @@ export const api = {
       },
     });
   },
+
+  // 获取用户个人档案模板
+  getUserProfileTemplate: () => {
+    return request("/api/user-profile-template/", {
+      method: "GET",
+    });
+  },
+
+  // 创建用户个人档案模板
+  createUserProfileTemplate: (profileData) => {
+    return request("/api/user-profile-template/", {
+      method: "POST",
+      data: profileData,
+      header: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
+
+  // 创建或更新用户个人档案模板
+  updateUserProfileTemplate: (profileData) => {
+    return request("/api/user-profile-template/", {
+      method: "PATCH",
+      data: profileData,
+      header: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
+
+  // 获取标签选项
+  getTagOptions: () => {
+    return request("/api/user-profile-template/tag-options", {
+      method: "GET",
+    });
+  },
+
+  // 获取个人档案完成度
+  getProfileCompleteness: () => {
+    return request("/api/user-profile-template/completeness", {
+      method: "GET",
+    });
+  },
 };
 
 // 本地存储工具
