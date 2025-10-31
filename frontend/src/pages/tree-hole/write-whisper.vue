@@ -1,11 +1,15 @@
 <template>
-  <view class="write-whisper-container">    <view class="header">
+  <view class="write-whisper-container">
+    <view class="header">
       <view class="header-left" @click="cancel">
         <text class="cancel-btn">取消</text>
       </view>
       <view class="header-right" @click="publish">
-        <text class="publish-btn" :class="{ disabled: !canPublish || isPublishing }">
-          {{ isPublishing ? '发布中...' : '发布' }}
+        <text
+          class="publish-btn"
+          :class="{ disabled: !canPublish || isPublishing }"
+        >
+          {{ isPublishing ? "发布中..." : "发布" }}
         </text>
       </view>
     </view>
@@ -13,11 +17,21 @@
     <view class="content">
       <!-- 悄悄话标题输入 -->
       <view class="title-input-section">
-        <input class="whisper-title" placeholder="给悄悄话起个标题吧..." v-model="whisperTitle" maxlength="50" />
+        <input
+          class="whisper-title"
+          placeholder="给悄悄话起个标题吧..."
+          v-model="whisperTitle"
+          maxlength="50"
+        />
       </view>
 
       <!-- 悄悄话内容输入 -->
-      <textarea class="whisper-content" placeholder="向树洞倾诉你的心声..." v-model="whisperContent" maxlength="1000" />
+      <textarea
+        class="whisper-content"
+        placeholder="向树洞倾诉你的心声..."
+        v-model="whisperContent"
+        maxlength="1000"
+      />
 
       <view class="content-info">
         <text class="word-count">{{ whisperContent.length }}/1000</text>
@@ -27,19 +41,35 @@
       <view class="tag-selector">
         <text class="tag-label">标签：</text>
         <view class="tag-container">
-          <view class="tag-item" v-for="tag in selectedTags" :key="tag" @click="removeTag(tag)">
+          <view
+            class="tag-item"
+            v-for="tag in selectedTags"
+            :key="tag"
+            @click="removeTag(tag)"
+          >
             <text class="tag-text">{{ tag }}</text>
             <text class="tag-remove">×</text>
           </view>
-          <input v-if="showTagInput || selectedTags.length === 0" class="tag-input" placeholder="添加标签..."
-            v-model="currentTag" @confirm="addTag" @blur="hideTagInput" />
+          <input
+            v-if="showTagInput || selectedTags.length === 0"
+            class="tag-input"
+            placeholder="添加标签..."
+            v-model="currentTag"
+            @confirm="addTag"
+            @blur="hideTagInput"
+          />
           <view v-else class="add-tag-btn" @click="showTagInput = true">
             <text>+ 添加标签</text>
           </view>
         </view>
         <!-- 预设标签 -->
         <view class="preset-tags">
-          <view class="preset-tag" v-for="tag in presetTags" :key="tag" @click="selectPresetTag(tag)">
+          <view
+            class="preset-tag"
+            v-for="tag in presetTags"
+            :key="tag"
+            @click="selectPresetTag(tag)"
+          >
             <text>{{ tag }}</text>
           </view>
         </view>
@@ -49,8 +79,13 @@
       <view class="mood-selector">
         <text class="mood-label">心情：</text>
         <view class="mood-options">
-          <view class="mood-option" v-for="mood in moodOptions" :key="mood.value"
-            :class="{ selected: selectedMood === mood.value }" @click="selectMood(mood.value)">
+          <view
+            class="mood-option"
+            v-for="mood in moodOptions"
+            :key="mood.value"
+            :class="{ selected: selectedMood === mood.value }"
+            @click="selectMood(mood.value)"
+          >
             <text class="mood-emoji">{{ mood.emoji }}</text>
           </view>
         </view>
@@ -60,14 +95,26 @@
       <view class="image-upload">
         <text class="image-label">图片：</text>
         <view class="image-grid">
-          <view class="image-item" v-for="(image, index) in uploadedImages" :key="index">
-            <image :src="image.tempUrl || image.url" class="uploaded-image" mode="aspectFill" />
+          <view
+            class="image-item"
+            v-for="(image, index) in uploadedImages"
+            :key="index"
+          >
+            <image
+              :src="image.tempUrl || image.url"
+              class="uploaded-image"
+              mode="aspectFill"
+            />
             <view class="remove-image" @click="removeImage(index)">×</view>
             <view v-if="!image.uploaded" class="uploading-overlay">
               <text class="uploading-text">上传中...</text>
             </view>
           </view>
-          <view class="image-upload-btn" v-if="uploadedImages.length < 9" @click="chooseImage">
+          <view
+            class="image-upload-btn"
+            v-if="uploadedImages.length < 9"
+            @click="chooseImage"
+          >
             <text class="upload-icon">+</text>
           </view>
         </view>
@@ -76,7 +123,11 @@
       <!-- 匿名设置 -->
       <view class="anonymous-setting">
         <label class="anonymous-label">
-          <checkbox :checked="isAnonymous" @click="toggleAnonymous" color="#007aff" />
+          <checkbox
+            :checked="isAnonymous"
+            @click="toggleAnonymous"
+            color="#007aff"
+          />
           <text>匿名发布</text>
         </label>
 
@@ -85,8 +136,13 @@
           <view class="avatar-section">
             <text class="config-label">匿名头像：</text>
             <view class="avatar-grid">
-              <view class="avatar-item" v-for="(avatar, index) in anonymousAvatars" :key="index"
-                :class="{ selected: selectedAvatarIndex === index }" @click="selectAvatar(index)">
+              <view
+                class="avatar-item"
+                v-for="(avatar, index) in anonymousAvatars"
+                :key="index"
+                :class="{ selected: selectedAvatarIndex === index }"
+                @click="selectAvatar(index)"
+              >
                 <image :src="avatar" class="avatar-image" mode="aspectFill" />
               </view>
             </view>
@@ -95,8 +151,12 @@
           <view class="name-section">
             <text class="config-label">匿名名称：</text>
             <view class="name-config">
-              <input class="anonymous-name-input" v-model="customAnonymousName" :placeholder="defaultAnonymousName"
-                maxlength="20" />
+              <input
+                class="anonymous-name-input"
+                v-model="customAnonymousName"
+                :placeholder="defaultAnonymousName"
+                maxlength="20"
+              />
               <view class="name-regenerate" @click="generateRandomName">
                 <text>🎲</text>
               </view>
@@ -110,44 +170,53 @@
 </template>
 
 <script>
-import { api, storage } from '../../utils/api.js';
+import { api, storage } from "../../utils/api.js";
 
 export default {
   data() {
     return {
-      whisperTitle: '',
-      whisperContent: '',
-      selectedMood: 'neutral',
+      whisperTitle: "",
+      whisperContent: "",
+      selectedMood: "neutral",
       selectedTags: [],
-      currentTag: '',
+      currentTag: "",
       showTagInput: false,
-      presetTags: ['心情', '秘密', '困扰', '感悟', '日常', '吐槽', '想法', '回忆'],
+      presetTags: [
+        "心情",
+        "秘密",
+        "困扰",
+        "感悟",
+        "日常",
+        "吐槽",
+        "想法",
+        "回忆",
+      ],
       uploadedImages: [],
       isAnonymous: true,
       isPublishing: false,
       moodOptions: [
-        { value: 'very_happy', emoji: '😄' },
-        { value: 'happy', emoji: '😊' },
-        { value: 'neutral', emoji: '😐' },
-        { value: 'sad', emoji: '😢' },
-        { value: 'very_sad', emoji: '😭' }
+        { value: "very_happy", emoji: "😄" },
+        { value: "happy", emoji: "😊" },
+        { value: "neutral", emoji: "😐" },
+        { value: "sad", emoji: "😢" },
+        { value: "very_sad", emoji: "😭" },
       ],
       // 匿名相关 - 使用实际存在的头像路径
       anonymousAvatars: [
-        '/src/static/avatar/头像.png',
-        '/src/static/avatar/头像 (2).png',
-        '/src/static/avatar/头像 (3).png',
-        '/src/static/avatar/头像 (4).png',
-        '/src/static/avatar/头像 (5).png',
-        '/src/static/avatar/头像 (6).png',
-        '/src/static/avatar/头像 (7).png',
-        '/src/static/avatar/头像 (8).png',
-        '/src/static/avatar/头像 (9).png'
+        "/src/static/avatar/头像.png",
+        "/src/static/avatar/头像 (2).png",
+        "/src/static/avatar/头像 (3).png",
+        "/src/static/avatar/头像 (4).png",
+        "/src/static/avatar/头像 (5).png",
+        "/src/static/avatar/头像 (6).png",
+        "/src/static/avatar/头像 (7).png",
+        "/src/static/avatar/头像 (8).png",
+        "/src/static/avatar/头像 (9).png",
       ],
       selectedAvatarIndex: 0,
-      customAnonymousName: '',
-      defaultAnonymousName: ''
-    }
+      customAnonymousName: "",
+      defaultAnonymousName: "",
+    };
   },
 
   computed: {
@@ -157,7 +226,7 @@ export default {
 
     finalAnonymousName() {
       return this.customAnonymousName.trim() || this.defaultAnonymousName;
-    }
+    },
   },
 
   mounted() {
@@ -173,9 +242,13 @@ export default {
     // 标签相关方法
     addTag() {
       const tag = this.currentTag.trim();
-      if (tag && !this.selectedTags.includes(tag) && this.selectedTags.length < 5) {
+      if (
+        tag &&
+        !this.selectedTags.includes(tag) &&
+        this.selectedTags.length < 5
+      ) {
         this.selectedTags.push(tag);
-        this.currentTag = '';
+        this.currentTag = "";
       }
     },
 
@@ -204,20 +277,20 @@ export default {
     chooseImage() {
       uni.chooseImage({
         count: 9 - this.uploadedImages.length,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
+        sizeType: ["original", "compressed"],
+        sourceType: ["album", "camera"],
         success: (res) => {
           // 将选择的图片添加到uploadedImages数组中
           const newImages = res.tempFilePaths.map((path) => ({
-            tempUrl: path,    // 临时路径用于预览
-            url: '',          // 实际URL（上传后填充）
-            uploaded: false   // 标记是否已上传
+            tempUrl: path, // 临时路径用于预览
+            url: "", // 实际URL（上传后填充）
+            uploaded: false, // 标记是否已上传
           }));
           this.uploadedImages = [...this.uploadedImages, ...newImages];
 
           // 自动上传新选择的图片
           this.uploadNewImages();
-        }
+        },
       });
     },
 
@@ -225,8 +298,8 @@ export default {
       const token = storage.getToken();
       if (!token) {
         uni.showToast({
-          title: '请先登录',
-          icon: 'none'
+          title: "请先登录",
+          icon: "none",
         });
         return;
       }
@@ -241,10 +314,10 @@ export default {
             this.uploadedImages[i].url = result.url;
             this.uploadedImages[i].uploaded = true;
           } catch (error) {
-            console.error('图片上传失败:', error);
+            console.error("图片上传失败:", error);
             uni.showToast({
-              title: '图片上传失败',
-              icon: 'none'
+              title: "图片上传失败",
+              icon: "none",
             });
           }
         }
@@ -265,8 +338,8 @@ export default {
     },
 
     generateRandomName() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let result = '';
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+      let result = "";
       for (let i = 0; i < 5; i++) {
         result += chars.charAt(Math.floor(Math.random() * chars.length));
       }
@@ -278,26 +351,26 @@ export default {
     },
 
     getImageUrl(imageUrl) {
-      if (imageUrl.startsWith('http')) {
+      if (imageUrl.startsWith("http")) {
         return imageUrl;
       }
       const baseUrl = process.env.VUE_APP_API_BASE_URL;
       if (!baseUrl) {
-        console.error('❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!');
+        console.error("❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!");
         return imageUrl;
       }
-      if (imageUrl.startsWith('/')) {
+      if (imageUrl.startsWith("/")) {
         return baseUrl + imageUrl;
       } else {
-        return baseUrl + '/' + imageUrl;
+        return baseUrl + "/" + imageUrl;
       }
     },
 
     async publish() {
       if (!this.canPublish) {
         uni.showToast({
-          title: '请输入悄悄话内容',
-          icon: 'none'
+          title: "请输入悄悄话内容",
+          icon: "none",
         });
         return;
       }
@@ -309,73 +382,80 @@ export default {
       const token = storage.getToken();
       if (!token) {
         uni.showToast({
-          title: '请先登录',
-          icon: 'none'
+          title: "请先登录",
+          icon: "none",
         });
         return;
       }
 
       // 检查是否所有图片都已上传
-      const uploadingImages = this.uploadedImages.filter(img => !img.uploaded);
+      const uploadingImages = this.uploadedImages.filter(
+        (img) => !img.uploaded
+      );
       if (uploadingImages.length > 0) {
         uni.showToast({
-          title: '请等待图片上传完成',
-          icon: 'none'
+          title: "请等待图片上传完成",
+          icon: "none",
         });
         return;
       }
 
       this.isPublishing = true;
       uni.showLoading({
-        title: '发布中...'
+        title: "发布中...",
       });
 
       try {
         // 准备图片数据
         const imageUrls = this.uploadedImages.map((image, index) => ({
           image_url: image.url,
-          image_order: index
+          image_order: index,
         }));
 
         // 创建悄悄话数据
         const whisperData = {
-          title: this.whisperTitle.trim() || this.whisperContent.substring(0, 20) + (this.whisperContent.length > 20 ? '...' : ''),
+          title:
+            this.whisperTitle.trim() ||
+            this.whisperContent.substring(0, 20) +
+              (this.whisperContent.length > 20 ? "..." : ""),
           content: this.whisperContent,
           mood: this.selectedMood,
           tags: this.selectedTags.length > 0 ? this.selectedTags : null,
           is_anonymous: this.isAnonymous,
           anonymous_name: this.isAnonymous ? this.finalAnonymousName : null,
-          anonymous_avatar: this.isAnonymous ? this.anonymousAvatars[this.selectedAvatarIndex] : null,
-          images: imageUrls
+          anonymous_avatar: this.isAnonymous
+            ? this.anonymousAvatars[this.selectedAvatarIndex]
+            : null,
+          images: imageUrls,
         };
 
         const result = await api.createWhisper(token, whisperData);
 
         if (result.whisper_id) {
           uni.hideLoading();
-          
+
           // 发布成功后,领取奖励
           this.claimWhisperReward(token);
-          
+
           uni.showToast({
-            title: '发布成功',
-            icon: 'success'
+            title: "发布成功",
+            icon: "success",
           });
 
           // 发布成功后跳转到我的悄悄话页面
           setTimeout(() => {
             uni.navigateBack({
-              delta: 1
+              delta: 1,
             });
           }, 1500);
         }
       } catch (error) {
         this.isPublishing = false;
         uni.hideLoading();
-        console.error('发布失败:', error);
+        console.error("发布失败:", error);
         uni.showToast({
-          title: '发布失败: ' + (error.message || ''),
-          icon: 'none'
+          title: "发布失败: " + (error.message || ""),
+          icon: "none",
         });
       }
     },
@@ -387,14 +467,16 @@ export default {
 
         if (response.success) {
           // 显示奖励提示
-          console.log(`💧 发布奖励: 获得${response.water_drops_earned}水滴, 今日剩余${response.remaining_rewards_today}次机会`);
-          
+          console.log(
+            `💧 发布奖励: 获得${response.water_drops_earned}水滴, 今日剩余${response.remaining_rewards_today}次机会`
+          );
+
           // 可选：在发布成功提示后显示奖励
           setTimeout(() => {
             uni.showToast({
               title: `+${response.water_drops_earned}💧`,
-              icon: 'none',
-              duration: 1500
+              icon: "none",
+              duration: 1500,
             });
           }, 800);
         } else {
@@ -405,9 +487,9 @@ export default {
         console.error("Failed to claim whisper reward:", error);
         // 奖励失败不影响发布功能,静默处理
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

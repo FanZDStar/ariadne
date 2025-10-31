@@ -1,5 +1,6 @@
 <template>
-  <view class="my-whispers-container">    <view class="header">
+  <view class="my-whispers-container">
+    <view class="header">
       <text class="title">此情此语</text>
       <text class="subtitle">记录你的情感轨迹与心灵互动</text>
       <view class="manage-btn" @click="toggleManagementMode">
@@ -407,7 +408,7 @@ export default {
         content = "删除这个悄悄话会一并删除所有相关的聊天，确定吗？";
       } else if (type === "interaction") {
         content = "确定要移除这个互动记录吗？";
-      } 
+      }
       // 聊天功能已隐藏
       // else {
       //   content = "确定要离开这个聊天吗？";
@@ -422,7 +423,7 @@ export default {
               this.deleteWhisper(item.whisper_id);
             } else if (type === "interaction") {
               this.removeInteraction(item.whisper_id);
-            } 
+            }
             // 聊天功能已隐藏
             // else {
             //   this.leaveChat(item.whisper_id);
@@ -676,6 +677,9 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f8f9fa;
+  max-width: 950rpx;
+  margin: 0 auto;
+  position: relative; /* 让浮动按钮相对于此容器定位 */
 }
 
 .header {
@@ -967,7 +971,7 @@ export default {
 }
 
 .fab {
-  position: fixed;
+  position: absolute; /* 从 fixed 改为 absolute，相对于容器定位 */
   bottom: 50rpx;
   right: 50rpx;
   width: 100rpx;
