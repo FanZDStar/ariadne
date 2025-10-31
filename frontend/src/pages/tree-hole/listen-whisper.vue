@@ -1,5 +1,6 @@
 <template>
-  <view class="listen-container">    <!-- 卡片翻动容器 -->
+  <view class="listen-container">
+    <!-- 卡片翻动容器 -->
     <view class="content-wrapper">
       <view class="whisper-card-stack">
         <!-- 主卡片 -->
@@ -415,8 +416,10 @@ export default {
   overflow: hidden;
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950rpx;
+  width: 100%;
   bottom: 0;
 }
 
@@ -437,7 +440,7 @@ export default {
 .whisper-card-stack {
   position: relative;
   width: 85%;
-  max-width: 650rpx;
+  max-width: 850rpx;
   height: 75vh;
   max-height: 1100rpx;
 }
@@ -726,8 +729,10 @@ export default {
 .footer-actions {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950rpx;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -738,6 +743,7 @@ export default {
   backdrop-filter: blur(20rpx);
   border-top: 1rpx solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .next-button {

@@ -42,6 +42,7 @@ from app.api.routes import (
     tree_energy,
     user_profile_template,
     water_drops,
+    comment_rewards,
 )
 from app.api import protection_drill
 
@@ -118,6 +119,11 @@ api_router.include_router(
     water_drops.router,
     prefix="/water-drops",
     tags=["水滴系统"]
+)
+api_router.include_router(
+    comment_rewards.router,
+    prefix="/comment-rewards",
+    tags=["评论奖励"]
 )
 
 # 导入并添加看板娘好感度路由

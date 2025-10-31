@@ -28,6 +28,7 @@ from .mascot_affection import (
     UserMascotAffection, MascotAffectionLog, MascotAffectionLevel, 
     DailyAffectionLimits, UserAffectionRewards
 )
+from .daily_comment_reward import DailyCommentReward
 # 导出所有模型
 __all__ = [
     "User",
@@ -59,5 +60,6 @@ __all__ = [
     "MascotAffectionLog", 
     "MascotAffectionLevel",
     "DailyAffectionLimits",
-    "UserAffectionRewards"
+    "UserAffectionRewards",
+    "DailyCommentReward"
 ]

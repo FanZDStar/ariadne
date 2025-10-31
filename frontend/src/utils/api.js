@@ -646,7 +646,69 @@ export const api = {
     });
   },
 
+  // ==================== 水滴系统 ====================
 
+  // 获取水滴状态
+  getWaterDropsStatus: (token) => {
+    return request("/water-drops/status", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 领取水滴
+  claimWaterDrops: (token) => {
+    return request("/water-drops/claim", {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 转换水滴为能量
+  convertWaterDropsToEnergy: (token) => {
+    return request("/water-drops/convert-to-energy", {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // ==================== 评论奖励 ====================
+
+  // 领取评论奖励
+  claimCommentReward: (token) => {
+    return request("/comment-rewards/reward-comment", {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 领取发布悄悄话奖励
+  claimWhisperReward: (token) => {
+    return request("/comment-rewards/reward-whisper", {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取评论奖励状态
+  getCommentRewardStatus: (token) => {
+    return request("/comment-rewards/comment-status", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };
 
 // 本地存储工具

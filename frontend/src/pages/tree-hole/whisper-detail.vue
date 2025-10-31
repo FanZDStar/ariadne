@@ -1,6 +1,12 @@
 <template>
-  <view class="whisper-detail-container">    <!-- 悄悄话详情卡片 -->
-    <view class="whisper-card">
+  <view class="whisper-detail-container">
+    <!-- 加载状态 -->
+    <view v-if="loading" class="loading-container">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 悄悄话详情卡片 -->
+    <view v-else-if="whisper" class="whisper-card">
       <!-- 用户信息行 -->
       <view class="user-info">
         <image class="avatar" :src="getAvatarUrl()" mode="aspectFill" />
@@ -56,25 +62,23 @@
 
       <!-- 互动统计 - 可交互 -->
       <view class="interaction-stats">
-        <view 
-          class="stat-item stat-clickable" 
+        <view
+          class="stat-item stat-clickable"
           :class="{ 'stat-liked': whisper.liked }"
           @click="toggleLike"
         >
           <text class="stat-icon">{{ whisper.liked ? "❤️" : "🤍" }}</text>
           <text class="stat-text">{{ whisper.like_count || 0 }}</text>
         </view>
-        <view 
-          class="stat-item"
-        >
+        <view class="stat-item">
           <text class="stat-icon">💬</text>
           <text class="stat-text">{{ whisper.comment_count || 0 }}</text>
         </view>
-      </view>
-    </view>
+      </view> </view
+    ><!-- 闭合 whisper-card -->
 
     <!-- 评论列表区域 -->
-    <view class="comments-section">
+    <view v-if="!loading && whisper" class="comments-section">
       <view class="section-title">
         <text class="title-text">评论 ({{ whisper.comment_count || 0 }})</text>
       </view>
@@ -153,7 +157,7 @@
     </view>
 
     <!-- 底部评论输入框 -->
-    <view class="comment-input-bar">
+    <view v-if="!loading && whisper" class="comment-input-bar">
       <!-- 回复提示 -->
       <view v-if="replyingTo" class="reply-hint">
         <text class="reply-hint-text">
@@ -193,6 +197,7 @@ export default {
       newComment: "",
       whisperId: null,
       replyingTo: null, // 当前回复的对象 { type: 'comment'|'reply', id: xxx, userName: xxx, content: xxx }
+      loading: true, // 加载状态
     };
   },
   onLoad(option) {
@@ -207,6 +212,7 @@ export default {
       const token = storage.getToken();
       if (!token) {
         uni.showToast({ title: "请先登录", icon: "none" });
+        this.loading = false;
         return;
       }
 
@@ -214,24 +220,31 @@ export default {
 
       try {
         this.whisper = await api.getWhisperDetails(token, this.whisperId);
+        this.loading = false;
       } catch (error) {
-        console.error(`Failed to load whisper detail (attempt ${retryCount + 1}):`, error);
-        
+        console.error(
+          `Failed to load whisper detail (attempt ${retryCount + 1}):`,
+          error
+        );
+
         // 如果是网络错误或服务器错误，且还有重试次数，自动重试
         if (retryCount < maxRetries) {
           console.log(`⏳ 自动重试中... (${retryCount + 1}/${maxRetries})`);
-          
+
           // 延迟后重试，延迟时间随重试次数增加
-          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-          
+          await new Promise((resolve) =>
+            setTimeout(resolve, 1000 * (retryCount + 1))
+          );
+
           return this.loadWhisperDetail(retryCount + 1);
         }
-        
-                // 重试失败后显示简单的错误提示
+
+        this.loading = false;
+        // 重试失败后显示简单的错误提示
         uni.showToast({
-          title: '加载失败',
-          icon: 'none',
-          duration: 2000
+          title: "加载失败",
+          icon: "none",
+          duration: 2000,
         });
       }
     },
@@ -259,7 +272,7 @@ export default {
       // 否则使用用户头像
       const avatarUrl = this.whisper.user?.avatar_url;
       if (!avatarUrl) return "/static/avatar.png";
-      
+
       return this.getImageUrl(avatarUrl);
     },
 
@@ -446,10 +459,39 @@ export default {
         this.replyingTo = null;
         this.loadComments(); // 重新加载评论列表
 
+        // 评论成功后,请求评论奖励
+        this.claimCommentReward(token);
+
         uni.showToast({ title: "发送成功", icon: "success" });
       } catch (error) {
         console.error("Failed to submit comment:", error);
         uni.showToast({ title: "发送失败", icon: "none" });
+      }
+    },
+
+    // 领取评论奖励
+    async claimCommentReward(token) {
+      try {
+        const response = await api.claimCommentReward(token);
+
+        if (response.success) {
+          // 显示奖励提示
+          uni.showToast({
+            title: response.message,
+            icon: "none",
+            duration: 2000,
+          });
+
+          console.log(
+            `💧 评论奖励: 获得${response.water_drops_earned}水滴, 今日剩余${response.remaining_rewards_today}次机会`
+          );
+        } else {
+          // 已达上限,不显示提示
+          console.log(`💧 ${response.message}`);
+        }
+      } catch (error) {
+        console.error("Failed to claim comment reward:", error);
+        // 奖励失败不影响评论功能,静默处理
       }
     },
 
@@ -553,7 +595,7 @@ export default {
     //       });
     //     }
     //   });
-    //   
+    //
     //   // 提示用户可以评论
     //   uni.showToast({
     //     title: "请在底部输入评论",
@@ -561,7 +603,6 @@ export default {
     //     duration: 1500
     //   });
     // },
-
 
     formatTimestamp(dateString) {
       const date = new Date(dateString);
@@ -604,6 +645,22 @@ export default {
   padding-top: 60rpx;
   padding-bottom: 140rpx;
   /* 为底部输入框留空间 */
+  max-width: 950rpx;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
 }
 
 .whisper-card {
@@ -984,14 +1041,17 @@ export default {
 .comment-input-bar {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950rpx;
+  width: 100%;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20rpx);
   padding: 20rpx;
   border-top: 1rpx solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  box-sizing: border-box;
   /* 安全区域适配 */
   padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));

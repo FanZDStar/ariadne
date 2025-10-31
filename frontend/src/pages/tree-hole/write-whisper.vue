@@ -353,6 +353,10 @@ export default {
 
         if (result.whisper_id) {
           uni.hideLoading();
+          
+          // 发布成功后,领取奖励
+          this.claimWhisperReward(token);
+          
           uni.showToast({
             title: '发布成功',
             icon: 'success'
@@ -373,6 +377,33 @@ export default {
           title: '发布失败: ' + (error.message || ''),
           icon: 'none'
         });
+      }
+    },
+
+    // 领取发布悄悄话奖励
+    async claimWhisperReward(token) {
+      try {
+        const response = await api.claimWhisperReward(token);
+
+        if (response.success) {
+          // 显示奖励提示
+          console.log(`💧 发布奖励: 获得${response.water_drops_earned}水滴, 今日剩余${response.remaining_rewards_today}次机会`);
+          
+          // 可选：在发布成功提示后显示奖励
+          setTimeout(() => {
+            uni.showToast({
+              title: `+${response.water_drops_earned}💧`,
+              icon: 'none',
+              duration: 1500
+            });
+          }, 800);
+        } else {
+          // 已达上限,不显示提示
+          console.log(`💧 ${response.message}`);
+        }
+      } catch (error) {
+        console.error("Failed to claim whisper reward:", error);
+        // 奖励失败不影响发布功能,静默处理
       }
     }
   }
