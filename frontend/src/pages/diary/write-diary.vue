@@ -291,22 +291,35 @@ export default {
 
         if (result.diary_id) {
           uni.hideLoading();
-          
+
           // 显示发布成功消息
           uni.showToast({
             title: '发布成功',
             icon: 'success'
           });
 
-          // 如果获得了星星奖励，显示奖励消息
-          if (result.star_awarded && result.star_points > 0) {
-            setTimeout(() => {
-              uni.showToast({
-                title: result.star_message || `获得了${result.star_points}颗星星 ⭐`,
-                icon: 'none',
-                duration: 3000
-              });
-            }, 1500);
+          // 合并显示星星奖励和好感度奖励
+          if ((result.star_awarded && result.star_points > 0) || (result.affection_awarded && result.affection_points > 0)) {
+            let rewardMessage = '';
+
+            if (result.star_awarded && result.star_points > 0) {
+              rewardMessage += `获得了${result.star_points}颗星星 ⭐`;
+            }
+
+            if (result.affection_awarded && result.affection_points > 0) {
+              if (rewardMessage) rewardMessage += '\n';
+              rewardMessage += `看板娘好感度 +${result.affection_points} 💖`;
+            }
+
+            if (rewardMessage) {
+              setTimeout(() => {
+                uni.showToast({
+                  title: rewardMessage,
+                  icon: 'none',
+                  duration: 3000
+                });
+              }, 1500);
+            }
           }
 
           // 3秒后跳转到日记页面

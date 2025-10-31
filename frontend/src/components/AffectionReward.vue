@@ -1,45 +1,19 @@
 <template>
-    <view class="affection-reward-container" v-if="visible">
-        <view class="reward-modal" :class="{ 'show': showModal, 'level-up': isLevelUp }">
-            <view class="reward-content">
-                <!-- 普通好感度奖励 -->
-                <template v-if="!isLevelUp">
-                    <view class="reward-icon">💖</view>
-                    <view class="reward-title">好感度 +{{ points }}</view>
-                    <view class="reward-message">{{ message }}</view>
-                </template>
+    <!-- 简单的好感度奖励浮动提示 -->
+    <view class="affection-toast" v-if="visible" :class="{ 'show': showModal, 'level-up': isLevelUp }">
+        <view class="toast-content">
+            <!-- 普通好感度奖励 -->
+            <template v-if="!isLevelUp">
+                <view class="reward-icon">💖</view>
+                <text class="reward-text">好感度 +{{ points }}</text>
+            </template>
 
-                <!-- 升级奖励 -->
-                <template v-else>
-                    <view class="level-up-icon">🎉</view>
-                    <view class="level-up-title">好感度升级！</view>
-                    <view class="level-up-content">
-                        <view class="level-info">
-                            <text class="level-name">{{ levelName }}</text>
-                            <text class="level-desc">{{ levelDescription }}</text>
-                        </view>
-                        <view class="rewards-info" v-if="levelRewards">
-                            <view class="reward-item" v-if="levelRewards.star_points">
-                                <text class="reward-label">获得星星:</text>
-                                <text class="reward-value">+{{ levelRewards.star_points }}</text>
-                            </view>
-                            <view class="reward-item"
-                                v-if="levelRewards.special_items && levelRewards.special_items.length > 0">
-                                <text class="reward-label">特殊奖励:</text>
-                                <text class="reward-value">{{ levelRewards.special_items.join(', ') }}</text>
-                            </view>
-                        </view>
-                    </view>
-                </template>
-
-                <view class="reward-close" @click="closeReward">
-                    <text>确定</text>
-                </view>
-            </view>
+            <!-- 升级奖励 -->
+            <template v-else>
+                <view class="level-up-icon">🎉</view>
+                <text class="level-up-text">{{ levelName }} 升级！</text>
+            </template>
         </view>
-
-        <!-- 背景遮罩 -->
-        <view class="reward-backdrop" @click="closeReward"></view>
     </view>
 </template>
 
@@ -77,20 +51,25 @@ export default {
             this.showReward();
         },
 
-        // 显示奖励弹窗
+        // 显示奖励提示
         showReward() {
             this.visible = true;
             this.$nextTick(() => {
                 setTimeout(() => {
                     this.showModal = true;
                 }, 50);
+
+                // 3秒后自动消失
+                setTimeout(() => {
+                    this.closeReward();
+                }, 3000);
             });
 
             // 震动反馈
             uni.vibrateShort();
         },
 
-        // 关闭奖励弹窗
+        // 关闭奖励提示
         closeReward() {
             this.showModal = false;
             setTimeout(() => {
@@ -113,60 +92,43 @@ export default {
 </script>
 
 <style scoped>
-.affection-reward-container {
+/* 简单的浮动Toast样式 */
+.affection-toast {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 200rpx;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100rpx);
     z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40rpx;
-}
-
-.reward-backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5rpx);
-}
-
-.reward-modal {
-    position: relative;
-    background: #fff;
-    border-radius: 30rpx;
-    max-width: 500rpx;
-    width: 100%;
-    transform: scale(0.7) translateY(100rpx);
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.reward-modal.show {
-    transform: scale(1) translateY(0);
+.affection-toast.show {
+    transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
 
-.reward-modal.level-up {
-    background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-    border: 3rpx solid #e17055;
+.toast-content {
+    background: linear-gradient(135deg, #ff69b4, #ff91c7);
+    border-radius: 50rpx;
+    padding: 20rpx 40rpx;
+    display: flex;
+    align-items: center;
+    gap: 15rpx;
+    box-shadow: 0 8rpx 24rpx rgba(255, 105, 180, 0.4);
+    border: 2rpx solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10rpx);
 }
 
-.reward-content {
-    padding: 60rpx 40rpx 40rpx;
-    text-align: center;
+.affection-toast.level-up .toast-content {
+    background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+    box-shadow: 0 8rpx 24rpx rgba(255, 234, 167, 0.4);
+    border: 2rpx solid rgba(255, 255, 255, 0.5);
 }
 
 /* 普通奖励样式 */
 .reward-icon {
-    font-size: 80rpx;
-    margin-bottom: 20rpx;
+    font-size: 40rpx;
     animation: heartbeat 1.5s ease-in-out infinite;
 }
 
@@ -182,24 +144,16 @@ export default {
     }
 }
 
-.reward-title {
-    font-size: 36rpx;
+.reward-text {
+    font-size: 30rpx;
     font-weight: bold;
-    color: #e91e63;
-    margin-bottom: 15rpx;
-}
-
-.reward-message {
-    font-size: 28rpx;
-    color: #666;
-    margin-bottom: 40rpx;
-    line-height: 1.4;
+    color: #fff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
 /* 升级奖励样式 */
 .level-up-icon {
-    font-size: 100rpx;
-    margin-bottom: 20rpx;
+    font-size: 40rpx;
     animation: celebration 2s ease-in-out infinite;
 }
 
@@ -219,106 +173,29 @@ export default {
     }
 }
 
-.level-up-title {
-    font-size: 42rpx;
+.level-up-text {
+    font-size: 30rpx;
     font-weight: bold;
-    color: #d63031;
-    margin-bottom: 30rpx;
-    text-shadow: 2rpx 2rpx 4rpx rgba(214, 48, 49, 0.3);
-}
-
-.level-up-content {
-    margin-bottom: 40rpx;
-}
-
-.level-info {
-    margin-bottom: 30rpx;
-}
-
-.level-name {
-    display: block;
-    font-size: 32rpx;
-    font-weight: bold;
-    color: #2d3436;
-    margin-bottom: 10rpx;
-}
-
-.level-desc {
-    display: block;
-    font-size: 26rpx;
-    color: #636e72;
-    line-height: 1.4;
-}
-
-.rewards-info {
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 20rpx;
-    padding: 20rpx;
-    margin-top: 20rpx;
-}
-
-.reward-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10rpx;
-}
-
-.reward-item:last-child {
-    margin-bottom: 0;
-}
-
-.reward-label {
-    font-size: 26rpx;
-    color: #2d3436;
-}
-
-.reward-value {
-    font-size: 26rpx;
-    font-weight: bold;
-    color: #00b894;
-}
-
-/* 关闭按钮 */
-.reward-close {
-    background: linear-gradient(135deg, #74b9ff, #0984e3);
-    color: #fff;
-    padding: 20rpx 40rpx;
-    border-radius: 25rpx;
-    font-size: 28rpx;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    display: inline-block;
-    box-shadow: 0 8rpx 16rpx rgba(116, 185, 255, 0.3);
-}
-
-.reward-close:active {
-    transform: translateY(2rpx);
-    box-shadow: 0 4rpx 8rpx rgba(116, 185, 255, 0.4);
+    color: #8b4513;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
 }
 
 /* 响应式调整 */
 @media (max-width: 480px) {
-    .reward-modal {
-        max-width: 90%;
-    }
-
-    .reward-content {
-        padding: 50rpx 30rpx 30rpx;
-    }
 
     .reward-icon,
     .level-up-icon {
-        font-size: 70rpx;
+        font-size: 36rpx;
     }
 
-    .reward-title,
-    .level-up-title {
-        font-size: 32rpx;
+    .reward-text,
+    .level-up-text {
+        font-size: 26rpx;
     }
 
-    .level-name {
-        font-size: 28rpx;
+    .toast-content {
+        padding: 15rpx 30rpx;
+        gap: 12rpx;
     }
 }
 </style>

@@ -36,6 +36,8 @@
           : currentOutfit.name
       }}</view>
 
+
+
       <!-- 服装信息和操作按钮 -->
       <view class="outfit-info" v-if="selectedOutfitForPreview">
         <!-- 显示星星成本（仅当用户未拥有该服装时） -->
@@ -186,6 +188,8 @@ export default {
     goBack() {
       uni.navigateBack();
     },
+
+
 
     // 加载用户当前服装
     async loadCurrentOutfit() {
@@ -853,6 +857,8 @@ export default {
     height: 400rpx;
   }
 }
+
+
 
 .current-outfit-name {
   margin-top: 30rpx;

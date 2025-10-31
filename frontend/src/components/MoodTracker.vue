@@ -169,10 +169,24 @@ export default {
                 });
 
                 if (response.statusCode === 200) {
-                    // 显示积分奖励信息
-                    const starMessage = response.data.star_message || "心情记录成功 💫";
+                    // 合并显示积分奖励和好感度奖励信息
+                    let rewardMessage = "心情记录成功 💫";
+
+                    if ((response.data.star_awarded && response.data.star_points > 0) || (response.data.affection_awarded && response.data.affection_points > 0)) {
+                        rewardMessage = '';
+
+                        if (response.data.star_awarded && response.data.star_points > 0) {
+                            rewardMessage += `获得了${response.data.star_points}颗星星 ⭐`;
+                        }
+
+                        if (response.data.affection_awarded && response.data.affection_points > 0) {
+                            if (rewardMessage) rewardMessage += '\n';
+                            rewardMessage += `看板娘好感度 +${response.data.affection_points} 💖`;
+                        }
+                    }
+
                     uni.showToast({
-                        title: starMessage,
+                        title: rewardMessage,
                         icon: "none",
                         duration: 2500
                     });

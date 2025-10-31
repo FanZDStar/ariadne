@@ -22,8 +22,8 @@
             <view class="affection-progress">
                 <view class="progress-header">
                     <text class="current-points">当前好感度: {{ currentAffection }}</text>
-                    <text class="next-level" v-if="nextLevelPoints > 0">
-                        距离下级还需: {{ nextLevelPoints - currentAffection }} 点
+                    <text class="next-level" v-if="nextLevelPoints > currentAffection">
+                        距离下级还需: {{ pointsToNextLevel }} 点
                     </text>
                     <text class="max-level" v-else>已达到最高等级</text>
                 </view>
@@ -34,7 +34,7 @@
 
                 <view class="progress-labels">
                     <text class="progress-start">{{ currentLevelMinPoints }}</text>
-                    <text class="progress-end" v-if="nextLevelPoints > 0">{{ nextLevelPoints }}</text>
+                    <text class="progress-end" v-if="nextLevelPoints > currentAffection">{{ nextLevelPoints }}</text>
                     <text class="progress-end" v-else>MAX</text>
                 </view>
             </view>
@@ -59,10 +59,15 @@
                     <view class="log-icon">{{ getActionIcon(log.action_type) }}</view>
                     <view class="log-content">
                         <text class="log-action">{{ getActionName(log.action_type) }}</text>
+                        <text class="log-description" v-if="log.description">{{ log.description }}</text>
                         <text class="log-time">{{ formatTime(log.created_at) }}</text>
                     </view>
-                    <view class="log-points" :class="{ 'positive': log.points_change > 0 }">
-                        +{{ log.points_change }}
+                    <view class="log-points"
+                        :class="{ 'positive': log.affection_change > 0, 'negative': log.affection_change < 0 }">
+                        <text class="points-icon">{{ log.affection_change > 0 ? '↗' : log.affection_change < 0 ? '↘'
+                                : '' }}</text>
+                                <text class="points-value">{{ log.affection_change > 0 ? '+' : '' }}{{
+                                    log.affection_change }}</text>
                     </view>
                 </view>
             </view>
@@ -93,6 +98,7 @@ export default {
             nextLevelPoints: 100,
             unlockedActions: [],
             affectionLogs: [],
+            levels: [], // 添加等级配置数组
             hasMoreLogs: true,
             loadingLogs: false,
             logsOffset: 0,
@@ -102,11 +108,25 @@ export default {
 
     computed: {
         progressPercentage() {
-            if (this.nextLevelPoints <= 0) return 100;
-            const range = this.nextLevelPoints - this.currentLevelMinPoints;
-            const current = this.currentAffection - this.currentLevelMinPoints;
-            return Math.min(Math.max((current / range) * 100, 0), 100);
+            if (!this.nextLevelPoints || this.nextLevelPoints <= this.currentAffection) return 100;
+            const currentLevelMin = this.currentLevelMinPoints || 0;
+            const nextLevelRequired = this.nextLevelPoints;
+            const currentAffection = this.currentAffection;
+
+            // 当前等级的范围
+            const levelRange = nextLevelRequired - currentLevelMin;
+            // 当前在等级内的进度
+            const progressInLevel = currentAffection - currentLevelMin;
+
+            if (levelRange <= 0) return 100;
+
+            return Math.min(Math.max((progressInLevel / levelRange) * 100, 0), 100);
         },
+
+        pointsToNextLevel() {
+            if (!this.nextLevelPoints || this.nextLevelPoints <= this.currentAffection) return 0;
+            return this.nextLevelPoints - this.currentAffection;
+        }
     },
 
     onLoad() {
@@ -135,17 +155,39 @@ export default {
                 this.currentAffection = data.current_affection || 0;
                 this.currentLevel = {
                     name: data.level_name || '陌生',
-                    description: data.level_description || '刚刚认识的关系',
+                    description: '', // 这里需要从等级配置中获取
                 };
-                this.currentLevelMinPoints = data.current_level_min_points || 0;
-                this.nextLevelPoints = data.next_level_points || 100;
-                this.unlockedActions = data.unlocked_actions || [];
+
+                // 根据当前等级计算最小值
+                await this.loadAffectionLevels();
+                const currentLevelConfig = this.levels.find(l => l.level === data.current_level);
+                const nextLevelConfig = this.levels.find(l => l.level === data.current_level + 1);
+
+                this.currentLevelMinPoints = currentLevelConfig ? currentLevelConfig.required_affection : 0;
+                this.nextLevelPoints = data.next_level_required || (nextLevelConfig ? nextLevelConfig.required_affection : this.currentAffection);
+
+                // 从等级配置中获取解锁动作
+                this.unlockedActions = currentLevelConfig ? (currentLevelConfig.special_actions || []) : [];
+
             } catch (error) {
                 console.error('获取好感度概览失败:', error);
                 uni.showToast({
                     title: '获取好感度信息失败',
                     icon: 'none',
                 });
+            }
+        },
+
+        // 加载好感度等级配置
+        async loadAffectionLevels() {
+            if (this.levels.length > 0) return; // 避免重复加载
+
+            try {
+                const token = storage.getToken();
+                const data = await api.getMascotAffectionLevels(token);
+                this.levels = data || [];
+            } catch (error) {
+                console.error('获取好感度等级配置失败:', error);
             }
         },
 
@@ -159,16 +201,16 @@ export default {
             this.loadingLogs = true;
 
             try {
-                const offset = isLoadMore ? this.affectionLogs.length : 0;
+                // 后端API直接返回日志数组，不是包装在对象中
                 const data = await api.getMascotAffectionLogs(token, this.logsLimit);
 
                 if (isLoadMore) {
-                    this.affectionLogs = this.affectionLogs.concat(data.logs || []);
+                    this.affectionLogs = this.affectionLogs.concat(data || []);
                 } else {
-                    this.affectionLogs = data.logs || [];
+                    this.affectionLogs = data || [];
                 }
 
-                this.hasMoreLogs = (data.logs || []).length >= this.logsLimit;
+                this.hasMoreLogs = (data || []).length >= this.logsLimit;
             } catch (error) {
                 console.error('获取好感度记录失败:', error);
                 if (!isLoadMore) {
@@ -191,7 +233,10 @@ export default {
         getActionIcon(actionType) {
             const icons = {
                 'daily_login': '🎯',
-                'outfit_purchase': '👗',
+                'outfit_purchase_cheap': '👗',
+                'outfit_purchase_normal': '👗',
+                'outfit_purchase_premium': '👗',
+                'outfit_purchase_luxury': '👗',
                 'emotion_chat': '💬',
                 'diary_complete': '📔',
                 'mood_tracking': '😊',
@@ -204,13 +249,16 @@ export default {
         getActionName(actionType) {
             const names = {
                 'daily_login': '每日登录',
-                'outfit_purchase': '购买服装',
+                'outfit_purchase_cheap': '购买服装',
+                'outfit_purchase_normal': '购买服装',
+                'outfit_purchase_premium': '购买服装',
+                'outfit_purchase_luxury': '购买服装',
                 'emotion_chat': '情感对话',
                 'diary_complete': '完成日记',
                 'mood_tracking': '心情记录',
                 'manual_award': '手动奖励',
             };
-            return names[actionType] || '未知行为';
+            return names[actionType] || actionType; // 如果找不到就显示原始类型
         },
 
         // 格式化时间
@@ -460,19 +508,48 @@ export default {
     margin-bottom: 5rpx;
 }
 
+.log-description {
+    font-size: 24rpx;
+    color: #666;
+    margin-bottom: 5rpx;
+    line-height: 1.3;
+}
+
 .log-time {
     font-size: 22rpx;
     color: #999;
 }
 
 .log-points {
-    font-size: 28rpx;
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
     font-weight: bold;
     color: #999;
+    background: #f8f9fa;
+    border-radius: 12rpx;
+    padding: 8rpx 12rpx;
+    min-width: 80rpx;
+    justify-content: center;
 }
 
 .log-points.positive {
     color: #00b894;
+    background: #e8f5f0;
+}
+
+.log-points.negative {
+    color: #e74c3c;
+    background: #fdf2f2;
+}
+
+.points-icon {
+    font-size: 24rpx;
+}
+
+.points-value {
+    font-size: 26rpx;
+    font-weight: bold;
 }
 
 .empty-logs {

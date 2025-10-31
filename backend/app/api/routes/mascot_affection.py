@@ -270,6 +270,9 @@ async def claim_affection_reward(
     return {"message": "奖励领取成功！"}
 
 
+
+
+
 @router.get("/affection/levels")
 async def get_affection_levels(db: Session = Depends(get_db)):
     """获取所有好感度等级配置"""
