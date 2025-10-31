@@ -1,11 +1,30 @@
 <template>
   <view class="login-container">
     <!-- 背景图片 -->
-    <image class="background-image" src="/src/static/loginbg.jpg" mode="aspectFill"></image>
+    <image
+      class="background-image"
+      src="/src/static/loginbg.jpg"
+      mode="aspectFill"
+    ></image>
 
-    <!-- 粒子动效层 -->
+    <!-- 粒子动效层（背景层） -->
     <view class="particles-container">
-      <view v-for="(particle, index) in particles" :key="index" class="particle" :style="particle.style"></view>
+      <view
+        v-for="(particle, index) in particles"
+        :key="index"
+        class="particle"
+        :style="particle.style"
+      ></view>
+    </view>
+
+    <!-- 粒子动效层（最上层） -->
+    <view class="particles-container-top">
+      <view
+        v-for="(particle, index) in topParticles"
+        :key="'top-' + index"
+        class="particle"
+        :style="particle.style"
+      ></view>
     </view>
 
     <view class="login-header">
@@ -16,7 +35,11 @@
 
     <view class="login-form">
       <view class="input-group">
-        <input class="input" placeholder="请输入账号或邮箱" v-model="username" />
+        <input
+          class="input"
+          placeholder="请输入账号或邮箱"
+          v-model="username"
+        />
       </view>
 
       <!-- <view class="input-group">
@@ -24,7 +47,12 @@
             </view> -->
       <view class="input-group">
         <view class="password-input-container">
-          <input class="input" placeholder="请输入密码" :password="!showPassword" v-model="password" />
+          <input
+            class="input"
+            placeholder="请输入密码"
+            :password="!showPassword"
+            v-model="password"
+          />
           <text class="eye-icon" @click="showPassword = !showPassword">{{
             showPassword ? "👁️" : "👁️‍🗨️"
           }}</text>
@@ -49,7 +77,8 @@ export default {
       username: "",
       password: "",
       showPassword: false,
-      particles: [], // 粒子数组
+      particles: [], // 背景层粒子数组
+      topParticles: [], // 最上层粒子数组
       particleConfig: {
         count: 1000, // 粒子数量（可以调整）
         sizeRange: { min: 1, max: 11 }, // 大小范围（px）
@@ -57,10 +86,18 @@ export default {
         speedRange: { min: 6, max: 12 }, // 动画速度范围（秒）
         delayRange: { min: 0, max: 5 }, // 延迟范围（秒）
       },
+      topParticleConfig: {
+        count: 500, // 顶层粒子数量（较少，不遮挡内容）
+        sizeRange: { min: 2, max: 8 }, // 大小范围（px）
+        opacityRange: { min: 0.3, max: 0.7 }, // 透明度稍低
+        speedRange: { min: 8, max: 15 }, // 速度稍快
+        delayRange: { min: 0, max: 5 }, // 延迟范围（秒）
+      },
     };
   },
   mounted() {
     this.initParticles();
+    this.initTopParticles();
   },
   methods: {
     // 初始化粒子系统
@@ -69,14 +106,22 @@ export default {
 
       // 根据配置创建粒子
       for (let i = 0; i < this.particleConfig.count; i++) {
-        this.createParticle(i);
+        this.createParticle(i, this.particleConfig, this.particles);
+      }
+    },
+
+    // 初始化顶层粒子系统
+    initTopParticles() {
+      this.topParticles = [];
+
+      // 根据配置创建顶层粒子
+      for (let i = 0; i < this.topParticleConfig.count; i++) {
+        this.createParticle(i, this.topParticleConfig, this.topParticles);
       }
     },
 
     // 创建单个粒子
-    createParticle(index) {
-      const config = this.particleConfig;
-
+    createParticle(index, config, targetArray) {
       // 随机大小
       const size = this.randomInRange(
         config.sizeRange.min,
@@ -118,13 +163,14 @@ export default {
           animationDelay: delay + "s",
           animationDuration: duration + "s",
           opacity: opacity,
-          boxShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, ${opacity * 0.8
-            })`,
+          boxShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, ${
+            opacity * 0.8
+          })`,
           background: `rgba(255, 255, 255, ${opacity})`,
         },
       };
 
-      this.particles.push(particle);
+      targetArray.push(particle);
     },
 
     // 生成指定范围内的随机数
@@ -214,32 +260,49 @@ export default {
   padding: 40rpx;
   min-height: 100vh;
   overflow: hidden;
+  max-width: 950rpx;
+  margin: 0 auto;
+  background-color: transparent;
 }
 
 /* 背景图片样式 */
 .background-image {
-  position: fixed;
+  position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 750rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  height: 100vh;
-  z-index: -2;
-  object-fit: contain;
+  height: 100%;
+  z-index: 0;
+  object-fit: cover;
   /* 保持比例，不拉伸变形 */
 }
 
-/* 粒子容器 */
+/* 粒子容器（背景层） */
 .particles-container {
-  position: fixed;
+  position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 750rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  height: 100vh;
-  z-index: -1;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 粒子容器（最上层） */
+.particles-container-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
   pointer-events: none;
   overflow: hidden;
 }
@@ -277,13 +340,13 @@ export default {
   }
 
   100% {
-    transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(360deg);
+    transform: translate(calc(100vw + 100px), calc(100vh + 100px))
+      rotate(360deg);
     opacity: 0;
   }
 }
 
 @keyframes wobble {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -306,6 +369,8 @@ export default {
 /* #endif */
 
 .login-header {
+  position: relative;
+  z-index: 10;
   text-align: center;
   margin-top: 100rpx;
   margin-bottom: 100rpx;
@@ -334,6 +399,8 @@ export default {
 
 /* 毛玻璃效果的登录表单 */
 .login-form {
+  position: relative;
+  z-index: 10;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -383,9 +450,11 @@ export default {
 }
 
 .login-btn {
-  background: linear-gradient(135deg,
-      rgba(0, 122, 255, 0.8),
-      rgba(0, 122, 255, 1));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 122, 255, 0.8),
+    rgba(0, 122, 255, 1)
+  );
   color: white;
   border-radius: 10rpx;
   height: 80rpx;
