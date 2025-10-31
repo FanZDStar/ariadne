@@ -436,6 +436,9 @@ export default {
   justify-content: space-between;
   padding: 20rpx 40rpx;
   height: 88rpx;
+  max-width: 950rpx;
+  margin: 0 auto;
+  position: relative;
 }
 
 .nav-left,

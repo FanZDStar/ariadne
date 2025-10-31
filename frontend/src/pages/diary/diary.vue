@@ -5,7 +5,11 @@
         <view class="back-to-journey" v-if="isAtTop" @click="goBackToJourney">
           <text class="back-icon">←</text>
         </view>
-        <view class="back-to-top-hint" v-if="showBackToTopHint" @click="scrollToTop">
+        <view
+          class="back-to-top-hint"
+          v-if="showBackToTopHint"
+          @click="scrollToTop"
+        >
           <text class="back-icon">↑</text>
           <text class="back-text">回到顶部</text>
         </view>
@@ -30,19 +34,31 @@
       </view>
     </view>
 
-    <view class="background-section" :style="{ height: backgroundHeight + 'px' }">
+    <view
+      class="background-section"
+      :style="{ height: backgroundHeight + 'px' }"
+    >
       <!-- 当前背景显示 -->
       <view class="current-background" :style="getCurrentBackgroundStyle()">
-        <text class="background-label"
-          v-if="allBackgrounds[currentBackgroundIndex] && allBackgrounds[currentBackgroundIndex].name">
+        <text
+          class="background-label"
+          v-if="
+            allBackgrounds[currentBackgroundIndex] &&
+            allBackgrounds[currentBackgroundIndex].name
+          "
+        >
           {{ allBackgrounds[currentBackgroundIndex].name }}
         </text>
       </view>
 
       <!-- 背景指示点 -->
       <view class="background-indicators" v-if="allBackgrounds.length > 1">
-        <view v-for="(bg, index) in allBackgrounds" :key="bg.id || bg.name" class="indicator-dot"
-          :class="{ active: index === currentBackgroundIndex }"></view>
+        <view
+          v-for="(bg, index) in allBackgrounds"
+          :key="bg.id || bg.name"
+          class="indicator-dot"
+          :class="{ active: index === currentBackgroundIndex }"
+        ></view>
       </view>
 
       <view class="new-diary-btn" @click="createNewDiary">
@@ -51,24 +67,38 @@
     </view>
 
     <view class="diary-content">
-      <scroll-view class="diary-scroll-view" scroll-y @scroll="onScroll" :scroll-top="scrollTop"
-        :enable-back-to-top="true" ref="scrollView" id="scrollView">
+      <scroll-view
+        class="diary-scroll-view"
+        scroll-y
+        @scroll="onScroll"
+        :scroll-top="scrollTop"
+        :enable-back-to-top="true"
+        ref="scrollView"
+        id="scrollView"
+      >
         <view class="diary-list">
-          <view class="diary-item" v-for="diary in diaryList" :key="diary.diary_id">
+          <view
+            class="diary-item"
+            v-for="diary in diaryList"
+            :key="diary.diary_id"
+          >
             <!-- 可点击的主内容区域 -->
-            <view class="diary-main-area" @click="goToDiaryDetail(diary.diary_id)">
+            <view
+              class="diary-main-area"
+              @click="goToDiaryDetail(diary.diary_id)"
+            >
               <!-- 第一行：标题和日期时间 -->
               <view class="diary-header">
                 <view class="diary-title-section">
-                  <text class="diary-title">{{ diary.title || '无标题' }}</text>
+                  <text class="diary-title">{{ diary.title || "无标题" }}</text>
                 </view>
                 <view class="diary-date-section">
                   <text class="diary-date">{{
                     formatDiaryDate(diary.created_at)
-                    }}</text>
+                  }}</text>
                   <text class="diary-time">{{
                     formatDiaryTime(diary.created_at)
-                    }}</text>
+                  }}</text>
                 </view>
               </view>
 
@@ -76,7 +106,11 @@
               <view class="diary-meta">
                 <view class="diary-tags">
                   <template v-if="diary.tags && diary.tags.length > 0">
-                    <text class="tag-item" v-for="tag in diary.tags.slice(0, 3)" :key="tag">
+                    <text
+                      class="tag-item"
+                      v-for="tag in diary.tags.slice(0, 3)"
+                      :key="tag"
+                    >
                       #{{ tag }}
                     </text>
                     <text class="tag-more" v-if="diary.tags.length > 3">
@@ -92,22 +126,47 @@
               <!-- 第三行：正文和图片 -->
               <view class="diary-content-section">
                 <view class="diary-main-content">
-                  <text class="content-text">{{ truncateContent(diary.content, 50) }}</text>
-                  <text class="content-more" v-if="diary.content && diary.content.length > 50">...</text>
+                  <text class="content-text">{{
+                    truncateContent(diary.content, 50)
+                  }}</text>
+                  <text
+                    class="content-more"
+                    v-if="diary.content && diary.content.length > 50"
+                    >...</text
+                  >
                 </view>
 
-                <view class="diary-images" v-if="diary.images && diary.images.length > 0">
-                  <view class="image-grid" :class="{
-                    'single-image': diary.images.length === 1,
-                    'two-images': diary.images.length >= 2,
-                  }">
-                    <view class="image-wrapper" v-for="image in diary.images.slice(0, 2)" :key="image.image_id">
-                      <image :src="getImageUrl(image.image_url)" class="diary-image" mode="aspectFill"
-                        @click="previewImage(diary.images, image.image_url)" />
+                <view
+                  class="diary-images"
+                  v-if="diary.images && diary.images.length > 0"
+                >
+                  <view
+                    class="image-grid"
+                    :class="{
+                      'single-image': diary.images.length === 1,
+                      'two-images': diary.images.length >= 2,
+                    }"
+                  >
+                    <view
+                      class="image-wrapper"
+                      v-for="image in diary.images.slice(0, 2)"
+                      :key="image.image_id"
+                    >
+                      <image
+                        :src="getImageUrl(image.image_url)"
+                        class="diary-image"
+                        mode="aspectFill"
+                        @click="previewImage(diary.images, image.image_url)"
+                      />
                     </view>
 
-                    <view class="image-wrapper more-images" v-if="diary.images.length > 2">
-                      <text class="more-count">+{{ diary.images.length - 2 }}</text>
+                    <view
+                      class="image-wrapper more-images"
+                      v-if="diary.images.length > 2"
+                    >
+                      <text class="more-count"
+                        >+{{ diary.images.length - 2 }}</text
+                      >
                     </view>
                   </view>
                 </view>
@@ -123,20 +182,34 @@
           </view>
 
           <view v-if="diaryList.length === 0" class="empty-diary">
-            <text class="empty-text">还没有写过日记，点击右上角开始记录吧！</text>
+            <text class="empty-text"
+              >还没有写过日记，点击右上角开始记录吧！</text
+            >
           </view>
         </view>
 
         <!-- 分页组件 -->
-        <Pagination v-if="allDiaryList.length > 0" :current-page="currentPage" :page-size="pageSize" :total="totalCount"
-          @page-change="handlePageChange" />
+        <Pagination
+          v-if="allDiaryList.length > 0"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="totalCount"
+          @page-change="handlePageChange"
+        />
       </scroll-view>
     </view>
 
     <!-- 回到顶部按钮 -->
-    <BackToTop ref="backToTop" :threshold="300" :bottom="100" :right="30"
-      @start-scroll-listener="handleStartScrollListener" @remove-scroll-listener="handleRemoveScrollListener"
-      @scroll-to-top="scrollToTop" @scroll-to-top-success="handleBackToTopSuccess" />
+    <BackToTop
+      ref="backToTop"
+      :threshold="300"
+      :bottom="100"
+      :right="30"
+      @start-scroll-listener="handleStartScrollListener"
+      @remove-scroll-listener="handleRemoveScrollListener"
+      @scroll-to-top="scrollToTop"
+      @scroll-to-top-success="handleBackToTopSuccess"
+    />
   </view>
 </template>
 
@@ -214,7 +287,7 @@ export default {
       }
 
       uni.navigateTo({
-        url: `/pages/diary/diary-detail?id=${diaryId}`
+        url: `/pages/diary/diary-detail?id=${diaryId}`,
       });
     },
 
@@ -457,7 +530,7 @@ export default {
       const newHeight = Math.max(
         this.minBackgroundHeight,
         this.maxBackgroundHeight -
-        (this.maxBackgroundHeight - this.minBackgroundHeight) * scrollRatio
+          (this.maxBackgroundHeight - this.minBackgroundHeight) * scrollRatio
       );
 
       this.backgroundHeight = newHeight;
@@ -492,7 +565,7 @@ export default {
 
     // 截断正文内容
     truncateContent(content, maxLength = 50) {
-      if (!content) return '';
+      if (!content) return "";
       if (content.length <= maxLength) return content;
       return content.substring(0, maxLength);
     },
@@ -513,8 +586,10 @@ export default {
 .custom-navbar {
   position: fixed;
   top: var(--status-bar-height);
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950rpx;
+  width: 100%;
   height: 44px;
   background-color: #ffafcc;
   z-index: 1000;
@@ -864,9 +939,11 @@ export default {
 .manage-icon-wrapper {
   padding: 12rpx 24rpx;
   border-radius: 32rpx;
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.3),
-      rgba(255, 255, 255, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
   backdrop-filter: blur(10rpx);
   border: 2rpx solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
@@ -875,9 +952,11 @@ export default {
 
 .manage-btn:active .manage-icon-wrapper {
   transform: scale(0.95);
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.4),
-      rgba(255, 255, 255, 0.2));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.2)
+  );
 }
 
 .manage-icon {
@@ -900,9 +979,11 @@ export default {
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.3),
-      rgba(255, 255, 255, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
   backdrop-filter: blur(10rpx);
   border: 2rpx solid rgba(255, 255, 255, 0.2);
   display: flex;
@@ -914,9 +995,11 @@ export default {
 
 .background-settings-btn:active .settings-icon-wrapper {
   transform: scale(0.95);
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.4),
-      rgba(255, 255, 255, 0.2));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.2)
+  );
 }
 
 .bg-settings-icon {
