@@ -32,7 +32,8 @@ def try_award_points(
     try:
         from app.services.star_point_service import get_star_point_service
         service = get_star_point_service(db)
-        return service.award_points(user_id, action, source_id, source_type)
+        result = service.award_points(user_id, action, source_id, source_type)
+        return result.rewarded, result.message, result.points_awarded
     except Exception as e:
         if not silent:
             raise e

@@ -299,27 +299,25 @@ export default {
           });
 
           // 合并显示星星奖励和好感度奖励
-          if ((result.star_awarded && result.star_points > 0) || (result.affection_awarded && result.affection_points > 0)) {
-            let rewardMessage = '';
+          let rewardMessage = '';
 
-            if (result.star_awarded && result.star_points > 0) {
-              rewardMessage += `获得了${result.star_points}颗星星 ⭐`;
-            }
+          if (result.star_awarded && result.star_points > 0) {
+            rewardMessage += `获得了${result.star_points}颗星星 ⭐`;
+          }
 
-            if (result.affection_awarded && result.affection_points > 0) {
-              if (rewardMessage) rewardMessage += '\n';
-              rewardMessage += `看板娘好感度 +${result.affection_points} 💖`;
-            }
+          if (result.affection_awarded && result.affection_points > 0) {
+            if (rewardMessage) rewardMessage += '\n';
+            rewardMessage += `看板娘好感度 +${result.affection_points} 💖`;
+          }
 
-            if (rewardMessage) {
-              setTimeout(() => {
-                uni.showToast({
-                  title: rewardMessage,
-                  icon: 'none',
-                  duration: 3000
-                });
-              }, 1500);
-            }
+          if (rewardMessage) {
+            setTimeout(() => {
+              uni.showToast({
+                title: rewardMessage,
+                icon: 'none',
+                duration: 3000
+              });
+            }, 1500);
           }
 
           // 3秒后跳转到日记页面

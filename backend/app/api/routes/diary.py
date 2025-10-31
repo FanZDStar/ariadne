@@ -97,9 +97,13 @@ def create_diary(
         
         # 根据当日日记数量决定是否为第一篇
         is_first = daily_diary_count == 0
+        print(f"日记计数检查 - 用户: {current_user.user_id}, 今日已有日记: {daily_diary_count}, 是否为第一篇: {is_first}")
+        
         success, message, points = award_diary_points(
             db, current_user.user_id, str(db_diary.diary_id), is_first
         )
+        
+        print(f"积分奖励结果 - 成功: {success}, 消息: {message}, 积分: {points}")
         
         if success:
             star_awarded = True
@@ -110,6 +114,8 @@ def create_diary(
             print(f"用户 {current_user.user_id} 今日日记积分已达上限: {message}")
     except Exception as e:
         print(f"日记积分奖励失败: {e}")
+        import traceback
+        traceback.print_exc()
 
     # 尝试奖励日记好感度
     affection_awarded = False
@@ -152,7 +158,6 @@ def create_diary(
         mood=db_diary.mood,
         created_at=db_diary.created_at,
         updated_at=db_diary.updated_at,
-        is_private=db_diary.is_private,
         image_count=db_diary.image_count,
         tags=db_diary.tags,  # 添加标签支持
         images=[],
@@ -164,6 +169,11 @@ def create_diary(
         affection_message=affection_message,
         affection_level_up=affection_level_up
     )
+    
+    # 调试输出，方便前端检查
+    print(f"日记创建奖励结果 - 用户: {current_user.user_id}")
+    print(f"  星星奖励: {star_awarded}, 积分: {star_points}")
+    print(f"  好感度奖励: {affection_awarded}, 积分: {affection_points}")
 
     return result
 
