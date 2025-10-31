@@ -20,7 +20,7 @@ class MoodTrackerResponse(BaseModel):
         from_attributes = True
 
 class MoodTrackerWithStarResponse(BaseModel):
-    """包含星星奖励的心情记录响应"""
+    """包含星星奖励和好感度奖励的心情记录响应"""
     id: int
     user_id: int
     mood_date: date
@@ -30,6 +30,10 @@ class MoodTrackerWithStarResponse(BaseModel):
     star_awarded: bool = False
     star_points: int = 0
     star_message: str = "心情记录成功 💫"
+    affection_awarded: bool = False
+    affection_points: int = 0
+    affection_message: str = ""
+    affection_level_up: bool = False
 
 class WeeklyMoodResponse(BaseModel):
     """7天心情记录响应"""

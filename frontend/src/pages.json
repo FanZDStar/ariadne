@@ -373,6 +373,13 @@
         "navigationBarBackgroundColor": "#3498db",
         "navigationBarTextStyle": "white"
       }
+    },
+    {
+      "path": "pages/affection/affection-detail",
+      "style": {
+        "navigationBarTitleText": "好感度详情",
+        "navigationStyle": "custom"
+      }
     }
   ],
   "globalStyle": {

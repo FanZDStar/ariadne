@@ -333,6 +333,35 @@ def purchase_outfit(
         updated_result = db.execute(updated_points_query, {"user_id": current_user.user_id})
         updated_points = updated_result.fetchone()[0]
         
+        # 奖励购买服装好感度
+        affection_awarded = False
+        affection_points = 0
+        affection_message = ""
+        affection_level_up = False
+        
+        try:
+            from app.services.mascot_affection_service import MascotAffectionService
+            
+            affection_service = MascotAffectionService(db)
+            result = affection_service.award_outfit_purchase_affection(
+                user_id=current_user.user_id,
+                star_cost=star_cost,
+                source_id=str(outfit_id)
+            )
+            
+            if result.rewarded:
+                affection_awarded = True
+                affection_points = result.affection_awarded
+                affection_message = f"看板娘好感度 +{result.affection_awarded}"
+                affection_level_up = result.level_up
+                
+                if result.level_up:
+                    affection_message += f"，恭喜升级到{result.new_level}级！"
+                    
+        except Exception as e:
+            # 好感度奖励失败不影响购买
+            print(f"购买服装好感度奖励失败: {e}")
+        
         db.commit()
         
         return {
@@ -340,7 +369,11 @@ def purchase_outfit(
             "outfit_id": outfit_id,
             "outfit_name": outfit_name,
             "cost": star_cost,
-            "remaining_points": updated_points
+            "remaining_points": updated_points,
+            "affection_awarded": affection_awarded,
+            "affection_points": affection_points,
+            "affection_message": affection_message,
+            "affection_level_up": affection_level_up
         }
         
     except Exception as e:

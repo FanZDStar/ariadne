@@ -27,7 +27,11 @@ async def create_mood_record(
             "updated_at": result["mood_record"].updated_at,
             "star_awarded": result["star_awarded"],
             "star_points": result["star_points"],
-            "star_message": result["star_message"]
+            "star_message": result["star_message"],
+            "affection_awarded": result["affection_awarded"],
+            "affection_points": result["affection_points"],
+            "affection_message": result["affection_message"],
+            "affection_level_up": result["affection_level_up"]
         }
     except Exception as e:
         print(f"记录心情失败: {e}")

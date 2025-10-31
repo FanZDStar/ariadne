@@ -1,30 +1,17 @@
 <template>
   <view class="login-container">
     <!-- 背景图片 -->
-    <image
-      class="background-image"
-      src="/src/static/loginbg.jpg"
-      mode="aspectFill"
-    ></image>
+    <image class="background-image" src="/src/static/loginbg.jpg" mode="aspectFill"></image>
 
     <!-- 粒子动效层（背景层） -->
     <view class="particles-container">
-      <view
-        v-for="(particle, index) in particles"
-        :key="index"
-        class="particle"
-        :style="particle.style"
-      ></view>
+      <view v-for="(particle, index) in particles" :key="index" class="particle" :style="particle.style"></view>
     </view>
 
     <!-- 粒子动效层（最上层） -->
     <view class="particles-container-top">
-      <view
-        v-for="(particle, index) in topParticles"
-        :key="'top-' + index"
-        class="particle"
-        :style="particle.style"
-      ></view>
+      <view v-for="(particle, index) in topParticles" :key="'top-' + index" class="particle" :style="particle.style">
+      </view>
     </view>
 
     <view class="login-header">
@@ -35,11 +22,7 @@
 
     <view class="login-form">
       <view class="input-group">
-        <input
-          class="input"
-          placeholder="请输入账号或邮箱"
-          v-model="username"
-        />
+        <input class="input" placeholder="请输入账号或邮箱" v-model="username" />
       </view>
 
       <!-- <view class="input-group">
@@ -47,12 +30,7 @@
             </view> -->
       <view class="input-group">
         <view class="password-input-container">
-          <input
-            class="input"
-            placeholder="请输入密码"
-            :password="!showPassword"
-            v-model="password"
-          />
+          <input class="input" placeholder="请输入密码" :password="!showPassword" v-model="password" />
           <text class="eye-icon" @click="showPassword = !showPassword">{{
             showPassword ? "👁️" : "👁️‍🗨️"
           }}</text>
@@ -163,9 +141,8 @@ export default {
           animationDelay: delay + "s",
           animationDuration: duration + "s",
           opacity: opacity,
-          boxShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, ${
-            opacity * 0.8
-          })`,
+          boxShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, ${opacity * 0.8
+            })`,
           background: `rgba(255, 255, 255, ${opacity})`,
         },
       };
@@ -198,11 +175,26 @@ export default {
           // 保存token
           storage.setToken(res.access_token);
 
-          // 保存星星奖励信息到本地存储，供home页面使用
+          // 合并星星奖励和好感度奖励信息，供home页面使用
+          let rewardMessage = "欢迎回来~ 💫";
+
+          if ((res.star_awarded && res.star_points > 0) || (res.affection_awarded && res.affection_points > 0)) {
+            rewardMessage = '';
+
+            if (res.star_awarded && res.star_points > 0) {
+              rewardMessage += `获得了${res.star_points}颗星星 ⭐`;
+            }
+
+            if (res.affection_awarded && res.affection_points > 0) {
+              if (rewardMessage) rewardMessage += '\n';
+              rewardMessage += `看板娘好感度 +${res.affection_points} 💖`;
+            }
+          }
+
           storage.setStarReward({
-            awarded: res.star_awarded || false,
+            awarded: res.star_awarded || res.affection_awarded || false,
             points: res.star_points || 0,
-            message: res.star_message || "欢迎回来~ 💫",
+            message: rewardMessage,
           });
 
           // 直接跳转到主页，不显示"登录成功"提示
@@ -340,13 +332,13 @@ export default {
   }
 
   100% {
-    transform: translate(calc(100vw + 100px), calc(100vh + 100px))
-      rotate(360deg);
+    transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(360deg);
     opacity: 0;
   }
 }
 
 @keyframes wobble {
+
   0%,
   100% {
     transform: translateY(0px);
@@ -450,11 +442,9 @@ export default {
 }
 
 .login-btn {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 122, 255, 0.8),
-    rgba(0, 122, 255, 1)
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 122, 255, 0.8),
+      rgba(0, 122, 255, 1));
   color: white;
   border-radius: 10rpx;
   height: 80rpx;

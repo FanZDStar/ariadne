@@ -1,5 +1,7 @@
 <template>
   <view class="dress-up-container">
+    <!-- 好感度奖励弹窗组件 -->
+    <AffectionReward ref="affectionReward" />
     <!-- 自定义导航栏 -->
     <view class="custom-navbar">
       <view class="navbar-left" @click="goBack">
@@ -9,23 +11,24 @@
       <view class="navbar-right"></view>
     </view>
 
-    <!-- 星星积分显示 -->
+    <!-- 积分和好感度显示 -->
     <view class="star-section">
       <view class="star-points-container">
         <view class="star-icon">⭐</view>
         <text class="star-count">{{ starPoints }}</text>
+      </view>
+      <!-- 好感度显示 -->
+      <view class="affection-points-container" @click="goToAffectionDetail">
+        <view class="affection-icon">💖</view>
+        <text class="affection-count">{{ affectionPoints }}</text>
+        <text class="affection-level">{{ affectionLevelName }}</text>
       </view>
     </view>
 
     <!-- 当前看板娘展示区域 (上1/3) -->
     <view class="mascot-preview-section">
       <!-- <view class="mascot-preview"> -->
-      <image
-        :src="currentMascotImage"
-        mode="aspectFit"
-        class="mascot-image"
-        @error="onImageError"
-      ></image>
+      <image :src="currentMascotImage" mode="aspectFit" class="mascot-image" @error="onImageError"></image>
       <!-- </view> -->
       <view class="current-outfit-name">{{
         selectedOutfitForPreview
@@ -33,13 +36,12 @@
           : currentOutfit.name
       }}</view>
 
+
+
       <!-- 服装信息和操作按钮 -->
       <view class="outfit-info" v-if="selectedOutfitForPreview">
         <!-- 显示星星成本（仅当用户未拥有该服装时） -->
-        <view
-          class="cost-info"
-          v-if="!isOutfitOwned(selectedOutfitForPreview.id)"
-        >
+        <view class="cost-info" v-if="!isOutfitOwned(selectedOutfitForPreview.id)">
           <view class="cost-container">
             <view class="cost-star">⭐</view>
             <text class="cost-text">{{
@@ -50,18 +52,11 @@
 
         <!-- 操作按钮 -->
         <view class="action-buttons">
-          <view
-            v-if="isOutfitOwned(selectedOutfitForPreview.id)"
-            class="action-btn switch-btn"
-            @click="switchToOutfit(selectedOutfitForPreview)"
-          >
+          <view v-if="isOutfitOwned(selectedOutfitForPreview.id)" class="action-btn switch-btn"
+            @click="switchToOutfit(selectedOutfitForPreview)">
             切换
           </view>
-          <view
-            v-else
-            class="action-btn exchange-btn"
-            @click="exchangeOutfit(selectedOutfitForPreview)"
-          >
+          <view v-else class="action-btn exchange-btn" @click="exchangeOutfit(selectedOutfitForPreview)">
             兑换
           </view>
         </view>
@@ -72,25 +67,13 @@
     <view class="outfits-section">
       <view class="section-title">选择服装</view>
       <view class="outfits-grid">
-        <view
-          v-for="outfit in outfits"
-          :key="outfit.id"
-          class="outfit-item"
-          :class="{
-            active:
-              selectedOutfitForPreview &&
-              selectedOutfitForPreview.id === outfit.id,
-          }"
-          @click="selectOutfit(outfit)"
-          @longpress="showOutfitDetail(outfit)"
-        >
+        <view v-for="outfit in outfits" :key="outfit.id" class="outfit-item" :class="{
+          active:
+            selectedOutfitForPreview &&
+            selectedOutfitForPreview.id === outfit.id,
+        }" @click="selectOutfit(outfit)" @longpress="showOutfitDetail(outfit)">
           <view class="outfit-image-wrapper">
-            <image
-              :src="outfit.mascotImage"
-              mode="aspectFit"
-              class="outfit-image"
-              @error="onOutfitImageError"
-            >
+            <image :src="outfit.mascotImage" mode="aspectFit" class="outfit-image" @error="onOutfitImageError">
             </image>
           </view>
           <view class="outfit-name">{{ outfit.name }}</view>
@@ -101,12 +84,20 @@
 </template>
 
 <script>
+import AffectionReward from '../../components/AffectionReward.vue';
+
 export default {
+  components: {
+    AffectionReward
+  },
   data() {
     return {
       currentOutfit: {},
       currentMascotImage: "",
       starPoints: 0, // 用户星星积分
+      affectionPoints: 0, // 用户好感度
+      affectionLevel: 1, // 好感度等级
+      affectionLevelName: "陌生", // 好感度等级名称
       ownedOutfits: [], // 用户拥有的服装列表
       selectedOutfitForPreview: null, // 当前预览的服装（可能未拥有）
 
@@ -173,6 +164,9 @@ export default {
     // 加载用户星星积分
     this.loadStarPoints();
 
+    // 加载用户好感度
+    this.loadAffectionPoints();
+
     // 加载用户拥有的服装
     this.loadOwnedOutfits();
 
@@ -184,8 +178,9 @@ export default {
   },
 
   onShow() {
-    // 每次显示页面时刷新星星积分，确保显示最新数据
+    // 每次显示页面时刷新星星积分和好感度，确保显示最新数据
     this.loadStarPoints();
+    this.loadAffectionPoints();
   },
 
   methods: {
@@ -193,6 +188,8 @@ export default {
     goBack() {
       uni.navigateBack();
     },
+
+
 
     // 加载用户当前服装
     async loadCurrentOutfit() {
@@ -207,9 +204,8 @@ export default {
 
         // 已登录时从服务器获取
         const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/mascot-outfits/current`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/mascot-outfits/current`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -298,9 +294,8 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/star-points/balance`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/star-points/balance`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -330,9 +325,8 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/mascot-outfits/user-outfits`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/mascot-outfits/user-outfits`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -405,9 +399,8 @@ export default {
       if (token) {
         try {
           await uni.request({
-            url: `${
-              process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-            }/mascot-outfits/set-current`,
+            url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+              }/mascot-outfits/set-current`,
             method: "POST",
             header: {
               Authorization: `Bearer ${token}`,
@@ -466,9 +459,8 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${
-            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
-          }/mascot-outfits/purchase/${outfit.id}`,
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/mascot-outfits/purchase/${outfit.id}`,
           method: "POST",
           header: {
             Authorization: `Bearer ${token}`,
@@ -483,6 +475,30 @@ export default {
           // 使用服务器返回的最新积分
           if (response.data && response.data.remaining_points !== undefined) {
             this.starPoints = response.data.remaining_points;
+          }
+
+          // 检查是否有好感度奖励
+          if (response.data && response.data.affection_awarded) {
+            // 显示好感度奖励动画
+            if (response.data.affection_level_up) {
+              // 如果有升级，显示升级奖励
+              this.$refs.affectionReward.showLevelUpReward(
+                {
+                  name: response.data.new_level_name,
+                  description: response.data.new_level_description
+                },
+                response.data.level_up_rewards
+              );
+            } else {
+              // 普通好感度奖励
+              this.$refs.affectionReward.showAffectionReward(
+                response.data.affection_points,
+                response.data.affection_message || '购买服装获得好感度！'
+              );
+            }
+
+            // 重新加载好感度
+            await this.loadAffectionPoints();
           }
 
           // 无论服务器是否返回积分，都重新加载一次以确保数据同步
@@ -511,6 +527,53 @@ export default {
           icon: "none",
         });
       }
+    },
+
+    // 加载用户好感度
+    async loadAffectionPoints() {
+      const token = uni.getStorageSync("access_token");
+      if (!token) {
+        this.affectionPoints = 0;
+        this.affectionLevel = 1;
+        this.affectionLevelName = "陌生";
+        return;
+      }
+
+      try {
+        const response = await uni.request({
+          url: `${process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+            }/mascot-affection/affection/summary`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.statusCode === 200) {
+          const data = response.data;
+          this.affectionPoints = data.current_affection || 0;
+          this.affectionLevel = data.current_level || 1;
+          this.affectionLevelName = data.level_name || "陌生";
+        } else if (response.statusCode === 401) {
+          // Token过期
+          this.affectionPoints = 0;
+          this.affectionLevel = 1;
+          this.affectionLevelName = "陌生";
+        }
+      } catch (error) {
+        console.error("获取好感度失败:", error);
+        this.affectionPoints = 0;
+        this.affectionLevel = 1;
+        this.affectionLevelName = "陌生";
+      }
+    },
+
+    // 跳转到好感度详情页面
+    goToAffectionDetail() {
+      uni.navigateTo({
+        url: '/pages/affection/affection-detail'
+      });
     },
 
     // 显示服装详情
@@ -552,10 +615,8 @@ export default {
 .custom-navbar {
   position: fixed;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 950rpx;
-  width: 100%;
+  left: 0;
+  right: 0;
   height: 88rpx;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -564,7 +625,6 @@ export default {
   padding: 0 32rpx;
   z-index: 1000;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
 }
 
 .navbar-left {
@@ -601,15 +661,19 @@ export default {
   flex: 0 0 80rpx;
 }
 
-/* 星星积分区域 */
+/* 积分和好感度区域 */
 .star-section {
   margin-top: 88rpx;
   padding: 20rpx 30rpx;
   background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  align-items: center;
 }
 
-/* 移动端星星区域固定 */
+/* 移动端积分区域固定 */
 @media (max-width: 750px) {
   .star-section {
     position: fixed;
@@ -618,9 +682,10 @@ export default {
     right: 0;
     z-index: 101;
     margin-top: 0;
-    padding: 20rpx 30rpx;
+    padding: 20rpx 15rpx;
     background: rgba(250, 248, 243, 0.95);
     backdrop-filter: blur(10px);
+    gap: 15rpx;
   }
 }
 
@@ -633,25 +698,49 @@ export default {
   border: 2rpx solid #f0c400;
   border-radius: 25rpx;
   padding: 15rpx 25rpx;
-  margin: 0 auto;
   max-width: 200rpx;
   box-shadow: 0 4rpx 12rpx rgba(255, 215, 0, 0.3);
   transition: all 0.3s ease;
+  flex: 1;
 }
 
-/* 移动端星星容器尺寸优化 */
+/* 好感度积分容器 */
+.affection-points-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  background: linear-gradient(135deg, #ff69b4, #ff91c7);
+  border: 2rpx solid #ff1493;
+  border-radius: 25rpx;
+  padding: 15rpx 20rpx;
+  max-width: 220rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255, 105, 180, 0.3);
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+/* 移动端容器尺寸优化 */
 @media (max-width: 750px) {
-  .star-points-container {
-    padding: 10rpx 20rpx;
-    max-width: 180rpx;
+
+  .star-points-container,
+  .affection-points-container {
+    padding: 10rpx 15rpx;
+    max-width: 160rpx;
   }
 
-  .star-icon {
-    font-size: 28rpx;
+  .star-icon,
+  .affection-icon {
+    font-size: 24rpx;
   }
 
-  .star-count {
-    font-size: 26rpx;
+  .star-count,
+  .affection-count {
+    font-size: 24rpx;
+  }
+
+  .affection-level {
+    font-size: 20rpx;
   }
 }
 
@@ -660,22 +749,47 @@ export default {
   box-shadow: 0 2rpx 8rpx rgba(255, 215, 0, 0.4);
 }
 
+.affection-points-container:active {
+  transform: translateY(1rpx);
+  box-shadow: 0 2rpx 8rpx rgba(255, 105, 180, 0.4);
+}
+
 .star-icon {
-  font-size: 32rpx;
+  font-size: 28rpx;
   line-height: 1;
 }
 
 .star-count {
-  font-size: 30rpx;
+  font-size: 26rpx;
   font-weight: bold;
   color: #b8860b;
   line-height: 1;
 }
 
 .star-label {
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: #b8860b;
   line-height: 1;
+}
+
+/* 好感度图标和数字样式 */
+.affection-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.affection-count {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #c71585;
+  line-height: 1;
+}
+
+.affection-level {
+  font-size: 22rpx;
+  color: #c71585;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /* 看板娘预览区域 */
@@ -692,13 +806,15 @@ export default {
 @media (max-width: 750px) {
   .mascot-preview-section {
     position: fixed;
-    top: 108rpx; /* 导航栏 88rpx + 星星区域约 20rpx */
+    top: 108rpx;
+    /* 导航栏 88rpx + 星星区域约 20rpx */
     left: 0;
     right: 0;
     height: 45vh;
     z-index: 100;
     background: #faf8f3;
     padding: 10rpx 20rpx 20rpx;
+
   }
 }
 
@@ -717,6 +833,7 @@ export default {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
@@ -740,6 +857,8 @@ export default {
     height: 400rpx;
   }
 }
+
+
 
 .current-outfit-name {
   margin-top: 30rpx;
@@ -842,7 +961,8 @@ export default {
 @media (max-width: 750px) {
   .outfits-section {
     position: fixed;
-    top: calc(108rpx + 45vh); /* 导航栏 + 星星 + 人物区域高度（45vh） */
+    top: calc(108rpx + 45vh);
+    /* 导航栏 + 星星 + 人物区域高度（45vh） */
     left: 0;
     right: 0;
     bottom: 0;

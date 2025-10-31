@@ -65,7 +65,7 @@ class DiaryResponse(DiaryBase):
 
 
 class DiaryWithStarResponse(DiaryBase):
-    """包含星星奖励的日记响应"""
+    """包含星星奖励和好感度奖励的日记响应"""
     diary_id: int
     user_id: int
     created_at: datetime
@@ -75,6 +75,10 @@ class DiaryWithStarResponse(DiaryBase):
     star_awarded: bool = False
     star_points: int = 0
     star_message: str = "成功发表一篇碎碎念 💫"
+    affection_awarded: bool = False
+    affection_points: int = 0
+    affection_message: str = ""
+    affection_level_up: bool = False
 
     class Config:
         from_attributes = True

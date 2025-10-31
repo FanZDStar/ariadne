@@ -594,6 +594,59 @@ export const api = {
       method: "GET",
     });
   },
+
+  // 看板娘好感度系统API
+  // 获取好感度概览
+  getMascotAffectionSummary: (token) => {
+    return request("/mascot-affection/affection/summary", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取好感度变动记录
+  getMascotAffectionLogs: (token, limit = 20) => {
+    return request(`/mascot-affection/affection/logs?limit=${limit}`, {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取未领取奖励
+  getMascotAffectionRewards: (token) => {
+    return request("/mascot-affection/affection/rewards", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 获取等级配置
+  getMascotAffectionLevels: (token) => {
+    return request("/mascot-affection/affection/levels", {
+      method: "GET",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 领取奖励
+  claimMascotAffectionReward: (token, rewardId) => {
+    return request(`/mascot-affection/affection/rewards/${rewardId}/claim`, {
+      method: "POST",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+
 };
 
 // 本地存储工具

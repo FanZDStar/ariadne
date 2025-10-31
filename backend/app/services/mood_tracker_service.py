@@ -58,11 +58,48 @@ class MoodTrackerService:
             except Exception as e:
                 print(f"心情记录积分奖励失败: {e}")
         
+        # 尝试奖励心情记录好感度（仅在首次记录时）
+        affection_awarded = False
+        affection_points = 0
+        affection_message = ""
+        affection_level_up = False
+        
+        if is_first_record:
+            try:
+                from app.services.mascot_affection_service import MascotAffectionService
+                from app.utils.affection_types import MascotAffectionAction, AffectionSourceType
+                
+                affection_service = MascotAffectionService(db)
+                result = affection_service.award_affection(
+                    user_id=user_id,
+                    action=MascotAffectionAction.MOOD_TRACKING,
+                    source_id=str(mood_record.id),
+                    source_type=AffectionSourceType.MOOD
+                )
+                
+                if result.rewarded:
+                    affection_awarded = True
+                    affection_points = result.affection_awarded
+                    affection_message = f"看板娘好感度 +{result.affection_awarded}"
+                    affection_level_up = result.level_up
+                    print(f"用户 {user_id} 心情记录获得 {result.affection_awarded} 好感度")
+                    
+                    if result.level_up:
+                        affection_message += f"，恭喜升级到{result.new_level}级！"
+                else:
+                    print(f"用户 {user_id} 今日已获得心情记录好感度")
+            except Exception as e:
+                print(f"心情记录好感度奖励失败: {e}")
+        
         return {
             "mood_record": mood_record,
             "star_awarded": star_awarded,
             "star_points": star_points,
-            "star_message": star_message or "心情记录成功 💫"
+            "star_message": star_message or "心情记录成功 💫",
+            "affection_awarded": affection_awarded,
+            "affection_points": affection_points,
+            "affection_message": affection_message,
+            "affection_level_up": affection_level_up
         }
     
     @staticmethod
