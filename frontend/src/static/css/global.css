@@ -1,0 +1,112 @@
+/* ============================================
+   全局样式 - 用于控制原生组件和页面布局
+   ============================================ */
+
+/* 限制整体应用容器宽度 */
+#app,
+uni-app,
+body {
+  max-width: 950rpx;
+  margin: 0 auto !important;
+  background-color: #f5f5f5;
+}
+
+/* 限制页面主体宽度 */
+page {
+  max-width: 950rpx;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   修复底部 tabBar 居中
+   ============================================ */
+/* H5 平台的 tabBar */
+uni-tabbar {
+  max-width: 950rpx !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  z-index: 998 !important;
+}
+
+.uni-tabbar {
+  max-width: 950rpx !important;
+  margin: 0 auto !important;
+  z-index: 998 !important;
+}
+
+/* ============================================
+   修复顶部导航栏居中
+   ============================================ */
+/* H5 平台的顶部导航 - 改为相对定位，不覆盖页面内容 */
+uni-page-head {
+  max-width: 950rpx !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+  position: relative !important;
+  z-index: 999 !important;
+}
+
+.uni-page-head {
+  max-width: 950rpx !important;
+  margin: 0 auto !important;
+  z-index: 999 !important;
+}
+
+/* 修复导航栏内部元素居中对齐 */
+.uni-page-head-hd,
+.uni-page-head-bd,
+.uni-page-head-ft {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* 导航栏标题居中 */
+.uni-page-head-bd {
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+}
+
+/* 导航栏左侧按钮 */
+.uni-page-head-hd {
+  left: 0 !important;
+  position: absolute !important;
+}
+
+/* 导航栏右侧按钮 */
+.uni-page-head-ft {
+  right: 0 !important;
+  position: absolute !important;
+}
+
+/* ============================================
+   页面包装器居中
+   ============================================ */
+uni-page-wrapper {
+  max-width: 950rpx !important;
+  margin: 0 auto !important;
+}
+
+uni-page-body {
+  max-width: 950rpx !important;
+  margin: 0 auto !important;
+}
+
+/* ============================================
+   修复页面刷新容器
+   ============================================ */
+uni-page-refresh {
+  max-width: 950rpx !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+}

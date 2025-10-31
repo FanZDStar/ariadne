@@ -1,6 +1,10 @@
 <template>
   <view class="splash-container">
-    <image class="splash-image" src="/src/static/beforelogin.png" mode="aspectFill"></image>
+    <image
+      class="splash-image"
+      src="/src/static/beforelogin.png"
+      mode="aspectFill"
+    ></image>
   </view>
 </template>
 
@@ -22,7 +26,7 @@ export default {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 750rpx;
+  max-width: 950rpx;
   width: 100%;
   height: 100vh;
   z-index: 9999;
@@ -53,7 +57,7 @@ export default {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 750rpx;
+  max-width: 950rpx;
   width: 100%;
   height: 100vh;
 }
