@@ -1,7 +1,15 @@
 <template>
-  <view class="tree-hole-container" :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }">
+  <view
+    class="tree-hole-container"
+    :class="{ 'day-theme': theme === 'day', 'night-theme': theme === 'night' }"
+  >
     <!-- 全屏背景图片 - 添加key强制更新 -->
-    <image class="background-image" :src="backgroundImage" :key="'bg-' + theme + '-' + level" mode="aspectFill" />
+    <image
+      class="background-image"
+      :src="backgroundImage"
+      :key="'bg-' + theme + '-' + level"
+      mode="aspectFill"
+    />
 
     <!-- 水滴显示（页面顶部） -->
     <view class="water-drops-display" :key="'water-' + waterDrops">
@@ -10,11 +18,19 @@
     </view>
 
     <!-- 能量条 - 添加key强制重新渲染 -->
-    <view class="energy-bar-container" :key="'energy-' + energy + '-level-' + level">
+    <view
+      class="energy-bar-container"
+      :key="'energy-' + energy + '-level-' + level"
+    >
       <view class="energy-bar-bg">
-        <view class="energy-bar-fill" :style="{ width: energyProgress + '%' }"></view>
+        <view
+          class="energy-bar-fill"
+          :style="{ width: energyProgress + '%' }"
+        ></view>
       </view>
-      <text class="energy-bar-text">能量：{{ energyProgress }}/100　等级：Lv.{{ level }}</text>
+      <text class="energy-bar-text"
+        >能量：{{ energyProgress }}/100　等级：Lv.{{ level }}</text
+      >
       <text class="energy-tip">每升10级可以让树木成长哦</text>
     </view>
 
@@ -26,8 +42,13 @@
     <view class="tree-area">
       <!-- 水壶图片 - 点击转换所有水滴为能量 -->
       <view class="kettle-container" :key="'kettle-' + waterDrops">
-        <image class="kettle-image" :class="{ 'kettle-disabled': waterDrops === 0 }" src="../../static/kettle.png"
-          mode="aspectFit" @click="convertWaterDrops" />
+        <image
+          class="kettle-image"
+          :class="{ 'kettle-disabled': waterDrops === 0 }"
+          src="../../static/kettle.png"
+          mode="aspectFit"
+          @click="convertWaterDrops"
+        />
         <!-- 水滴提示 -->
         <view class="kettle-tip" v-if="waterDrops > 0">
           <text class="tip-text">点击转换 {{ waterDrops }} 💧</text>
@@ -45,7 +66,11 @@
     </view>
 
     <!-- 任务弹窗 -->
-    <view class="task-modal-overlay" v-if="showTaskModal" @click="showTaskModal = false">
+    <view
+      class="task-modal-overlay"
+      v-if="showTaskModal"
+      @click="showTaskModal = false"
+    >
       <view class="task-modal" @click.stop>
         <view class="modal-header">
           <text class="modal-title">每小时领取水滴</text>
@@ -53,26 +78,31 @@
         </view>
         <view class="modal-content">
           <text class="task-description">每1个小时可以领取10个水滴💧</text>
-          
+
           <!-- 倒计时显示 -->
           <view class="countdown-container" v-if="!canClaim">
             <text class="countdown-label">距离下次领取：</text>
-            <text class="countdown-time" :key="claimRemainingSeconds">{{ claimCountdownDisplay }}</text>
+            <text class="countdown-time" :key="claimRemainingSeconds">{{
+              claimCountdownDisplay
+            }}</text>
             <!-- 调试：显示原始秒数 -->
-            <text class="countdown-debug" style="font-size: 20rpx; color: #999; margin-top: 5rpx;">
+            <text
+              class="countdown-debug"
+              style="font-size: 20rpx; color: #999; margin-top: 5rpx"
+            >
               ({{ claimRemainingSeconds }}秒)
             </text>
           </view>
-          
+
           <!-- 领取按钮 -->
           <view class="claim-button-container">
-            <button 
-              class="claim-button" 
-              :class="{ 'can-claim': canClaim, 'disabled': !canClaim }"
+            <button
+              class="claim-button"
+              :class="{ 'can-claim': canClaim, disabled: !canClaim }"
               :disabled="!canClaim"
               @click="claimWaterDrops"
             >
-              {{ canClaim ? '领取 10💧' : '冷却中...' }}
+              {{ canClaim ? "领取 10💧" : "冷却中..." }}
             </button>
           </view>
         </view>
@@ -216,14 +246,23 @@ export default {
     startClaimCountdown() {
       // 启动领取倒计时
       this.clearClaimCountdown();
-      console.log("⏰ 启动领取倒计时定时器，初始秒数:", this.claimRemainingSeconds);
-      
+      console.log(
+        "⏰ 启动领取倒计时定时器，初始秒数:",
+        this.claimRemainingSeconds
+      );
+
       this.claimCountdownTimer = setInterval(() => {
         if (this.claimRemainingSeconds > 0) {
           // 使用 this.$set 确保响应式更新
           this.claimRemainingSeconds = this.claimRemainingSeconds - 1;
-          console.log("⏱️ 领取倒计时更新:", this.claimRemainingSeconds, "秒", "显示:", this.claimCountdownDisplay);
-          
+          console.log(
+            "⏱️ 领取倒计时更新:",
+            this.claimRemainingSeconds,
+            "秒",
+            "显示:",
+            this.claimCountdownDisplay
+          );
+
           // 强制更新视图
           this.$forceUpdate();
         } else {
@@ -251,7 +290,9 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/water-drops/status`,
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/water-drops/status`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -262,7 +303,8 @@ export default {
         if (response.statusCode === 200) {
           this.waterDrops = parseInt(response.data.water_drops) || 0;
           this.canClaim = response.data.can_claim !== false;
-          this.claimRemainingSeconds = parseInt(response.data.remaining_seconds) || 0;
+          this.claimRemainingSeconds =
+            parseInt(response.data.remaining_seconds) || 0;
 
           console.log("✅ 水滴状态:", {
             waterDrops: this.waterDrops,
@@ -308,7 +350,9 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/water-drops/claim`,
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/water-drops/claim`,
           method: "POST",
           header: {
             Authorization: `Bearer ${token}`,
@@ -339,7 +383,11 @@ export default {
 
           // 启动新的倒计时
           if (this.claimRemainingSeconds > 0 && !this.canClaim) {
-            console.log("🔄 领取后启动倒计时:", this.claimRemainingSeconds, "秒");
+            console.log(
+              "🔄 领取后启动倒计时:",
+              this.claimRemainingSeconds,
+              "秒"
+            );
             this.startClaimCountdown();
           }
 
@@ -399,7 +447,9 @@ export default {
           if (res.confirm) {
             try {
               const response = await uni.request({
-                url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/water-drops/convert-to-energy`,
+                url: `${
+                  process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+                }/water-drops/convert-to-energy`,
                 method: "POST",
                 header: {
                   Authorization: `Bearer ${token}`,
@@ -463,7 +513,9 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/tree-energy/status`,
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/tree-energy/status`,
           method: "GET",
           header: {
             Authorization: `Bearer ${token}`,
@@ -552,8 +604,8 @@ export default {
 /* 水滴显示（页面顶部） */
 .water-drops-display {
   position: fixed;
-  top: 120rpx;
-  right: 40rpx;
+  top: 400rpx;
+  left: 20rpx;
   z-index: 999;
   display: flex;
   align-items: center;
@@ -728,7 +780,7 @@ export default {
 .task-button {
   position: fixed;
   left: 40rpx;
-  bottom: 200rpx;
+  bottom: 540rpx;
   z-index: 999;
   display: flex;
   flex-direction: column;
