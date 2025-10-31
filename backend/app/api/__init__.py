@@ -41,6 +41,7 @@ from app.api.routes import (
     mascot_outfits,
     tree_energy,
     user_profile_template,
+    water_drops,
 )
 from app.api import protection_drill
 
@@ -112,5 +113,10 @@ api_router.include_router(
 api_router.include_router(
     user_profile_template.router,
     tags=["user-profile-template"]
+)
+api_router.include_router(
+    water_drops.router,
+    prefix="/water-drops",
+    tags=["水滴系统"]
 )
 
