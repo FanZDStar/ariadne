@@ -1,5 +1,6 @@
 <template>
-  <view class="practice-detail-container">    <!-- 顶部导航 -->
+  <view class="practice-detail-container">
+    <!-- 顶部导航 -->
     <view class="custom-navbar">
       <view class="nav-left" @click="goBack">
         <text class="nav-icon">←</text>
@@ -347,6 +348,10 @@ export default {
   position: sticky;
   top: 0;
   z-index: 100;
+  max-width: 950rpx;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
 }
 
 .nav-left,

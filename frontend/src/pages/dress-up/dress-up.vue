@@ -615,8 +615,10 @@ export default {
 .custom-navbar {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950rpx;
+  width: 100%;
   height: 88rpx;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -625,6 +627,7 @@ export default {
   padding: 0 32rpx;
   z-index: 1000;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .navbar-left {
@@ -682,10 +685,9 @@ export default {
     right: 0;
     z-index: 101;
     margin-top: 0;
-    padding: 20rpx 15rpx;
+    padding: 20rpx 30rpx;
     background: rgba(250, 248, 243, 0.95);
     backdrop-filter: blur(10px);
-    gap: 15rpx;
   }
 }
 
@@ -722,25 +724,17 @@ export default {
 
 /* 移动端容器尺寸优化 */
 @media (max-width: 750px) {
-
-  .star-points-container,
-  .affection-points-container {
-    padding: 10rpx 15rpx;
-    max-width: 160rpx;
+  .star-points-container {
+    padding: 10rpx 20rpx;
+    max-width: 180rpx;
   }
 
-  .star-icon,
-  .affection-icon {
-    font-size: 24rpx;
+  .star-icon {
+    font-size: 28rpx;
   }
 
-  .star-count,
-  .affection-count {
-    font-size: 24rpx;
-  }
-
-  .affection-level {
-    font-size: 20rpx;
+  .star-count {
+    font-size: 26rpx;
   }
 }
 
@@ -806,15 +800,13 @@ export default {
 @media (max-width: 750px) {
   .mascot-preview-section {
     position: fixed;
-    top: 108rpx;
-    /* 导航栏 88rpx + 星星区域约 20rpx */
+    top: 108rpx; /* 导航栏 88rpx + 星星区域约 20rpx */
     left: 0;
     right: 0;
     height: 45vh;
     z-index: 100;
     background: #faf8f3;
     padding: 10rpx 20rpx 20rpx;
-
   }
 }
 
@@ -961,8 +953,7 @@ export default {
 @media (max-width: 750px) {
   .outfits-section {
     position: fixed;
-    top: calc(108rpx + 45vh);
-    /* 导航栏 + 星星 + 人物区域高度（45vh） */
+    top: calc(108rpx + 45vh); /* 导航栏 + 星星 + 人物区域高度（45vh） */
     left: 0;
     right: 0;
     bottom: 0;

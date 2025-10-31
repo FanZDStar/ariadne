@@ -2,18 +2,37 @@
 <template>
   <view v-show="shouldShowMascot" class="mascot-container">
     <!-- 看板娘主体 -->
-    <view class="mascot" :class="currentAction" :style="{ left: position.x + 'px', top: position.y + 'px' }"
-      @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
-      @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseEnd" @tap="handleTap">
+    <view
+      class="mascot"
+      :class="currentAction"
+      :style="{ left: position.x + 'px', top: position.y + 'px' }"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+      @mousedown="handleMouseDown"
+      @mousemove="handleMouseMove"
+      @mouseup="handleMouseEnd"
+      @tap="handleTap"
+    >
       <!-- 静态小人图片 -->
-      <image v-if="!isPlayingAnimation" class="mascot-image" :src="currentImage" mode="aspectFit" @load="onImageLoad"
-        @error="onImageError"></image>
+      <image
+        v-if="!isPlayingAnimation"
+        class="mascot-image"
+        :src="currentImage"
+        mode="aspectFit"
+        @load="onImageLoad"
+        @error="onImageError"
+      ></image>
       <!-- 图片加载中的占位符 -->
       <view v-if="!isPlayingAnimation && imageLoading" class="image-loading">
         <text>🔄</text>
       </view>
       <!-- Lottie动画容器 -->
-      <view v-if="isPlayingAnimation" class="lottie-container" :id="lottieContainerId"></view>
+      <view
+        v-if="isPlayingAnimation"
+        class="lottie-container"
+        :id="lottieContainerId"
+      ></view>
     </view>
 
     <!-- 对话气泡 -->
@@ -26,7 +45,12 @@
       <view class="dress-content" @tap.stop>
         <view class="dress-title">换装</view>
         <view class="outfit-list">
-          <view v-for="outfit in outfits" :key="outfit.id" class="outfit-item" @tap="changeOutfit(outfit)">
+          <view
+            v-for="outfit in outfits"
+            :key="outfit.id"
+            class="outfit-item"
+            @tap="changeOutfit(outfit)"
+          >
             <image :src="outfit.preview" mode="aspectFit"></image>
             <text>{{ outfit.name }}</text>
           </view>
@@ -40,7 +64,7 @@
 // 引入lottie-web
 import lottie from "lottie-web";
 // 引入看板娘配置
-import { shouldShowMascot } from '../utils/mascot-config.js';
+import { shouldShowMascot } from "../utils/mascot-config.js";
 
 export default {
   data() {
@@ -58,7 +82,7 @@ export default {
 
       // 看板娘显示控制
       shouldShowMascot: true, // 初始为true，会在mounted时根据页面路由更新
-      currentPagePath: '', // 当前页面路径
+      currentPagePath: "", // 当前页面路径
 
       // Lottie动画相关
       isPlayingAnimation: false,
@@ -179,24 +203,24 @@ export default {
   },
 
   mounted() {
-    console.log('🎭 看板娘组件已挂载');
+    console.log("🎭 看板娘组件已挂载");
 
     this.checkPosition();
     this.checkOutfitStorage();
 
     // 立即检查当前页面是否应该显示看板娘
-    console.log('🎭 开始检查看板娘可见性...');
+    console.log("🎭 开始检查看板娘可见性...");
     this.updateMascotVisibility();
 
     // 延迟再检查一次，确保页面信息已加载
     setTimeout(() => {
-      console.log('🎭 延迟100ms后再次检查可见性');
+      console.log("🎭 延迟100ms后再次检查可见性");
       this.updateMascotVisibility();
     }, 100);
 
     // 再延迟检查一次
     setTimeout(() => {
-      console.log('🎭 延迟500ms后最后检查可见性');
+      console.log("🎭 延迟500ms后最后检查可见性");
       this.updateMascotVisibility();
     }, 500);
 
@@ -222,21 +246,21 @@ export default {
     }, 1000);
 
     // 监听全局服装切换事件
-    uni.$on('outfitChanged', this.handleOutfitChanged);
+    uni.$on("outfitChanged", this.handleOutfitChanged);
 
     // 监听页面焦点变化，实现跨标签页同步
     this.setupFocusSync();
 
     // 监听页面路由变化
-    uni.$on('pageChange', this.handlePageChange);
+    uni.$on("pageChange", this.handlePageChange);
 
     // 添加全局鼠标事件监听，支持电脑端拖动
     // 使用箭头函数确保 this 指向 Vue 实例
     this.boundMouseMove = (e) => this.handleMouseMove(e);
     this.boundMouseEnd = (e) => this.handleMouseEnd(e);
 
-    document.addEventListener('mousemove', this.boundMouseMove);
-    document.addEventListener('mouseup', this.boundMouseEnd);
+    document.addEventListener("mousemove", this.boundMouseMove);
+    document.addEventListener("mouseup", this.boundMouseEnd);
   },
 
   onLoad() {
@@ -268,8 +292,8 @@ export default {
     this.clearLottieInstance();
 
     // 取消全局事件监听
-    uni.$off('outfitChanged', this.handleOutfitChanged);
-    uni.$off('pageChange', this.handlePageChange);
+    uni.$off("outfitChanged", this.handleOutfitChanged);
+    uni.$off("pageChange", this.handlePageChange);
 
     // 清理焦点事件监听
     if (this.focusCleanup) {
@@ -278,10 +302,10 @@ export default {
 
     // 清理全局鼠标事件监听
     if (this.boundMouseMove) {
-      document.removeEventListener('mousemove', this.boundMouseMove);
+      document.removeEventListener("mousemove", this.boundMouseMove);
     }
     if (this.boundMouseEnd) {
-      document.removeEventListener('mouseup', this.boundMouseEnd);
+      document.removeEventListener("mouseup", this.boundMouseEnd);
     }
   },
 
@@ -315,18 +339,20 @@ export default {
         }
 
         const currentPage = pages[pages.length - 1];
-        const route = currentPage.route || currentPage.$vm?.$route?.path || '';
+        const route = currentPage.route || currentPage.$vm?.$route?.path || "";
         this.currentPagePath = route;
 
         // 规范化路由：确保以/开头
-        const normalizedRoute = route.startsWith('/') ? route : '/' + route;
+        const normalizedRoute = route.startsWith("/") ? route : "/" + route;
 
         // 检查是否在配置的页面中
         this.shouldShowMascot = shouldShowMascot(normalizedRoute);
 
-        console.log(`🎭 看板娘可见性检测: 原始路由="${route}", 规范化="${normalizedRoute}", 显示=${this.shouldShowMascot}`);
+        console.log(
+          `🎭 看板娘可见性检测: 原始路由="${route}", 规范化="${normalizedRoute}", 显示=${this.shouldShowMascot}`
+        );
       } catch (error) {
-        console.error('🎭 看板娘可见性检测出错:', error);
+        console.error("🎭 看板娘可见性检测出错:", error);
         this.shouldShowMascot = true; // 出错时默认显示
       }
     },
@@ -347,7 +373,10 @@ export default {
         const outfitId = savedOutfit.id || 1;
 
         // 检查是否有服装变化（包括图片路径变化）
-        if (this.lastOutfitId !== outfitId || this.currentImage !== savedOutfit.mascotImage) {
+        if (
+          this.lastOutfitId !== outfitId ||
+          this.currentImage !== savedOutfit.mascotImage
+        ) {
           this.currentOutfitId = outfitId;
           // 预加载新图片，避免切换时的空白
           this.preloadAndSwitchImage(savedOutfit.mascotImage);
@@ -610,9 +639,9 @@ export default {
       this.outfitCheckTimer = setInterval(() => {
         this.checkOutfitStorage();
       }, 30000);
-    },    // 处理服装切换事件
+    }, // 处理服装切换事件
     handleOutfitChanged(outfit) {
-      console.log('收到服装切换通知:', outfit);
+      console.log("收到服装切换通知:", outfit);
       // 立即更新显示
       this.checkOutfitStorage();
       // 重置定时器
@@ -641,7 +670,7 @@ export default {
 
       tempImg.onerror = () => {
         // 预加载失败，直接切换（可能是相对路径）
-        console.warn('图片预加载失败，直接切换:', newImageSrc);
+        console.warn("图片预加载失败，直接切换:", newImageSrc);
         this.currentImage = newImageSrc;
         this.imageLoading = false;
         this.nextImage = null;
@@ -667,7 +696,7 @@ export default {
 
     // 图片加载错误
     onImageError() {
-      console.error('看板娘图片加载失败:', this.currentImage);
+      console.error("看板娘图片加载失败:", this.currentImage);
       this.imageLoading = false;
       // 回退到默认图片
       if (this.currentImage !== "/static/outfits/default-full.png") {
@@ -677,7 +706,7 @@ export default {
 
     // 按需从服务器同步
     async syncFromServerIfNeeded() {
-      const token = uni.getStorageSync('access_token');
+      const token = uni.getStorageSync("access_token");
       if (!token) return; // 未登录时不同步
 
       const now = Date.now();
@@ -688,30 +717,35 @@ export default {
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/mascot-outfits/current`,
-          method: 'GET',
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/mascot-outfits/current`,
+          method: "GET",
           header: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (response.statusCode === 200 && response.data) {
           const serverOutfit = response.data;
-          const localOutfit = uni.getStorageSync('selectedOutfit');
+          const localOutfit = uni.getStorageSync("selectedOutfit");
 
           // 比较服务器数据和本地数据
           if (!localOutfit || localOutfit.id !== serverOutfit.id) {
-            console.log('🔄 发现服务器数据更新，同步到本地:', serverOutfit.name);
+            console.log(
+              "🔄 发现服务器数据更新，同步到本地:",
+              serverOutfit.name
+            );
 
             const newOutfit = {
               id: serverOutfit.id,
               name: serverOutfit.name,
-              mascotImage: serverOutfit.mascot_image
+              mascotImage: serverOutfit.mascot_image,
             };
 
             // 更新本地存储
-            uni.setStorageSync('selectedOutfit', newOutfit);
+            uni.setStorageSync("selectedOutfit", newOutfit);
 
             // 立即更新显示
             this.preloadAndSwitchImage(newOutfit.mascotImage);
@@ -726,7 +760,7 @@ export default {
 
         this.lastServerSyncTime = now;
       } catch (error) {
-        console.error('从服务器同步服装失败:', error);
+        console.error("从服务器同步服装失败:", error);
       }
     },
 
@@ -745,7 +779,7 @@ export default {
       const handleVisibilityChange = () => {
         if (!document.hidden) {
           // 页面变为可见时，检查服务器更新
-          console.log('🔍 页面重新聚焦，检查服务器同步...');
+          console.log("🔍 页面重新聚焦，检查服务器同步...");
           setTimeout(() => {
             this.syncFromServerIfNeeded();
           }, 500); // 延迟500ms确保页面完全加载
@@ -754,36 +788,41 @@ export default {
 
       // 监听窗口焦点变化
       const handleFocus = () => {
-        console.log('🔍 窗口重新聚焦，检查服务器同步...');
+        console.log("🔍 窗口重新聚焦，检查服务器同步...");
         setTimeout(() => {
           this.syncFromServerIfNeeded();
         }, 500);
       };
 
       // 添加事件监听器
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-      window.addEventListener('focus', handleFocus);
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      window.addEventListener("focus", handleFocus);
 
       // 存储引用以便清理
       this.focusCleanup = () => {
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-        window.removeEventListener('focus', handleFocus);
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange
+        );
+        window.removeEventListener("focus", handleFocus);
       };
     },
 
     // 从服务器同步服装设置
     async syncOutfitFromServer() {
-      const token = uni.getStorageSync('access_token');
+      const token = uni.getStorageSync("access_token");
       if (!token) return; // 未登录时不同步
 
       try {
         const response = await uni.request({
-          url: `${process.env.VUE_APP_API_BASE_URL || 'http://localhost:8000'}/mascot-outfits/current`,
-          method: 'GET',
+          url: `${
+            process.env.VUE_APP_API_BASE_URL || "http://localhost:8000"
+          }/mascot-outfits/current`,
+          method: "GET",
           header: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (response.statusCode === 200 && response.data) {
@@ -791,16 +830,16 @@ export default {
           const localOutfit = {
             id: serverOutfit.id,
             name: serverOutfit.name,
-            mascotImage: serverOutfit.mascot_image
+            mascotImage: serverOutfit.mascot_image,
           };
 
           // 更新本地存储
-          uni.setStorageSync('selectedOutfit', localOutfit);
+          uni.setStorageSync("selectedOutfit", localOutfit);
 
           //console.log('从服务器同步服装设置:', localOutfit);
         }
       } catch (error) {
-        console.error('从服务器同步服装失败:', error);
+        console.error("从服务器同步服装失败:", error);
       }
     },
 
@@ -851,10 +890,7 @@ export default {
       // 边界检查 - 限制在 950rpx (约 475px) 容器内
       const systemInfo = uni.getSystemInfoSync();
       const maxWidth = Math.min(systemInfo.windowWidth, 475); // 950rpx = 475px
-      this.position.x = Math.max(
-        0,
-        Math.min(this.position.x, maxWidth - 130)
-      );
+      this.position.x = Math.max(0, Math.min(this.position.x, maxWidth - 130));
       this.position.y = Math.max(
         0,
         Math.min(this.position.y, systemInfo.windowHeight - 156)
@@ -884,10 +920,7 @@ export default {
       // 边界检查 - 限制在 950rpx (约 475px) 容器内
       const systemInfo = uni.getSystemInfoSync();
       const maxWidth = Math.min(systemInfo.windowWidth, 475); // 950rpx = 475px
-      this.position.x = Math.max(
-        0,
-        Math.min(this.position.x, maxWidth - 130)
-      );
+      this.position.x = Math.max(0, Math.min(this.position.x, maxWidth - 130));
       this.position.y = Math.max(
         0,
         Math.min(this.position.y, systemInfo.windowHeight - 156)
@@ -1160,7 +1193,6 @@ export default {
 }
 
 @keyframes wave {
-
   0%,
   100% {
     transform: rotate(0deg);
@@ -1176,7 +1208,6 @@ export default {
 }
 
 @keyframes bounce {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1188,7 +1219,6 @@ export default {
 }
 
 @keyframes fadeInOut {
-
   0%,
   100% {
     opacity: 0;

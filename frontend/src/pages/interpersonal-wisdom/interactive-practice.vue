@@ -1,5 +1,6 @@
 <template>
-  <view class="dialog-container">    <!-- AI助手介绍 -->
+  <view class="dialog-container">
+    <!-- AI助手介绍 -->
     <view class="assistant-intro">
       <view class="intro-card">
         <view class="assistant-avatar">
@@ -451,6 +452,8 @@ export default {
   background: linear-gradient(135deg, #f8fafc 0%, #e1f5fe 30%, #f0f9ff 100%);
   display: flex;
   flex-direction: column;
+  max-width: 950rpx;
+  margin: 0 auto;
 }
 
 .assistant-intro {
@@ -678,16 +681,16 @@ export default {
     grid-template-columns: 1fr;
     gap: 20rpx;
   }
-  
+
   .scenario-card {
     min-height: 140rpx;
     padding: 32rpx 24rpx;
   }
-  
+
   .scenario-name {
     font-size: 28rpx;
   }
-  
+
   .scenario-desc {
     font-size: 24rpx;
   }
@@ -712,7 +715,7 @@ export default {
     max-width: 1200rpx;
     margin: 0 auto;
   }
-  
+
   .scenario-card {
     min-height: 200rpx;
     padding: 48rpx 40rpx;

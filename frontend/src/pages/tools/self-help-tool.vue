@@ -180,9 +180,9 @@
     >
       <text class="tip-text">{{ isCollected ? "已收藏" : "取消收藏" }}</text>
     </view>
-    
+
     <!-- 回到顶部组件 -->
-    <BackToTop 
+    <BackToTop
       ref="backToTop"
       :bottom="150"
       @start-scroll-listener="startScrollListener"
@@ -192,10 +192,10 @@
 </template>
 
 <script>
-import BackToTop from '../../components/BackToTop.vue'
+import BackToTop from "../../components/BackToTop.vue";
 export default {
   components: {
-    BackToTop
+    BackToTop,
   },
   data() {
     return {
@@ -668,7 +668,10 @@ export default {
         // 冥想指导(3) 和 压力测试(6) 功能开发中
         uni.showModal({
           title: "功能开发中",
-          content: this.toolId == 3 ? "冥想指导功能正在开发中，敬请期待！" : "压力测试功能正在开发中，敬请期待！",
+          content:
+            this.toolId == 3
+              ? "冥想指导功能正在开发中，敬请期待！"
+              : "压力测试功能正在开发中，敬请期待！",
           showCancel: false,
           confirmText: "知道了",
         });
@@ -715,14 +718,17 @@ export default {
     // 滚动监听相关方法
     startScrollListener() {
       // H5环境使用window.addEventListener
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         this.handleScroll = () => {
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+          const scrollTop =
+            window.pageYOffset ||
+            document.documentElement.scrollTop ||
+            document.body.scrollTop;
           if (this.$refs.backToTop) {
             this.$refs.backToTop.updateVisibility(scrollTop);
           }
         };
-        window.addEventListener('scroll', this.handleScroll);
+        window.addEventListener("scroll", this.handleScroll);
       } else {
         // 小程序环境使用uni.onPageScroll
         uni.onPageScroll((res) => {
@@ -734,9 +740,9 @@ export default {
     },
 
     removeScrollListener() {
-      if (typeof window !== 'undefined' && this.handleScroll) {
-        window.removeEventListener('scroll', this.handleScroll);
-      } else if (typeof uni !== 'undefined' && uni.offPageScroll) {
+      if (typeof window !== "undefined" && this.handleScroll) {
+        window.removeEventListener("scroll", this.handleScroll);
+      } else if (typeof uni !== "undefined" && uni.offPageScroll) {
         uni.offPageScroll();
       }
     },
@@ -766,6 +772,9 @@ export default {
   justify-content: space-between;
   padding: 20rpx 40rpx;
   height: 88rpx;
+  max-width: 950rpx;
+  margin: 0 auto;
+  position: relative;
 }
 
 .nav-left,
