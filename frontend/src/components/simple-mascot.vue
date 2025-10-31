@@ -848,11 +848,12 @@ export default {
       this.position.x = e.touches[0].clientX - this.startTouch.x;
       this.position.y = e.touches[0].clientY - this.startTouch.y;
 
-      // 边界检查 - 使用新的尺寸
+      // 边界检查 - 限制在 950rpx (约 475px) 容器内
       const systemInfo = uni.getSystemInfoSync();
+      const maxWidth = Math.min(systemInfo.windowWidth, 475); // 950rpx = 475px
       this.position.x = Math.max(
         0,
-        Math.min(this.position.x, systemInfo.windowWidth - 130)
+        Math.min(this.position.x, maxWidth - 130)
       );
       this.position.y = Math.max(
         0,
@@ -880,11 +881,12 @@ export default {
       this.position.x = e.clientX - this.startTouch.x;
       this.position.y = e.clientY - this.startTouch.y;
 
-      // 边界检查
+      // 边界检查 - 限制在 950rpx (约 475px) 容器内
       const systemInfo = uni.getSystemInfoSync();
+      const maxWidth = Math.min(systemInfo.windowWidth, 475); // 950rpx = 475px
       this.position.x = Math.max(
         0,
-        Math.min(this.position.x, systemInfo.windowWidth - 130)
+        Math.min(this.position.x, maxWidth - 130)
       );
       this.position.y = Math.max(
         0,
