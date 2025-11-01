@@ -4,7 +4,9 @@ from datetime import datetime
 
 class ChatMessageBase(BaseModel):
     role: str = Field(..., description="消息角色: user 或 assistant")
-    content: str = Field(..., description="消息内容")
+    content: str = Field(default="", description="消息内容（图片消息时可为空）")
+    msg_type: str = Field(default="text", description="消息类型: text/img/multimodal")
+    img_urls: Optional[List[str]] = Field(default_factory=list, description="图片URL数组")
 
 class ChatMessageCreate(ChatMessageBase):
     pass

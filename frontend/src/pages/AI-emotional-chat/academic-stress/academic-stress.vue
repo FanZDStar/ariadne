@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="告诉我您遇到的学业困扰，如考试焦虑、学习效率..." 
             theme="student"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

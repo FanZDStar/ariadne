@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="分享您的社交困扰，比如宿舍关系、课堂发言等..." 
             theme="student"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

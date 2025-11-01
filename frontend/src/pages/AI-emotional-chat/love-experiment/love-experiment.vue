@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="分享您的恋爱困扰或想练习的社交场景..." 
             theme="tree-hole"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

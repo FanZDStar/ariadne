@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="告诉我您的生活状态，如学习、社交、健康等方面..." 
             theme="student"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

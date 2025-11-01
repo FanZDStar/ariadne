@@ -10,6 +10,18 @@
       <text class="typing-text">正在输入...</text>
     </view>
 
+    <!-- 图片预览 -->
+    <view v-if="imgList.length > 0" class="img-preview-container">
+      <view
+        v-for="(img, index) in imgList"
+        :key="index"
+        class="img-preview-item"
+      >
+        <image :src="img" mode="aspectFill" class="preview-img" />
+        <view class="img-remove" @click="removeImage(index)">×</view>
+      </view>
+    </view>
+
     <view class="input-container">
       <textarea
         class="input"
@@ -28,15 +40,19 @@
         @focus="handleFocus"
         @blur="handleBlur"
       />
+      <!-- 图片选择按钮 -->
+      <button class="image-btn" @click="chooseImage">
+        <text class="btn-icon">📷</text>
+      </button>
       <button
         class="submit-btn"
         :class="{
-          disabled: !userInput.trim() || disabled,
+          disabled: (!userInput.trim() && imgList.length === 0) || disabled,
           'warning-btn': inputRiskLevel !== 'low',
           sending: isSending,
         }"
-        :disabled="!userInput.trim() || disabled"
-        @click="sendMessage"
+        :disabled="(!userInput.trim() && imgList.length === 0) || disabled"
+        @click="imgList.length > 0 ? sendMultimodalMessage() : sendMessage()"
       >
         <text v-if="!isSending" class="btn-text">{{ sendButtonText }}</text>
         <view v-else class="loading-spinner"></view>
@@ -110,6 +126,9 @@ export default {
       isTyping: false,
       typingTimer: null,
       isSending: false,
+      // 图片上传相关
+      imgList: [],
+      maxImageCount: 9,
     };
   },
   computed: {
@@ -238,6 +257,81 @@ export default {
       this.showRiskHint = false;
       this.isTyping = false;
       this.isSending = false;
+      this.imgList = [];
+    },
+
+    /**
+     * 选择图片
+     */
+    chooseImage() {
+      const remainingCount = this.maxImageCount - this.imgList.length;
+      if (remainingCount <= 0) {
+        uni.showToast({
+          title: `最多只能选择${this.maxImageCount}张图片`,
+          icon: "none",
+        });
+        return;
+      }
+
+      uni.chooseImage({
+        count: remainingCount,
+        sizeType: ["compressed"], // 压缩图片
+        sourceType: ["album", "camera"],
+        success: (res) => {
+          this.imgList.push(...res.tempFilePaths);
+          this.$emit("images-selected", this.imgList);
+        },
+        fail: (err) => {
+          console.error("选择图片失败:", err);
+          uni.showToast({
+            title: "选择图片失败",
+            icon: "none",
+          });
+        },
+      });
+    },
+
+    /**
+     * 移除图片
+     */
+    removeImage(index) {
+      this.imgList.splice(index, 1);
+      this.$emit("images-selected", this.imgList);
+    },
+
+    /**
+     * 发送消息 - 新增多模态支持
+     */
+    async sendMultimodalMessage() {
+      if (
+        (!this.userInput.trim() && this.imgList.length === 0) ||
+        this.disabled ||
+        this.isSending
+      )
+        return;
+
+      this.isSending = true;
+      this.isTyping = false;
+
+      try {
+        // 触发发送事件，传递文本和图片
+        this.$emit("send-multimodal", {
+          text: this.userInput,
+          images: this.imgList,
+        });
+
+        // 清空输入框和图片
+        this.userInput = "";
+        this.imgList = [];
+        this.inputRiskLevel = "low";
+        this.showRiskHint = false;
+        this.$emit("typing-end");
+      } finally {
+        // 延迟重置发送状态
+        setTimeout(() => {
+          this.isSending = false;
+        }, 500);
+      }
     },
   },
 
@@ -587,5 +681,68 @@ export default {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* 图片预览容器 */
+.img-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  padding: 12rpx 0;
+  margin-bottom: 8rpx;
+}
+
+.img-preview-item {
+  position: relative;
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+}
+
+.img-remove {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background-color: rgba(255, 0, 0, 0.8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28rpx;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 图片选择按钮 */
+.image-btn {
+  background-color: #f0f0f0;
+  border-radius: 22rpx;
+  height: 45rpx;
+  width: 45rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-bottom: 12rpx;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.image-btn:active {
+  background-color: #e0e0e0;
+  transform: scale(0.95);
+}
+
+.btn-icon {
+  font-size: 28rpx;
 }
 </style>

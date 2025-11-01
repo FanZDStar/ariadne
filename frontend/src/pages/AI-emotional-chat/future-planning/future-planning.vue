@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="聊聊您对未来的思考，比如专业选择、职业规划等..." 
             theme="student"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

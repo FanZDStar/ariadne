@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="分享您在自我关爱方面的困惑或想法..." 
             theme="tree-hole"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

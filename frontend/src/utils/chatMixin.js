@@ -734,6 +734,246 @@ ${report.ai_analysis.substring(0, 100)}...
         },
 
         /**
+         * 处理多模态消息发送（文本+图片）
+         */
+        async handleMultimodalSend(data) {
+            console.log('[多模态] 收到多模态发送请求:', data);
+            await this.sendMultimodalMessage(data.text, data.images);
+        },
+
+        /**
+         * 发送多模态消息（支持图床上传）
+         */
+        async sendMultimodalMessage(content, imagePaths) {
+            if (!content.trim() && (!imagePaths || imagePaths.length === 0)) {
+                console.log('[多模态] 内容为空且无图片，不发送');
+                return;
+            }
+
+            console.log('[多模态] ==================== 开始处理多模态消息 ====================');
+            console.log('[多模态] 内容:', content);
+            console.log('[多模态] 图片数量:', imagePaths ? imagePaths.length : 0);
+            console.log('[多模态] 当前sessionId:', this.sessionId);
+
+            try {
+                // 检查登录状态
+                const token = uni.getStorageSync('access_token');
+                if (!token) {
+                    console.error('[多模态] 未登录');
+                    uni.showToast({
+                        title: '请先登录',
+                        icon: 'none'
+                    });
+                    return;
+                }
+
+                // 如果没有sessionId，先尝试创建会话（静默失败，不影响后续流程）
+                if (!this.sessionId) {
+                    console.log('[多模态] 无sessionId，尝试创建会话');
+                    try {
+                        await this.autoSaveForStarReward();
+                        console.log('[多模态] 会话创建结果，sessionId:', this.sessionId || '未创建');
+                    } catch (error) {
+                        console.warn('[多模态] 创建会话失败，继续使用空sessionId:', error.message);
+                    }
+                }
+
+                console.log('[多模态] 最终使用sessionId:', this.sessionId || '空（将创建新会话）');
+
+                // 处理图片上传
+                if (imagePaths && imagePaths.length > 0) {
+                    uni.showLoading({
+                        title: '上传中...',
+                        mask: true
+                    });
+
+                    // 如果有sessionId，使用多模态接口上传（包含图床上传和AI分析）
+                    if (this.sessionId) {
+                        console.log('[多模态] 使用会话ID发送图片，sessionId:', this.sessionId);
+
+                        const formData = {
+                            session_id: this.sessionId,
+                            content: content || '',
+                            msg_type: 'img',
+                        };
+
+                        const response = await uni.uploadFile({
+                            url: `${BASE_URL}/multimodal/chat/message`,
+                            filePath: imagePaths[0],
+                            name: 'files',
+                            formData: formData,
+                            header: {
+                                'Authorization': `Bearer ${token}`
+                            },
+                            timeout: 60000  // 60秒超时
+                        });
+
+                        uni.hideLoading();
+
+                        console.log('[多模态] 上传响应状态码:', response.statusCode);
+
+                        if (response.statusCode === 200) {
+                            const result = JSON.parse(response.data);
+                            console.log('[多模态] 上传成功，结果:', result);
+
+                            // 添加用户消息到聊天历史
+                            this.chatHistory.push({
+                                role: 'user',
+                                content: result.user_message?.content || content || '',
+                                msg_type: result.user_message?.msg_type || 'img',
+                                img_urls: result.user_message?.img_urls || []
+                            });
+
+                            // 添加AI回复
+                            this.chatHistory.push({
+                                role: 'assistant',
+                                content: result.assistant_message?.content || '收到您的图片消息',
+                                msg_type: 'text'
+                            });
+
+                            this.hasNewMessages = true;
+
+                            uni.showToast({
+                                title: '发送成功',
+                                icon: 'success',
+                                duration: 1500
+                            });
+                        } else {
+                            console.error('[多模态] 发送失败，响应:', response);
+                            uni.showToast({
+                                title: '发送失败，请重试',
+                                icon: 'none',
+                                duration: 3000
+                            });
+                        }
+                    } else {
+                        // 没有sessionId，降级使用旧接口（仅AI分析，不保存到数据库）
+                        console.log('[多模态] 无sessionId，使用降级方案');
+
+                        let imageData = imagePaths[0];
+                        let isBlobUrl = imagePaths[0].startsWith('blob:');
+
+                        if (isBlobUrl) {
+                            console.log('[多模态] 检测到blob URL，转换为base64');
+                            imageData = await this.blobUrlToBase64(imagePaths[0]);
+                            console.log('[多模态] base64转换成功');
+                        }
+
+                        const requestData = {
+                            image_base64: imageData,
+                            text: content || '',
+                            scene: this.scene || 'image_analysis'
+                        };
+
+                        const response = await uni.request({
+                            url: `${BASE_URL}/multimodal/chat/image-upload-base64`,
+                            method: 'POST',
+                            header: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            data: requestData
+                        });
+
+                        uni.hideLoading();
+
+                        if (response.statusCode === 200) {
+                            console.log('[多模态] AI分析成功');
+
+                            // 添加用户消息（使用临时URL）
+                            this.chatHistory.push({
+                                role: 'user',
+                                content: content || '',
+                                msg_type: 'img',
+                                img_urls: imagePaths  // 临时URL，无法查看历史
+                            });
+
+                            // 添加AI回复
+                            this.chatHistory.push({
+                                role: 'assistant',
+                                content: response.data.content || '收到您的图片消息',
+                                msg_type: 'text'
+                            });
+
+                            this.hasNewMessages = true;
+
+                            uni.showToast({
+                                title: '发送成功',
+                                icon: 'success',
+                                duration: 1500
+                            });
+                        } else {
+                            console.error('[多模态] AI分析失败');
+                            uni.showToast({
+                                title: '发送失败，请重试',
+                                icon: 'none',
+                                duration: 3000
+                            });
+                        }
+                    }
+                } else {
+                    console.error('[多模态] 没有可用的图片路径');
+                    uni.showToast({
+                        title: '请选择图片',
+                        icon: 'none'
+                    });
+                }
+            } catch (error) {
+                uni.hideLoading();
+                console.error('[多模态] 发生异常:');
+                console.error('[多模态] 错误类型:', error.constructor.name);
+                console.error('[多模态] 错误消息:', error.message);
+                console.error('[多模态] 错误详情:', error);
+
+                uni.showToast({
+                    title: error.message || '网络错误，请重试',
+                    icon: 'none',
+                    duration: 3000
+                });
+            } finally {
+                console.log('[多模态] ==================== 处理完成 ====================');
+            }
+        },
+
+        /**
+         * 将blob URL转换为base64
+         */
+        async blobUrlToBase64(blobUrl) {
+            return new Promise((resolve, reject) => {
+                console.log('[多模态] 开始转换blob URL:', blobUrl);
+
+                // 使用fetch读取blob URL
+                fetch(blobUrl)
+                    .then(response => {
+                        console.log('[多模态] fetch响应状态:', response.status);
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        console.log('[多模态] blob读取成功，大小:', blob.size);
+                        const reader = new FileReader();
+
+                        reader.onloadend = () => {
+                            // 移除data:image/xxx;base64,前缀
+                            const base64 = reader.result.split(',')[1];
+                            console.log('[多模态] base64转换完成');
+                            resolve(base64);
+                        };
+
+                        reader.onerror = (error) => {
+                            console.error('[多模态] FileReader错误:', error);
+                            reject(error);
+                        };
+
+                        reader.readAsDataURL(blob);
+                    })
+                    .catch(error => {
+                        console.error('[多模态] fetch错误:', error);
+                        reject(error);
+                    });
+            });
+        },
+
+        /**
          * 发送消息方法（增强版）
          */
         async sendMessage(content) {

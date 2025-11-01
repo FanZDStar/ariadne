@@ -32,7 +32,8 @@
             class="fixed-input"
             placeholder="请描述你在感情中遇到的问题或困惑..." 
             theme="emotion"
-            @send="handleSend" 
+            @send="handleSend"
+            @send-multimodal="handleMultimodalSend"
             :disabled="isAiTyping"
         />
         

@@ -1,10 +1,17 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, JSON, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database.session import Base
+import enum
 # from app.utils.encryption import encryption  # 暂时注释掉加密功能
+
+class MessageType(str, enum.Enum):
+    """消息类型枚举"""
+    TEXT = "text"
+    IMG = "img"
+    MULTIMODAL = "multimodal"
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
@@ -28,7 +35,9 @@ class ChatMessage(Base):
     id = Column(Integer, primary_key=True, index=True)
     session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False)
     role = Column(String(20), nullable=False)  # user 或 assistant
+    msg_type = Column(Enum("text", "img", "multimodal"), nullable=False, default="text")  # 消息类型
     content = Column(Text, nullable=False)
+    img_urls = Column(JSON, nullable=True)  # 图片URL数组
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # 关联关系

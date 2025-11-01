@@ -256,7 +256,9 @@ async def save_chat_session(
             chat_message = ChatMessage(
                 session_id=existing_session.id,
                 role=msg.role,
-                content=msg.content
+                content=msg.content,
+                msg_type=getattr(msg, 'msg_type', 'text'),
+                img_urls=getattr(msg, 'img_urls', None)
             )
             db.add(chat_message)
             print(f"➕ 添加消息 {i+1}: {msg.role} - {msg.content[:50]}...")
@@ -464,7 +466,9 @@ async def save_chat_session(
         chat_message = ChatMessage(
             session_id=chat_session.id,
             role=msg.role,
-            content=msg.content
+            content=msg.content,
+            msg_type=getattr(msg, 'msg_type', 'text'),
+            img_urls=getattr(msg, 'img_urls', None)
         )
         db.add(chat_message)
     
@@ -647,6 +651,12 @@ async def get_chat_session(
     
     if not session:
         raise HTTPException(status_code=404, detail="对话记录不存在")
+    
+    # 手动加载messages关联（包含img_urls和msg_type）
+    messages = db.query(ChatMessage).filter(
+        ChatMessage.session_id == session_id
+    ).order_by(ChatMessage.created_at.asc()).all()
+    session.messages = messages
     
     return session
 
