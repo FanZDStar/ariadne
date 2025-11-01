@@ -55,6 +55,21 @@ class StarRewardInfo(BaseModel):
     description: Optional[str] = Field(None, description="奖励描述")
     show_toast: bool = Field(False, description="是否显示奖励提示")
 
+class AffectionRewardInfo(BaseModel):
+    """好感度奖励信息"""
+    earned_affection: int = Field(0, description="获得的好感度数量")
+    is_rewarded: bool = Field(False, description="是否有奖励")
+    action_type: Optional[str] = Field(None, description="奖励类型")
+    description: Optional[str] = Field(None, description="奖励描述")
+    level_up: bool = Field(False, description="是否升级")
+    new_level: Optional[int] = Field(None, description="新等级")
+    show_toast: bool = Field(False, description="是否显示奖励提示")
+
+class ChatSessionWithRewardResponse(ChatSession):
+    """包含星点奖励和好感度奖励信息的聊天会话响应"""
+    star_reward: StarRewardInfo = Field(default_factory=StarRewardInfo, description="星点奖励信息")
+    affection_reward: AffectionRewardInfo = Field(default_factory=AffectionRewardInfo, description="好感度奖励信息")
+
 class ChatSessionWithStarResponse(ChatSession):
-    """包含星点奖励信息的聊天会话响应"""
+    """包含星点奖励信息的聊天会话响应（保持向后兼容）"""
     star_reward: StarRewardInfo = Field(default_factory=StarRewardInfo, description="星点奖励信息")

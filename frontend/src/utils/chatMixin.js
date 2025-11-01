@@ -889,9 +889,17 @@ ${report.ai_analysis.substring(0, 100)}...
                         console.log('设置新会话ID:', this.sessionId);
                     }
 
-                    // 处理星点奖励
+                    // 调试：打印完整的响应数据
+                    console.log('📥 保存响应数据:', response.data);
+
+                    // 处理星点奖励和好感度奖励
                     if (response.data.star_reward && response.data.star_reward.is_rewarded) {
                         this.handleStarReward(response.data.star_reward);
+                    }
+                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded) {
+                        this.handleAffectionReward(response.data.affection_reward);
+                    } else {
+                        console.log('🔍 好感度奖励信息:', response.data.affection_reward);
                     }
 
                     // 重置新消息标志
@@ -905,13 +913,22 @@ ${report.ai_analysis.substring(0, 100)}...
                         await this.enableSessionAutoSave();
                     }
 
-                    // 处理星点奖励
+                    // 处理星点奖励和好感度奖励的Toast显示
+                    let rewardMessages = [];
+
                     if (response.data.star_reward && response.data.star_reward.is_rewarded && response.data.star_reward.show_toast) {
-                        const reward = response.data.star_reward;
+                        rewardMessages.push(`获得${response.data.star_reward.earned_points}颗星星 ⭐`);
+                    }
+
+                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded && response.data.affection_reward.show_toast) {
+                        rewardMessages.push(`好感度 +${response.data.affection_reward.earned_affection} 💖`);
+                    }
+
+                    if (rewardMessages.length > 0) {
                         uni.showToast({
-                            title: `${reward.description}！`,
-                            icon: 'success',
-                            duration: 2000
+                            title: rewardMessages.join('\n'),
+                            icon: 'none',
+                            duration: 3000
                         });
                     } else {
                         uni.showToast({
@@ -1034,12 +1051,40 @@ ${report.ai_analysis.substring(0, 100)}...
                         console.log('设置新会话ID:', this.sessionId);
                     }
 
-                    // 处理星点奖励
+                    // 调试：打印完整的响应数据
+                    console.log('📥 自动保存响应数据:', response.data);
+
+                    // 处理星点奖励和好感度奖励（记录日志但不单独显示）
                     if (response.data.star_reward && response.data.star_reward.is_rewarded) {
                         this.handleStarReward(response.data.star_reward);
                     }
+                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded) {
+                        this.handleAffectionReward(response.data.affection_reward);
+                    } else {
+                        console.log('🔍 自动保存好感度奖励信息:', response.data.affection_reward);
+                    }
 
-                    console.log('✅ 自动保存成功');
+                    // 处理星点奖励和好感度奖励的Toast显示
+                    let rewardMessages = [];
+
+                    if (response.data.star_reward && response.data.star_reward.is_rewarded && response.data.star_reward.show_toast) {
+                        rewardMessages.push(`获得${response.data.star_reward.earned_points}颗星星 ⭐`);
+                    }
+
+                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded && response.data.affection_reward.show_toast) {
+                        rewardMessages.push(`好感度 +${response.data.affection_reward.earned_affection} 💖`);
+                    }
+
+                    if (rewardMessages.length > 0) {
+                        uni.showToast({
+                            title: rewardMessages.join('\n'),
+                            icon: 'none',
+                            duration: 3000
+                        });
+                        console.log('✅ 自动保存成功，显示奖励:', rewardMessages.join(', '));
+                    } else {
+                        console.log('✅ 自动保存成功');
+                    }
                 } else {
                     console.error('❌ 自动保存失败:', response);
                 }
@@ -1054,17 +1099,25 @@ ${report.ai_analysis.substring(0, 100)}...
         handleStarReward(rewardInfo) {
             console.log('⭐ 收到星点奖励:', rewardInfo);
 
-            // 只在前5条消息时显示toast提示
+            // 记录奖励信息，但不单独显示toast（由合并显示逻辑统一处理）
             if (rewardInfo.show_toast) {
-                uni.showToast({
-                    title: `+${rewardInfo.earned_points}⭐`,
-                    icon: 'none',
-                    duration: 2000
-                });
-
-                console.log(`⭐ 显示奖励提示: +${rewardInfo.earned_points}星点`);
+                console.log(`⭐ 准备显示星点奖励提示: +${rewardInfo.earned_points}星点`);
             } else {
                 console.log(`⭐ 获得奖励但不显示提示: +${rewardInfo.earned_points}星点`);
+            }
+        },
+
+        /**
+         * 处理好感度奖励
+         */
+        handleAffectionReward(rewardInfo) {
+            console.log('💖 收到好感度奖励:', rewardInfo);
+
+            // 记录奖励信息，但不单独显示toast（由合并显示逻辑统一处理）
+            if (rewardInfo.show_toast) {
+                console.log(`💖 准备显示好感度奖励提示: +${rewardInfo.earned_affection}点`, rewardInfo.level_up ? `升级到${rewardInfo.new_level}级` : '');
+            } else {
+                console.log(`💖 获得好感度但不显示提示: +${rewardInfo.earned_affection}点`);
             }
         },
 

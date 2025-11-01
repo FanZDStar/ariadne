@@ -14,7 +14,9 @@ from app.schemas.chat_history import (
     SaveChatRequest, 
     ChatHistoryResponse,
     ChatSessionWithStarResponse,
-    StarRewardInfo
+    ChatSessionWithRewardResponse,
+    StarRewardInfo,
+    AffectionRewardInfo
 )
 from app.api.deps import get_current_user
 from app.models.user import User
@@ -187,7 +189,7 @@ async def generate_title_with_ai(messages: List[dict]) -> str:
         print(f"AI标题生成失败: {e}")
         return None
 
-@router.post("/save-chat", response_model=ChatSessionWithStarResponse)
+@router.post("/save-chat", response_model=ChatSessionWithRewardResponse)
 async def save_chat_session(
     request: SaveChatRequest,
     background_tasks: BackgroundTasks,
@@ -261,6 +263,7 @@ async def save_chat_session(
         
         # 初始化奖励信息
         star_reward = StarRewardInfo()
+        affection_reward = AffectionRewardInfo()
         
         # 只有当确实有新的用户消息时才进行处理
         if new_user_messages > 0:
@@ -280,8 +283,8 @@ async def save_chat_session(
                     
                     print(f"📝 用户消息 #{message_number}: +{reward_for_this_message}星点")
                 
-                # 前7条用户消息显示toast提示
-                show_toast = (user_message_count_today + new_user_messages) <= 7
+                # 星星积分显示条件：前10条用户消息（有积分奖励时）
+                star_show_toast = (user_message_count_today + new_user_messages) <= 10
                 
                 # 检查今日聊天积分限制（最多10星点）
                 if daily_limits.emotion_chat_points + total_reward_points <= 10 and total_reward_points > 0:
@@ -307,7 +310,7 @@ async def save_chat_session(
                         is_rewarded=True,
                         action_type="emotion_chat",
                         description=f"聊天互动获得{total_reward_points}星点",
-                        show_toast=show_toast
+                        show_toast=star_show_toast
                     )
                     print(f"⭐ 聊天奖励成功: {total_reward_points}星点")
                 else:
@@ -321,7 +324,7 @@ async def save_chat_session(
                             is_rewarded=False,
                             action_type="emotion_chat",
                             description="聊天互动暂无奖励",
-                            show_toast=show_toast
+                            show_toast=star_show_toast
                         )
                         print(f"⭐ 聊天消息超出奖励范围")
                     else:
@@ -331,11 +334,65 @@ async def save_chat_session(
                             is_rewarded=False,
                             action_type="emotion_chat",
                             description="今日聊天奖励已达上限",
-                            show_toast=show_toast
+                            show_toast=star_show_toast
                         )
                         print(f"⭐ 聊天奖励已达到今日上限(10星点)")
             except Exception as e:
                 print(f"❌ 聊天奖励失败: {str(e)}")
+        
+        # 尝试奖励情感对话好感度（仅在有新用户消息时）
+        if new_user_messages > 0:
+            try:
+                from app.services.mascot_affection_service import MascotAffectionService
+                from app.utils.affection_types import MascotAffectionAction, AffectionSourceType
+                
+                affection_service = MascotAffectionService(db)
+                
+                # 好感度显示条件：前5条用户消息（有好感度奖励时）
+                affection_show_toast = (user_message_count_today + new_user_messages) <= 5
+                
+                # 计算应该奖励的好感度次数（新用户消息数量）
+                total_affection_points = 0
+                last_result = None
+                
+                for i in range(new_user_messages):
+                    result = affection_service.award_affection(
+                        user_id=current_user.user_id,
+                        action=MascotAffectionAction.EMOTION_CHAT,
+                        source_id=str(existing_session.id),
+                        source_type=AffectionSourceType.CHAT
+                    )
+                    
+                    if result.rewarded:
+                        total_affection_points += result.affection_awarded
+                        last_result = result  # 保存最后一次成功的结果，用于升级检测
+                        print(f"💖 用户消息 #{user_message_count_today + i + 1}: +{result.affection_awarded}好感度")
+                    else:
+                        print(f"💖 用户消息 #{user_message_count_today + i + 1}: 已达每日上限")
+                        break  # 达到每日限制，停止奖励
+                
+                if total_affection_points > 0:
+                    affection_reward = AffectionRewardInfo(
+                        earned_affection=total_affection_points,
+                        is_rewarded=True,
+                        action_type="emotion_chat",
+                        description=f"情感对话获得{total_affection_points}好感度",
+                        level_up=last_result.level_up if last_result else False,
+                        new_level=last_result.new_level if last_result and last_result.level_up else None,
+                        show_toast=affection_show_toast
+                    )
+                    print(f"💖 好感度奖励成功: {total_affection_points}点")
+                else:
+                    affection_reward = AffectionRewardInfo(
+                        earned_affection=0,
+                        is_rewarded=False,
+                        action_type="emotion_chat",
+                        description="今日情感对话好感度已达上限",
+                        show_toast=affection_show_toast
+                    )
+                    print(f"💖 好感度奖励已达到今日上限")
+            except Exception as e:
+                print(f"❌ 好感度奖励失败: {str(e)}")
         
         db.commit()
         db.refresh(existing_session)
@@ -346,8 +403,8 @@ async def save_chat_session(
             print(f"🧠 触发心理评估报告生成 - 会话ID: {existing_session.id}")
             background_tasks.add_task(generate_psychological_report_task, existing_session.id)
         
-        # 创建包含星点奖励信息的响应
-        result = ChatSessionWithStarResponse(**existing_session.__dict__, star_reward=star_reward)
+        # 创建包含星点奖励和好感度奖励信息的响应
+        result = ChatSessionWithRewardResponse(**existing_session.__dict__, star_reward=star_reward, affection_reward=affection_reward)
         return result
     
     # 如果没有提供session_id，则创建新会话
@@ -419,6 +476,7 @@ async def save_chat_session(
     
     # 初始化奖励信息
     star_reward = StarRewardInfo()
+    affection_reward = AffectionRewardInfo()
     
     # 只有当确实有新的用户消息时才进行处理
     if new_user_messages > 0:
@@ -438,8 +496,8 @@ async def save_chat_session(
                 
                 print(f"📝 用户消息 #{message_number}: +{reward_for_this_message}星点")
             
-            # 前7条用户消息显示toast提示
-            show_toast = (user_message_count_today + new_user_messages) <= 7
+            # 星星积分显示条件：前10条用户消息（有积分奖励时）
+            star_show_toast = (user_message_count_today + new_user_messages) <= 10
             
             # 检查今日聊天积分限制（最多10星点）
             if daily_limits.emotion_chat_points + total_reward_points <= 10 and total_reward_points > 0:
@@ -465,7 +523,7 @@ async def save_chat_session(
                     is_rewarded=True,
                     action_type="emotion_chat",
                     description=f"聊天互动获得{total_reward_points}星点",
-                    show_toast=show_toast
+                    show_toast=star_show_toast
                 )
                 print(f"⭐ 聊天奖励成功: {total_reward_points}星点")
             else:
@@ -479,7 +537,7 @@ async def save_chat_session(
                         is_rewarded=False,
                         action_type="emotion_chat",
                         description="聊天互动暂无奖励",
-                        show_toast=show_toast
+                        show_toast=star_show_toast
                     )
                     print(f"⭐ 聊天消息超出奖励范围")
                 else:
@@ -489,12 +547,66 @@ async def save_chat_session(
                         is_rewarded=False,
                         action_type="emotion_chat",
                         description="今日聊天奖励已达上限",
-                        show_toast=show_toast
+                        show_toast=star_show_toast
                     )
                     print(f"⭐ 聊天奖励已达到今日上限(10星点)")
         except Exception as e:
             print(f"❌ 聊天奖励失败: {str(e)}")
     
+    # 尝试奖励情感对话好感度（仅在有新用户消息时）
+    if new_user_messages > 0:
+        try:
+            from app.services.mascot_affection_service import MascotAffectionService
+            from app.utils.affection_types import MascotAffectionAction, AffectionSourceType
+            
+            affection_service = MascotAffectionService(db)
+            
+            # 好感度显示条件：前5条用户消息（有好感度奖励时）
+            affection_show_toast = (user_message_count_today + new_user_messages) <= 5
+            
+            # 计算应该奖励的好感度次数（新用户消息数量）
+            total_affection_points = 0
+            last_result = None
+            
+            for i in range(new_user_messages):
+                result = affection_service.award_affection(
+                    user_id=current_user.user_id,
+                    action=MascotAffectionAction.EMOTION_CHAT,
+                    source_id=str(chat_session.id),
+                    source_type=AffectionSourceType.CHAT
+                )
+                
+                if result.rewarded:
+                    total_affection_points += result.affection_awarded
+                    last_result = result  # 保存最后一次成功的结果，用于升级检测
+                    print(f"💖 用户消息 #{user_message_count_today + i + 1}: +{result.affection_awarded}好感度")
+                else:
+                    print(f"💖 用户消息 #{user_message_count_today + i + 1}: 已达每日上限")
+                    break  # 达到每日限制，停止奖励
+            
+            if total_affection_points > 0:
+                affection_reward = AffectionRewardInfo(
+                    earned_affection=total_affection_points,
+                    is_rewarded=True,
+                    action_type="emotion_chat",
+                    description=f"情感对话获得{total_affection_points}好感度",
+                    level_up=last_result.level_up if last_result else False,
+                    new_level=last_result.new_level if last_result and last_result.level_up else None,
+                    show_toast=affection_show_toast
+                )
+                print(f"💖 好感度奖励成功: {total_affection_points}点")
+            else:
+                affection_reward = AffectionRewardInfo(
+                    earned_affection=0,
+                    is_rewarded=False,
+                    action_type="emotion_chat",
+                    description="今日情感对话好感度已达上限",
+                    show_toast=affection_show_toast
+                )
+                print(f"💖 好感度奖励已达到今日上限")
+        except Exception as e:
+            print(f"❌ 好感度奖励失败: {str(e)}")
+            
     db.commit()
     db.refresh(chat_session)
     
@@ -503,8 +615,8 @@ async def save_chat_session(
         print(f"🧠 触发心理评估报告生成 - 新会话ID: {chat_session.id}")
         background_tasks.add_task(generate_psychological_report_task, chat_session.id)
     
-    # 创建包含星点奖励信息的响应
-    result = ChatSessionWithStarResponse(**chat_session.__dict__, star_reward=star_reward)
+    # 创建包含星点奖励和好感度奖励信息的响应
+    result = ChatSessionWithRewardResponse(**chat_session.__dict__, star_reward=star_reward, affection_reward=affection_reward)
     return result
 @router.get("/chat-sessions", response_model=List[ChatSessionSchema])
 async def get_chat_sessions(
