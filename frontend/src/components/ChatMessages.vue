@@ -16,6 +16,13 @@
           { 'message-enter': messageAnimations[index] },
         ]"
       >
+        <!-- AI消息：头像在左侧 -->
+        <image
+          v-if="message.role === 'assistant'"
+          :src="mascotAvatar"
+          mode="aspectFill"
+          class="message-avatar ai-avatar"
+        />
         <view :class="['message', message.role]">
           <!-- 文本内容 -->
           <text v-if="message.content" class="message-text">{{
@@ -44,6 +51,13 @@
             >|</text
           >
         </view>
+        <!-- 用户消息：头像在右侧 -->
+        <image
+          v-if="message.role === 'user'"
+          :src="userAvatar"
+          mode="aspectFill"
+          class="message-avatar user-avatar"
+        />
       </view>
       <view class="scroll-anchor" ref="scrollAnchor"></view>
     </scroll-view>
@@ -51,6 +65,8 @@
 </template>
 
 <script>
+import { storage } from '../utils/api.js';
+
 export default {
   name: "ChatMessages",
   props: {
@@ -80,6 +96,8 @@ export default {
       typingTimers: {}, // 存储每个消息的打字机定时器
       isAutoScroll: true,
       messageAnimations: {}, // 消息动画状态
+      userAvatar: '/static/avatar.png', // 用户头像
+      mascotAvatar: '/static/outfits/default-full.png', // 看板娘头像
     };
   },
   computed: {
@@ -98,6 +116,17 @@ export default {
       deep: true,
     },
   },
+  created() {
+    // 监听用户信息更新事件
+    uni.$on('userInfoUpdated', () => {
+      this.loadUserAvatar();
+    });
+    
+    // 监听看板娘换装事件
+    uni.$on('outfitChanged', () => {
+      this.loadMascotAvatar();
+    });
+  },
   mounted() {
     // 初始化显示消息
     this.displayedMessages = JSON.parse(JSON.stringify(this.messages));
@@ -108,6 +137,9 @@ export default {
         this.$set(this.messageAnimations, index, true);
       }, index * 100);
     });
+    
+    // 加载头像
+    this.loadAvatars();
   },
   methods: {
     handleNewMessages(newMessages) {
@@ -228,11 +260,109 @@ export default {
         },
       });
     },
+
+    // 加载用户头像和看板娘头像
+    loadAvatars() {
+      // 加载用户头像
+      this.loadUserAvatar();
+      // 加载看板娘头像
+      this.loadMascotAvatar();
+    },
+
+    // 加载用户头像
+    loadUserAvatar() {
+      try {
+        const userInfo = storage.getUserInfo();
+        if (userInfo && userInfo.avatar_url) {
+          const avatarUrl = userInfo.avatar_url;
+          if (avatarUrl.startsWith('http')) {
+            this.userAvatar = avatarUrl;
+          } else {
+            const baseUrl = process.env.VUE_APP_API_BASE_URL;
+            if (baseUrl) {
+              this.userAvatar = avatarUrl.startsWith('/') 
+                ? baseUrl + avatarUrl 
+                : baseUrl + '/' + avatarUrl;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('加载用户头像失败:', error);
+      }
+    },
+
+    // 加载看板娘头像
+    loadMascotAvatar() {
+      try {
+        // 先从本地存储获取
+        const selectedOutfit = uni.getStorageSync('selectedOutfit');
+        if (selectedOutfit && selectedOutfit.mascotImage) {
+          // 如果是相对路径（以/static开头），直接使用
+          if (selectedOutfit.mascotImage.startsWith('/static')) {
+            this.mascotAvatar = selectedOutfit.mascotImage;
+          } else if (selectedOutfit.mascotImage.startsWith('http')) {
+            this.mascotAvatar = selectedOutfit.mascotImage;
+          } else {
+            // 其他情况可能是服务器返回的路径，需要添加baseUrl
+            const baseUrl = process.env.VUE_APP_API_BASE_URL;
+            if (baseUrl) {
+              this.mascotAvatar = selectedOutfit.mascotImage.startsWith('/')
+                ? baseUrl + selectedOutfit.mascotImage
+                : baseUrl + '/' + selectedOutfit.mascotImage;
+            } else {
+              this.mascotAvatar = selectedOutfit.mascotImage;
+            }
+          }
+          return;
+        }
+
+        // 如果没有本地存储，尝试从服务器获取
+        const token = uni.getStorageSync('access_token');
+        if (token) {
+          const baseUrl = process.env.VUE_APP_API_BASE_URL;
+          if (baseUrl) {
+            uni.request({
+              url: `${baseUrl}/mascot-outfits/current`,
+              method: 'GET',
+              header: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              success: (res) => {
+                if (res.statusCode === 200 && res.data && res.data.mascot_image) {
+                  const mascotImage = res.data.mascot_image;
+                  if (mascotImage.startsWith('http')) {
+                    this.mascotAvatar = mascotImage;
+                  } else if (mascotImage.startsWith('/static')) {
+                    // 静态资源路径，直接使用
+                    this.mascotAvatar = mascotImage;
+                  } else {
+                    // 服务器路径，需要添加baseUrl
+                    this.mascotAvatar = mascotImage.startsWith('/')
+                      ? baseUrl + mascotImage
+                      : baseUrl + '/' + mascotImage;
+                  }
+                }
+              },
+              fail: (err) => {
+                console.error('从服务器获取看板娘头像失败:', err);
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('加载看板娘头像失败:', error);
+      }
+    },
   },
 
   beforeDestroy() {
     // 组件销毁前清除所有定时器
     Object.values(this.typingTimers).forEach((timer) => clearInterval(timer));
+    
+    // 移除事件监听
+    uni.$off('userInfoUpdated');
+    uni.$off('outfitChanged');
   },
 };
 </script>
@@ -259,6 +389,8 @@ export default {
 .message-container {
   margin-bottom: 15rpx;
   display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
   opacity: 0;
   transform: translateY(30rpx);
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -271,10 +403,27 @@ export default {
 
 .message-container.user {
   justify-content: flex-end;
+  flex-direction: row;
 }
 
 .message-container.ai {
   justify-content: flex-start;
+  flex-direction: row;
+}
+
+/* 头像样式 */
+.message-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.message-avatar:active {
+  transform: scale(0.95);
 }
 
 .message {
@@ -283,7 +432,7 @@ export default {
   word-wrap: break-word;
   word-break: break-word;
   display: inline-block;
-  max-width: 80%;
+  max-width: calc(80% - 80rpx); /* 减去头像和间距的宽度 */
   padding: 16rpx 20rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10rpx);
@@ -443,12 +592,21 @@ export default {
 /* 响应式设计 */
 @media (max-width: 750rpx) {
   .message {
-    max-width: 85%;
+    max-width: calc(85% - 70rpx); /* 减去头像和间距的宽度 */
     padding: 14rpx 18rpx;
   }
 
   .message-text {
     font-size: 24rpx;
+  }
+
+  .message-avatar {
+    width: 50rpx;
+    height: 50rpx;
+  }
+
+  .message-container {
+    gap: 10rpx;
   }
 }
 </style>
