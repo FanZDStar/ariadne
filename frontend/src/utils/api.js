@@ -409,6 +409,16 @@ export const api = {
     );
   },
 
+  // 删除悄悄话评论
+  deleteWhisperComment: (token, commentId) => {
+    return request(`/tree-hole/comments/${commentId}`, {
+      method: "DELETE",
+      header: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   // 点赞/取消点赞悄悄话
   toggleWhisperLike: (token, whisperId) => {
     return request(`/tree-hole/${whisperId}/like`, {

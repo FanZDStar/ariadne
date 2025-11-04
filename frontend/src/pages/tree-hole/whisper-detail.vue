@@ -105,6 +105,11 @@
               formatTimestamp(comment.created_at)
             }}</text>
             <text class="reply-btn" @click="replyToComment(comment)">回复</text>
+            <text 
+              v-if="canDeleteComment(comment)" 
+              class="delete-btn" 
+              @click="deleteComment(comment)"
+            >删除</text>
           </view>
 
           <!-- 回复列表 -->
@@ -135,6 +140,11 @@
                   <text class="reply-btn" @click="replyToReply(comment, reply)"
                     >回复</text
                   >
+                  <text 
+                    v-if="canDeleteComment(reply)" 
+                    class="delete-btn" 
+                    @click="deleteReply(comment, reply)"
+                  >删除</text>
                 </view>
               </view>
             </view>
@@ -198,16 +208,30 @@ export default {
       whisperId: null,
       replyingTo: null, // 当前回复的对象 { type: 'comment'|'reply', id: xxx, userName: xxx, content: xxx }
       loading: true, // 加载状态
+      currentUserId: null, // 当前登录用户ID
     };
   },
   onLoad(option) {
     this.whisperId = option.whisper_id;
     if (this.whisperId) {
+      this.loadCurrentUser();
       this.loadWhisperDetail();
       this.loadComments();
     }
   },
   methods: {
+    async loadCurrentUser() {
+      const token = storage.getToken();
+      if (!token) return;
+
+      try {
+        const userInfo = await api.getUserInfo(token);
+        this.currentUserId = userInfo.user_id;
+      } catch (error) {
+        console.error("Failed to load user info:", error);
+      }
+    },
+
     async loadWhisperDetail(retryCount = 0) {
       const token = storage.getToken();
       if (!token) {
@@ -634,6 +658,95 @@ export default {
 
       return `${month}月${day}日 ${hours}:${minutes}`;
     },
+
+    // 判断当前用户是否可以删除评论
+    canDeleteComment(comment) {
+      if (!this.currentUserId) return false;
+      
+      // 悄悄话发布者可以删除任意评论
+      const isWhisperAuthor = this.whisper && this.whisper.user_id === this.currentUserId;
+      
+      // 评论发布者可以删除自己的评论
+      const isCommentAuthor = comment.user_id === this.currentUserId;
+      
+      return isWhisperAuthor || isCommentAuthor;
+    },
+
+    // 删除评论
+    async deleteComment(comment) {
+      const token = storage.getToken();
+      if (!token) {
+        uni.showToast({ title: "请先登录", icon: "none" });
+        return;
+      }
+
+      // 二次确认
+      uni.showModal({
+        title: "确认删除",
+        content: "确定要删除这条评论吗？",
+        success: async (res) => {
+          if (res.confirm) {
+            try {
+              await api.deleteWhisperComment(token, comment.comment_id);
+              
+              // 更新本地状态
+              this.comments = this.comments.filter(
+                c => c.comment_id !== comment.comment_id
+              );
+              
+              // 更新评论数
+              if (this.whisper.comment_count > 0) {
+                this.whisper.comment_count--;
+              }
+              
+              uni.showToast({ title: "删除成功", icon: "success" });
+            } catch (error) {
+              console.error("Failed to delete comment:", error);
+              uni.showToast({ title: "删除失败", icon: "none" });
+            }
+          }
+        }
+      });
+    },
+
+    // 删除回复
+    async deleteReply(comment, reply) {
+      const token = storage.getToken();
+      if (!token) {
+        uni.showToast({ title: "请先登录", icon: "none" });
+        return;
+      }
+
+      // 二次确认
+      uni.showModal({
+        title: "确认删除",
+        content: "确定要删除这条回复吗?",
+        success: async (res) => {
+          if (res.confirm) {
+            try {
+              await api.deleteWhisperComment(token, reply.reply_id);
+              
+              // 更新本地状态 - 从comment的replies中移除
+              if (comment.replies) {
+                comment.replies = comment.replies.filter(
+                  r => r.reply_id !== reply.reply_id
+                );
+                
+                // 更新回复数
+                if (comment.reply_count > 0) {
+                  comment.reply_count--;
+                }
+              }
+              
+              uni.showToast({ title: "删除成功", icon: "success" });
+            } catch (error) {
+              console.error("Failed to delete reply:", error);
+              uni.showToast({ title: "删除失败", icon: "none" });
+            }
+          }
+        }
+      });
+    },
   },
 };
 </script>
@@ -954,6 +1067,18 @@ export default {
 
 .reply-btn:active {
   background-color: rgba(102, 126, 234, 0.1);
+  border-radius: 4rpx;
+}
+
+.delete-btn {
+  font-size: 22rpx;
+  color: #ef4444;
+  padding: 4rpx 8rpx;
+  cursor: pointer;
+}
+
+.delete-btn:active {
+  background-color: rgba(239, 68, 68, 0.1);
   border-radius: 4rpx;
 }
 

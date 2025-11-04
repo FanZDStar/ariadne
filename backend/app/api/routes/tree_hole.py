@@ -742,6 +742,56 @@ def create_whisper_comment(
     )
 
 
+@router.delete("/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_whisper_comment(
+    comment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """删除悄悄话评论
+    
+    权限：
+    - 悄悄话发布者可以删除任意评论
+    - 评论发布者只能删除自己的评论
+    """
+    # 查找评论
+    comment = db.query(TreeHoleComment).filter(
+        TreeHoleComment.comment_id == comment_id
+    ).first()
+    
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    # 查找对应的悄悄话
+    whisper = db.query(TreeHoleWhisper).filter(
+        TreeHoleWhisper.whisper_id == comment.whisper_id
+    ).first()
+    
+    if not whisper:
+        raise HTTPException(status_code=404, detail="Whisper not found")
+    
+    # 权限检查：是悄悄话发布者或评论发布者
+    is_whisper_author = whisper.user_id == current_user.user_id
+    is_comment_author = comment.user_id == current_user.user_id
+    
+    if not (is_whisper_author or is_comment_author):
+        raise HTTPException(
+            status_code=403, 
+            detail="You don't have permission to delete this comment"
+        )
+    
+    # 删除评论
+    db.delete(comment)
+    
+    # 更新悄悄话的评论数
+    if whisper.comment_count > 0:
+        whisper.comment_count -= 1
+    
+    db.commit()
+    
+    return None
+
+
 @router.post("/reset-comment-counts")
 def reset_comment_counts(
     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
