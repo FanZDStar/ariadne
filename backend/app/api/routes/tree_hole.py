@@ -23,6 +23,7 @@ from app.schemas.tree_hole import (
 from app.api.deps import get_current_user
 from app.services.star_point_service import StarPointService
 from app.utils.star_point_types import StarPointAction, SourceType
+from app.services.offensive_content_detector import check_offensive_content
 
 router = APIRouter(prefix="/tree-hole", tags=["心灵树洞"])
 
@@ -670,6 +671,27 @@ def create_whisper_comment(
     )
     if not whisper:
         raise HTTPException(status_code=404, detail="Whisper not found")
+
+    # 🛡️ 冒犯性内容检测
+    try:
+        detection_result = check_offensive_content(comment_data.content, threshold=0.7)
+        
+        if detection_result["is_offensive"]:
+            # 检测到冒犯性内容，拒绝发布
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "error": "offensive_content_detected",
+                    "message": f"评论包含不当内容，请文明发言（{detection_result['message']}）",
+                    "confidence": detection_result["confidence"]
+                }
+            )
+    except HTTPException:
+        # 重新抛出 HTTPException
+        raise
+    except Exception as e:
+        # 检测服务异常时记录日志但允许评论通过
+        print(f"⚠️ 冒犯性内容检测异常: {str(e)}")
 
     # 创建评论
     db_comment = TreeHoleComment(

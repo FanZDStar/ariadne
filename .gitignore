@@ -54,3 +54,12 @@ backend/uploads/
 .env
 .env.*
 .ecosystem.config
+
+# AI Models (too large for git)
+backend/models/
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.pt
+*.pth

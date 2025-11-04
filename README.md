@@ -174,7 +174,21 @@ https://ariadne.nuyoahming.xyz
    picui_strategy_id=你的策略ID
    picui_album_id=你的相册ID
    ```
-3. 安装依赖（推荐使用虚拟环境）：
+3. 下载模型到本地
+
+```bash
+# 下载模型到项目本地（推荐）
+python scripts/download_offensive_model.py
+```
+
+**模型下载说明**：
+
+- 📦 模型大小：约 400MB
+- 📁 保存位置：`backend/models/offensive_detector/local_model/`
+- ⏱️ 下载时间：首次约 3-5 分钟（取决于网络速度）
+- 🔄 自动使用：服务会优先使用本地模型
+
+4. 安装依赖（推荐使用虚拟环境）：
    ```bash
    # 进入后端目录
    cd ariadne/backend
@@ -203,12 +217,12 @@ https://ariadne.nuyoahming.xyz
    # 退出虚拟环境
    deactivate
    ```
-4. 启动开发服务器：
+5. 启动开发服务器：
    ```bash
    uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
    ```
 
-5. 服务器启动后，访问以下地址查看API文档：
+6. 服务器启动后，访问以下地址查看API文档：
    - 交互式文档: http://localhost:8000/docs
    - ReDoc文档: http://localhost:8000/redoc
    - 基础接口测试: http://localhost:8000/

@@ -105,11 +105,12 @@
               formatTimestamp(comment.created_at)
             }}</text>
             <text class="reply-btn" @click="replyToComment(comment)">回复</text>
-            <text 
-              v-if="canDeleteComment(comment)" 
-              class="delete-btn" 
+            <text
+              v-if="canDeleteComment(comment)"
+              class="delete-btn"
               @click="deleteComment(comment)"
-            >删除</text>
+              >删除</text
+            >
           </view>
 
           <!-- 回复列表 -->
@@ -140,11 +141,12 @@
                   <text class="reply-btn" @click="replyToReply(comment, reply)"
                     >回复</text
                   >
-                  <text 
-                    v-if="canDeleteComment(reply)" 
-                    class="delete-btn" 
+                  <text
+                    v-if="canDeleteComment(reply)"
+                    class="delete-btn"
                     @click="deleteReply(comment, reply)"
-                  >删除</text>
+                    >删除</text
+                  >
                 </view>
               </view>
             </view>
@@ -489,7 +491,36 @@ export default {
         uni.showToast({ title: "发送成功", icon: "success" });
       } catch (error) {
         console.error("Failed to submit comment:", error);
-        uni.showToast({ title: "发送失败", icon: "none" });
+
+        // 🛡️ 处理冒犯性内容检测错误
+        if (error.statusCode === 400 && error.responseData?.detail) {
+          const detail = error.responseData.detail;
+
+          // 检查是否是冒犯性内容检测错误
+          if (
+            typeof detail === "object" &&
+            detail.error === "offensive_content_detected"
+          ) {
+            uni.showModal({
+              title: "评论被拦截",
+              content: detail.message || "您的评论包含不当内容，请文明发言",
+              showCancel: false,
+              confirmText: "我知道了",
+              confirmColor: "#f56c6c",
+            });
+            return;
+          }
+
+          // 其他400错误
+          const errorMsg =
+            typeof detail === "string"
+              ? detail
+              : detail.message || "评论内容有误";
+          uni.showToast({ title: errorMsg, icon: "none", duration: 2000 });
+        } else {
+          // 其他错误
+          uni.showToast({ title: "发送失败", icon: "none" });
+        }
       }
     },
 
@@ -662,13 +693,14 @@ export default {
     // 判断当前用户是否可以删除评论
     canDeleteComment(comment) {
       if (!this.currentUserId) return false;
-      
+
       // 悄悄话发布者可以删除任意评论
-      const isWhisperAuthor = this.whisper && this.whisper.user_id === this.currentUserId;
-      
+      const isWhisperAuthor =
+        this.whisper && this.whisper.user_id === this.currentUserId;
+
       // 评论发布者可以删除自己的评论
       const isCommentAuthor = comment.user_id === this.currentUserId;
-      
+
       return isWhisperAuthor || isCommentAuthor;
     },
 
@@ -688,24 +720,24 @@ export default {
           if (res.confirm) {
             try {
               await api.deleteWhisperComment(token, comment.comment_id);
-              
+
               // 更新本地状态
               this.comments = this.comments.filter(
-                c => c.comment_id !== comment.comment_id
+                (c) => c.comment_id !== comment.comment_id
               );
-              
+
               // 更新评论数
               if (this.whisper.comment_count > 0) {
                 this.whisper.comment_count--;
               }
-              
+
               uni.showToast({ title: "删除成功", icon: "success" });
             } catch (error) {
               console.error("Failed to delete comment:", error);
               uni.showToast({ title: "删除失败", icon: "none" });
             }
           }
-        }
+        },
       });
     },
 
@@ -725,26 +757,26 @@ export default {
           if (res.confirm) {
             try {
               await api.deleteWhisperComment(token, reply.reply_id);
-              
+
               // 更新本地状态 - 从comment的replies中移除
               if (comment.replies) {
                 comment.replies = comment.replies.filter(
-                  r => r.reply_id !== reply.reply_id
+                  (r) => r.reply_id !== reply.reply_id
                 );
-                
+
                 // 更新回复数
                 if (comment.reply_count > 0) {
                   comment.reply_count--;
                 }
               }
-              
+
               uni.showToast({ title: "删除成功", icon: "success" });
             } catch (error) {
               console.error("Failed to delete reply:", error);
               uni.showToast({ title: "删除失败", icon: "none" });
             }
           }
-        }
+        },
       });
     },
   },
