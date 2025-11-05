@@ -672,18 +672,25 @@ def create_whisper_comment(
     if not whisper:
         raise HTTPException(status_code=404, detail="Whisper not found")
 
-    # 🛡️ 冒犯性内容检测
+    # 🛡️ 冒犯性内容检测（AI模型 + 关键词黑名单）
     try:
-        detection_result = check_offensive_content(comment_data.content, threshold=0.7)
+        detection_result = check_offensive_content(comment_data.content, threshold=0.5)
         
         if detection_result["is_offensive"]:
             # 检测到冒犯性内容，拒绝发布
+            error_message = detection_result["message"]
+            
+            # 如果是关键词匹配，提供更明确的提示
+            if detection_result.get("matched_keyword"):
+                error_message = f"评论包含敏感词「{detection_result['matched_keyword']}」，请文明发言"
+            
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "error": "offensive_content_detected",
-                    "message": f"评论包含不当内容，请文明发言（{detection_result['message']}）",
-                    "confidence": detection_result["confidence"]
+                    "message": error_message,
+                    "confidence": detection_result["confidence"],
+                    "matched_keyword": detection_result.get("matched_keyword")
                 }
             )
     except HTTPException:
