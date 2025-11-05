@@ -11,6 +11,10 @@ from app.services.crisis_monitoring_task import crisis_monitor
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+
+# 导入模型预加载函数
+from app.services.offensive_content_detector import preload_model
+
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 
@@ -54,9 +58,18 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_event():
     """应用启动时的事件处理"""
+    print("=" * 60)
+    print("🚀 应用启动中...")
+    print("=" * 60)
+    
+    # 预加载冒犯性内容检测模型（在后台线程中加载，不阻塞启动）
+    asyncio.create_task(asyncio.to_thread(preload_model))
+    
     # 启动心理危机监控任务（可选，根据需要启用）
     # asyncio.create_task(crisis_monitor.start_monitoring(check_interval_hours=6))
-    pass
+    
+    print("✅ 应用启动完成！")
+    print("=" * 60)
 
 @app.on_event("shutdown") 
 async def shutdown_event():

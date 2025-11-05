@@ -40,14 +40,14 @@ class OffensiveContentDetector:
         
         # --- 其他攻击性词汇 ---
         "找死", "作死", "活腻", "欠打", "欠揍",
-        "丑逼", "丑八怪", "死肥猪",
+        "丑逼", "丑八怪", "死肥猪","扫码",
         
         # --- 常见变体 ---
         "卧槽", "我操", "我艹", "我草", "wocao", "woc",
         "尼玛", "你马", "你🐴",
         "傻吊", "傻屌", "煞吊", "煞屌",
         "给爷爬", "给老子", "给爷滚",
-        "司马", "司马脸", "死妈脸",
+        "司马", "司马脸", "死妈脸","死马",
         "你妈逼", "你妈b", "草泥马", "草拟吗",
         "操你妈", "操你娘", "日你妈",
         "去死", "找抽", "欠骂",
@@ -317,6 +317,30 @@ class OffensiveContentDetector:
 def get_offensive_detector() -> OffensiveContentDetector:
     """获取冒犯性内容检测器单例"""
     return OffensiveContentDetector()
+
+
+def preload_model():
+    """
+    预加载模型 - 在应用启动时调用
+    
+    这个函数会提前加载AI模型到内存中，避免第一次检测时的延迟。
+    如果加载失败，不会影响应用启动，只是会在日志中记录警告。
+    """
+    try:
+        logger.info("🚀 开始预加载冒犯性内容检测模型...")
+        detector = get_offensive_detector()
+        
+        # 触发模型加载
+        if detector._lazy_load_model():
+            logger.info("✅ 冒犯性内容检测模型预加载成功！")
+            # 进行一次测试检测，确保模型工作正常
+            test_result = detector.check_content("测试", threshold=0.5)
+            logger.info(f"✅ 模型测试通过: {test_result['label']}")
+        else:
+            logger.warning("⚠️ 冒犯性内容检测模型预加载失败，将在首次使用时加载")
+    except Exception as e:
+        logger.error(f"❌ 预加载模型时发生错误: {str(e)}")
+        logger.warning("⚠️ 模型将在首次使用时加载")
 
 
 # 便捷函数
