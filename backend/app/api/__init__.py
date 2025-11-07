@@ -43,6 +43,7 @@ from app.api.routes import (
     user_profile_template,
     water_drops,
     comment_rewards,
+    crisis_detection,
 )
 from app.api import protection_drill
 
@@ -63,6 +64,10 @@ api_router.include_router(
 )
 api_router.include_router(
     risk_assessment.router, prefix="/risk-assessment", tags=["risk-assessment"]
+)
+api_router.include_router(
+    crisis_detection.router,
+    tags=["心灵预警检测"]
 )
 api_router.include_router(
     social_skills.router, prefix="/social-skills", tags=["social-skills"]

@@ -1,9 +1,9 @@
 # file:ariadne/backend/app/api/routes/tree_hole.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel, Field
 from sqlalchemy import and_, func
-from typing import List
+from typing import List, Optional
 import json
 from app.database.session import get_db
 from app.models.user import User
@@ -19,11 +19,13 @@ from app.schemas.tree_hole import (
     CommentWithStarResponse,
     WhisperWithStarResponse,
     StarRewardInfo,
+    CrisisWarningInfo,
 )
 from app.api.deps import get_current_user
 from app.services.star_point_service import StarPointService
 from app.utils.star_point_types import StarPointAction, SourceType
 from app.services.offensive_content_detector import check_offensive_content
+from app.services.crisis_detector_component import get_crisis_detector
 
 router = APIRouter(prefix="/tree-hole", tags=["心灵树洞"])
 
@@ -31,13 +33,38 @@ router = APIRouter(prefix="/tree-hole", tags=["心灵树洞"])
 @router.post(
     "/", response_model=WhisperWithStarResponse, status_code=status.HTTP_201_CREATED
 )
-def create_whisper(
+async def create_whisper(
     whisper: WhisperCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """创建新的悄悄话"""
+    """创建新的悄悄话（集成心灵预警）"""
     from app.models.tree_hole import TreeHoleWhisperImage
+    
+    # ============ 心灵预警检测 ============
+    crisis_warning = CrisisWarningInfo()
+    try:
+        detector = get_crisis_detector(db)
+        crisis_result = await detector.detect_content_risk(
+            content=whisper.content,
+            scene="tree-hole",
+            user_id=current_user.user_id,
+            enable_ai=True
+        )
+        
+        crisis_warning = CrisisWarningInfo(
+            has_risk=crisis_result.has_risk,
+            risk_level=crisis_result.risk_level,
+            should_show_bubble=crisis_result.should_show_bubble,
+            bubble_message=crisis_result.bubble_message,
+            ai_brief_analysis=crisis_result.ai_brief_analysis
+        )
+        
+        print(f"🔍 心灵预警检测完成 - 风险等级: {crisis_result.risk_level}")
+        
+    except Exception as e:
+        print(f"❌ 心灵预警检测失败: {str(e)}")
+        # 不影响发布流程，继续执行
 
     # 创建悄悄话对象
     db_whisper = TreeHoleWhisper(
@@ -96,7 +123,7 @@ def create_whisper(
     except Exception as e:
         print(f"❌ 悄悄话奖励失败: {str(e)}")
 
-    # 创建带星点奖励信息的响应
+    # 创建带星点奖励和心灵预警信息的响应
     whisper_data = {
         "whisper_id": db_whisper.whisper_id,
         "content": db_whisper.content,  # 已经是解密后的内容
@@ -136,6 +163,7 @@ def create_whisper(
         ),
         "liked": False,  # 自己发的悄悄话默认未点赞
         "star_reward": star_reward,
+        "crisis_warning": crisis_warning,  # 添加心灵预警信息
     }
 
     result = WhisperWithStarResponse(**whisper_data)

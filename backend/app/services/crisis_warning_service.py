@@ -47,20 +47,40 @@ class CrisisWarningService:
     
     # 危机关键词配置（增强版）
     CRISIS_KEYWORDS = {
-        "自伤": ["自杀", "自残", "自伤", "结束生命", "不想活", "想死", "自我了断", "轻生", "了结", "自了", "了断"],
-        "绝望": ["绝望", "无望", "没有希望", "看不到未来", "一片黑暗", "无路可走", "走投无路", "没救", "完了"],
-        "孤独": ["孤独", "孤单", "没人理解", "没人关心", "被遗弃", "被抛弃", "无人陪伴", "一个人", "形只影单"],
-        "无价值感": ["没用", "无价值", "废物", "垃圾", "拖累", "负担", "没意义", "多余", "无能", "失败者"],
-        "极端情绪": ["崩溃", "疯了", "受不了", "痛苦", "煎熬", "折磨", "地狱", "末日", "撑不住", "要疯"]
+        "自伤": [
+            "自杀", "自残", "自伤", "结束生命", "不想活", "想死", "自我了断", 
+            "轻生", "了结", "自了", "了断", "去死", "想去死", "要去死",
+            "寻死", "找死", "赴死", "死了算了", "一死了之", "以死解脱"
+        ],
+        "绝望": [
+            "绝望", "无望", "没有希望", "看不到未来", "一片黑暗", "无路可走", 
+            "走投无路", "没救", "完了", "没意思", "活着没意义", "没活路"
+        ],
+        "孤独": [
+            "孤独", "孤单", "没人理解", "没人关心", "被遗弃", "被抛弃", 
+            "无人陪伴", "一个人", "形只影单", "无依无靠", "孑然一身"
+        ],
+        "无价值感": [
+            "没用", "无价值", "废物", "垃圾", "拖累", "负担", "没意义", 
+            "多余", "无能", "失败者", "活该", "该死", "不配"
+        ],
+        "极端情绪": [
+            "崩溃", "疯了", "受不了", "痛苦", "煎熬", "折磨", "地狱", 
+            "末日", "撑不住", "要疯", "要死", "快死了", "死掉算了"
+        ]
     }
     
-    # 同音字和模糊匹配模式
+    # 同音字和模糊匹配模式（扩充版）
     FUZZY_PATTERNS = {
-        "自杀": ["zi sha", "自 杀", "自_杀", "自-杀", "自*杀", "zi4", "zisha"],
-        "想死": ["想 死", "想4", "想si", "xiang死", "想sǐ"],
-        "绝望": ["绝 望", "jue望", "绝wang", "jué望"],
-        "崩溃": ["崩 溃", "beng溃", "崩kui", "běng溃"],
-        "痛苦": ["痛 苦", "tong苦", "痛ku", "tòng苦"]
+        "自杀": ["zi sha", "自 杀", "自_杀", "自-杀", "自*杀", "zi4", "zisha", "zs"],
+        "想死": ["想 死", "想4", "想si", "xiang死", "想sǐ", "xiang si", "xiangsi"],
+        "去死": ["去 死", "去4", "qu死", "去si", "qu si", "qusi", "qs"],
+        "要死": ["要 死", "要4", "yao死", "要si", "yao si", "yaosi"],
+        "绝望": ["绝 望", "jue望", "绝wang", "jué望", "juewang"],
+        "崩溃": ["崩 溃", "beng溃", "崩kui", "běng溃", "bengkui"],
+        "痛苦": ["痛 苦", "tong苦", "痛ku", "tòng苦", "tongku"],
+        "不想活": ["不想 活", "不 想活", "b想活", "不xiang活"],
+        "活着没意义": ["活着 没意义", "活 着没意义", "没 意义"]
     }
     
     # 心情评分映射
@@ -135,6 +155,8 @@ class CrisisWarningService:
         
         # 标准化文本
         normalized_content = self._normalize_text(content)
+        logger.info(f"🔍 关键词检测 - 原始内容: {content}")
+        logger.info(f"🔍 关键词检测 - 标准化后: {normalized_content}")
         
         # 1. 精确关键词匹配
         for category, keywords in self.CRISIS_KEYWORDS.items():
@@ -148,12 +170,24 @@ class CrisisWarningService:
                 detected_keywords.extend(category_matches)
                 categories.append(category)
         
+        logger.info(f"🔍 关键词检测 - 精确匹配: {detected_keywords}, 分类: {categories}")
+        
         # 2. 模糊匹配
         for keyword, patterns in self.FUZZY_PATTERNS.items():
             for pattern in patterns:
-                if pattern.lower() in normalized_content.lower():
+                # 🔧 修复: 对模糊匹配的pattern也进行标准化处理
+                normalized_pattern = self._normalize_text(pattern)
+                if normalized_pattern in normalized_content:
                     fuzzy_matches.append(pattern)
-                    total_score += self._get_keyword_weight(keyword, self._get_keyword_category(keyword)) * 0.8  # 模糊匹配权重稍低
+                    # 模糊匹配也应该添加到对应的类别中
+                    category = self._get_keyword_category(keyword)
+                    if category not in categories:
+                        categories.append(category)
+                    total_score += self._get_keyword_weight(keyword, category) * 0.8  # 模糊匹配权重稍低
+                    logger.info(f"✅ 模糊匹配成功: '{pattern}' (标准化: '{normalized_pattern}') → 关键词: '{keyword}', 分类: '{category}'")
+        
+        logger.info(f"🔍 关键词检测 - 模糊匹配: {fuzzy_matches}")
+        logger.info(f"🔍 关键词检测 - 最终分类: {categories}, 总分: {total_score}")
         
         return {
             'keywords': detected_keywords,

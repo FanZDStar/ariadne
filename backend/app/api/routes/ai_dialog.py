@@ -7,6 +7,8 @@ import json
 from app.core.config import settings
 from app.core.prompts import PROMPTS
 from typing import Optional, List
+from app.schemas.tree_hole import CrisisWarningInfo
+from app.services.crisis_detector_component import get_crisis_detector
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -32,6 +34,7 @@ class DialogRequest(BaseModel):
 
 class DialogResponse(BaseModel):
     content: str
+    crisis_warning: Optional[CrisisWarningInfo] = Field(default=None, description="危机预警信息")
 
 class AIConfig:
     """AI 服务配置类，便于未来更换不同的 AI 模型"""
@@ -199,6 +202,61 @@ async def ai_dialog_stream(data: DialogRequest, request: Request):
             logger.info(f"📌 消息总数: {len(data.messages)}")
             logger.info(f"📌 用户模板信息提供: {'是' if data.user_profile else '否'}")
             
+            # 🚨 危机检测 - 在流式响应开始前进行
+            user_messages = [msg.content for msg in data.messages if msg.role == "user"]
+            latest_user_message = user_messages[-1] if user_messages else ""
+            
+            crisis_warning = CrisisWarningInfo()  # 默认安全值
+            
+            if latest_user_message:
+                try:
+                    logger.info(f"🚨 [流式接口] 开始危机检测: {latest_user_message[:50]}...")
+                    from app.database.session import get_db
+                    db = next(get_db())
+                    
+                    detector = get_crisis_detector(db)
+                    crisis_result = await detector.detect_content_risk(
+                        content=latest_user_message,
+                        scene="chat",
+                        user_id=data.user_id if data.user_id else None,
+                        enable_ai=True
+                    )
+                    
+                    logger.info(f"🔍 [流式接口] 危机检测原始结果:")
+                    logger.info(f"  - has_risk: {crisis_result.has_risk}")
+                    logger.info(f"  - risk_score: {crisis_result.risk_score}")
+                    logger.info(f"  - detected_keywords: {crisis_result.detected_keywords}")
+                    logger.info(f"  - should_show_bubble: {crisis_result.should_show_bubble}")
+                    logger.info(f"  - risk_level: {crisis_result.risk_level}")
+                    
+                    crisis_warning = CrisisWarningInfo(
+                        should_show_bubble=crisis_result.should_show_bubble,
+                        bubble_message=crisis_result.bubble_message,
+                        risk_level=crisis_result.risk_level,
+                        ai_analysis=crisis_result.ai_brief_analysis,
+                        has_risk=crisis_result.has_risk
+                    )
+                    
+                    # 🎯 立即发送危机预警信息给前端
+                    if crisis_result.should_show_bubble:
+                        logger.info(f"⚠️ [流式接口] 检测到风险，发送气泡提示")
+                        crisis_data = {
+                            "type": "crisis_warning",
+                            "data": {
+                                "should_show_bubble": crisis_warning.should_show_bubble,
+                                "bubble_message": crisis_warning.bubble_message,
+                                "risk_level": crisis_warning.risk_level,
+                                "ai_analysis": crisis_warning.ai_analysis,
+                                "has_risk": crisis_warning.has_risk
+                            }
+                        }
+                        yield f"data: {json.dumps(crisis_data, ensure_ascii=False)}\n\n"
+                    
+                except Exception as e:
+                    logger.error(f"❌ [流式接口] 危机检测失败: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+            
             # 构造请求负载，启用流式
             payload = ai_config.build_payload(
                 data.messages,
@@ -312,6 +370,71 @@ async def ai_dialog(data: DialogRequest, request: Request):
             content_preview = msg.content[:100] + "..." if len(msg.content) > 100 else msg.content
             logger.info(f"  [{i+1}] {msg.role.upper()}: {content_preview}")
         
+        # 🚨 提取用户最新消息进行危机检测
+        user_messages = [msg.content for msg in data.messages if msg.role == "user"]
+        latest_user_message = user_messages[-1] if user_messages else ""
+        
+        # 初始化危机预警信息（默认安全值）
+        crisis_warning = CrisisWarningInfo()
+        
+        # 🔍 调试日志
+        logger.info(f"🔍 危机检测前置检查:")
+        logger.info(f"  - 最新用户消息: {latest_user_message[:50] if latest_user_message else 'None'}...")
+        logger.info(f"  - 用户ID: {data.user_id}")
+        logger.info(f"  - 是否有用户消息: {bool(latest_user_message)}")
+        
+        # 如果有用户消息，进行危机检测（即使没有user_id也执行基础检测）
+        if latest_user_message:
+            try:
+                logger.info("🚨 开始进行危机检测...")
+                from app.database.session import get_db
+                db = next(get_db())
+                
+                detector = get_crisis_detector(db)
+                crisis_result = await detector.detect_content_risk(
+                    content=latest_user_message,
+                    scene="chat",
+                    user_id=data.user_id if data.user_id else None,
+                    enable_ai=True  # 启用AI增强分析
+                )
+                
+                logger.info(f"🔍 危机检测原始结果:")
+                logger.info(f"  - has_risk: {crisis_result.has_risk}")
+                logger.info(f"  - risk_score: {crisis_result.risk_score}")
+                logger.info(f"  - detected_keywords: {crisis_result.detected_keywords}")
+                logger.info(f"  - should_show_bubble: {crisis_result.should_show_bubble}")
+                logger.info(f"  - risk_level: {crisis_result.risk_level}")
+                logger.info(f"  - bubble_message: {crisis_result.bubble_message}")
+                logger.info(f"  - ai_brief_analysis: {crisis_result.ai_brief_analysis}")
+                
+                crisis_warning = CrisisWarningInfo(
+                    should_show_bubble=crisis_result.should_show_bubble,
+                    bubble_message=crisis_result.bubble_message,
+                    risk_level=crisis_result.risk_level,
+                    ai_analysis=crisis_result.ai_brief_analysis,  # 🔧 修正字段名
+                    has_risk=crisis_result.has_risk  # 🔧 添加 has_risk 字段
+                )
+                
+                logger.info(f"🔍 危机检测结果:")
+                logger.info(f"  - should_show_bubble: {crisis_result.should_show_bubble}")
+                logger.info(f"  - risk_level: {crisis_result.risk_level}")
+                logger.info(f"  - bubble_message: {crisis_result.bubble_message[:50] if crisis_result.bubble_message else 'None'}...")
+                logger.info(f"  - ai_brief_analysis: {crisis_result.ai_brief_analysis[:50] if crisis_result.ai_brief_analysis else 'None'}...")
+                
+                if crisis_result.should_show_bubble:
+                    logger.warning(f"⚠️ 检测到危机信号 - 用户ID: {data.user_id}, 风险等级: {crisis_result.risk_level}")
+                else:
+                    logger.info("✅ 危机检测完成 - 无明显风险")
+                    
+            except Exception as e:
+                logger.error(f"❌ 危机检测失败: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
+                # 不阻塞主流程，使用默认安全值
+                crisis_warning = CrisisWarningInfo()
+        else:
+            logger.info("⏭️ 跳过危机检测 - 无用户消息")
+        
         # 构造请求负载，传递用户模板信息
         payload = ai_config.build_payload(
             data.messages, 
@@ -371,24 +494,29 @@ async def ai_dialog(data: DialogRequest, request: Request):
                         logger.error(f"情感对话好感度奖励失败: {e}")
                     
                     logger.info("=" * 80)
-                    return DialogResponse(content=optimized)
+                    logger.info("📤 准备返回响应:")
+                    logger.info(f"  - AI内容长度: {len(optimized)}")
+                    logger.info(f"  - 危机预警 should_show_bubble: {crisis_warning.should_show_bubble}")
+                    logger.info(f"  - 危机预警 risk_level: {crisis_warning.risk_level}")
+                    logger.info("=" * 80)
+                    return DialogResponse(content=optimized, crisis_warning=crisis_warning)
                 else:
                     logger.warning(f"AI 响应格式异常: {response_data}")
-                    return DialogResponse(content="AI 响应异常，请稍后再试。")
+                    return DialogResponse(content="AI 响应异常，请稍后再试。", crisis_warning=crisis_warning)
                     
             except httpx.TimeoutException:
                 logger.error("AI 服务超时")
-                return DialogResponse(content="AI 服务响应超时，请稍后再试。")
+                return DialogResponse(content="AI 服务响应超时，请稍后再试。", crisis_warning=crisis_warning)
             except httpx.HTTPStatusError as e:
                 logger.error(f"AI 服务 HTTP 错误: {e.response.status_code} - {e.response.text}")
-                return DialogResponse(content="AI 服务暂时不可用，请稍后再试。")
+                return DialogResponse(content="AI 服务暂时不可用，请稍后再试。", crisis_warning=crisis_warning)
             except Exception as e:
                 logger.error(f"AI 服务请求异常: {str(e)}")
-                return DialogResponse(content="AI 服务异常，请稍后再试。")
+                return DialogResponse(content="AI 服务异常，请稍后再试。", crisis_warning=crisis_warning)
                 
     except Exception as e:
         logger.error(f"AI 对话处理异常: {str(e)}")
-        return DialogResponse(content="系统异常，请稍后再试。")
+        return DialogResponse(content="系统异常，请稍后再试。", crisis_warning=CrisisWarningInfo())
 
 # AI回复内容优化，去除标签、无关信息，保证体验
 def optimize_ai_response(content: str) -> str:

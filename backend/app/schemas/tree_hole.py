@@ -106,6 +106,18 @@ class StarRewardInfo(BaseModel):
     action_type: Optional[str] = None
     description: Optional[str] = None
 
+# 心灵预警信息
+class CrisisWarningInfo(BaseModel):
+    """心灵预警信息"""
+    should_show_bubble: bool = False
+    risk_level: str = "LOW"
+    bubble_message: Optional[str] = None
+    ai_analysis: Optional[str] = None  # 改为 ai_analysis，与 CrisisDetectorComponent 一致
+    
+    # 保留旧字段以兼容（可选）
+    has_risk: bool = False  # 通过 should_show_bubble 推断
+    ai_brief_analysis: Optional[str] = None  # 别名，指向 ai_analysis
+
 # 带星点奖励的响应
 class LikeWithStarResponse(BaseModel):
     """点赞操作带星点奖励的响应"""
@@ -120,5 +132,6 @@ class CommentWithStarResponse(BaseModel):
     star_reward: StarRewardInfo = StarRewardInfo()
 
 class WhisperWithStarResponse(WhisperResponse):
-    """发表悄悄话带星点奖励的响应"""
+    """发表悄悄话带星点奖励和心灵预警的响应"""
     star_reward: StarRewardInfo = StarRewardInfo()
+    crisis_warning: CrisisWarningInfo = CrisisWarningInfo()

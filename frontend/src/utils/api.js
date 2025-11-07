@@ -719,6 +719,39 @@ export const api = {
       },
     });
   },
+
+  // ==================== 心灵预警 ====================
+
+  // 分析内容风险（完整分析，含AI）
+  analyzeCrisisRisk: (token, content, scene = "tree-hole", enableAi = true) => {
+    return request("/crisis-detection/analyze", {
+      method: "POST",
+      data: {
+        content,
+        scene,
+        enable_ai: enableAi,
+      },
+      header: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  // 快速关键词检测（不使用AI，实时检测）
+  quickCrisisCheck: (token, content, scene = "tree-hole") => {
+    return request("/crisis-detection/quick-check", {
+      method: "POST",
+      data: {
+        content,
+        scene,
+      },
+      header: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };
 
 // 本地存储工具

@@ -60,6 +60,8 @@ class Token(BaseModel):
 class TokenWithStarReward(BaseModel):
     access_token: str
     token_type: str
+    user_id: int  # 🆕 添加用户ID
+    username: str  # 🆕 添加用户名
     star_awarded: bool = False
     star_points: int = 0
     star_message: str = "欢迎回来~ 💫"

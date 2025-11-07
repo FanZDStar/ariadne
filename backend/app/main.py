@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 import asyncio
+import logging
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
 from app.api import api_router
 from app.database.session import Base, engine
 from app.core.config import settings
@@ -14,6 +17,35 @@ from fastapi.exceptions import RequestValidationError
 
 # 导入模型预加载函数
 from app.services.offensive_content_detector import preload_model
+
+# ==================== 配置日志系统 ====================
+# 确保logs目录存在
+LOGS_DIR = "logs"
+if not os.path.exists(LOGS_DIR):
+    os.makedirs(LOGS_DIR)
+
+# 配置根日志器
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        # 控制台处理器
+        logging.StreamHandler(),
+        # 文件处理器 - 使用RotatingFileHandler自动轮转
+        RotatingFileHandler(
+            filename=os.path.join(LOGS_DIR, 'app.log'),
+            maxBytes=10*1024*1024,  # 10MB
+            backupCount=5,  # 保留5个备份文件
+            encoding='utf-8'
+        )
+    ]
+)
+
+# 获取根日志器
+logger = logging.getLogger(__name__)
+logger.info(f"📝 日志系统已初始化 - 日志文件: {os.path.join(LOGS_DIR, 'app.log')}")
+# ====================================================
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
@@ -58,9 +90,9 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_event():
     """应用启动时的事件处理"""
-    print("=" * 60)
-    print("🚀 应用启动中...")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("🚀 应用启动中...")
+    logger.info("=" * 60)
     
     # 预加载冒犯性内容检测模型（在后台线程中加载，不阻塞启动）
     asyncio.create_task(asyncio.to_thread(preload_model))
@@ -68,8 +100,8 @@ async def startup_event():
     # 启动心理危机监控任务（可选，根据需要启用）
     # asyncio.create_task(crisis_monitor.start_monitoring(check_interval_hours=6))
     
-    print("✅ 应用启动完成！")
-    print("=" * 60)
+    logger.info("✅ 应用启动完成！")
+    logger.info("=" * 60)
 
 @app.on_event("shutdown") 
 async def shutdown_event():

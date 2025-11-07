@@ -156,6 +156,8 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     return {
         "access_token": access_token, 
         "token_type": "bearer",
+        "user_id": db_user.user_id,  # 🆕 添加用户ID
+        "username": db_user.username,  # 🆕 添加用户名（可选）
         "star_awarded": star_awarded,
         "star_points": star_points,
         "star_message": star_message,

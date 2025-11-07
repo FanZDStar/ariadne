@@ -10,312 +10,367 @@ const BASE_URL = process.env.VUE_APP_API_BASE_URL;
 
 // 检查环境变量是否正确配置
 if (!BASE_URL) {
-    console.error('❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!');
-    throw new Error('API基础地址未配置，请检查环境变量 VUE_APP_API_BASE_URL');
+  console.error("❌ 错误: VUE_APP_API_BASE_URL 环境变量未配置!");
+  throw new Error("API基础地址未配置，请检查环境变量 VUE_APP_API_BASE_URL");
 }
 
 // 引入危机检测相关工具
-import { CrisisKeywordDetector } from './crisisKeywordDetector.js';
-import { CrisisUtils } from './crisisApi.js';
+import { CrisisKeywordDetector } from "./crisisKeywordDetector.js";
+import { CrisisUtils } from "./crisisApi.js";
 
 export default {
-    data() {
-        return {
-            chatHistory: [],
-            isAiTyping: false,
-            hasNewMessages: false,
-            sessionId: null,
-            scene: '', // 由具体页面设置
-            welcomeMessage: '', // 由具体页面设置
-            // 危机检测相关
-            crisisDetector: null,
-            currentRiskLevel: 'low',
-            showCrisisWarning: false,
-            crisisWarningData: null,
-            // 风险评估相关
-            conversationStartTime: null,
-            hasRiskDetected: false,
-            autoSaveEnabled: false,  // 默认不启用自动保存，只有检测到风险或从数据库加载时才启用
-            riskDetectedInSession: false
-        }
-    },
+  data() {
+    return {
+      chatHistory: [],
+      isAiTyping: false,
+      hasNewMessages: false,
+      sessionId: null,
+      scene: "", // 由具体页面设置
+      welcomeMessage: "", // 由具体页面设置
+      // 危机检测相关
+      crisisDetector: null,
+      currentRiskLevel: "low",
+      showCrisisWarning: false,
+      crisisWarningData: null,
+      // 新增:来自后端的危机预警信息
+      backendCrisisWarning: null,
+      // 风险评估相关
+      conversationStartTime: null,
+      hasRiskDetected: false,
+      autoSaveEnabled: false, // 默认不启用自动保存，只有检测到风险或从数据库加载时才启用
+      riskDetectedInSession: false,
+    };
+  },
 
-    onLoad(options) {
-        // 初始化危机检测器
-        this.crisisDetector = new CrisisKeywordDetector();
+  onLoad(options) {
+    // 初始化危机检测器
+    this.crisisDetector = new CrisisKeywordDetector();
 
-        // 记录对话开始时间
-        this.conversationStartTime = new Date();
+    // 记录对话开始时间
+    this.conversationStartTime = new Date();
 
-        // 设置欢迎消息
-        if (this.welcomeMessage) {
-            this.chatHistory = [{
-                role: 'assistant',
-                content: this.welcomeMessage
-            }]
-        }
-
-        // 如果是从历史记录进入，加载历史对话
-        if (options.sessionId) {
-            this.sessionId = options.sessionId
-            this.loadHistorySession(options.sessionId)
-        }
-
-        // 检查并显示上次的风险评估报告
-        this.checkAndShowPreviousReport();
-    },
-
-    onUnload() {
-        // 页面卸载时自动生成风险评估报告
-        this.handlePageUnload();
-    },
-
-    methods: {
-        /**
-         * AI 调用方法（支持用户模板信息）
-         */
-        async callAIAPI(messages, scene = 'general', userProfile = null) {
-            return new Promise((resolve, reject) => {
-                // 构建请求数据
-                const requestData = {
-                    messages: messages,
-                    scene: scene
-                };
-
-                // 如果提供了用户模板信息，则包含在请求中
-                if (userProfile) {
-                    requestData.user_profile = {
-                        name: userProfile.name || null,
-                        star_sign: userProfile.star_sign || null,
-                        gender: userProfile.gender || null,
-                        personality_tags: userProfile.personality_tags || [],
-                        hobby_tags: userProfile.hobby_tags || [],
-                        personal_motto: userProfile.personal_motto || null
-                    };
-                    console.log('📋 已包含用户模板信息:', requestData.user_profile);
-                }
-
-                uni.request({
-                    url: `${BASE_URL}/ai-dialog?t=${Date.now()}`,  // 添加时间戳避免缓存
-                    method: 'POST',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: requestData,
-                    success: (res) => {
-                        if (res.statusCode === 200) {
-                            resolve(res.data);
-                        } else {
-                            reject(new Error('AI请求失败'));
-                        }
-                    },
-                    fail: (err) => {
-                        let errorMsg = '网络连接失败，请检查网络后重试';
-                        if (err.errMsg && err.errMsg.includes('timeout')) {
-                            errorMsg = 'AI响应超时，请重试';
-                        }
-                        reject(new Error(errorMsg));
-                    }
-                });
-            });
+    // 设置欢迎消息
+    if (this.welcomeMessage) {
+      this.chatHistory = [
+        {
+          role: "assistant",
+          content: this.welcomeMessage,
         },
+      ];
+    }
 
-        /**
-         * 流式 AI 调用方法（边生成边显示）
-         */
-        async callAIAPIStream(messages, scene = 'general', userProfile = null) {
-            return new Promise((resolve, reject) => {
-                // 构建请求数据
-                const requestData = {
-                    messages: messages,
-                    scene: scene
-                };
+    // 如果是从历史记录进入，加载历史对话
+    if (options.sessionId) {
+      this.sessionId = options.sessionId;
+      this.loadHistorySession(options.sessionId);
+    }
 
-                // 如果提供了用户模板信息，则包含在请求中
-                if (userProfile) {
-                    requestData.user_profile = {
-                        name: userProfile.name || null,
-                        star_sign: userProfile.star_sign || null,
-                        gender: userProfile.gender || null,
-                        personality_tags: userProfile.personality_tags || [],
-                        hobby_tags: userProfile.hobby_tags || [],
-                        personal_motto: userProfile.personal_motto || null
-                    };
-                    console.log('📋 流式模式 - 已包含用户模板信息:', requestData.user_profile);
-                }
+    // 检查并显示上次的风险评估报告
+    this.checkAndShowPreviousReport();
+  },
 
-                let fullContent = '';
-                let chunkCount = 0;
-                let lastUpdateTime = Date.now();
-                const updateInterval = 100; // 最小更新间隔（毫秒）
+  onUnload() {
+    // 页面卸载时自动生成风险评估报告
+    this.handlePageUnload();
+  },
 
-                // 获取监听回调函数
-                const streamCallback = this._currentStreamListener;
+  methods: {
+    /**
+     * AI 调用方法(支持用户模板信息)
+     */
+    async callAIAPI(messages, scene = "general", userProfile = null) {
+      return new Promise((resolve, reject) => {
+        // 构建请求数据
+        const requestData = {
+          messages: messages,
+          scene: scene,
+          user_id: uni.getStorageSync("user_id") || null, // 添加用户ID用于危机检测
+        };
 
-                uni.request({
-                    url: `${BASE_URL}/ai-dialog-stream?t=${Date.now()}`,  // 新增流式端点
-                    method: 'POST',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: requestData,
-                    responseType: 'text',
-                    success: (res) => {
-                        if (res.statusCode === 200) {
-                            try {
-                                // 解析 SSE 格式的流式数据
-                                const lines = res.data.split('\n');
+        // 如果提供了用户模板信息，则包含在请求中
+        if (userProfile) {
+          requestData.user_profile = {
+            name: userProfile.name || null,
+            star_sign: userProfile.star_sign || null,
+            gender: userProfile.gender || null,
+            personality_tags: userProfile.personality_tags || [],
+            hobby_tags: userProfile.hobby_tags || [],
+            personal_motto: userProfile.personal_motto || null,
+          };
+          console.log("📋 已包含用户模板信息:", requestData.user_profile);
+        }
 
-                                for (const line of lines) {
-                                    if (line.startsWith('data:')) {
-                                        const dataStr = line.slice(5).trim();
+        uni.request({
+          url: `${BASE_URL}/ai-dialog?t=${Date.now()}`, // 添加时间戳避免缓存
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          data: requestData,
+          success: (res) => {
+            if (res.statusCode === 200) {
+              console.log("✅ AI对话响应成功");
+              console.log("📦 完整响应数据:", res.data);
+              console.log("🔍 危机预警检查:", {
+                存在: !!res.data.crisis_warning,
+                should_show_bubble: res.data.crisis_warning?.should_show_bubble,
+                risk_level: res.data.crisis_warning?.risk_level,
+                bubble_message: res.data.crisis_warning?.bubble_message,
+              });
 
-                                        // 检查是否完成
-                                        if (dataStr === '[DONE]') {
-                                            console.log(`✅ 流式响应完成，共 ${chunkCount} 个数据块，总长度 ${fullContent.length} 字符`);
-                                            resolve({ content: fullContent });
-                                            break;
-                                        }
+              // 🚨 处理危机预警信息
+              if (
+                res.data.crisis_warning &&
+                res.data.crisis_warning.should_show_bubble
+              ) {
+                console.log("🚨 收到危机预警:", res.data.crisis_warning);
+                this.handleCrisisWarning(res.data.crisis_warning);
+              } else {
+                console.log("✅ 无需显示危机预警气泡");
+              }
+              resolve(res.data);
+            } else {
+              reject(new Error("AI请求失败"));
+            }
+          },
+          fail: (err) => {
+            let errorMsg = "网络连接失败，请检查网络后重试";
+            if (err.errMsg && err.errMsg.includes("timeout")) {
+              errorMsg = "AI响应超时，请重试";
+            }
+            reject(new Error(errorMsg));
+          },
+        });
+      });
+    },
 
-                                        // 解析 JSON 数据
-                                        if (dataStr) {
-                                            try {
-                                                const chunk = JSON.parse(dataStr);
+    /**
+     * 流式 AI 调用方法（边生成边显示）
+     */
+    async callAIAPIStream(messages, scene = "general", userProfile = null) {
+      return new Promise((resolve, reject) => {
+        // 🔧 获取用户ID
+        const userId = uni.getStorageSync("user_id");
 
-                                                // 检查错误
-                                                if (chunk.error) {
-                                                    console.error('流式响应错误:', chunk.error);
-                                                    reject(new Error(chunk.error));
-                                                    return;
-                                                }
+        // 构建请求数据
+        const requestData = {
+          messages: messages,
+          scene: scene,
+          user_id: userId || null, // 🔧 添加用户ID
+        };
 
-                                                // 提取内容
-                                                if (chunk.content) {
-                                                    fullContent += chunk.content;
-                                                    chunkCount++;
+        console.log("🔍 [流式接口] 请求数据 - user_id:", userId);
 
-                                                    // 实时更新 UI（节流处理）
-                                                    const now = Date.now();
-                                                    if (now - lastUpdateTime >= updateInterval) {
-                                                        // 使用回调函数而不是事件
-                                                        if (streamCallback && typeof streamCallback === 'function') {
-                                                            try {
-                                                                streamCallback(fullContent);
-                                                            } catch (err) {
-                                                                console.warn('流式更新回调错误:', err);
-                                                            }
-                                                        }
-                                                        lastUpdateTime = now;
+        // 如果提供了用户模板信息，则包含在请求中
+        if (userProfile) {
+          requestData.user_profile = {
+            name: userProfile.name || null,
+            star_sign: userProfile.star_sign || null,
+            gender: userProfile.gender || null,
+            personality_tags: userProfile.personality_tags || [],
+            hobby_tags: userProfile.hobby_tags || [],
+            personal_motto: userProfile.personal_motto || null,
+          };
+          console.log(
+            "📋 流式模式 - 已包含用户模板信息:",
+            requestData.user_profile
+          );
+        }
 
-                                                        // 每收到 10 个块记录一次
-                                                        if (chunkCount % 10 === 0) {
-                                                            console.log(`  📦 已收到 ${chunkCount} 个数据块，累计 ${fullContent.length} 字符`);
-                                                        }
-                                                    }
-                                                }
-                                            } catch (parseErr) {
-                                                console.debug('无法解析 JSON:', dataStr);
-                                            }
-                                        }
-                                    }
-                                }
+        let fullContent = "";
+        let chunkCount = 0;
+        let lastUpdateTime = Date.now();
+        const updateInterval = 100; // 最小更新间隔（毫秒）
 
-                                // 确保最后一次更新
-                                if (fullContent.length > 0) {
-                                    this.$emit('ai-streaming', fullContent);
-                                }
-                            } catch (error) {
-                                console.error('流式数据处理错误:', error);
-                                reject(error);
+        // 获取监听回调函数
+        const streamCallback = this._currentStreamListener;
+
+        uni.request({
+          url: `${BASE_URL}/ai-dialog-stream?t=${Date.now()}`, // 新增流式端点
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          data: requestData,
+          responseType: "text",
+          success: (res) => {
+            if (res.statusCode === 200) {
+              try {
+                // 解析 SSE 格式的流式数据
+                const lines = res.data.split("\n");
+
+                for (const line of lines) {
+                  if (line.startsWith("data:")) {
+                    const dataStr = line.slice(5).trim();
+
+                    // 检查是否完成
+                    if (dataStr === "[DONE]") {
+                      console.log(
+                        `✅ 流式响应完成，共 ${chunkCount} 个数据块，总长度 ${fullContent.length} 字符`
+                      );
+                      resolve({ content: fullContent });
+                      break;
+                    }
+
+                    // 解析 JSON 数据
+                    if (dataStr) {
+                      try {
+                        const chunk = JSON.parse(dataStr);
+
+                        // 检查错误
+                        if (chunk.error) {
+                          console.error("流式响应错误:", chunk.error);
+                          reject(new Error(chunk.error));
+                          return;
+                        }
+
+                        // 🚨 检查危机预警信息
+                        if (chunk.type === "crisis_warning" && chunk.data) {
+                          console.log(
+                            "🚨 [流式接口] 收到危机预警信息:",
+                            chunk.data
+                          );
+                          // 调用危机预警处理方法
+                          if (typeof this.handleCrisisWarning === "function") {
+                            this.handleCrisisWarning(chunk.data);
+                          }
+                          continue; // 继续处理下一行,不计入内容
+                        }
+
+                        // 提取内容
+                        if (chunk.content) {
+                          fullContent += chunk.content;
+                          chunkCount++;
+
+                          // 实时更新 UI（节流处理）
+                          const now = Date.now();
+                          if (now - lastUpdateTime >= updateInterval) {
+                            // 使用回调函数而不是事件
+                            if (
+                              streamCallback &&
+                              typeof streamCallback === "function"
+                            ) {
+                              try {
+                                streamCallback(fullContent);
+                              } catch (err) {
+                                console.warn("流式更新回调错误:", err);
+                              }
                             }
-                        } else {
-                            reject(new Error('AI流式请求失败'));
+                            lastUpdateTime = now;
+
+                            // 每收到 10 个块记录一次
+                            if (chunkCount % 10 === 0) {
+                              console.log(
+                                `  📦 已收到 ${chunkCount} 个数据块，累计 ${fullContent.length} 字符`
+                              );
+                            }
+                          }
                         }
-                    },
-                    fail: (err) => {
-                        let errorMsg = '网络连接失败，请检查网络后重试';
-                        if (err.errMsg && err.errMsg.includes('timeout')) {
-                            errorMsg = 'AI响应超时，请重试';
-                        }
-                        console.error('流式请求失败:', err);
-                        reject(new Error(errorMsg));
+                      } catch (parseErr) {
+                        console.debug("无法解析 JSON:", dataStr);
+                      }
                     }
-                });
-            });
-        },
-
-        /**
-         * 检查会话是否有心理评估报告
-         */
-        async checkSessionReport() {
-            if (!this.sessionId) return false;
-
-            try {
-                const response = await uni.request({
-                    url: `${BASE_URL}/risk-assessment/session/${this.sessionId}/has-report`,
-                    method: 'GET',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    }
-                });
-
-                if (response.statusCode === 200) {
-                    return response.data.has_report;
+                  }
                 }
-            } catch (error) {
-                console.log('检查会话报告失败:', error);
+
+                // 确保最后一次更新
+                if (fullContent.length > 0) {
+                  this.$emit("ai-streaming", fullContent);
+                }
+              } catch (error) {
+                console.error("流式数据处理错误:", error);
+                reject(error);
+              }
+            } else {
+              reject(new Error("AI流式请求失败"));
             }
-            return false;
-        },
-
-        /**
-         * 获取会话的心理评估报告
-         */
-        async getSessionReport() {
-            if (!this.sessionId) return null;
-
-            try {
-                const response = await uni.request({
-                    url: `${BASE_URL}/risk-assessment/session/${this.sessionId}/report`,
-                    method: 'GET',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    }
-                });
-
-                if (response.statusCode === 200) {
-                    return response.data;
-                } else if (response.statusCode === 404) {
-                    return null; // 没有报告
-                }
-            } catch (error) {
-                console.log('获取会话报告失败:', error);
-                if (error.statusCode === 404) {
-                    return null;
-                }
+          },
+          fail: (err) => {
+            let errorMsg = "网络连接失败，请检查网络后重试";
+            if (err.errMsg && err.errMsg.includes("timeout")) {
+              errorMsg = "AI响应超时，请重试";
             }
-            return null;
-        },
+            console.error("流式请求失败:", err);
+            reject(new Error(errorMsg));
+          },
+        });
+      });
+    },
 
-        /**
-         * 显示心理评估报告
-         */
-        async showPsychologicalReport() {
-            const report = await this.getSessionReport();
-            if (!report) return;
+    /**
+     * 检查会话是否有心理评估报告
+     */
+    async checkSessionReport() {
+      if (!this.sessionId) return false;
 
-            const riskLevelText = {
-                'critical': '🚨 高危',
-                'high': '⚠️ 较高',
-                'medium': '⚡ 中等',
-                'low': '✅ 较低'
-            };
+      try {
+        const response = await uni.request({
+          url: `${BASE_URL}/risk-assessment/session/${this.sessionId}/has-report`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+          },
+        });
 
-            const content = `基于您的对话内容，系统为您生成了心理状态评估报告：
+        if (response.statusCode === 200) {
+          return response.data.has_report;
+        }
+      } catch (error) {
+        console.log("检查会话报告失败:", error);
+      }
+      return false;
+    },
 
-风险等级：${riskLevelText[report.overall_risk_level] || report.overall_risk_level}
+    /**
+     * 获取会话的心理评估报告
+     */
+    async getSessionReport() {
+      if (!this.sessionId) return null;
+
+      try {
+        const response = await uni.request({
+          url: `${BASE_URL}/risk-assessment/session/${this.sessionId}/report`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+          },
+        });
+
+        if (response.statusCode === 200) {
+          return response.data;
+        } else if (response.statusCode === 404) {
+          return null; // 没有报告
+        }
+      } catch (error) {
+        console.log("获取会话报告失败:", error);
+        if (error.statusCode === 404) {
+          return null;
+        }
+      }
+      return null;
+    },
+
+    /**
+     * 显示心理评估报告
+     */
+    async showPsychologicalReport() {
+      const report = await this.getSessionReport();
+      if (!report) return;
+
+      const riskLevelText = {
+        critical: "🚨 高危",
+        high: "⚠️ 较高",
+        medium: "⚡ 中等",
+        low: "✅ 较低",
+      };
+
+      const content = `基于您的对话内容，系统为您生成了心理状态评估报告：
+
+风险等级：${
+        riskLevelText[report.overall_risk_level] || report.overall_risk_level
+      }
 风险分数：${report.overall_risk_score.toFixed(1)}/100
 对话消息：${report.total_messages}条
 
@@ -324,83 +379,95 @@ ${report.summary}
 
 是否查看完整的AI分析报告？`;
 
-            uni.showModal({
-                title: '🧠 心理状态评估报告',
-                content: content,
-                showCancel: true,
-                cancelText: '稍后查看',
-                confirmText: '查看详情',
-                success: (res) => {
-                    if (res.confirm) {
-                        this.viewDetailedReport(report);
-                    }
-                }
-            });
+      uni.showModal({
+        title: "🧠 心理状态评估报告",
+        content: content,
+        showCancel: true,
+        cancelText: "稍后查看",
+        confirmText: "查看详情",
+        success: (res) => {
+          if (res.confirm) {
+            this.viewDetailedReport(report);
+          }
         },
+      });
+    },
 
-        /**
-         * 查看详细报告
-         */
-        viewDetailedReport(report) {
-            // 跳转到报告详情页面
-            uni.navigateTo({
-                url: `/pages/risk-report/report-detail?reportId=${report.report_id}`,
-                success: () => {
-                    console.log('跳转到报告详情页面成功');
-                },
-                fail: (err) => {
-                    console.error('跳转到报告详情页面失败:', err);
-                    // 如果跳转失败，显示简单的模态框作为备选方案
-                    uni.showModal({
-                        title: '🧠 AI心理分析',
-                        content: report.ai_analysis.substring(0, 300) + (report.ai_analysis.length > 300 ? '...\n\n请稍后重试查看完整分析' : ''),
-                        showCancel: false,
-                        confirmText: '我知道了'
-                    });
-                }
-            });
+    /**
+     * 查看详细报告
+     */
+    viewDetailedReport(report) {
+      // 跳转到报告详情页面
+      uni.navigateTo({
+        url: `/pages/risk-report/report-detail?reportId=${report.report_id}`,
+        success: () => {
+          console.log("跳转到报告详情页面成功");
         },
-
-        /**
-         * 检查并显示上次的风险评估报告
-         */
-        async checkAndShowPreviousReport() {
-            if (!this.sessionId) return;
-
-            try {
-                const response = await uni.request({
-                    url: `${BASE_URL}/risk-assessment/latest-report/${this.sessionId}`,
-                    method: 'GET',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    }
-                });
-
-                if (response.statusCode === 200 && response.data && !response.data.is_viewed) {
-                    // 显示风险评估报告
-                    this.showRiskAssessmentReport(response.data);
-                }
-            } catch (error) {
-                console.log('获取风险评估报告失败:', error);
-            }
+        fail: (err) => {
+          console.error("跳转到报告详情页面失败:", err);
+          // 如果跳转失败，显示简单的模态框作为备选方案
+          uni.showModal({
+            title: "🧠 AI心理分析",
+            content:
+              report.ai_analysis.substring(0, 300) +
+              (report.ai_analysis.length > 300
+                ? "...\n\n请稍后重试查看完整分析"
+                : ""),
+            showCancel: false,
+            confirmText: "我知道了",
+          });
         },
+      });
+    },
 
-        /**
-         * 显示风险评估报告弹窗
-         */
-        showRiskAssessmentReport(report) {
-            const riskLevelText = {
-                'critical': '🚨 高危',
-                'high': '⚠️ 较高',
-                'medium': '⚡ 中等',
-                'low': '✅ 较低'
-            };
+    /**
+     * 检查并显示上次的风险评估报告
+     */
+    async checkAndShowPreviousReport() {
+      if (!this.sessionId) return;
 
-            const content = `上次对话风险评估结果：
+      try {
+        const response = await uni.request({
+          url: `${BASE_URL}/risk-assessment/latest-report/${this.sessionId}`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+          },
+        });
 
-风险等级：${riskLevelText[report.overall_risk_level] || report.overall_risk_level}
+        if (
+          response.statusCode === 200 &&
+          response.data &&
+          !response.data.is_viewed
+        ) {
+          // 显示风险评估报告
+          this.showRiskAssessmentReport(response.data);
+        }
+      } catch (error) {
+        console.log("获取风险评估报告失败:", error);
+      }
+    },
+
+    /**
+     * 显示风险评估报告弹窗
+     */
+    showRiskAssessmentReport(report) {
+      const riskLevelText = {
+        critical: "🚨 高危",
+        high: "⚠️ 较高",
+        medium: "⚡ 中等",
+        low: "✅ 较低",
+      };
+
+      const content = `上次对话风险评估结果：
+
+风险等级：${
+        riskLevelText[report.overall_risk_level] || report.overall_risk_level
+      }
 风险分数：${report.overall_risk_score.toFixed(1)}/100
-对话消息：${report.total_messages}条（${report.risk_messages_count}条检测到风险）
+对话消息：${report.total_messages}条（${
+        report.risk_messages_count
+      }条检测到风险）
 
 ${report.summary}
 
@@ -409,992 +476,1153 @@ ${report.ai_analysis.substring(0, 100)}...
 
 是否查看完整报告？`;
 
-            uni.showModal({
-                title: '💙 心理状态评估报告',
-                content: content,
-                showCancel: true,
-                cancelText: '稍后查看',
-                confirmText: '查看详情',
-                success: (res) => {
-                    if (res.confirm) {
-                        this.viewFullReport(report);
-                    }
-                    // 标记为已查看
-                    this.markReportAsViewed(report.id);
+      uni.showModal({
+        title: "💙 心理状态评估报告",
+        content: content,
+        showCancel: true,
+        cancelText: "稍后查看",
+        confirmText: "查看详情",
+        success: (res) => {
+          if (res.confirm) {
+            this.viewFullReport(report);
+          }
+          // 标记为已查看
+          this.markReportAsViewed(report.id);
+        },
+      });
+    },
+
+    /**
+     * 查看完整报告
+     */
+    viewFullReport(report) {
+      uni.navigateTo({
+        url: `/pages/risk-report/report-detail?reportId=${report.id}`,
+      });
+    },
+
+    /**
+     * 标记报告为已查看
+     */
+    async markReportAsViewed(reportId) {
+      try {
+        await uni.request({
+          url: `${BASE_URL}/risk-assessment/mark-viewed`,
+          method: "PUT",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          data: { report_id: reportId },
+        });
+      } catch (error) {
+        console.log("标记报告已查看失败:", error);
+      }
+    },
+
+    /**
+     * 检查会话的自动保存状态
+     */
+    async checkAutoSaveStatus() {
+      if (!this.sessionId) return false;
+
+      try {
+        const response = await uni.request({
+          url: `${BASE_URL}/chat-history/chat-sessions/${this.sessionId}/auto-save-status`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+          },
+        });
+
+        if (response.statusCode === 200) {
+          this.autoSaveEnabled = response.data.auto_save_enabled;
+          console.log(
+            `✅ 会话 ${this.sessionId} 自动保存状态: ${this.autoSaveEnabled}`
+          );
+          return this.autoSaveEnabled;
+        }
+      } catch (error) {
+        console.log("检查自动保存状态失败:", error);
+      }
+      return false;
+    },
+
+    /**
+     * 为会话启用自动保存（用于手动保存的会话）
+     */
+    async enableSessionAutoSave() {
+      if (!this.sessionId) return;
+
+      try {
+        const response = await uni.request({
+          url: `${BASE_URL}/chat-history/chat-sessions/${this.sessionId}/enable-auto-save`,
+          method: "PUT",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+          },
+        });
+
+        if (response.statusCode === 200) {
+          console.log(`✅ 会话 ${this.sessionId} 已启用自动保存`);
+          return true;
+        }
+      } catch (error) {
+        console.log("启用自动保存失败:", error);
+      }
+      return false;
+    },
+    /**
+     * 处理页面卸载事件 - 生成风险评估报告
+     */ async handlePageUnload() {
+      if (!this.sessionId || !this.riskDetectedInSession) return;
+
+      try {
+        // 生成风险评估报告
+        await uni.request({
+          url: `${BASE_URL}/risk-assessment/generate-report`,
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          data: {
+            session_id: this.sessionId,
+            scene: this.scene,
+            conversation_start_time: this.conversationStartTime,
+            conversation_end_time: new Date(),
+          },
+        });
+
+        console.log("✅ 风险评估报告已生成");
+      } catch (error) {
+        console.log("生成风险评估报告失败:", error);
+      }
+    },
+
+    /**
+     * 增强的危机检测方法（标记风险但不立即保存）
+     */
+    async performCrisisDetection(userMessage) {
+      if (!this.crisisDetector) return;
+
+      try {
+        // 执行危机检测
+        const detectionResult = await this.crisisDetector.detectCrisis(
+          userMessage
+        );
+
+        if (detectionResult.isRisk) {
+          console.log("🚨 检测到风险内容:", detectionResult);
+
+          this.currentRiskLevel = detectionResult.riskLevel;
+          this.showCrisisWarning = true;
+          this.crisisWarningData = detectionResult;
+          this.riskDetectedInSession = true;
+
+          // 不在这里立即保存，等AI回复后再保存
+          console.log("🔍 标记会话需要自动保存");
+
+          // 显示风险提示
+          this.showRiskDetectionAlert(detectionResult);
+        }
+      } catch (error) {
+        console.error("危机检测失败:", error);
+      }
+    },
+
+    /**
+     * 自动保存会话
+     */
+    async autoSaveSession() {
+      if (!this.sessionId && this.chatHistory.length > 0) {
+        try {
+          await this.saveSession();
+
+          uni.showToast({
+            title: "💾 对话已自动保存",
+            icon: "success",
+            duration: 2000,
+          });
+        } catch (error) {
+          console.log("自动保存失败:", error);
+        }
+      }
+    },
+
+    /**
+     * 自动保存对话以获取星点奖励
+     */
+    async autoSaveForStarReward() {
+      // 检查token是否存在
+      const token = uni.getStorageSync("access_token");
+      if (!token) {
+        console.error("❌ 没有access_token，无法保存");
+        return;
+      }
+
+      try {
+        console.log("💾 自动保存对话以获取星点奖励...");
+        await this.saveSession();
+      } catch (error) {
+        console.error("❌ 自动保存失败:", error);
+        // 静默失败，不影响用户对话体验
+      }
+    },
+
+    /**
+     * 处理风险相关逻辑（不包括常规保存）
+     */
+    async handleRiskLogic() {
+      if (this.sessionId && this.riskDetectedInSession) {
+        // 如果是因为检测到风险而触发，检查是否生成了心理评估报告
+        setTimeout(async () => {
+          try {
+            const hasReport = await this.checkSessionReport();
+            if (hasReport) {
+              console.log("✅ 检测到新的心理评估报告");
+              // 显示温和的提示，不打断用户的对话流程
+              uni.showToast({
+                title: "已生成心理评估报告",
+                icon: "none",
+                duration: 2000,
+              });
+
+              // 延迟显示报告详情
+              setTimeout(() => {
+                this.showPsychologicalReport();
+              }, 3000);
+            }
+          } catch (error) {
+            console.log("检查心理评估报告失败:", error);
+          }
+        }, 5000); // 5秒后检查，给AI生成报告足够时间
+      }
+    },
+
+    /**
+     * 处理风险会话的自动保存逻辑（保留原有逻辑用于兼容）
+     */
+    async handleRiskSessionSave() {
+      // 如果检测到风险或者会话已启用自动保存，则进行保存
+      if (!this.riskDetectedInSession && !this.autoSaveEnabled) {
+        console.log("❌ 不满足自动保存条件");
+        console.log("riskDetectedInSession:", this.riskDetectedInSession);
+        console.log("autoSaveEnabled:", this.autoSaveEnabled);
+        return;
+      }
+
+      // 检查token是否存在
+      const token = uni.getStorageSync("access_token");
+      if (!token) {
+        console.error("❌ 没有access_token，无法保存");
+        uni.showToast({
+          title: "请先登录",
+          icon: "none",
+        });
+        return;
+      }
+
+      try {
+        console.log("💾 风险对话自动保存中...");
+        console.log("当前会话ID:", this.sessionId);
+        console.log("当前聊天历史长度:", this.chatHistory.length);
+        console.log("聊天历史内容:", JSON.stringify(this.chatHistory, null, 2));
+
+        await this.saveSession();
+
+        // 保存成功后检查会话的自动保存状态
+        if (this.sessionId) {
+          await this.checkAutoSaveStatus();
+
+          // 如果是因为检测到风险而触发的自动保存，检查是否生成了心理评估报告
+          if (this.riskDetectedInSession) {
+            setTimeout(async () => {
+              try {
+                const hasReport = await this.checkSessionReport();
+                if (hasReport) {
+                  console.log("✅ 自动保存后检测到新的心理评估报告");
+                  // 显示温和的提示，不打断用户的对话流程
+                  uni.showToast({
+                    title: "已生成心理评估报告",
+                    icon: "none",
+                    duration: 2000,
+                  });
+
+                  // 延迟显示报告详情
+                  setTimeout(() => {
+                    this.showPsychologicalReport();
+                  }, 3000);
                 }
-            });
+              } catch (error) {
+                console.log("检查心理评估报告失败:", error);
+              }
+            }, 5000); // 5秒后检查，给AI生成报告足够时间
+          }
+        }
+      } catch (error) {
+        console.log("风险会话保存失败:", error);
+      }
+    },
+
+    /**
+     * 显示风险检测提醒
+     */
+    showRiskDetectionAlert(detectionResult) {
+      const riskMessages = {
+        low: "💙 我注意到您的情绪状态，如需帮助请随时告诉我",
+        medium: "⚠️ 我感受到您可能正在经历一些困扰，建议与朋友或专业人士交流",
+        high: "🚨 您提到的内容让我担心，强烈建议寻求专业心理健康支持",
+        critical:
+          "🆘 请立即寻求专业帮助！如有紧急情况，请拨打心理危机干预热线：400-161-9995",
+      };
+
+      uni.showModal({
+        title: "💙 关爱提醒",
+        content:
+          riskMessages[detectionResult.riskLevel] || riskMessages["medium"],
+        showCancel: true,
+        cancelText: "我知道了",
+        confirmText: "获取帮助",
+        success: (res) => {
+          if (res.confirm) {
+            CrisisUtils.showHelpOptions();
+          }
         },
+      });
+    },
 
-        /**
-         * 查看完整报告
-         */
-        viewFullReport(report) {
-            uni.navigateTo({
-                url: `/pages/risk-report/report-detail?reportId=${report.id}`
-            });
+    /**
+     * 处理 AI 输入状态（用于 ChatMessages 组件）
+     */
+    handleAiTyping(typing) {
+      this.isAiTyping = typing;
+    },
+
+    /**
+     * 🚨 处理后端返回的危机预警信息
+     */
+    handleCrisisWarning(crisisWarning) {
+      console.log("🚨 处理危机预警信息:", crisisWarning);
+
+      this.backendCrisisWarning = crisisWarning;
+      this.riskDetectedInSession = true;
+
+      // 根据风险等级显示不同的提示
+      const riskLevelMessages = {
+        LOW: "💙 我注意到您的情绪状态，如需帮助请随时告诉我",
+        MEDIUM: "💛 我感受到您可能正在经历一些困扰，建议与朋友或专业人士交流",
+        HIGH: "🧡 您提到的内容让我担心，强烈建议寻求专业心理健康支持",
+        CRITICAL:
+          "❤️ 请立即寻求专业帮助！如有紧急情况，请拨打心理危机干预热线：400-161-9995",
+      };
+
+      const message =
+        crisisWarning.bubble_message ||
+        riskLevelMessages[crisisWarning.risk_level] ||
+        riskLevelMessages["MEDIUM"];
+
+      // 显示气泡提示
+      uni.showModal({
+        title: "💙 看板娘关怀",
+        content: message,
+        showCancel: true,
+        cancelText: "我知道了",
+        confirmText: "获取帮助",
+        success: (res) => {
+          if (res.confirm) {
+            // 跳转到帮助资源页面或显示帮助信息
+            this.showHelpResources(crisisWarning);
+          }
         },
+      });
+    },
 
-        /**
-         * 标记报告为已查看
-         */
-        async markReportAsViewed(reportId) {
-            try {
-                await uni.request({
-                    url: `${BASE_URL}/risk-assessment/mark-viewed`,
-                    method: 'PUT',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: { report_id: reportId }
-                });
-            } catch (error) {
-                console.log('标记报告已查看失败:', error);
-            }
-        },
+    /**
+     * 🚨 显示帮助资源
+     */
+    showHelpResources(crisisWarning) {
+      const helpContent = `💙 心理健康支持资源
 
-        /**
-         * 检查会话的自动保存状态
-         */
-        async checkAutoSaveStatus() {
-            if (!this.sessionId) return false;
+📞 心理危机干预热线
+400-161-9995（24小时）
 
-            try {
-                const response = await uni.request({
-                    url: `${BASE_URL}/chat-history/chat-sessions/${this.sessionId}/auto-save-status`,
-                    method: 'GET',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    }
-                });
+🏥 专业心理咨询
+建议寻求专业心理咨询师帮助
 
-                if (response.statusCode === 200) {
-                    this.autoSaveEnabled = response.data.auto_save_enabled;
-                    console.log(`✅ 会话 ${this.sessionId} 自动保存状态: ${this.autoSaveEnabled}`);
-                    return this.autoSaveEnabled;
-                }
-            } catch (error) {
-                console.log('检查自动保存状态失败:', error);
-            }
-            return false;
-        },
+${
+  crisisWarning.ai_analysis
+    ? "\n🤖 AI分析建议:\n" + crisisWarning.ai_analysis
+    : ""
+}
 
-        /**
-         * 为会话启用自动保存（用于手动保存的会话）
-         */
-        async enableSessionAutoSave() {
-            if (!this.sessionId) return;
+请记住：
+• 您并不孤单
+• 寻求帮助是勇敢的表现
+• 专业支持可以帮助您`;
 
-            try {
-                const response = await uni.request({
-                    url: `${BASE_URL}/chat-history/chat-sessions/${this.sessionId}/enable-auto-save`,
-                    method: 'PUT',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    }
-                });
+      uni.showModal({
+        title: "💙 帮助资源",
+        content: helpContent,
+        showCancel: false,
+        confirmText: "我知道了",
+      });
+    },
 
-                if (response.statusCode === 200) {
-                    console.log(`✅ 会话 ${this.sessionId} 已启用自动保存`);
-                    return true;
-                }
-            } catch (error) {
-                console.log('启用自动保存失败:', error);
-            }
-            return false;
-        },        /**
-         * 处理页面卸载事件 - 生成风险评估报告
-         */
-        async handlePageUnload() {
-            if (!this.sessionId || !this.riskDetectedInSession) return;
+    /**
+     * 处理发送消息事件（用于接收 ChatInput 组件的 send 事件）
+     */
+    handleSend(content) {
+      this.sendMessage(content);
+    },
 
-            try {
-                // 生成风险评估报告
-                await uni.request({
-                    url: `${BASE_URL}/risk-assessment/generate-report`,
-                    method: 'POST',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: {
-                        session_id: this.sessionId,
-                        scene: this.scene,
-                        conversation_start_time: this.conversationStartTime,
-                        conversation_end_time: new Date()
-                    }
-                });
+    /**
+     * 处理多模态消息发送（文本+图片）
+     */
+    async handleMultimodalSend(data) {
+      console.log("[多模态] 收到多模态发送请求:", data);
+      await this.sendMultimodalMessage(data.text, data.images);
+    },
 
-                console.log('✅ 风险评估报告已生成');
-            } catch (error) {
-                console.log('生成风险评估报告失败:', error);
-            }
-        },
+    /**
+     * 发送多模态消息（支持图床上传）
+     */
+    async sendMultimodalMessage(content, imagePaths) {
+      if (!content.trim() && (!imagePaths || imagePaths.length === 0)) {
+        console.log("[多模态] 内容为空且无图片，不发送");
+        return;
+      }
 
-        /**
-         * 增强的危机检测方法（标记风险但不立即保存）
-         */
-        async performCrisisDetection(userMessage) {
-            if (!this.crisisDetector) return;
+      console.log(
+        "[多模态] ==================== 开始处理多模态消息 ===================="
+      );
+      console.log("[多模态] 内容:", content);
+      console.log("[多模态] 图片数量:", imagePaths ? imagePaths.length : 0);
+      console.log("[多模态] 当前sessionId:", this.sessionId);
 
-            try {
-                // 执行危机检测
-                const detectionResult = await this.crisisDetector.detectCrisis(userMessage);
+      try {
+        // 检查登录状态
+        const token = uni.getStorageSync("access_token");
+        if (!token) {
+          console.error("[多模态] 未登录");
+          uni.showToast({
+            title: "请先登录",
+            icon: "none",
+          });
+          return;
+        }
 
-                if (detectionResult.isRisk) {
-                    console.log('🚨 检测到风险内容:', detectionResult);
+        // 如果没有sessionId，先尝试创建会话（静默失败，不影响后续流程）
+        if (!this.sessionId) {
+          console.log("[多模态] 无sessionId，尝试创建会话");
+          try {
+            await this.autoSaveForStarReward();
+            console.log(
+              "[多模态] 会话创建结果，sessionId:",
+              this.sessionId || "未创建"
+            );
+          } catch (error) {
+            console.warn(
+              "[多模态] 创建会话失败，继续使用空sessionId:",
+              error.message
+            );
+          }
+        }
 
-                    this.currentRiskLevel = detectionResult.riskLevel;
-                    this.showCrisisWarning = true;
-                    this.crisisWarningData = detectionResult;
-                    this.riskDetectedInSession = true;
+        console.log(
+          "[多模态] 最终使用sessionId:",
+          this.sessionId || "空（将创建新会话）"
+        );
 
-                    // 不在这里立即保存，等AI回复后再保存
-                    console.log('🔍 标记会话需要自动保存');
+        // 处理图片上传
+        if (imagePaths && imagePaths.length > 0) {
+          uni.showLoading({
+            title: "上传中...",
+            mask: true,
+          });
 
-                    // 显示风险提示
-                    this.showRiskDetectionAlert(detectionResult);
-                }
-            } catch (error) {
-                console.error('危机检测失败:', error);
-            }
-        },
+          // 如果有sessionId，使用多模态接口上传（包含图床上传和AI分析）
+          if (this.sessionId) {
+            console.log(
+              "[多模态] 使用会话ID发送图片，sessionId:",
+              this.sessionId
+            );
 
-        /**
-         * 自动保存会话
-         */
-        async autoSaveSession() {
-            if (!this.sessionId && this.chatHistory.length > 0) {
-                try {
-                    await this.saveSession();
-
-                    uni.showToast({
-                        title: '💾 对话已自动保存',
-                        icon: 'success',
-                        duration: 2000
-                    });
-                } catch (error) {
-                    console.log('自动保存失败:', error);
-                }
-            }
-        },
-
-        /**
-         * 自动保存对话以获取星点奖励
-         */
-        async autoSaveForStarReward() {
-            // 检查token是否存在
-            const token = uni.getStorageSync('access_token');
-            if (!token) {
-                console.error('❌ 没有access_token，无法保存');
-                return;
-            }
-
-            try {
-                console.log('💾 自动保存对话以获取星点奖励...');
-                await this.saveSession();
-            } catch (error) {
-                console.error('❌ 自动保存失败:', error);
-                // 静默失败，不影响用户对话体验
-            }
-        },
-
-        /**
-         * 处理风险相关逻辑（不包括常规保存）
-         */
-        async handleRiskLogic() {
-            if (this.sessionId && this.riskDetectedInSession) {
-                // 如果是因为检测到风险而触发，检查是否生成了心理评估报告
-                setTimeout(async () => {
-                    try {
-                        const hasReport = await this.checkSessionReport();
-                        if (hasReport) {
-                            console.log('✅ 检测到新的心理评估报告');
-                            // 显示温和的提示，不打断用户的对话流程
-                            uni.showToast({
-                                title: '已生成心理评估报告',
-                                icon: 'none',
-                                duration: 2000
-                            });
-
-                            // 延迟显示报告详情
-                            setTimeout(() => {
-                                this.showPsychologicalReport();
-                            }, 3000);
-                        }
-                    } catch (error) {
-                        console.log('检查心理评估报告失败:', error);
-                    }
-                }, 5000); // 5秒后检查，给AI生成报告足够时间
-            }
-        },
-
-        /**
-         * 处理风险会话的自动保存逻辑（保留原有逻辑用于兼容）
-         */
-        async handleRiskSessionSave() {
-            // 如果检测到风险或者会话已启用自动保存，则进行保存
-            if (!this.riskDetectedInSession && !this.autoSaveEnabled) {
-                console.log('❌ 不满足自动保存条件');
-                console.log('riskDetectedInSession:', this.riskDetectedInSession);
-                console.log('autoSaveEnabled:', this.autoSaveEnabled);
-                return;
-            }
-
-            // 检查token是否存在
-            const token = uni.getStorageSync('access_token');
-            if (!token) {
-                console.error('❌ 没有access_token，无法保存');
-                uni.showToast({
-                    title: '请先登录',
-                    icon: 'none'
-                });
-                return;
-            }
-
-            try {
-                console.log('💾 风险对话自动保存中...');
-                console.log('当前会话ID:', this.sessionId);
-                console.log('当前聊天历史长度:', this.chatHistory.length);
-                console.log('聊天历史内容:', JSON.stringify(this.chatHistory, null, 2));
-
-                await this.saveSession();
-
-                // 保存成功后检查会话的自动保存状态
-                if (this.sessionId) {
-                    await this.checkAutoSaveStatus();
-
-                    // 如果是因为检测到风险而触发的自动保存，检查是否生成了心理评估报告
-                    if (this.riskDetectedInSession) {
-                        setTimeout(async () => {
-                            try {
-                                const hasReport = await this.checkSessionReport();
-                                if (hasReport) {
-                                    console.log('✅ 自动保存后检测到新的心理评估报告');
-                                    // 显示温和的提示，不打断用户的对话流程
-                                    uni.showToast({
-                                        title: '已生成心理评估报告',
-                                        icon: 'none',
-                                        duration: 2000
-                                    });
-
-                                    // 延迟显示报告详情
-                                    setTimeout(() => {
-                                        this.showPsychologicalReport();
-                                    }, 3000);
-                                }
-                            } catch (error) {
-                                console.log('检查心理评估报告失败:', error);
-                            }
-                        }, 5000); // 5秒后检查，给AI生成报告足够时间
-                    }
-                }
-            } catch (error) {
-                console.log('风险会话保存失败:', error);
-            }
-        },
-
-        /**
-         * 显示风险检测提醒
-         */
-        showRiskDetectionAlert(detectionResult) {
-            const riskMessages = {
-                'low': '💙 我注意到您的情绪状态，如需帮助请随时告诉我',
-                'medium': '⚠️ 我感受到您可能正在经历一些困扰，建议与朋友或专业人士交流',
-                'high': '🚨 您提到的内容让我担心，强烈建议寻求专业心理健康支持',
-                'critical': '🆘 请立即寻求专业帮助！如有紧急情况，请拨打心理危机干预热线：400-161-9995'
+            const formData = {
+              session_id: this.sessionId,
+              content: content || "",
+              msg_type: "img",
             };
 
-            uni.showModal({
-                title: '💙 关爱提醒',
-                content: riskMessages[detectionResult.riskLevel] || riskMessages['medium'],
-                showCancel: true,
-                cancelText: '我知道了',
-                confirmText: '获取帮助',
-                success: (res) => {
-                    if (res.confirm) {
-                        CrisisUtils.showHelpOptions();
-                    }
-                }
-            });
-        },
-
-        /**
-         * 处理 AI 输入状态（用于 ChatMessages 组件）
-         */
-        handleAiTyping(typing) {
-            this.isAiTyping = typing;
-        },
-
-        /**
-         * 处理发送消息事件（用于接收 ChatInput 组件的 send 事件）
-         */
-        handleSend(content) {
-            this.sendMessage(content);
-        },
-
-        /**
-         * 处理多模态消息发送（文本+图片）
-         */
-        async handleMultimodalSend(data) {
-            console.log('[多模态] 收到多模态发送请求:', data);
-            await this.sendMultimodalMessage(data.text, data.images);
-        },
-
-        /**
-         * 发送多模态消息（支持图床上传）
-         */
-        async sendMultimodalMessage(content, imagePaths) {
-            if (!content.trim() && (!imagePaths || imagePaths.length === 0)) {
-                console.log('[多模态] 内容为空且无图片，不发送');
-                return;
-            }
-
-            console.log('[多模态] ==================== 开始处理多模态消息 ====================');
-            console.log('[多模态] 内容:', content);
-            console.log('[多模态] 图片数量:', imagePaths ? imagePaths.length : 0);
-            console.log('[多模态] 当前sessionId:', this.sessionId);
-
-            try {
-                // 检查登录状态
-                const token = uni.getStorageSync('access_token');
-                if (!token) {
-                    console.error('[多模态] 未登录');
-                    uni.showToast({
-                        title: '请先登录',
-                        icon: 'none'
-                    });
-                    return;
-                }
-
-                // 如果没有sessionId，先尝试创建会话（静默失败，不影响后续流程）
-                if (!this.sessionId) {
-                    console.log('[多模态] 无sessionId，尝试创建会话');
-                    try {
-                        await this.autoSaveForStarReward();
-                        console.log('[多模态] 会话创建结果，sessionId:', this.sessionId || '未创建');
-                    } catch (error) {
-                        console.warn('[多模态] 创建会话失败，继续使用空sessionId:', error.message);
-                    }
-                }
-
-                console.log('[多模态] 最终使用sessionId:', this.sessionId || '空（将创建新会话）');
-
-                // 处理图片上传
-                if (imagePaths && imagePaths.length > 0) {
-                    uni.showLoading({
-                        title: '上传中...',
-                        mask: true
-                    });
-
-                    // 如果有sessionId，使用多模态接口上传（包含图床上传和AI分析）
-                    if (this.sessionId) {
-                        console.log('[多模态] 使用会话ID发送图片，sessionId:', this.sessionId);
-
-                        const formData = {
-                            session_id: this.sessionId,
-                            content: content || '',
-                            msg_type: 'img',
-                        };
-
-                        const response = await uni.uploadFile({
-                            url: `${BASE_URL}/multimodal/chat/message`,
-                            filePath: imagePaths[0],
-                            name: 'files',
-                            formData: formData,
-                            header: {
-                                'Authorization': `Bearer ${token}`
-                            },
-                            timeout: 60000  // 60秒超时
-                        });
-
-                        uni.hideLoading();
-
-                        console.log('[多模态] 上传响应状态码:', response.statusCode);
-
-                        if (response.statusCode === 200) {
-                            const result = JSON.parse(response.data);
-                            console.log('[多模态] 上传成功，结果:', result);
-
-                            // 添加用户消息到聊天历史
-                            this.chatHistory.push({
-                                role: 'user',
-                                content: result.user_message?.content || content || '',
-                                msg_type: result.user_message?.msg_type || 'img',
-                                img_urls: result.user_message?.img_urls || []
-                            });
-
-                            // 添加AI回复
-                            this.chatHistory.push({
-                                role: 'assistant',
-                                content: result.assistant_message?.content || '收到您的图片消息',
-                                msg_type: 'text'
-                            });
-
-                            this.hasNewMessages = true;
-
-                            uni.showToast({
-                                title: '发送成功',
-                                icon: 'success',
-                                duration: 1500
-                            });
-                        } else {
-                            console.error('[多模态] 发送失败，响应:', response);
-                            uni.showToast({
-                                title: '发送失败，请重试',
-                                icon: 'none',
-                                duration: 3000
-                            });
-                        }
-                    } else {
-                        // 没有sessionId，降级使用旧接口（仅AI分析，不保存到数据库）
-                        console.log('[多模态] 无sessionId，使用降级方案');
-
-                        let imageData = imagePaths[0];
-                        let isBlobUrl = imagePaths[0].startsWith('blob:');
-
-                        if (isBlobUrl) {
-                            console.log('[多模态] 检测到blob URL，转换为base64');
-                            imageData = await this.blobUrlToBase64(imagePaths[0]);
-                            console.log('[多模态] base64转换成功');
-                        }
-
-                        const requestData = {
-                            image_base64: imageData,
-                            text: content || '',
-                            scene: this.scene || 'image_analysis'
-                        };
-
-                        const response = await uni.request({
-                            url: `${BASE_URL}/multimodal/chat/image-upload-base64`,
-                            method: 'POST',
-                            header: {
-                                'Authorization': `Bearer ${token}`,
-                                'Content-Type': 'application/json'
-                            },
-                            data: requestData
-                        });
-
-                        uni.hideLoading();
-
-                        if (response.statusCode === 200) {
-                            console.log('[多模态] AI分析成功');
-
-                            // 添加用户消息（使用临时URL）
-                            this.chatHistory.push({
-                                role: 'user',
-                                content: content || '',
-                                msg_type: 'img',
-                                img_urls: imagePaths  // 临时URL，无法查看历史
-                            });
-
-                            // 添加AI回复
-                            this.chatHistory.push({
-                                role: 'assistant',
-                                content: response.data.content || '收到您的图片消息',
-                                msg_type: 'text'
-                            });
-
-                            this.hasNewMessages = true;
-
-                            uni.showToast({
-                                title: '发送成功',
-                                icon: 'success',
-                                duration: 1500
-                            });
-                        } else {
-                            console.error('[多模态] AI分析失败');
-                            uni.showToast({
-                                title: '发送失败，请重试',
-                                icon: 'none',
-                                duration: 3000
-                            });
-                        }
-                    }
-                } else {
-                    console.error('[多模态] 没有可用的图片路径');
-                    uni.showToast({
-                        title: '请选择图片',
-                        icon: 'none'
-                    });
-                }
-            } catch (error) {
-                uni.hideLoading();
-                console.error('[多模态] 发生异常:');
-                console.error('[多模态] 错误类型:', error.constructor.name);
-                console.error('[多模态] 错误消息:', error.message);
-                console.error('[多模态] 错误详情:', error);
-
-                uni.showToast({
-                    title: error.message || '网络错误，请重试',
-                    icon: 'none',
-                    duration: 3000
-                });
-            } finally {
-                console.log('[多模态] ==================== 处理完成 ====================');
-            }
-        },
-
-        /**
-         * 将blob URL转换为base64
-         */
-        async blobUrlToBase64(blobUrl) {
-            return new Promise((resolve, reject) => {
-                console.log('[多模态] 开始转换blob URL:', blobUrl);
-
-                // 使用fetch读取blob URL
-                fetch(blobUrl)
-                    .then(response => {
-                        console.log('[多模态] fetch响应状态:', response.status);
-                        return response.blob();
-                    })
-                    .then(blob => {
-                        console.log('[多模态] blob读取成功，大小:', blob.size);
-                        const reader = new FileReader();
-
-                        reader.onloadend = () => {
-                            // 移除data:image/xxx;base64,前缀
-                            const base64 = reader.result.split(',')[1];
-                            console.log('[多模态] base64转换完成');
-                            resolve(base64);
-                        };
-
-                        reader.onerror = (error) => {
-                            console.error('[多模态] FileReader错误:', error);
-                            reject(error);
-                        };
-
-                        reader.readAsDataURL(blob);
-                    })
-                    .catch(error => {
-                        console.error('[多模态] fetch错误:', error);
-                        reject(error);
-                    });
-            });
-        },
-
-        /**
-         * 发送消息方法（增强版）
-         */
-        async sendMessage(content) {
-            if (!content.trim()) return;
-
-            // 检查当前会话的自动保存状态
-            if (this.sessionId) {
-                await this.checkAutoSaveStatus();
-            }
-
-            // 添加用户消息到聊天历史
-            this.chatHistory.push({
-                role: 'user',
-                content: content
+            const response = await uni.uploadFile({
+              url: `${BASE_URL}/multimodal/chat/message`,
+              filePath: imagePaths[0],
+              name: "files",
+              formData: formData,
+              header: {
+                Authorization: `Bearer ${token}`,
+              },
+              timeout: 60000, // 60秒超时
             });
 
-            // 执行危机检测
-            await this.performCrisisDetection(content);
+            uni.hideLoading();
 
-            // 显示AI正在输入
-            this.isAiTyping = true;
+            console.log("[多模态] 上传响应状态码:", response.statusCode);
 
-            try {
-                // 获取用户模板信息（从本地存储）
-                let userProfile = null;
-                try {
-                    const profileData = uni.getStorageSync('user_profile_template');
-                    if (profileData) {
-                        userProfile = typeof profileData === 'string' ? JSON.parse(profileData) : profileData;
-                        console.log('📋 从本地存储获取用户模板:', userProfile);
-                    }
-                } catch (e) {
-                    console.log('⚠️ 获取用户模板失败:', e);
-                }
+            if (response.statusCode === 200) {
+              const result = JSON.parse(response.data);
+              console.log("[多模态] 上传成功，结果:", result);
 
-                // 添加 AI 助手消息占位符到聊天历史（用于实时显示）
-                const aiMessageIndex = this.chatHistory.length;
-                this.chatHistory.push({
-                    role: 'assistant',
-                    content: ''  // 初始为空，会被流式数据填充
-                });
+              // 添加用户消息到聊天历史
+              this.chatHistory.push({
+                role: "user",
+                content: result.user_message?.content || content || "",
+                msg_type: result.user_message?.msg_type || "img",
+                img_urls: result.user_message?.img_urls || [],
+              });
 
-                // 监听流式数据更新事件
-                const streamListener = (fullContent) => {
-                    // 实时更新聊天历史中的 AI 消息内容
-                    if (aiMessageIndex < this.chatHistory.length) {
-                        this.chatHistory[aiMessageIndex].content = fullContent;
-                    }
-                    console.log(`📡 流式更新: ${fullContent.length} 字符`);
-                };
+              // 添加AI回复
+              this.chatHistory.push({
+                role: "assistant",
+                content:
+                  result.assistant_message?.content || "收到您的图片消息",
+                msg_type: "text",
+              });
 
-                // 使用流式 API 调用
-                try {
-                    // 监听流式事件（需要在 callAIAPIStream 内部手动触发）
-                    this._currentStreamListener = streamListener;
+              this.hasNewMessages = true;
 
-                    const aiResponse = await this.callAIAPIStream(this.chatHistory.slice(0, -1), this.scene, userProfile);
-
-                    // 流式完成，清除监听
-                    this._currentStreamListener = null;
-
-                    // 确保最终内容是完整的
-                    if (aiMessageIndex < this.chatHistory.length) {
-                        this.chatHistory[aiMessageIndex].content = aiResponse.content;
-                    }
-
-                    console.log('✅ 流式对话完成，长度:', aiResponse.content.length);
-                } catch (streamError) {
-                    console.warn('流式 API 失败，尝试使用非流式 API...', streamError);
-
-                    // 清除监听
-                    this._currentStreamListener = null;
-
-                    // 降级：如果流式失败，使用传统 API
-                    try {
-                        const aiResponse = await this.callAIAPI(this.chatHistory.slice(0, -1), this.scene, userProfile);
-                        this.chatHistory[aiMessageIndex].content = aiResponse.content;
-                        console.log('✅ 使用传统 API 完成对话');
-                    } catch (fallbackError) {
-                        console.error('两种 API 都失败:', fallbackError);
-                        this.chatHistory[aiMessageIndex].content = '抱歉，AI 服务暂时不可用，请稍后重试。';
-                        throw fallbackError;
-                    }
-                }
-
-                this.hasNewMessages = true;
-
-                // 每次对话后自动保存以触发星点奖励
-                console.log('💾 自动保存对话以获取星点奖励...');
-                await this.autoSaveForStarReward();
-
-                // 如果检测到风险或会话已启用自动保存，处理风险相关逻辑
-                if (this.riskDetectedInSession || this.autoSaveEnabled) {
-                    console.log('🚨 触发风险处理逻辑...');
-                    await this.handleRiskLogic();
-                }
-
-            } catch (error) {
-                console.error('AI调用失败:', error);
-                uni.showToast({
-                    title: error.message || 'AI调用失败',
-                    icon: 'none',
-                    duration: 3000
-                });
-            } finally {
-                this.isAiTyping = false;
-            }
-        },
-
-        /**
-         * 保存聊天历史（用于 SaveButton 组件）
-         */
-        saveChatHistory() {
-            this.saveSession();
-        },
-
-        /**
-         * 保存会话
-         */
-        async saveSession() {
-            if (this.chatHistory.length === 0) {
-                uni.showToast({
-                    title: '暂无对话内容可保存',
-                    icon: 'none'
-                });
-                return;
-            }
-
-            try {
-                const requestData = {
-                    scene: this.scene,
-                    messages: this.chatHistory,
-                    session_id: this.sessionId // 如果有sessionId，则更新现有会话
-                };
-
-                console.log('保存请求数据:', JSON.stringify(requestData, null, 2));
-
-                const response = await uni.request({
-                    url: `${BASE_URL}/chat/save-chat`,
-                    method: 'POST',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: requestData
-                });
-
-                console.log('保存响应:', response);
-
-                if (response.statusCode === 200) {
-                    if (!this.sessionId) {
-                        this.sessionId = response.data.id;  // 首次保存时设置sessionId
-                        console.log('设置新会话ID:', this.sessionId);
-                    }
-
-                    // 调试：打印完整的响应数据
-                    console.log('📥 保存响应数据:', response.data);
-
-                    // 处理星点奖励和好感度奖励
-                    if (response.data.star_reward && response.data.star_reward.is_rewarded) {
-                        this.handleStarReward(response.data.star_reward);
-                    }
-                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded) {
-                        this.handleAffectionReward(response.data.affection_reward);
-                    } else {
-                        console.log('🔍 好感度奖励信息:', response.data.affection_reward);
-                    }
-
-                    // 重置新消息标志
-                    this.hasNewMessages = false;
-
-                    // 手动保存的会话应该启用自动保存，便于日后继续会话时自动保存
-                    this.autoSaveEnabled = true;
-
-                    // 检查并更新数据库中的自动保存状态
-                    if (this.sessionId) {
-                        await this.enableSessionAutoSave();
-                    }
-
-                    // 处理星点奖励和好感度奖励的Toast显示
-                    let rewardMessages = [];
-
-                    if (response.data.star_reward && response.data.star_reward.is_rewarded && response.data.star_reward.show_toast) {
-                        rewardMessages.push(`获得${response.data.star_reward.earned_points}颗星星 ⭐`);
-                    }
-
-                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded && response.data.affection_reward.show_toast) {
-                        rewardMessages.push(`好感度 +${response.data.affection_reward.earned_affection} 💖`);
-                    }
-
-                    if (rewardMessages.length > 0) {
-                        uni.showToast({
-                            title: rewardMessages.join('\n'),
-                            icon: 'none',
-                            duration: 3000
-                        });
-                    } else {
-                        uni.showToast({
-                            title: '保存成功',
-                            icon: 'success'
-                        });
-                    }
-
-                    // 保存成功后，延迟检查是否生成了心理评估报告
-                    setTimeout(async () => {
-                        try {
-                            const hasReport = await this.checkSessionReport();
-                            if (hasReport) {
-                                console.log('✅ 检测到新的心理评估报告');
-                                // 延迟显示报告，让用户先看到保存成功的提示
-                                setTimeout(() => {
-                                    this.showPsychologicalReport();
-                                }, 2000);
-                            }
-                        } catch (error) {
-                            console.log('检查心理评估报告失败:', error);
-                        }
-                    }, 3000); // 3秒后检查，给后台任务足够时间生成报告
-                }
-            } catch (error) {
-                console.error('保存失败:', error);
-                console.error('保存响应详情:', error.response || error);
-
-                if (error.statusCode === 401) {
-                    console.error('❌ 认证失败，token可能过期');
-                    uni.showToast({
-                        title: '登录已过期，请重新登录',
-                        icon: 'none'
-                    });
-                } else {
-                    uni.showToast({
-                        title: '保存失败',
-                        icon: 'none'
-                    });
-                }
-            }
-        },
-
-        /**
-         * 加载历史会话
-         */
-        async loadHistorySession(sessionId) {
-            try {
-                const response = await uni.request({
-                    url: `${BASE_URL}/chat/chat-sessions/${sessionId}`,
-                    method: 'GET',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`
-                    }
-                });
-
-                if (response.statusCode === 200) {
-                    this.chatHistory = response.data.messages || [];
-
-                    // 检查该会话的自动保存状态
-                    await this.checkAutoSaveStatus();
-
-                    console.log(`✅ 加载历史会话 ${sessionId}，自动保存状态: ${this.autoSaveEnabled}`);
-
-                    // 检查该会话是否有心理评估报告，如果有且未查看过，则提示用户
-                    setTimeout(async () => {
-                        try {
-                            const hasReport = await this.checkSessionReport();
-                            if (hasReport) {
-                                const report = await this.getSessionReport();
-                                if (report && !report.is_viewed) {
-                                    console.log('📊 发现未查看的心理评估报告');
-                                    uni.showToast({
-                                        title: '发现心理评估报告',
-                                        icon: 'none',
-                                        duration: 2000
-                                    });
-
-                                    // 延迟显示报告
-                                    setTimeout(() => {
-                                        this.showPsychologicalReport();
-                                    }, 2000);
-                                }
-                            }
-                        } catch (error) {
-                            console.log('检查历史会话报告失败:', error);
-                        }
-                    }, 1000);
-                }
-            } catch (error) {
-                console.error('加载历史会话失败:', error);
-            }
-        },
-
-        /**
-         * 自动保存对话以获取星点奖励
-         */
-        async autoSaveForStarReward() {
-            try {
-                console.log('💫 开始自动保存以获取星点奖励...');
-                const requestData = {
-                    scene: this.scene,
-                    messages: this.chatHistory,
-                    session_id: this.sessionId
-                };
-
-                const response = await uni.request({
-                    url: `${BASE_URL}/chat/save-chat`,
-                    method: 'POST',
-                    header: {
-                        'Authorization': `Bearer ${uni.getStorageSync('access_token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    data: requestData
-                });
-
-                if (response.statusCode === 200) {
-                    if (!this.sessionId) {
-                        this.sessionId = response.data.id;
-                        console.log('设置新会话ID:', this.sessionId);
-                    }
-
-                    // 调试：打印完整的响应数据
-                    console.log('📥 自动保存响应数据:', response.data);
-
-                    // 处理星点奖励和好感度奖励（记录日志但不单独显示）
-                    if (response.data.star_reward && response.data.star_reward.is_rewarded) {
-                        this.handleStarReward(response.data.star_reward);
-                    }
-                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded) {
-                        this.handleAffectionReward(response.data.affection_reward);
-                    } else {
-                        console.log('🔍 自动保存好感度奖励信息:', response.data.affection_reward);
-                    }
-
-                    // 处理星点奖励和好感度奖励的Toast显示
-                    let rewardMessages = [];
-
-                    if (response.data.star_reward && response.data.star_reward.is_rewarded && response.data.star_reward.show_toast) {
-                        rewardMessages.push(`获得${response.data.star_reward.earned_points}颗星星 ⭐`);
-                    }
-
-                    if (response.data.affection_reward && response.data.affection_reward.is_rewarded && response.data.affection_reward.show_toast) {
-                        rewardMessages.push(`好感度 +${response.data.affection_reward.earned_affection} 💖`);
-                    }
-
-                    if (rewardMessages.length > 0) {
-                        uni.showToast({
-                            title: rewardMessages.join('\n'),
-                            icon: 'none',
-                            duration: 3000
-                        });
-                        console.log('✅ 自动保存成功，显示奖励:', rewardMessages.join(', '));
-                    } else {
-                        console.log('✅ 自动保存成功');
-                    }
-                } else {
-                    console.error('❌ 自动保存失败:', response);
-                }
-            } catch (error) {
-                console.error('❌ 自动保存异常:', error);
-            }
-        },
-
-        /**
-         * 处理星点奖励
-         */
-        handleStarReward(rewardInfo) {
-            console.log('⭐ 收到星点奖励:', rewardInfo);
-
-            // 记录奖励信息，但不单独显示toast（由合并显示逻辑统一处理）
-            if (rewardInfo.show_toast) {
-                console.log(`⭐ 准备显示星点奖励提示: +${rewardInfo.earned_points}星点`);
+              uni.showToast({
+                title: "发送成功",
+                icon: "success",
+                duration: 1500,
+              });
             } else {
-                console.log(`⭐ 获得奖励但不显示提示: +${rewardInfo.earned_points}星点`);
+              console.error("[多模态] 发送失败，响应:", response);
+              uni.showToast({
+                title: "发送失败，请重试",
+                icon: "none",
+                duration: 3000,
+              });
             }
-        },
+          } else {
+            // 没有sessionId，降级使用旧接口（仅AI分析，不保存到数据库）
+            console.log("[多模态] 无sessionId，使用降级方案");
 
-        /**
-         * 处理好感度奖励
-         */
-        handleAffectionReward(rewardInfo) {
-            console.log('💖 收到好感度奖励:', rewardInfo);
+            let imageData = imagePaths[0];
+            let isBlobUrl = imagePaths[0].startsWith("blob:");
 
-            // 记录奖励信息，但不单独显示toast（由合并显示逻辑统一处理）
-            if (rewardInfo.show_toast) {
-                console.log(`💖 准备显示好感度奖励提示: +${rewardInfo.earned_affection}点`, rewardInfo.level_up ? `升级到${rewardInfo.new_level}级` : '');
-            } else {
-                console.log(`💖 获得好感度但不显示提示: +${rewardInfo.earned_affection}点`);
+            if (isBlobUrl) {
+              console.log("[多模态] 检测到blob URL，转换为base64");
+              imageData = await this.blobUrlToBase64(imagePaths[0]);
+              console.log("[多模态] base64转换成功");
             }
-        },
 
-        /**
-         * 处理风险相关逻辑（从原来的自动保存逻辑中分离）
-         */
-        async handleRiskLogic() {
-            try {
-                // 这里可以添加风险相关的特殊处理逻辑
-                // 比如额外的风险评估、报告生成等
-                console.log('🚨 处理风险相关逻辑...');
-            } catch (error) {
-                console.error('❌ 风险逻辑处理失败:', error);
-            }
-        },
+            const requestData = {
+              image_base64: imageData,
+              text: content || "",
+              scene: this.scene || "image_analysis",
+            };
 
-        /**
-         * 清空聊天记录
-         */
-        clearChat() {
-            uni.showModal({
-                title: '确认清空',
-                content: '确定要清空当前对话吗？此操作不可恢复。',
-                success: (res) => {
-                    if (res.confirm) {
-                        this.chatHistory = this.welcomeMessage ? [{
-                            role: 'assistant',
-                            content: this.welcomeMessage
-                        }] : [];
-                        this.sessionId = null;
-                        this.hasNewMessages = false;
-                        this.riskDetectedInSession = false;
-                        this.autoSaveEnabled = false;  // 重置自动保存状态
-                        this.conversationStartTime = new Date();
-                    }
-                }
+            const response = await uni.request({
+              url: `${BASE_URL}/multimodal/chat/image-upload-base64`,
+              method: "POST",
+              header: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              data: requestData,
             });
+
+            uni.hideLoading();
+
+            if (response.statusCode === 200) {
+              console.log("[多模态] AI分析成功");
+
+              // 添加用户消息（使用临时URL）
+              this.chatHistory.push({
+                role: "user",
+                content: content || "",
+                msg_type: "img",
+                img_urls: imagePaths, // 临时URL，无法查看历史
+              });
+
+              // 添加AI回复
+              this.chatHistory.push({
+                role: "assistant",
+                content: response.data.content || "收到您的图片消息",
+                msg_type: "text",
+              });
+
+              this.hasNewMessages = true;
+
+              uni.showToast({
+                title: "发送成功",
+                icon: "success",
+                duration: 1500,
+              });
+            } else {
+              console.error("[多模态] AI分析失败");
+              uni.showToast({
+                title: "发送失败，请重试",
+                icon: "none",
+                duration: 3000,
+              });
+            }
+          }
+        } else {
+          console.error("[多模态] 没有可用的图片路径");
+          uni.showToast({
+            title: "请选择图片",
+            icon: "none",
+          });
         }
-    }
+      } catch (error) {
+        uni.hideLoading();
+        console.error("[多模态] 发生异常:");
+        console.error("[多模态] 错误类型:", error.constructor.name);
+        console.error("[多模态] 错误消息:", error.message);
+        console.error("[多模态] 错误详情:", error);
+
+        uni.showToast({
+          title: error.message || "网络错误，请重试",
+          icon: "none",
+          duration: 3000,
+        });
+      } finally {
+        console.log(
+          "[多模态] ==================== 处理完成 ===================="
+        );
+      }
+    },
+
+    /**
+     * 将blob URL转换为base64
+     */
+    async blobUrlToBase64(blobUrl) {
+      return new Promise((resolve, reject) => {
+        console.log("[多模态] 开始转换blob URL:", blobUrl);
+
+        // 使用fetch读取blob URL
+        fetch(blobUrl)
+          .then((response) => {
+            console.log("[多模态] fetch响应状态:", response.status);
+            return response.blob();
+          })
+          .then((blob) => {
+            console.log("[多模态] blob读取成功，大小:", blob.size);
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+              // 移除data:image/xxx;base64,前缀
+              const base64 = reader.result.split(",")[1];
+              console.log("[多模态] base64转换完成");
+              resolve(base64);
+            };
+
+            reader.onerror = (error) => {
+              console.error("[多模态] FileReader错误:", error);
+              reject(error);
+            };
+
+            reader.readAsDataURL(blob);
+          })
+          .catch((error) => {
+            console.error("[多模态] fetch错误:", error);
+            reject(error);
+          });
+      });
+    },
+
+    /**
+     * 发送消息方法（增强版）
+     */
+    async sendMessage(content) {
+      if (!content.trim()) return;
+
+      // 检查当前会话的自动保存状态
+      if (this.sessionId) {
+        await this.checkAutoSaveStatus();
+      }
+
+      // 添加用户消息到聊天历史
+      this.chatHistory.push({
+        role: "user",
+        content: content,
+      });
+
+      // 执行危机检测
+      await this.performCrisisDetection(content);
+
+      // 显示AI正在输入
+      this.isAiTyping = true;
+
+      try {
+        // 获取用户模板信息（从本地存储）
+        let userProfile = null;
+        try {
+          const profileData = uni.getStorageSync("user_profile_template");
+          if (profileData) {
+            userProfile =
+              typeof profileData === "string"
+                ? JSON.parse(profileData)
+                : profileData;
+            console.log("📋 从本地存储获取用户模板:", userProfile);
+          }
+        } catch (e) {
+          console.log("⚠️ 获取用户模板失败:", e);
+        }
+
+        // 添加 AI 助手消息占位符到聊天历史（用于实时显示）
+        const aiMessageIndex = this.chatHistory.length;
+        this.chatHistory.push({
+          role: "assistant",
+          content: "", // 初始为空，会被流式数据填充
+        });
+
+        // 监听流式数据更新事件
+        const streamListener = (fullContent) => {
+          // 实时更新聊天历史中的 AI 消息内容
+          if (aiMessageIndex < this.chatHistory.length) {
+            this.chatHistory[aiMessageIndex].content = fullContent;
+          }
+          console.log(`📡 流式更新: ${fullContent.length} 字符`);
+        };
+
+        // 使用流式 API 调用
+        try {
+          // 监听流式事件（需要在 callAIAPIStream 内部手动触发）
+          this._currentStreamListener = streamListener;
+
+          const aiResponse = await this.callAIAPIStream(
+            this.chatHistory.slice(0, -1),
+            this.scene,
+            userProfile
+          );
+
+          // 流式完成，清除监听
+          this._currentStreamListener = null;
+
+          // 确保最终内容是完整的
+          if (aiMessageIndex < this.chatHistory.length) {
+            this.chatHistory[aiMessageIndex].content = aiResponse.content;
+          }
+
+          console.log("✅ 流式对话完成，长度:", aiResponse.content.length);
+        } catch (streamError) {
+          console.warn("流式 API 失败，尝试使用非流式 API...", streamError);
+
+          // 清除监听
+          this._currentStreamListener = null;
+
+          // 降级：如果流式失败，使用传统 API
+          try {
+            const aiResponse = await this.callAIAPI(
+              this.chatHistory.slice(0, -1),
+              this.scene,
+              userProfile
+            );
+            this.chatHistory[aiMessageIndex].content = aiResponse.content;
+            console.log("✅ 使用传统 API 完成对话");
+          } catch (fallbackError) {
+            console.error("两种 API 都失败:", fallbackError);
+            this.chatHistory[aiMessageIndex].content =
+              "抱歉，AI 服务暂时不可用，请稍后重试。";
+            throw fallbackError;
+          }
+        }
+
+        this.hasNewMessages = true;
+
+        // 每次对话后自动保存以触发星点奖励
+        console.log("💾 自动保存对话以获取星点奖励...");
+        await this.autoSaveForStarReward();
+
+        // 如果检测到风险或会话已启用自动保存，处理风险相关逻辑
+        if (this.riskDetectedInSession || this.autoSaveEnabled) {
+          console.log("🚨 触发风险处理逻辑...");
+          await this.handleRiskLogic();
+        }
+      } catch (error) {
+        console.error("AI调用失败:", error);
+        uni.showToast({
+          title: error.message || "AI调用失败",
+          icon: "none",
+          duration: 3000,
+        });
+      } finally {
+        this.isAiTyping = false;
+      }
+    },
+
+    /**
+     * 保存聊天历史（用于 SaveButton 组件）
+     */
+    saveChatHistory() {
+      this.saveSession();
+    },
+
+    /**
+     * 保存会话
+     */
+    async saveSession() {
+      if (this.chatHistory.length === 0) {
+        uni.showToast({
+          title: "暂无对话内容可保存",
+          icon: "none",
+        });
+        return;
+      }
+
+      try {
+        const requestData = {
+          scene: this.scene,
+          messages: this.chatHistory,
+          session_id: this.sessionId, // 如果有sessionId，则更新现有会话
+        };
+
+        console.log("保存请求数据:", JSON.stringify(requestData, null, 2));
+
+        const response = await uni.request({
+          url: `${BASE_URL}/chat/save-chat`,
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          data: requestData,
+        });
+
+        console.log("保存响应:", response);
+
+        if (response.statusCode === 200) {
+          if (!this.sessionId) {
+            this.sessionId = response.data.id; // 首次保存时设置sessionId
+            console.log("设置新会话ID:", this.sessionId);
+          }
+
+          // 调试：打印完整的响应数据
+          console.log("📥 保存响应数据:", response.data);
+
+          // 处理星点奖励和好感度奖励
+          if (
+            response.data.star_reward &&
+            response.data.star_reward.is_rewarded
+          ) {
+            this.handleStarReward(response.data.star_reward);
+          }
+          if (
+            response.data.affection_reward &&
+            response.data.affection_reward.is_rewarded
+          ) {
+            this.handleAffectionReward(response.data.affection_reward);
+          } else {
+            console.log("🔍 好感度奖励信息:", response.data.affection_reward);
+          }
+
+          // 重置新消息标志
+          this.hasNewMessages = false;
+
+          // 手动保存的会话应该启用自动保存，便于日后继续会话时自动保存
+          this.autoSaveEnabled = true;
+
+          // 检查并更新数据库中的自动保存状态
+          if (this.sessionId) {
+            await this.enableSessionAutoSave();
+          }
+
+          // 处理星点奖励和好感度奖励的Toast显示
+          let rewardMessages = [];
+
+          if (
+            response.data.star_reward &&
+            response.data.star_reward.is_rewarded &&
+            response.data.star_reward.show_toast
+          ) {
+            rewardMessages.push(
+              `获得${response.data.star_reward.earned_points}颗星星 ⭐`
+            );
+          }
+
+          if (
+            response.data.affection_reward &&
+            response.data.affection_reward.is_rewarded &&
+            response.data.affection_reward.show_toast
+          ) {
+            rewardMessages.push(
+              `好感度 +${response.data.affection_reward.earned_affection} 💖`
+            );
+          }
+
+          if (rewardMessages.length > 0) {
+            uni.showToast({
+              title: rewardMessages.join("\n"),
+              icon: "none",
+              duration: 3000,
+            });
+          } else {
+            uni.showToast({
+              title: "保存成功",
+              icon: "success",
+            });
+          }
+
+          // 保存成功后，延迟检查是否生成了心理评估报告
+          setTimeout(async () => {
+            try {
+              const hasReport = await this.checkSessionReport();
+              if (hasReport) {
+                console.log("✅ 检测到新的心理评估报告");
+                // 延迟显示报告，让用户先看到保存成功的提示
+                setTimeout(() => {
+                  this.showPsychologicalReport();
+                }, 2000);
+              }
+            } catch (error) {
+              console.log("检查心理评估报告失败:", error);
+            }
+          }, 3000); // 3秒后检查，给后台任务足够时间生成报告
+        }
+      } catch (error) {
+        console.error("保存失败:", error);
+        console.error("保存响应详情:", error.response || error);
+
+        if (error.statusCode === 401) {
+          console.error("❌ 认证失败，token可能过期");
+          uni.showToast({
+            title: "登录已过期，请重新登录",
+            icon: "none",
+          });
+        } else {
+          uni.showToast({
+            title: "保存失败",
+            icon: "none",
+          });
+        }
+      }
+    },
+
+    /**
+     * 加载历史会话
+     */
+    async loadHistorySession(sessionId) {
+      try {
+        const response = await uni.request({
+          url: `${BASE_URL}/chat/chat-sessions/${sessionId}`,
+          method: "GET",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+          },
+        });
+
+        if (response.statusCode === 200) {
+          this.chatHistory = response.data.messages || [];
+
+          // 检查该会话的自动保存状态
+          await this.checkAutoSaveStatus();
+
+          console.log(
+            `✅ 加载历史会话 ${sessionId}，自动保存状态: ${this.autoSaveEnabled}`
+          );
+
+          // 检查该会话是否有心理评估报告，如果有且未查看过，则提示用户
+          setTimeout(async () => {
+            try {
+              const hasReport = await this.checkSessionReport();
+              if (hasReport) {
+                const report = await this.getSessionReport();
+                if (report && !report.is_viewed) {
+                  console.log("📊 发现未查看的心理评估报告");
+                  uni.showToast({
+                    title: "发现心理评估报告",
+                    icon: "none",
+                    duration: 2000,
+                  });
+
+                  // 延迟显示报告
+                  setTimeout(() => {
+                    this.showPsychologicalReport();
+                  }, 2000);
+                }
+              }
+            } catch (error) {
+              console.log("检查历史会话报告失败:", error);
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        console.error("加载历史会话失败:", error);
+      }
+    },
+
+    /**
+     * 自动保存对话以获取星点奖励
+     */
+    async autoSaveForStarReward() {
+      try {
+        console.log("💫 开始自动保存以获取星点奖励...");
+        const requestData = {
+          scene: this.scene,
+          messages: this.chatHistory,
+          session_id: this.sessionId,
+        };
+
+        const response = await uni.request({
+          url: `${BASE_URL}/chat/save-chat`,
+          method: "POST",
+          header: {
+            Authorization: `Bearer ${uni.getStorageSync("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          data: requestData,
+        });
+
+        if (response.statusCode === 200) {
+          if (!this.sessionId) {
+            this.sessionId = response.data.id;
+            console.log("设置新会话ID:", this.sessionId);
+          }
+
+          // 调试：打印完整的响应数据
+          console.log("📥 自动保存响应数据:", response.data);
+
+          // 处理星点奖励和好感度奖励（记录日志但不单独显示）
+          if (
+            response.data.star_reward &&
+            response.data.star_reward.is_rewarded
+          ) {
+            this.handleStarReward(response.data.star_reward);
+          }
+          if (
+            response.data.affection_reward &&
+            response.data.affection_reward.is_rewarded
+          ) {
+            this.handleAffectionReward(response.data.affection_reward);
+          } else {
+            console.log(
+              "🔍 自动保存好感度奖励信息:",
+              response.data.affection_reward
+            );
+          }
+
+          // 处理星点奖励和好感度奖励的Toast显示
+          let rewardMessages = [];
+
+          if (
+            response.data.star_reward &&
+            response.data.star_reward.is_rewarded &&
+            response.data.star_reward.show_toast
+          ) {
+            rewardMessages.push(
+              `获得${response.data.star_reward.earned_points}颗星星 ⭐`
+            );
+          }
+
+          if (
+            response.data.affection_reward &&
+            response.data.affection_reward.is_rewarded &&
+            response.data.affection_reward.show_toast
+          ) {
+            rewardMessages.push(
+              `好感度 +${response.data.affection_reward.earned_affection} 💖`
+            );
+          }
+
+          if (rewardMessages.length > 0) {
+            uni.showToast({
+              title: rewardMessages.join("\n"),
+              icon: "none",
+              duration: 3000,
+            });
+            console.log(
+              "✅ 自动保存成功，显示奖励:",
+              rewardMessages.join(", ")
+            );
+          } else {
+            console.log("✅ 自动保存成功");
+          }
+        } else {
+          console.error("❌ 自动保存失败:", response);
+        }
+      } catch (error) {
+        console.error("❌ 自动保存异常:", error);
+      }
+    },
+
+    /**
+     * 处理星点奖励
+     */
+    handleStarReward(rewardInfo) {
+      console.log("⭐ 收到星点奖励:", rewardInfo);
+
+      // 记录奖励信息，但不单独显示toast（由合并显示逻辑统一处理）
+      if (rewardInfo.show_toast) {
+        console.log(
+          `⭐ 准备显示星点奖励提示: +${rewardInfo.earned_points}星点`
+        );
+      } else {
+        console.log(
+          `⭐ 获得奖励但不显示提示: +${rewardInfo.earned_points}星点`
+        );
+      }
+    },
+
+    /**
+     * 处理好感度奖励
+     */
+    handleAffectionReward(rewardInfo) {
+      console.log("💖 收到好感度奖励:", rewardInfo);
+
+      // 记录奖励信息，但不单独显示toast（由合并显示逻辑统一处理）
+      if (rewardInfo.show_toast) {
+        console.log(
+          `💖 准备显示好感度奖励提示: +${rewardInfo.earned_affection}点`,
+          rewardInfo.level_up ? `升级到${rewardInfo.new_level}级` : ""
+        );
+      } else {
+        console.log(
+          `💖 获得好感度但不显示提示: +${rewardInfo.earned_affection}点`
+        );
+      }
+    },
+
+    /**
+     * 处理风险相关逻辑（从原来的自动保存逻辑中分离）
+     */
+    async handleRiskLogic() {
+      try {
+        // 这里可以添加风险相关的特殊处理逻辑
+        // 比如额外的风险评估、报告生成等
+        console.log("🚨 处理风险相关逻辑...");
+      } catch (error) {
+        console.error("❌ 风险逻辑处理失败:", error);
+      }
+    },
+
+    /**
+     * 清空聊天记录
+     */
+    clearChat() {
+      uni.showModal({
+        title: "确认清空",
+        content: "确定要清空当前对话吗？此操作不可恢复。",
+        success: (res) => {
+          if (res.confirm) {
+            this.chatHistory = this.welcomeMessage
+              ? [
+                  {
+                    role: "assistant",
+                    content: this.welcomeMessage,
+                  },
+                ]
+              : [];
+            this.sessionId = null;
+            this.hasNewMessages = false;
+            this.riskDetectedInSession = false;
+            this.autoSaveEnabled = false; // 重置自动保存状态
+            this.conversationStartTime = new Date();
+          }
+        },
+      });
+    },
+  },
 };
